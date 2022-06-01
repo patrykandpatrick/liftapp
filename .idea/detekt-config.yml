@@ -1,0 +1,42 @@
+complexity:
+  LongMethod:
+    threshold: 90
+  LongParameterList:
+    ignoreDefaultParameters: true
+    ignoreAnnotated:
+      - "Composable"
+      - "LongParameterListDrawFunction"
+  TooManyFunctions:
+    thresholdInFiles: 999
+    ignoreDeprecated: true
+    ignorePrivate: true
+    ignoreOverridden: true
+style:
+  MagicNumber:
+    excludes:
+      - "**/Color.kt"
+      - "**/test/**"
+      - "**/androidTest/**"
+      - "**/commonTest/**"
+      - "**/jvmTest/**"
+      - "**/jsTest/**"
+      - "**/iosTest/**"
+      - "**/preview/**"
+      - "**/Preview.kt"
+      - "**/Previews.kt"
+    ignoreNumbers:
+      - "-1"
+      - "0"
+      - "1"
+      - "2"
+      - "100"
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - "Composable"
+formatting:
+  active: true
+  TrailingComma:
+    active: true
+    allowTrailingComma: true
+    allowTrailingCommaOnCallSite: true

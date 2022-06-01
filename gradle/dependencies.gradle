@@ -1,0 +1,364 @@
+ext {
+
+    def arch_components = [
+            viewmodel: [
+                    group  : "androidx.lifecycle",
+                    name   : "lifecycle-viewmodel-compose",
+                    version: versions.viewmodel
+            ],
+    ]
+
+    def database = [
+            room         : [
+                    group  : "androidx.room",
+                    name   : "room-runtime",
+                    version: versions.room
+            ],
+            room_ktx     : [
+                    group  : "androidx.room",
+                    name   : "room-ktx",
+                    version: versions.room
+            ],
+            room_compiler: [
+                    group  : "androidx.room",
+                    name   : "room-compiler",
+                    version: versions.room
+            ],
+    ]
+
+    def di = [
+            hilt                : [
+                    group  : "com.google.dagger",
+                    name   : "hilt-android",
+                    version: versions.hilt
+            ],
+            hilt_core           : [
+                    group  : "com.google.dagger",
+                    name   : "hilt-core",
+                    version: versions.hilt
+            ],
+            hilt_compiler       : [
+                    group  : "com.google.dagger",
+                    name   : "hilt-compiler",
+                    version: versions.hilt
+            ],
+            hilt_android_testing: [
+                    group  : "com.google.dagger",
+                    name   : "hilt-android-testing",
+                    version: versions.hilt
+            ],
+            hilt_testing        : [
+                    group  : "com.google.dagger",
+                    name   : "hilt-android-testing",
+                    version: versions.hilt
+            ],
+    ]
+
+    def kotlin = [
+            coroutines_android: [
+                    group  : "org.jetbrains.kotlinx",
+                    name   : "kotlinx-coroutines-android",
+                    version: versions.coroutines
+            ],
+            std_lib           : [
+                    group  : "org.jetbrains.kotlin",
+                    name   : "kotlin-stdlib",
+                    version: versions.kotlin
+            ],
+            test              : [
+                    group  : "org.jetbrains.kotlin",
+                    name   : "kotlin-test",
+                    version: versions.kotlin
+            ],
+    ]
+
+    def logging = [
+            timber: [
+                    group  : "com.jakewharton.timber",
+                    name   : "timber",
+                    version: versions.timber
+            ]
+    ]
+
+    def navigation = [
+            destinations    : [
+                    group  : "io.github.raamcosta.compose-destinations",
+                    name   : "animations-core",
+                    version: versions.destinations,
+            ],
+            destinations_ksp: [
+                    group  : "io.github.raamcosta.compose-destinations",
+                    name   : "ksp",
+                    version: versions.destinations,
+            ],
+            hilt            : [
+                    group  : "androidx.hilt",
+                    name   : "hilt-navigation-compose",
+                    version: versions.hiltNavigation,
+            ],
+    ]
+
+    def networking = [
+            retrofit                     : [
+                    group  : "com.squareup.retrofit2",
+                    name   : "retrofit",
+                    version: versions.retrofit,
+            ],
+            kotlinxSerializationConverter: [
+                    group  : "com.jakewharton.retrofit",
+                    name   : "retrofit2-kotlinx-serialization-converter",
+                    version: versions.kotlinxSerializationConverter,
+            ]
+    ]
+
+    def serialization = [
+            kotlinxSerialization: [
+                    group  : "org.jetbrains.kotlinx",
+                    name   : "kotlinx-serialization-json",
+                    version: versions.kotlinxSerialization
+            ],
+    ]
+
+    def storage = [
+            datastore   : [
+                    group  : "androidx.datastore",
+                    name   : "datastore",
+                    version: versions.datastore,
+            ],
+            documentfile: [
+                    group  : "androidx.documentfile",
+                    name   : "documentfile",
+                    version: versions.documentfile,
+            ],
+    ]
+
+    def ui = [
+            activity                        : [
+                    group  : "androidx.activity",
+                    name   : "activity-compose",
+                    version: versions.activity,
+            ],
+            appcompat                       : [
+                    group  : "androidx.appcompat",
+                    name   : "appcompat",
+                    version: versions.appcompat,
+            ],
+            coil                            : [
+                    group  : "io.coil-kt",
+                    name   : "coil-compose",
+                    version: versions.coil,
+            ],
+            compose_ui                      : [
+                    group  : "androidx.compose.ui",
+                    name   : "ui",
+                    version: versions.compose,
+            ],
+            compose_ui_tooling              : [
+                    group  : "androidx.compose.ui",
+                    name   : "ui-tooling",
+                    version: versions.compose,
+            ],
+            compose_ui_test_manifest              : [
+                    group  : "androidx.compose.ui",
+                    name   : "ui-test-manifest",
+                    version: versions.compose,
+            ],
+            compose_material                : [
+                    group  : "androidx.compose.material",
+                    name   : "material",
+                    version: versions.compose,
+            ],
+            compose_foundation              : [
+                    group  : "androidx.compose.foundation",
+                    name   : "foundation",
+                    version: versions.compose,
+            ],
+            compose_material3               : [
+                    group  : "androidx.compose.material3",
+                    name   : "material3",
+                    version: versions.material3,
+            ],
+            lifecycleRuntime                : [
+                    group  : "androidx.lifecycle",
+                    name   : "lifecycle-runtime-ktx",
+                    version: versions.lifecycleRuntime,
+            ],
+            accompanist_system_ui_controller: [
+                    group  : "com.google.accompanist",
+                    name   : "accompanist-systemuicontroller",
+                    version: versions.accompanist,
+            ],
+            accompanist_insets              : [
+                    group  : "com.google.accompanist",
+                    name   : "accompanist-insets",
+                    version: versions.accompanist,
+            ],
+            accompanist_swiperefresh        : [
+                    group  : "com.google.accompanist",
+                    name   : "accompanist-swiperefresh",
+                    version: versions.accompanist,
+            ],
+            accompanist_placeholder         : [
+                    group  : "com.google.accompanist",
+                    name   : "accompanist-placeholder-material",
+                    version: versions.accompanist,
+            ],
+            accompanist_navigation_animation: [
+                    group  : "com.google.accompanist",
+                    name   : "accompanist-navigation-animation",
+                    version: versions.accompanist,
+            ],
+            accompanist_navigation_material : [
+                    group  : "com.google.accompanist",
+                    name   : "accompanist-navigation-material",
+                    version: versions.accompanist,
+            ],
+            vico                            : [
+                    group  : "com.patrykandpatryk.vico",
+                    name   : "compose-m3",
+                    version: versions.vico,
+            ],
+    ]
+
+    def testing = [
+            junit   : [
+                    group  : "junit",
+                    name   : "junit",
+                    version: versions.junit
+            ],
+            junitExt: [
+                    group  : "androidx.test.ext",
+                    name   : "junit",
+                    version: versions.junitExt
+            ],
+            mockk   : [
+                    group  : "io.mockk",
+                    name   : "mockk",
+                    version: versions.mockk
+            ],
+            testCore: [
+                    group  : "androidx.test",
+                    name   : "core-ktx",
+                    version: versions.testCore
+            ]
+    ]
+
+    coreModuleDependencies = [
+            [configuration: "implementation", dependency: project(":domain")],
+            [configuration: "implementation", dependency: arch_components.viewmodel],
+            [configuration: "implementation", dependency: kotlin.coroutines_android],
+            [configuration: "implementation", dependency: kotlin.std_lib],
+            [configuration: "implementation", dependency: ui.activity],
+            [configuration: "implementation", dependency: ui.appcompat],
+            [configuration: "implementation", dependency: ui.coil],
+            [configuration: "implementation", dependency: ui.compose_ui],
+            [configuration: "debugImplementation", dependency: ui.compose_ui_tooling],
+            [configuration: "debugImplementation", dependency: ui.compose_ui_test_manifest],
+            [configuration: "implementation", dependency: ui.compose_material],
+            [configuration: "implementation", dependency: ui.compose_material3],
+            [configuration: "implementation", dependency: ui.compose_foundation],
+            [configuration: "implementation", dependency: ui.lifecycleRuntime],
+            [configuration: "implementation", dependency: ui.accompanist_insets],
+            [configuration: "implementation", dependency: ui.accompanist_system_ui_controller],
+            [configuration: "implementation", dependency: ui.accompanist_swiperefresh],
+            [configuration: "implementation", dependency: ui.accompanist_placeholder],
+            [configuration: "implementation", dependency: ui.accompanist_navigation_animation],
+            [configuration: "implementation", dependency: ui.accompanist_navigation_material],
+            [configuration: "implementation", dependency: ui.vico],
+            [configuration: "implementation", dependency: di.hilt],
+            [configuration: "implementation", dependency: navigation.hilt],
+            [configuration: "api", dependency: logging.timber],
+            [configuration: "kapt", dependency: di.hilt_compiler],
+            [configuration: "testImplementation", dependency: di.hilt_testing],
+            [configuration: "testImplementation", dependency: testing.junit],
+            [configuration: "testImplementation", dependency: testing.junitExt],
+            [configuration: "testImplementation", dependency: kotlin.test],
+    ]
+
+    appModuleDependencies = {
+        def dependencies = [
+                [configuration: "implementation", dependency: project(":data")],
+                [configuration: "implementation", dependency: project(":domain")],
+                [configuration: "implementation", dependency: project(":core")],
+                [configuration: "implementation", dependency: project(":feature:main")],
+                [configuration: "implementation", dependency: project(":functionality:database")],
+                [configuration: "implementation", dependency: project(":functionality:storage")],
+        ]
+        dependencies.addAll(featureModuleDependencies())
+        dependencies
+    }
+
+    featureModuleDependencies = {
+        def dependencies = [
+                [configuration: "implementation", dependency: project(":core")],
+        ]
+        dependencies.addAll(coreModuleDependencies)
+        dependencies
+    }
+
+    featureMainModuleDependencies = {
+        def dependencies = [
+                [configuration: "implementation", dependency: project(":feature:about")],
+                [configuration: "implementation", dependency: project(":feature:home")],
+                [configuration: "implementation", dependency: project(":feature:settings")],
+        ]
+        dependencies.addAll(featureModuleDependencies())
+        dependencies
+    }
+
+    databaseModuleDependencies = [
+            [configuration: "implementation", dependency: project(":data")],
+            [configuration: "implementation", dependency: di.hilt],
+            [configuration: "implementation", dependency: kotlin.coroutines_android],
+            [configuration: "implementation", dependency: kotlin.std_lib],
+            [configuration: "implementation", dependency: database.room],
+            [configuration: "implementation", dependency: database.room_ktx],
+            [configuration: "ksp", dependency: database.room_compiler],
+            [configuration: "kapt", dependency: di.hilt_compiler],
+            [configuration: "testImplementation", dependency: kotlin.test],
+    ]
+
+    storageModuleDependencies = [
+            [configuration: "implementation", dependency: project(":data")],
+            [configuration: "implementation", dependency: storage.documentfile],
+    ]
+
+    preferenceModuleDependencies = [
+            [configuration: "implementation", dependency: project(":data")],
+            [configuration: "implementation", dependency: di.hilt],
+            [configuration: "implementation", dependency: kotlin.coroutines_android],
+            [configuration: "implementation", dependency: kotlin.std_lib],
+            [configuration: "implementation", dependency: storage.datastore],
+            [configuration: "kapt", dependency: di.hilt_compiler],
+            [configuration: "testImplementation", dependency: kotlin.test],
+    ]
+
+    dataModuleDependencies = [
+            [configuration: "implementation", dependency: project(":domain")],
+            [configuration: "implementation", dependency: di.hilt],
+            [configuration: "implementation", dependency: kotlin.coroutines_android],
+            [configuration: "implementation", dependency: kotlin.std_lib],
+            [configuration: "implementation", dependency: serialization.kotlinxSerialization],
+            [configuration: "api", dependency: logging.timber],
+            [configuration: "kapt", dependency: di.hilt_compiler],
+            [configuration: "testImplementation", dependency: kotlin.test],
+    ]
+
+    domainModuleDependencies = [
+            [configuration: "implementation", dependency: di.hilt_core],
+            [configuration: "implementation", dependency: kotlin.coroutines_android],
+            [configuration: "implementation", dependency: kotlin.std_lib],
+            [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "kapt", dependency: di.hilt_compiler],
+    ]
+
+    homeModuleDependencies = [
+            [configuration: "implementation", dependency: project(":core")],
+    ]
+
+    networkingModuleDependencies = [
+            [configuration: "implementation", dependency: project(":data")],
+            [configuration: "implementation", dependency: networking.retrofit],
+            [configuration: "implementation", dependency: networking.kotlinxSerializationConverter],
+    ]
+}

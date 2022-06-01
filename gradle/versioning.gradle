@@ -1,0 +1,21 @@
+import java.util.concurrent.TimeUnit
+
+def getProjectVersionCode() {
+    if (isReleaseBuild()) {
+        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) as int
+    } else {
+        1
+    }
+}
+
+boolean isReleaseBuild() {
+    List<String> taskArgs = gradle.getStartParameter().getTaskRequests().get(0).getArgs()
+    if (taskArgs.size() > 0) {
+        String taskName = taskArgs.get(0).toLowerCase()
+        return taskName.contains("release")
+    } else return false
+}
+
+ext {
+    getProjectVersionCode = this.&getProjectVersionCode
+}

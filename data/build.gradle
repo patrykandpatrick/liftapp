@@ -1,0 +1,8 @@
+apply plugin: "com.android.library"
+apply from: "$rootDir/gradle/base.gradle"
+
+dependencies {
+    dataModuleDependencies.each {
+        add(it.configuration, it.dependency, it.options)
+    }
+}

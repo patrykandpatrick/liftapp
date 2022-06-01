@@ -1,0 +1,25 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "LiftApp"
+include ':app'
+include ':core'
+include ':data'
+include ':domain'
+include ':feature:about'
+include ':feature:home'
+include ':feature:main'
+include ':feature:settings'
+include ':functionality:database'
+include ':functionality:storage'

@@ -1,0 +1,54 @@
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "kotlin-kapt"
+apply plugin: "dagger.hilt.android.plugin"
+apply plugin: "com.google.devtools.ksp"
+
+apply from: "$rootDir/gradle/dependencies.gradle"
+apply from: "$rootDir/gradle/versioning.gradle"
+apply from: "$rootDir/gradle/versions.gradle"
+
+android {
+
+    compileSdk android.compileSdk
+
+    defaultConfig {
+        
+        minSdk android.minSdk
+        targetSdk android.targetSdk
+        versionCode getProjectVersionCode()
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+
+        debug {
+
+            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+        }
+
+        release {
+
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+
+            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+        }
+    }
+
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+
+        jvmTarget = "1.8"
+        freeCompilerArgs += ["-Xjvm-default=compatibility", "-Xopt-in=kotlin.RequiresOptIn"]
+        useIR = true
+    }
+}
