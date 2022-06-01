@@ -30,11 +30,11 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import pl.patrykgoworowski.mintlift.core.navigation.NavItemRoute
 import pl.patrykgoworowski.mintlift.core.navigation.Routes
-import pl.patrykgoworowski.mintlift.core.navigation.navBarRoutes
+import pl.patrykgoworowski.mintlift.feature.main.navigation.navBarRoutes
 import pl.patrykgoworowski.mintlift.core.ui.anim.EXIT_ANIM_DURATION
 import pl.patrykgoworowski.mintlift.core.ui.anim.slideAndFadeIn
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Main(
     parentNavController: NavHostController,

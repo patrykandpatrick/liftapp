@@ -1,9 +1,11 @@
-package pl.patrykgoworowski.mintlift.core.navigation
+package pl.patrykgoworowski.mintlift.feature.main.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import pl.patrykgoworowski.mintlift.core.R
+import pl.patrykgoworowski.mintlift.core.navigation.NavItemRoute
+import pl.patrykgoworowski.mintlift.core.navigation.Routes
 import pl.patrykgoworowski.mintlift.feature.about.ui.About
 import pl.patrykgoworowski.mintlift.feature.settings.ui.Settings
 
