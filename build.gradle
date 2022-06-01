@@ -30,7 +30,7 @@ dependencies {
 
 detekt {
     buildUponDefaultConfig = true
-    source = files("core", "domain", "feature", "functionality")
+    source = files("app", "core", "domain", "feature", "functionality")
     config = files(".idea/detekt-config.yml")
 }
 
@@ -48,6 +48,7 @@ task detektFix(type: Detekt) {
     autoCorrect = true
     buildUponDefaultConfig = true
     source = files("app", "core", "domain", "feature", "functionality")
+    config.setFrom(files(".idea/detekt-config.yml"))
 }
 
 task clean(type: Delete) {
