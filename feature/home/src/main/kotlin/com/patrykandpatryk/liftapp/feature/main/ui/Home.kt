@@ -37,7 +37,7 @@ import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun Main(
+fun Home(
     parentNavController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -56,7 +56,7 @@ fun Main(
         val navBarRoutes = navBarRoutes
 
         AnimatedNavHost(
-            route = Routes.Menu.value,
+            route = Routes.Home.value,
             navController = navController,
             startDestination = navBarRoutes.first().route,
             enterTransition = { slideAndFadeIn() },

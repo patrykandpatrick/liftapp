@@ -16,16 +16,12 @@ object Routes {
 
     const val ARG_ID = "id"
 
-    val Main = Route("main")
+    object Home : Route(value = "home") {
 
-    object Menu : Route("menu") {
-
-        val Settings = append("settings")
-        val About = append("about")
-
-        val children = listOf(
-            Settings,
-            About,
-        )
+        val Dashboard = append(childRoute = "dashboard")
+        val More = append(childRoute = "more")
     }
+
+    val About = Route(value = "about")
+    val Settings = Route(value = "settings")
 }

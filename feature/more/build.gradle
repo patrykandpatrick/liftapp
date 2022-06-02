@@ -2,7 +2,7 @@ apply from: "$rootDir/gradle/feature-module-base.gradle"
 
 dependencies {
 
-    featureMainModuleDependencies().forEach {
+    featureMoreModuleDependencies.forEach {
 
         add(it.configuration, it.dependency, it.options)
     }

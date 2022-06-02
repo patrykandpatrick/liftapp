@@ -7,17 +7,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
 import com.patrykandpatryk.liftapp.core.R
 
 @Composable
 fun About(
-    modifier: Modifier,
+    parentNavController: NavHostController,
+    modifier: Modifier = Modifier,
 ) {
     Text(
         modifier = modifier
             .statusBarsPadding()
             .fillMaxSize(),
-        text = stringResource(id = R.string.menu_route_about),
+        text = stringResource(id = R.string.route_about),
         style = MaterialTheme.typography.displayMedium,
     )
 }

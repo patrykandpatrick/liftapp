@@ -158,7 +158,7 @@ ext {
                     name   : "ui-tooling",
                     version: versions.compose,
             ],
-            compose_ui_test_manifest              : [
+            compose_ui_test_manifest        : [
                     group  : "androidx.compose.ui",
                     name   : "ui-test-manifest",
                     version: versions.compose,
@@ -280,7 +280,9 @@ ext {
                 [configuration: "implementation", dependency: project(":data")],
                 [configuration: "implementation", dependency: project(":domain")],
                 [configuration: "implementation", dependency: project(":core")],
-                [configuration: "implementation", dependency: project(":feature:main")],
+                [configuration: "implementation", dependency: project(":feature:home")],
+                [configuration: "implementation", dependency: project(":feature:settings")],
+                [configuration: "implementation", dependency: project(":feature:about")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
         ]
@@ -296,15 +298,19 @@ ext {
         dependencies
     }
 
-    featureMainModuleDependencies = {
+    featureHomeModuleDependencies = {
         def dependencies = [
-                [configuration: "implementation", dependency: project(":feature:about")],
-                [configuration: "implementation", dependency: project(":feature:home")],
-                [configuration: "implementation", dependency: project(":feature:settings")],
+                [configuration: "implementation", dependency: project(":feature:dashboard")],
+                [configuration: "implementation", dependency: project(":feature:more")],
         ]
         dependencies.addAll(featureModuleDependencies())
         dependencies
     }
+
+    featureMoreModuleDependencies = [
+            [configuration: "implementation", dependency: project(":feature:about")],
+            [configuration: "implementation", dependency: project(":feature:settings")],
+    ]
 
     databaseModuleDependencies = [
             [configuration: "implementation", dependency: project(":data")],

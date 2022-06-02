@@ -15,7 +15,9 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.feature.main.ui.Main
+import com.patrykandpatryk.liftapp.feature.about.ui.About
+import com.patrykandpatryk.liftapp.feature.main.ui.Home
+import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
 
 @Composable
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class)
@@ -43,11 +45,19 @@ fun Root(modifier: Modifier = Modifier) {
 
             AnimatedNavHost(
                 navController = navController,
-                startDestination = Routes.Menu.value,
+                startDestination = Routes.Home.value,
             ) {
 
-                composable(route = Routes.Menu.value) {
-                    Main(parentNavController = navController)
+                composable(route = Routes.Home.value) {
+                    Home(parentNavController = navController)
+                }
+
+                composable(route = Routes.About.value) {
+                    About(parentNavController = navController)
+                }
+
+                composable(route = Routes.Settings.value) {
+                    Settings(parentNavController = navController)
                 }
             }
         }
