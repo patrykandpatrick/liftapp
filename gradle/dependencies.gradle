@@ -283,6 +283,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:home")],
                 [configuration: "implementation", dependency: project(":feature:settings")],
                 [configuration: "implementation", dependency: project(":feature:about")],
+                [configuration: "implementation", dependency: project(":feature:onerepmax")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
         ]
@@ -306,11 +307,6 @@ ext {
         dependencies.addAll(featureModuleDependencies())
         dependencies
     }
-
-    featureMoreModuleDependencies = [
-            [configuration: "implementation", dependency: project(":feature:about")],
-            [configuration: "implementation", dependency: project(":feature:settings")],
-    ]
 
     databaseModuleDependencies = [
             [configuration: "implementation", dependency: project(":data")],

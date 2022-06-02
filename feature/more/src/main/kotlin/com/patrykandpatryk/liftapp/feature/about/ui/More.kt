@@ -29,5 +29,8 @@ fun More(
         Button(onClick = { navigate(Routes.About.value) }) {
             Text(text = stringResource(id = R.string.route_about))
         }
+        Button(onClick = { navigate(Routes.OneRepMax.value) }) {
+            Text(text = stringResource(id = R.string.route_one_rep_max))
+        }
     }
 }

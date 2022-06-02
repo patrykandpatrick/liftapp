@@ -8,6 +8,10 @@
         <entry key="..\:/AndroidStudioProjects/LiftApp2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1965" />
         <entry key="..\:/AndroidStudioProjects/LiftApp2/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1965" />
         <entry key="..\:/AndroidStudioProjects/LiftApp2/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1965" />
+        <entry key="core/src/main/res/drawable/ic_)more_horizontal.xml" value="0.1585" />
+        <entry key="core/src/main/res/drawable/ic_dashboard.xml" value="0.1585" />
+        <entry key="core/src/main/res/drawable/ic_more_horizontal.xml" value="0.1585" />
+        <entry key="core/src/main/res/drawable/ic_settings.xml" value="0.1585" />
       </map>
     </option>
   </component>
