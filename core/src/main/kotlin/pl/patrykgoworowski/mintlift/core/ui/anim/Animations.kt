@@ -13,7 +13,7 @@ const val EXIT_ANIM_DURATION = 200
 private const val ENTER_TRANSITION_SPRING_DAMPING_RATIO = 0.55f
 private const val ENTER_TRANSITION_FADE_HEIGHT_DIVIDER = 8
 
-fun <T> slideAndFadeIn(
+fun slideAndFadeIn(
     fadeDuration: Int = ENTER_ANIM_DURATION,
     springDampingRatio: Float = ENTER_TRANSITION_SPRING_DAMPING_RATIO,
     fadeHeightDivider: Int = ENTER_TRANSITION_FADE_HEIGHT_DIVIDER,
@@ -21,7 +21,7 @@ fun <T> slideAndFadeIn(
     slideIn(
         animationSpec = spring(dampingRatio = springDampingRatio),
     ) { fullSize ->
-        IntOffset(0, fullSize.height / fadeHeightDivider)
+        IntOffset(x = 0, y = fullSize.height / fadeHeightDivider)
     } + fadeIn(
         animationSpec = tween(fadeDuration),
     )

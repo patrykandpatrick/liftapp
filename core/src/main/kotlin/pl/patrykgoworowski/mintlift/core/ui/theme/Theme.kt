@@ -8,24 +8,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Orange30,
+    primary = Orange300,
     onPrimary = Color.Black,
-    secondary = Orange50,
+    secondary = Orange500,
     onSecondary = Color.Black,
-    tertiary = Orange70,
+    tertiary = Orange700,
     onTertiary = Color.White,
-    background = Black70,
-    surface = Black90,
+    background = Black700,
+    surface = Black900,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Orange50,
+    primary = Orange500,
     onPrimary = Color.Black,
-    secondary = Orange70,
+    secondary = Orange700,
     onSecondary = Color.White,
-    tertiary = Orange70,
-    onTertiary = White90,
-    background = White70,
+    tertiary = Orange700,
+    onTertiary = Color.White,
+    background = White700,
     surface = Color.White,
 )
 
@@ -34,10 +34,7 @@ fun LiftAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

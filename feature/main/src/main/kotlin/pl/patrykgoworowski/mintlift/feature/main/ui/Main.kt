@@ -58,7 +58,7 @@ fun Main(
             route = Routes.Menu.value,
             navController = navController,
             startDestination = navBarRoutes.first().route,
-            enterTransition = { slideAndFadeIn<Int>() },
+            enterTransition = { slideAndFadeIn() },
             exitTransition = {
                 fadeOut(animationSpec = tween(durationMillis = EXIT_ANIM_DURATION))
             },
