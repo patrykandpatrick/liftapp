@@ -1,15 +1,15 @@
 package com.patrykandpatryk.liftapp.core.di
 
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import com.patrykandpatryk.liftapp.core.BuildConfig
 import com.patrykandpatryk.liftapp.core.logging.DisplayableExceptionMapper
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.domain.exception.DisplayableException
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import timber.log.Timber
 
 @Module
