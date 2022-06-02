@@ -5,10 +5,10 @@ package pl.patrykgoworowski.mintlift.feature.main.ui
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.Icon
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
@@ -86,16 +87,17 @@ private fun NavigationBarWithPadding(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        color = Color.Red,
-        modifier = modifier
-            .background(color = Color.Red)
-            .navigationBarsPadding(),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 3.dp,
+        modifier = modifier,
     ) {
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
-
         val currentDestination by derivedStateOf { currentBackStackEntry?.destination }
 
-        NavigationBar {
+        NavigationBar(
+            containerColor = Color.Transparent,
+            modifier = Modifier.navigationBarsPadding(),
+        ) {
             navItemRoutes.forEach { menuRoute ->
                 NavigationBarItem(
                     selected = currentDestination?.hierarchy?.any {
