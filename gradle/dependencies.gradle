@@ -122,7 +122,7 @@ ext {
     def storage = [
             datastore   : [
                     group  : "androidx.datastore",
-                    name   : "datastore",
+                    name   : "datastore-preferences",
                     version: versions.datastore,
             ],
             documentfile: [
@@ -130,6 +130,11 @@ ext {
                     name   : "documentfile",
                     version: versions.documentfile,
             ],
+            preferenceManager: [
+                    group : "com.patrykmichalik",
+                    name: "preference-manager",
+                    version: versions.preferenceManager,
+            ]
     ]
 
     def ui = [
@@ -285,6 +290,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:about")],
                 [configuration: "implementation", dependency: project(":feature:onerepmax")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
+                [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
         ]
         dependencies.addAll(featureModuleDependencies())
@@ -331,12 +337,13 @@ ext {
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
             [configuration: "implementation", dependency: storage.datastore],
+            [configuration: "implementation", dependency: storage.preferenceManager],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
     ]
 
     dataModuleDependencies = [
-            [configuration: "implementation", dependency: project(":domain")],
+            [configuration: "api", dependency: project(":domain")],
             [configuration: "implementation", dependency: di.hilt],
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],

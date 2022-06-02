@@ -40,6 +40,8 @@ formatting:
         active: true
         allowTrailingComma: true
         allowTrailingCommaOnCallSite: true
+    ImportOrdering:
+        active: false
 performance:
     SpreadOperator:
         active: false

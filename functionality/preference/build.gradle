@@ -1,7 +1,7 @@
 apply from: "$rootDir/gradle/functionality-module-base.gradle"
 
 dependencies {
-    databaseModuleDependencies.each {
+    preferenceModuleDependencies.each {
         add(it.configuration, it.dependency, it.options)
     }
 }
