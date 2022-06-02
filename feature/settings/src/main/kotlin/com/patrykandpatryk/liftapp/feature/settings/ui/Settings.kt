@@ -7,14 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import com.patrykandpatryk.liftapp.core.R
 
 @Composable
-fun Settings(
-    parentNavController: NavController,
-    modifier: Modifier = Modifier,
-) {
+fun Settings(modifier: Modifier = Modifier) {
     Text(
         modifier = modifier
             .statusBarsPadding()

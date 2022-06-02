@@ -53,11 +53,11 @@ fun Root(modifier: Modifier = Modifier) {
                 }
 
                 composable(route = Routes.About.value) {
-                    About(parentNavController = navController)
+                    About()
                 }
 
                 composable(route = Routes.Settings.value) {
-                    Settings(parentNavController = navController)
+                    Settings()
                 }
             }
         }
