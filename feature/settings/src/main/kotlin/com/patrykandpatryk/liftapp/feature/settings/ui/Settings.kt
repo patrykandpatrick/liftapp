@@ -1,21 +1,38 @@
 package com.patrykandpatryk.liftapp.feature.settings.ui
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.ui.TopAppBar
+import com.patrykandpatryk.liftapp.core.ui.rememberTopAppBarScrollBehavior
 
 @Composable
-fun Settings(modifier: Modifier = Modifier) {
-    Text(
-        modifier = modifier
-            .statusBarsPadding()
-            .fillMaxSize(),
-        text = stringResource(id = R.string.route_settings),
-        style = MaterialTheme.typography.displayMedium,
-    )
+@OptIn(ExperimentalMaterial3Api::class)
+fun Settings(
+    parentNavController: NavController,
+    modifier: Modifier = Modifier,
+) {
+    val topAppBarScrollBehavior = rememberTopAppBarScrollBehavior()
+
+    Scaffold(
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = stringResource(id = R.string.route_settings),
+                scrollBehavior = topAppBarScrollBehavior,
+                onBackClick = parentNavController::popBackStack,
+            )
+        },
+    ) { paddingValues ->
+
+        LazyColumn(contentPadding = paddingValues) {
+
+        }
+    }
 }

@@ -58,7 +58,7 @@ fun Root(modifier: Modifier = Modifier) {
                 }
 
                 composable(route = Routes.Settings.value) {
-                    Settings()
+                    Settings(parentNavController = navController)
                 }
 
                 composable(route = Routes.OneRepMax.value) {
