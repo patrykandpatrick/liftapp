@@ -2,15 +2,10 @@ package com.patrykandpatryk.liftapp.domain.repository
 
 import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
-import kotlinx.coroutines.flow.Flow
+import com.patrykmichalik.preferencemanager.domain.Preference
 
 interface PreferenceRepository {
 
-    val massUnit: Flow<MassUnit>
-
-    val distanceUnit: Flow<DistanceUnit>
-
-    suspend fun setMassUnit(massUnit: MassUnit)
-
-    suspend fun setDistanceUnit(distanceUnit: DistanceUnit)
+    val massUnit: Preference<MassUnit, String, *>
+    val distanceUnit: Preference<DistanceUnit, String, *>
 }

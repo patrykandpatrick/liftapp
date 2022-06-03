@@ -130,11 +130,16 @@ ext {
                     name   : "documentfile",
                     version: versions.documentfile,
             ],
-            preferenceManager: [
-                    group : "com.patrykmichalik",
-                    name: "preference-manager",
+            preferenceManagerDomain: [
+                    group : "com.patrykmichalik.preference-manager",
+                    name: "domain",
                     version: versions.preferenceManager,
-            ]
+            ],
+            preferenceManagerCore: [
+                    group : "com.patrykmichalik.preference-manager",
+                    name: "core",
+                    version: versions.preferenceManager,
+            ],
     ]
 
     def ui = [
@@ -337,7 +342,8 @@ ext {
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
             [configuration: "implementation", dependency: storage.datastore],
-            [configuration: "implementation", dependency: storage.preferenceManager],
+            [configuration: "implementation", dependency: storage.preferenceManagerCore],
+            [configuration: "implementation", dependency: storage.preferenceManagerDomain],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
     ]
@@ -357,6 +363,7 @@ ext {
             [configuration: "implementation", dependency: di.hiltCore],
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
+            [configuration: "implementation", dependency: storage.preferenceManagerDomain],
             [configuration: "testImplementation", dependency: kotlin.test],
             [configuration: "kapt", dependency: di.hiltCompiler],
     ]
