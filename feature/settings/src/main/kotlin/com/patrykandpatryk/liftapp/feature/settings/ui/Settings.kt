@@ -31,8 +31,6 @@ fun Settings(
         },
     ) { paddingValues ->
 
-        LazyColumn(contentPadding = paddingValues) {
-
-        }
+        LazyColumn(contentPadding = paddingValues) { }
     }
 }
