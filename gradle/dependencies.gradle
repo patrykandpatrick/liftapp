@@ -9,7 +9,7 @@ ext {
     ]
 
     def database = [
-            room         : [
+            room        : [
                     group  : "androidx.room",
                     name   : "room-runtime",
                     version: versions.room,
@@ -27,17 +27,17 @@ ext {
     ]
 
     def di = [
-            hilt                : [
+            hilt              : [
                     group  : "com.google.dagger",
                     name   : "hilt-android",
                     version: versions.hilt,
             ],
-            hiltCore           : [
+            hiltCore          : [
                     group  : "com.google.dagger",
                     name   : "hilt-core",
                     version: versions.hilt,
             ],
-            hiltCompiler       : [
+            hiltCompiler      : [
                     group  : "com.google.dagger",
                     name   : "hilt-compiler",
                     version: versions.hilt,
@@ -47,7 +47,7 @@ ext {
                     name   : "hilt-android-testing",
                     version: versions.hilt,
             ],
-            hiltTesting        : [
+            hiltTesting       : [
                     group  : "com.google.dagger",
                     name   : "hilt-android-testing",
                     version: versions.hilt,
@@ -65,7 +65,7 @@ ext {
                     name   : "kotlin-stdlib",
                     version: versions.kotlin,
             ],
-            test              : [
+            test             : [
                     group  : "org.jetbrains.kotlin",
                     name   : "kotlin-test",
                     version: versions.kotlin,
@@ -81,7 +81,7 @@ ext {
     ]
 
     def navigation = [
-            destinations    : [
+            destinations   : [
                     group  : "io.github.raamcosta.compose-destinations",
                     name   : "animations-core",
                     version: versions.destinations,
@@ -91,7 +91,7 @@ ext {
                     name   : "ksp",
                     version: versions.destinations,
             ],
-            hilt            : [
+            hilt           : [
                     group  : "androidx.hilt",
                     name   : "hilt-navigation-compose",
                     version: versions.hiltNavigation,
@@ -120,45 +120,45 @@ ext {
     ]
 
     def storage = [
-            datastore   : [
+            datastore              : [
                     group  : "androidx.datastore",
                     name   : "datastore-preferences",
                     version: versions.datastore,
             ],
-            documentfile: [
+            documentfile           : [
                     group  : "androidx.documentfile",
                     name   : "documentfile",
                     version: versions.documentfile,
             ],
             preferenceManagerDomain: [
-                    group : "com.patrykmichalik.preference-manager",
-                    name: "domain",
+                    group  : "com.patrykmichalik.preference-manager",
+                    name   : "domain",
                     version: versions.preferenceManager,
             ],
-            preferenceManagerCore: [
-                    group : "com.patrykmichalik.preference-manager",
-                    name: "core",
+            preferenceManagerCore  : [
+                    group  : "com.patrykmichalik.preference-manager",
+                    name   : "core",
                     version: versions.preferenceManager,
             ],
     ]
 
     def ui = [
-            activity                        : [
+            activity                      : [
                     group  : "androidx.activity",
                     name   : "activity-compose",
                     version: versions.activity,
             ],
-            appcompat                       : [
+            appcompat                     : [
                     group  : "androidx.appcompat",
                     name   : "appcompat",
                     version: versions.appcompat,
             ],
-            coil                            : [
+            coil                          : [
                     group  : "io.coil-kt",
                     name   : "coil-compose",
                     version: versions.coil,
             ],
-            composeUi                      : [
+            composeUi                     : [
                     group  : "androidx.compose.ui",
                     name   : "ui",
                     version: versions.compose,
@@ -168,47 +168,47 @@ ext {
                     name   : "ui-tooling",
                     version: versions.compose,
             ],
-            composeUiTestManifest        : [
+            composeUiTestManifest         : [
                     group  : "androidx.compose.ui",
                     name   : "ui-test-manifest",
                     version: versions.compose,
             ],
-            composeMaterial                : [
+            composeMaterial               : [
                     group  : "androidx.compose.material",
                     name   : "material",
                     version: versions.compose,
             ],
-            composeFoundation              : [
+            composeFoundation             : [
                     group  : "androidx.compose.foundation",
                     name   : "foundation",
                     version: versions.compose,
             ],
-            composeMaterial3               : [
+            composeMaterial3              : [
                     group  : "androidx.compose.material3",
                     name   : "material3",
                     version: versions.material3,
             ],
-            lifecycleRuntime                : [
+            lifecycleRuntime              : [
                     group  : "androidx.lifecycle",
                     name   : "lifecycle-runtime-ktx",
                     version: versions.lifecycleRuntime,
             ],
-            accompanistSystemUiController: [
+            accompanistSystemUiController : [
                     group  : "com.google.accompanist",
                     name   : "accompanist-systemuicontroller",
                     version: versions.accompanist,
             ],
-            accompanistInsets              : [
+            accompanistInsets             : [
                     group  : "com.google.accompanist",
                     name   : "accompanist-insets",
                     version: versions.accompanist,
             ],
-            accompanistSwiperefresh        : [
+            accompanistSwiperefresh       : [
                     group  : "com.google.accompanist",
                     name   : "accompanist-swiperefresh",
                     version: versions.accompanist,
             ],
-            accompanistPlaceholder         : [
+            accompanistPlaceholder        : [
                     group  : "com.google.accompanist",
                     name   : "accompanist-placeholder-material",
                     version: versions.accompanist,
@@ -223,7 +223,7 @@ ext {
                     name   : "accompanist-navigation-material",
                     version: versions.accompanist,
             ],
-            vico                            : [
+            vico                          : [
                     group  : "com.patrykandpatryk.vico",
                     name   : "compose-m3",
                     version: versions.vico,
@@ -314,6 +314,15 @@ ext {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":feature:dashboard")],
                 [configuration: "implementation", dependency: project(":feature:more")],
+        ]
+        dependencies.addAll(featureModuleDependencies())
+        dependencies
+    }
+
+    featureSettingsModuleDependencies = {
+        def dependencies = [
+                [configuration: "implementation", dependency: storage.preferenceManagerDomain],
+                [configuration: "implementation", dependency: storage.preferenceManagerCore],
         ]
         dependencies.addAll(featureModuleDependencies())
         dependencies

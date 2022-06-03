@@ -1,1 +1,9 @@
 apply from: "$rootDir/gradle/feature-module-base.gradle"
+
+dependencies {
+
+    featureSettingsModuleDependencies().forEach {
+
+        add(it.configuration, it.dependency, it.options)
+    }
+}
