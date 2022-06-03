@@ -130,14 +130,19 @@ ext {
                     name   : "documentfile",
                     version: versions.documentfile,
             ],
-            preferenceManagerDomain: [
+            preferenceManagerCompose  : [
                     group  : "com.patrykmichalik.preference-manager",
-                    name   : "domain",
+                    name   : "compose",
                     version: versions.preferenceManager,
             ],
             preferenceManagerCore  : [
                     group  : "com.patrykmichalik.preference-manager",
                     name   : "core",
+                    version: versions.preferenceManager,
+            ],
+            preferenceManagerDomain: [
+                    group  : "com.patrykmichalik.preference-manager",
+                    name   : "domain",
                     version: versions.preferenceManager,
             ],
     ]
