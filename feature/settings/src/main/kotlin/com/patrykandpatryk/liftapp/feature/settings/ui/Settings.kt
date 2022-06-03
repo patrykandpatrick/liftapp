@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
-import com.patrykandpatryk.liftapp.core.ui.rememberTopAppBarScrollBehavior
+import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,7 +18,7 @@ fun Settings(
     parentNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    val topAppBarScrollBehavior = rememberTopAppBarScrollBehavior()
+    val topAppBarScrollBehavior = topAppBarScrollBehavior()
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),

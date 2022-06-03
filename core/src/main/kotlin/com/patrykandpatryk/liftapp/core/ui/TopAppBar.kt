@@ -58,7 +58,7 @@ fun TopAppBar(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun rememberTopAppBarScrollBehavior(): TopAppBarScrollBehavior {
+fun topAppBarScrollBehavior(): TopAppBarScrollBehavior {
 
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
     return TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
