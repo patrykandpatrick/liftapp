@@ -63,7 +63,7 @@ fun OneRepMax(
                 text = massUnit?.formatValue(
                     context = context,
                     value = uiState.oneRepMax,
-                    decimalPlaces = OneRepMaxDecimalPlaces,
+                    decimalPlaces = ONE_REP_MAX_DECIMAL_PLACES,
                 ).orEmpty(),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(top = 16.dp),
@@ -134,4 +134,4 @@ private fun RowScope.TextField(
     )
 }
 
-private const val OneRepMaxDecimalPlaces = 1
+private const val ONE_REP_MAX_DECIMAL_PLACES = 1
