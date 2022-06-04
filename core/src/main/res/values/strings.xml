@@ -11,5 +11,11 @@
     <string name="pound_unit">lb</string>
     <string name="distance">Distance</string>
     <string name="mass">Mass</string>
+    <string name="mass_with_unit">Mass (%s)</string>
     <string name="units">Units</string>
+    <string name="mass_value_and_unit">%1$s %2$s</string>
+    <string name="distance_value_and_unit">%1$s %2$s</string>
+    <string name="one_rep_max">One-Rep Max</string>
+    <string name="one_rep_max_description">1RM is the greatest weight you can lift once. It helps determine strength and best exercise load.</string>
+    <string name="reps">Reps</string>
 </resources>

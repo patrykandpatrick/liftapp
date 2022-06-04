@@ -62,7 +62,7 @@ fun Root(modifier: Modifier = Modifier) {
                 }
 
                 composable(route = Routes.OneRepMax.value) {
-                    OneRepMax()
+                    OneRepMax(parentNavController = navController)
                 }
             }
         }
