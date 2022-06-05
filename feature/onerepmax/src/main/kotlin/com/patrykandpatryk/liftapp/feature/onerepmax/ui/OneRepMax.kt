@@ -12,8 +12,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,7 +38,6 @@ fun OneRepMax(
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
     val viewModel = hiltViewModel<OneRepMaxViewModel>()
     val uiState = viewModel.oneRepMaxUiState
-    val massUnit by viewModel.massUnit.collectAsState(initial = null)
     val context = LocalContext.current
 
     Scaffold(
@@ -60,7 +57,7 @@ fun OneRepMax(
         ) {
 
             Text(
-                text = massUnit?.formatValue(
+                text = uiState.massUnit?.formatValue(
                     context = context,
                     value = uiState.oneRepMax,
                     decimalPlaces = ONE_REP_MAX_DECIMAL_PLACES,
@@ -90,7 +87,7 @@ fun OneRepMax(
                     onValueChange = viewModel::updateMassInput,
                     isError = uiState.massInputValid.not(),
                     keyboardType = KeyboardType.Decimal,
-                    label = massUnit?.let {
+                    label = uiState.massUnit?.let {
                         stringResource(
                             id = R.string.mass_with_unit,
                             stringResource(id = it.stringResourceId),

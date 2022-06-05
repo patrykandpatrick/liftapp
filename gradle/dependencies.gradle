@@ -311,6 +311,7 @@ ext {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":core")],
                 [configuration: "implementation", dependency: storage.preferenceManagerDomain],
+                [configuration: "implementation", dependency: storage.preferenceManagerCore],
         ]
         dependencies.addAll(coreModuleDependencies)
         dependencies
@@ -320,14 +321,6 @@ ext {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":feature:dashboard")],
                 [configuration: "implementation", dependency: project(":feature:more")],
-        ]
-        dependencies.addAll(featureModuleDependencies())
-        dependencies
-    }
-
-    featureSettingsModuleDependencies = {
-        def dependencies = [
-                [configuration: "implementation", dependency: storage.preferenceManagerCore],
         ]
         dependencies.addAll(featureModuleDependencies())
         dependencies

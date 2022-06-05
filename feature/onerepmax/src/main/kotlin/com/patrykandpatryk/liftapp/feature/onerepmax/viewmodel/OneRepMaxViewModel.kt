@@ -4,10 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.core.extension.smartToFloatOrNull
 import com.patrykandpatryk.liftapp.core.extension.smartToIntOrNull
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.feature.onerepmax.model.OneRepMaxUiState
+import com.patrykmichalik.preferencemanager.core.onEach
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -15,8 +17,6 @@ import javax.inject.Inject
 class OneRepMaxViewModel @Inject constructor(
     preferenceRepository: PreferenceRepository,
 ) : ViewModel() {
-
-    val massUnit = preferenceRepository.massUnit.get()
 
     var oneRepMaxUiState by mutableStateOf(
         value = OneRepMaxUiState(
@@ -27,8 +27,15 @@ class OneRepMaxViewModel @Inject constructor(
             massInputValid = true,
             mass = 0f,
             oneRepMax = 0f,
+            massUnit = null,
         ),
     )
+
+    init {
+        preferenceRepository.massUnit.onEach(launchIn = viewModelScope) {
+            oneRepMaxUiState = oneRepMaxUiState.copy(massUnit = it)
+        }
+    }
 
     fun updateRepsInput(repsInput: String) {
 

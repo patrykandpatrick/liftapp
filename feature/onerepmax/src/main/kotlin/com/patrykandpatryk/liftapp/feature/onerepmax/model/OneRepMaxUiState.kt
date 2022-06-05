@@ -1,5 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.onerepmax.model
 
+import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+
 data class OneRepMaxUiState(
     val repsInput: String,
     val repsInputValid: Boolean,
@@ -8,4 +10,5 @@ data class OneRepMaxUiState(
     val massInputValid: Boolean,
     val mass: Float,
     val oneRepMax: Float,
+    val massUnit: MassUnit?,
 )
