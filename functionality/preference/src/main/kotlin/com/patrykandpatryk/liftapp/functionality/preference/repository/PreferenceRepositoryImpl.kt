@@ -25,8 +25,8 @@ class PreferenceRepositoryImpl @Inject constructor(
 
     override val allPreferences = preferencesDataStore.data.map { preferences ->
         AllPreferences(
-            distanceUnit = distanceUnit.getFromPreferences(preferences = preferences),
             massUnit = massUnit.getFromPreferences(preferences = preferences),
+            distanceUnit = distanceUnit.getFromPreferences(preferences = preferences),
         )
     }
 }
