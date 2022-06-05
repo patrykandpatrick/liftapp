@@ -24,6 +24,7 @@ fun DialogContent(
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Column {
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall,
@@ -34,7 +35,9 @@ fun DialogContent(
                     bottom = 16.dp,
                 ),
             )
+
             content()
+
             Row(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier

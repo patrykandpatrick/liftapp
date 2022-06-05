@@ -43,6 +43,7 @@ fun <T : Enum<T>> EnumPreferenceListItem(
 
     if (dialogVisible) {
         Dialog(onDismissRequest = { dialogVisible = false }) {
+
             DialogContent(
                 title = title,
                 actions = {
@@ -52,6 +53,7 @@ fun <T : Enum<T>> EnumPreferenceListItem(
                 },
             ) {
                 values.forEach { value ->
+
                     ValueRow(
                         title = getValueTitle(value),
                         selected = value == selectedValue,
