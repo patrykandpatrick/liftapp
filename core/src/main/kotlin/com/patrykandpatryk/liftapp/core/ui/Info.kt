@@ -17,7 +17,6 @@ fun Info(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-
     Row(
         modifier = modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 16.dp),
