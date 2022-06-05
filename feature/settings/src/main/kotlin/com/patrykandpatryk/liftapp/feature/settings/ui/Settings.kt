@@ -30,9 +30,7 @@ fun Settings(
 ) {
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
     val viewModel = hiltViewModel<SettingsViewModel>()
-
-    val massUnit by viewModel.massUnit.collectAsState(initial = null)
-    val distanceUnit by viewModel.distanceUnit.collectAsState(initial = null)
+    val allPreferences by viewModel.allPreferences.collectAsState(initial = null)
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -55,7 +53,7 @@ fun Settings(
             item {
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.distance),
-                    selectedValue = distanceUnit,
+                    selectedValue = allPreferences?.distanceUnit,
                     values = DistanceUnit.values(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setDistanceUnit,
@@ -65,7 +63,7 @@ fun Settings(
             item {
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.mass),
-                    selectedValue = massUnit,
+                    selectedValue = allPreferences?.massUnit,
                     values = MassUnit.values(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setMassUnit,

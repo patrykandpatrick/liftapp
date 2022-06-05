@@ -14,14 +14,14 @@ class SettingsViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository,
 ) : ViewModel() {
 
-    val massUnit = preferenceRepository.massUnit.get()
+    val allPreferences = preferenceRepository.allPreferences
+
     fun setMassUnit(value: MassUnit) {
         viewModelScope.launch {
             preferenceRepository.massUnit.set(value = value)
         }
     }
 
-    val distanceUnit = preferenceRepository.distanceUnit.get()
     fun setDistanceUnit(value: DistanceUnit) {
         viewModelScope.launch {
             preferenceRepository.distanceUnit.set(value = value)
