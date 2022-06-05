@@ -7,9 +7,9 @@ import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
-import com.patrykmichalik.preferencemanager.core.PreferenceManager
-import com.patrykmichalik.preferencemanager.core.getFromPreferences
-import com.patrykmichalik.preferencemanager.domain.Preference
+import com.patrykmichalik.opto.core.PreferenceManager
+import com.patrykmichalik.opto.core.getFromPreferences
+import com.patrykmichalik.opto.domain.Preference
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

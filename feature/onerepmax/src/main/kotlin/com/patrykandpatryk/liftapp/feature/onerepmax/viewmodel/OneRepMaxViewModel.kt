@@ -9,7 +9,7 @@ import com.patrykandpatryk.liftapp.core.extension.smartToFloatOrNull
 import com.patrykandpatryk.liftapp.core.extension.smartToIntOrNull
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.feature.onerepmax.model.OneRepMaxUiState
-import com.patrykmichalik.preferencemanager.core.onEach
+import com.patrykmichalik.opto.core.onEach
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
