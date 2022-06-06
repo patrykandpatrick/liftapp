@@ -1,10 +1,10 @@
 package com.patrykandpatryk.liftapp.feature.onerepmax.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatryk.liftapp.core.delegate.SavedStateHandleDelegate
+import com.patrykandpatryk.liftapp.core.viewmodel.SavedStateHandleViewModel
 import com.patrykandpatryk.liftapp.core.extension.smartToFloatOrNull
 import com.patrykandpatryk.liftapp.core.extension.smartToIntOrNull
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
@@ -16,19 +16,17 @@ import javax.inject.Inject
 @HiltViewModel
 class OneRepMaxViewModel @Inject constructor(
     preferenceRepository: PreferenceRepository,
-) : ViewModel() {
+    override val savedStateHandle: SavedStateHandle,
+) : ViewModel(), SavedStateHandleViewModel {
 
-    var oneRepMaxUiState by mutableStateOf(
-        value = OneRepMaxUiState(
-            repsInput = "",
-            repsInputValid = true,
-            reps = 0,
-            massInput = "",
-            massInputValid = true,
-            mass = 0f,
-            oneRepMax = 0f,
-            massUnit = null,
-        ),
+    val oneRepMaxUiStateStateFlow = savedStateHandle.getStateFlow(
+        key = ONE_REP_MAX_UI_STATE_KEY,
+        initialValue = OneRepMaxUiState(),
+    )
+
+    var oneRepMaxUiState by SavedStateHandleDelegate(
+        key = ONE_REP_MAX_UI_STATE_KEY,
+        defaultValue = OneRepMaxUiState(),
     )
 
     init {
@@ -77,5 +75,6 @@ class OneRepMaxViewModel @Inject constructor(
     private companion object {
 
         private const val EPLEY_REP_COUNT_DIVISOR = 30f
+        private const val ONE_REP_MAX_UI_STATE_KEY = "one_rep_max_ui_state"
     }
 }

@@ -12,6 +12,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,7 +39,7 @@ fun OneRepMax(
 ) {
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
     val viewModel = hiltViewModel<OneRepMaxViewModel>()
-    val uiState = viewModel.oneRepMaxUiState
+    val uiState by viewModel.oneRepMaxUiStateStateFlow.collectAsState()
     val context = LocalContext.current
 
     Scaffold(
