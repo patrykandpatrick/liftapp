@@ -120,30 +120,25 @@ ext {
     ]
 
     def storage = [
-            datastore              : [
+            datastore   : [
                     group  : "androidx.datastore",
                     name   : "datastore-preferences",
                     version: versions.datastore,
             ],
-            documentfile           : [
+            documentfile: [
                     group  : "androidx.documentfile",
                     name   : "documentfile",
                     version: versions.documentfile,
             ],
-            preferenceManagerCompose  : [
-                    group  : "com.patrykmichalik.preference-manager",
-                    name   : "compose",
-                    version: versions.preferenceManager,
-            ],
-            preferenceManagerCore  : [
-                    group  : "com.patrykmichalik.preference-manager",
+            optoCore    : [
+                    group  : "com.patrykmichalik.opto",
                     name   : "core",
-                    version: versions.preferenceManager,
+                    version: versions.opto,
             ],
-            preferenceManagerDomain: [
-                    group  : "com.patrykmichalik.preference-manager",
+            optoDomain  : [
+                    group  : "com.patrykmichalik.opto",
                     name   : "domain",
-                    version: versions.preferenceManager,
+                    version: versions.opto,
             ],
     ]
 
@@ -310,6 +305,8 @@ ext {
     featureModuleDependencies = {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":core")],
+                [configuration: "implementation", dependency: storage.optoDomain],
+                [configuration: "implementation", dependency: storage.optoCore],
         ]
         dependencies.addAll(coreModuleDependencies)
         dependencies
@@ -319,15 +316,6 @@ ext {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":feature:dashboard")],
                 [configuration: "implementation", dependency: project(":feature:more")],
-        ]
-        dependencies.addAll(featureModuleDependencies())
-        dependencies
-    }
-
-    featureSettingsModuleDependencies = {
-        def dependencies = [
-                [configuration: "implementation", dependency: storage.preferenceManagerDomain],
-                [configuration: "implementation", dependency: storage.preferenceManagerCore],
         ]
         dependencies.addAll(featureModuleDependencies())
         dependencies
@@ -356,8 +344,8 @@ ext {
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
             [configuration: "implementation", dependency: storage.datastore],
-            [configuration: "implementation", dependency: storage.preferenceManagerCore],
-            [configuration: "implementation", dependency: storage.preferenceManagerDomain],
+            [configuration: "implementation", dependency: storage.optoCore],
+            [configuration: "implementation", dependency: storage.optoDomain],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
     ]
@@ -377,7 +365,7 @@ ext {
             [configuration: "implementation", dependency: di.hiltCore],
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
-            [configuration: "implementation", dependency: storage.preferenceManagerDomain],
+            [configuration: "implementation", dependency: storage.optoDomain],
             [configuration: "testImplementation", dependency: kotlin.test],
             [configuration: "kapt", dependency: di.hiltCompiler],
     ]
