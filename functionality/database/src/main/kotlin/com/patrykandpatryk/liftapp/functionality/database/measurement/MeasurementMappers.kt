@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.mintlift.functionality.database.measurement
+package com.patrykandpatryk.liftapp.functionality.database.measurement
 
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementEntry

@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.mintlift.functionality.database.di
+package com.patrykandpatryk.liftapp.functionality.database.di
 
 import javax.inject.Qualifier
 

@@ -1,5 +1,5 @@
 @file:Suppress("Indentation")
-package pl.patrykgoworowski.mintlift.functionality.database.measurement
+package com.patrykandpatryk.liftapp.functionality.database.measurement
 
 import androidx.room.DatabaseView
 import androidx.room.Embedded

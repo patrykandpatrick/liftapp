@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.mintlift.functionality.database.converter
+package com.patrykandpatryk.liftapp.functionality.database.converter
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter

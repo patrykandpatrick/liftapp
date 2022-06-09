@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.mintlift.functionality.database.measurement
+package com.patrykandpatryk.liftapp.functionality.database.measurement
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

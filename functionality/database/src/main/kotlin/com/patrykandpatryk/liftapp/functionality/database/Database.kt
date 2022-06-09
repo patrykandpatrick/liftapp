@@ -1,14 +1,14 @@
-package pl.patrykgoworowski.mintlift.functionality.database
+package com.patrykandpatryk.liftapp.functionality.database
 
 import androidx.room.BuiltInTypeConverters
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import pl.patrykgoworowski.mintlift.functionality.database.converter.DateConverters
-import pl.patrykgoworowski.mintlift.functionality.database.converter.JsonConverters
-import pl.patrykgoworowski.mintlift.functionality.database.measurement.MeasurementEntity
-import pl.patrykgoworowski.mintlift.functionality.database.measurement.MeasurementDao
-import pl.patrykgoworowski.mintlift.functionality.database.measurement.MeasurementEntryEntity
-import pl.patrykgoworowski.mintlift.functionality.database.measurement.MeasurementWithLatestEntryView
+import com.patrykandpatryk.liftapp.functionality.database.converter.DateConverters
+import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
+import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntity
+import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementDao
+import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntryEntity
+import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementWithLatestEntryView
 
 @androidx.room.Database(
     entities = [

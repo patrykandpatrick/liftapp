@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.mintlift.functionality.database.measurement
+package com.patrykandpatryk.liftapp.functionality.database.measurement
 
 import androidx.room.Dao
 import androidx.room.Insert
