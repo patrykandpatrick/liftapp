@@ -1,4 +1,9 @@
 apply from: "$rootDir/gradle/functionality-module-base.gradle"
+apply plugin: "kotlinx-serialization"
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas".toString())
+}
 
 dependencies {
     databaseModuleDependencies.each {
