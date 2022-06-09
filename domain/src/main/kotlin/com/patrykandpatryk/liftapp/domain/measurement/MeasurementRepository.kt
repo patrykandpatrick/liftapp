@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.measurement
 
 import com.patrykandpatryk.liftapp.domain.model.Name
-import java.util.*
+import java.util.Date
 import kotlinx.coroutines.flow.Flow
 
 interface MeasurementRepository {

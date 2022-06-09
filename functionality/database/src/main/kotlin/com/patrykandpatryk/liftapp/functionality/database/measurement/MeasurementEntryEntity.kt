@@ -28,10 +28,11 @@ import java.util.Date
 )
 class MeasurementEntryEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "entry_id")
+    @ColumnInfo(name = "entry_id", index = true)
     val id: Long = 0,
-    @ColumnInfo(name = "parent_id")
+    @ColumnInfo(name = "parent_id", index = true)
     val parentId: Long,
     val values: MeasurementValues,
+    @ColumnInfo(index = true)
     val timestamp: Date,
 )

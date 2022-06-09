@@ -7,10 +7,10 @@ import androidx.room.Embedded
 @DatabaseView(
     value = "SELECT measurement.*, latest_entry.* FROM measurement " +
             "LEFT JOIN " +
-            "(SELECT * FROM measurement_entry as entry WHERE entry.timestamp in" +
-            "(SELECT MAX(E.timestamp) FROM measurement_entry as E GROUP BY E.parent_id) " +
+            "(SELECT * FROM measurement_entry AS entry WHERE entry.timestamp IN" +
+            "(SELECT MAX(E.timestamp) FROM measurement_entry AS E GROUP BY E.parent_id) " +
             "ORDER BY entry.entry_id DESC) " +
-            "as latest_entry on measurement.id = latest_entry.parent_id",
+            "AS latest_entry ON measurement.id = latest_entry.parent_id",
     viewName = "measurement_with_latest_entry",
 )
 class MeasurementWithLatestEntryView(

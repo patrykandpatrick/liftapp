@@ -2,9 +2,8 @@ plugins {
     id "java-library"
     id "org.jetbrains.kotlin.jvm"
     id "kotlin-kapt"
+    id "kotlinx-serialization"
 }
-
-apply plugin: 'kotlinx-serialization'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11

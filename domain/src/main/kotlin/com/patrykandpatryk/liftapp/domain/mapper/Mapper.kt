@@ -6,5 +6,5 @@ interface Mapper<I, O> {
 
     operator fun invoke(input: I): O = map(input)
 
-    operator fun invoke(transform: Iterable<I>): List<O> = transform.map { input -> map(input) }
+    operator fun invoke(input: Iterable<I>): List<O> = input.map(::map)
 }

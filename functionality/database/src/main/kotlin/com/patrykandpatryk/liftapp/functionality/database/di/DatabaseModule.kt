@@ -13,7 +13,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import javax.inject.Singleton
 import com.patrykandpatryk.liftapp.functionality.database.Database
 import com.patrykandpatryk.liftapp.functionality.database.converter.DateConverters

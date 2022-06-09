@@ -7,7 +7,7 @@ import com.patrykandpatryk.liftapp.domain.measurement.MeasurementType
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementValues
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
 import com.patrykandpatryk.liftapp.domain.model.Name
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
