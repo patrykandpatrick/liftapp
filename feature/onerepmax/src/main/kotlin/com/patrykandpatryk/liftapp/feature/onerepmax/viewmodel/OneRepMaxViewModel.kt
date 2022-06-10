@@ -57,7 +57,7 @@ class OneRepMaxViewModel @Inject constructor(
         )
 
         if (reps != null && oneRepMaxUiState.massInputValid) {
-            updateHistory(reps = reps, mass = oneRepMaxUiState.mass, oneRepMax = oneRepMax)
+            addToHistory(reps = reps, mass = oneRepMaxUiState.mass, oneRepMax = oneRepMax)
         }
     }
 
@@ -77,11 +77,11 @@ class OneRepMaxViewModel @Inject constructor(
         )
 
         if (mass != null && oneRepMaxUiState.repsInputValid) {
-            updateHistory(reps = oneRepMaxUiState.reps, mass = mass, oneRepMax = oneRepMax)
+            addToHistory(reps = oneRepMaxUiState.reps, mass = mass, oneRepMax = oneRepMax)
         }
     }
 
-    private fun updateHistory(
+    private fun addToHistory(
         reps: Int,
         mass: Float,
         oneRepMax: Float,
