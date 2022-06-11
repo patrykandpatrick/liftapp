@@ -19,6 +19,7 @@ object Routes {
     object Home : Route(value = "home") {
 
         val Dashboard = append(childRoute = "dashboard")
+        val Body = append(childRoute = "body")
         val More = append(childRoute = "more")
     }
 

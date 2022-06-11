@@ -315,6 +315,7 @@ ext {
     featureHomeModuleDependencies = {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":feature:dashboard")],
+                [configuration: "implementation", dependency: project(":feature:body")],
                 [configuration: "implementation", dependency: project(":feature:more")],
         ]
         dependencies.addAll(featureModuleDependencies())
