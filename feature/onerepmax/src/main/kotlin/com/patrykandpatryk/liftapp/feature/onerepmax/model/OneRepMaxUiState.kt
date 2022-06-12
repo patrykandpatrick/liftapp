@@ -14,4 +14,5 @@ data class OneRepMaxUiState(
     val mass: Float = 0f,
     val oneRepMax: Float = 0f,
     val massUnit: MassUnit? = null,
+    val history: List<HistoryEntryModel> = emptyList(),
 ) : Parcelable
