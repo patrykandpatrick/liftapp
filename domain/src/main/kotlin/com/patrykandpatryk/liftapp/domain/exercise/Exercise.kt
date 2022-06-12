@@ -5,7 +5,7 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 
 data class Exercise(
     val id: Long,
-    val name: Name,
+    val name: String,
     val exerciseType: ExerciseType,
     val mainMuscles: List<Muscle>,
     val secondaryMuscles: List<Muscle>,
@@ -14,7 +14,7 @@ data class Exercise(
 
     fun update(
         id: Long = this.id,
-        name: Name = this.name,
+        name: Name = Name.Raw(this.name),
         mainMuscles: List<Muscle> = this.mainMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,

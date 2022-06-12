@@ -2,14 +2,17 @@ package com.patrykandpatryk.liftapp.functionality.database.exercise
 
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
+import com.patrykandpatryk.liftapp.domain.model.NameSolver
 import javax.inject.Inject
 
-class ExerciseEntityToDomainMapper @Inject constructor() : Mapper<ExerciseEntity, Exercise> {
+class ExerciseEntityToDomainMapper @Inject constructor(
+    private val nameSolver: NameSolver,
+) : Mapper<ExerciseEntity, Exercise> {
 
     override fun map(input: ExerciseEntity): Exercise =
         Exercise(
             id = input.id,
-            name = input.name,
+            name = nameSolver.getSolvedString(input.name),
             exerciseType = input.exerciseType,
             mainMuscles = input.mainMuscles,
             secondaryMuscles = input.secondaryMuscles,

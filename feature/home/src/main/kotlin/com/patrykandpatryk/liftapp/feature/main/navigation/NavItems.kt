@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.feature.about.ui.Dashboard
 import com.patrykandpatryk.liftapp.feature.about.ui.More
 import com.patrykandpatryk.liftapp.feature.body.ui.Body
+import com.patrykandpatryk.liftapp.feature.exercise.ui.Exercises
 
 @Stable
 val navBarRoutes: List<NavItemRoute>
@@ -20,6 +21,14 @@ val navBarRoutes: List<NavItemRoute>
                 iconRes = R.drawable.ic_dashboard,
                 content = { _, modifier, _, _ ->
                     Dashboard(modifier = modifier)
+                },
+            ),
+            NavItemRoute(
+                route = Routes.Home.Exercises.value,
+                titleRes = R.string.route_exercises,
+                iconRes = R.drawable.ic_more_horizontal,
+                content = { _, modifier, _, _ ->
+                    Exercises(modifier = modifier)
                 },
             ),
             NavItemRoute(
