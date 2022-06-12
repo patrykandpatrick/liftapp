@@ -330,6 +330,7 @@ ext {
             [configuration: "implementation", dependency: database.room],
             [configuration: "implementation", dependency: database.roomKtx],
             [configuration: "implementation", dependency: serialization.kotlinxSerialization],
+            [configuration: "implementation", dependency: logging.timber],
             [configuration: "ksp", dependency: database.roomCompiler],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
