@@ -8,6 +8,8 @@ interface ExerciseRepository {
 
     suspend fun insert(exercise: Exercise.Insert): Long
 
+    suspend fun insert(exercises: List<Exercise.Insert>): List<Long>
+
     suspend fun update(exercise: Exercise.Update)
 
     suspend fun delete(exerciseId: Long)

@@ -27,11 +27,11 @@ data class Exercise(
     )
 
     data class Insert(
-        val name: Name.Raw,
+        val name: Name,
         val exerciseType: ExerciseType,
         val mainMuscles: List<Muscle>,
-        val secondaryMuscles: List<Muscle>,
-        val tertiaryMuscles: List<Muscle>,
+        val secondaryMuscles: List<Muscle> = emptyList(),
+        val tertiaryMuscles: List<Muscle> = emptyList(),
     )
 
     data class Update(

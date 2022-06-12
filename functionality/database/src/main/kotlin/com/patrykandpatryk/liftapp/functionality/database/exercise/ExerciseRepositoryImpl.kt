@@ -27,6 +27,10 @@ class ExerciseRepositoryImpl @Inject constructor(
         exerciseDao.insert(insertToEntity(exercise))
     }
 
+    override suspend fun insert(exercises: List<Exercise.Insert>): List<Long> = withContext(dispatcher) {
+        exerciseDao.insert(insertToEntity(exercises))
+    }
+
     override suspend fun update(exercise: Exercise.Update) = withContext(dispatcher) {
         exerciseDao.update(updateToEntity(exercise))
     }

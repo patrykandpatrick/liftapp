@@ -11,7 +11,7 @@ class MuscleConverterTest {
 
     @Test
     fun `Conversion of List of Muscles to String and back yields the same result`() {
-        val input = listOf(Muscle.ABS, Muscle.CHEST, Muscle.GLUTES)
+        val input = listOf(Muscle.Abs, Muscle.Chest, Muscle.Glutes)
         val serializedInput = converter.toString(input)
         val deserializedInput = converter.toMuscles(serializedInput)
         assertContentEquals(input, deserializedInput)

@@ -10,6 +10,7 @@ import com.patrykandpatryk.liftapp.domain.measurement.MeasurementEntry
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementRepository
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
 import com.patrykandpatryk.liftapp.functionality.database.Database
+import com.patrykandpatryk.liftapp.functionality.database.DatabaseCallback
 import com.patrykandpatryk.liftapp.functionality.database.converter.DateConverters
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
@@ -81,9 +82,11 @@ interface DatabaseModule {
             application: Application,
             jsonConverters: JsonConverters,
             dateConverters: DateConverters,
+            databaseCallback: DatabaseCallback,
         ): Database =
             Room
                 .databaseBuilder(application, Database::class.java, Constants.Database.Name)
+                .addCallback(databaseCallback)
                 .addTypeConverter(jsonConverters)
                 .addTypeConverter(dateConverters)
                 .build()
