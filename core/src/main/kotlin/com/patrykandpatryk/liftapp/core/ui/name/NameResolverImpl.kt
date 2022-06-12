@@ -7,7 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Resources
 import com.patrykandpatryk.liftapp.domain.model.Name
-import com.patrykandpatryk.liftapp.domain.model.NameSolver
+import com.patrykandpatryk.liftapp.domain.model.NameResolver
 import javax.inject.Inject
 import javax.inject.Singleton
 import timber.log.Timber
@@ -15,9 +15,9 @@ import timber.log.Timber
 private const val TYPE_STRING = "string"
 
 @Singleton
-class NameSolverImpl @Inject constructor(
+class NameResolverImpl @Inject constructor(
     private val application: Application,
-) : NameSolver {
+) : NameResolver {
 
     private val solvedNames = HashMap<String, String>()
 
@@ -25,7 +25,7 @@ class NameSolverImpl @Inject constructor(
         registerOnLocaleChangedReceiver()
     }
 
-    override fun getSolvedString(name: Name): String = when (name) {
+    override fun getResolvedString(name: Name): String = when (name) {
         is Name.Raw -> name.value
         is Name.Resource -> getSolvedString(name.resourceName)
     }
