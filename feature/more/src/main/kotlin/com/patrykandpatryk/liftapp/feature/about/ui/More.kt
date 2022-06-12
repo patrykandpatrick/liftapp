@@ -27,7 +27,7 @@ fun More(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = stringResource(id = R.string.route_dashboard),
+                title = stringResource(id = R.string.route_more),
                 scrollBehavior = topAppBarScrollBehavior,
             )
         },
