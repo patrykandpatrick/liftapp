@@ -333,6 +333,7 @@ ext {
             [configuration: "ksp", dependency: database.roomCompiler],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "testImplementation", dependency: testing.junit],
     ]
 
     storageModuleDependencies = [

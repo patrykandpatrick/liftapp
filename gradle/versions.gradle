@@ -31,7 +31,7 @@ ext {
             ossLicenses                  : "17.0.0",
             opto                         : "1.0.12",
             retrofit                     : "2.9.0",
-            room                         : "2.5.0-alpha01",
+            room                         : "2.5.0-alpha02",
             viewmodel                    : "2.4.0",
             testCore                     : "1.3.0",
             timber                       : "5.0.1",
