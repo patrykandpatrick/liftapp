@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.about.ui
+package com.patrykandpatryk.liftapp.feature.dashboard.ui
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

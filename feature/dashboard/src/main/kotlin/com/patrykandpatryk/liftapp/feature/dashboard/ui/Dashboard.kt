@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.about.ui
+package com.patrykandpatryk.liftapp.feature.dashboard.ui
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -12,7 +12,7 @@ import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun About(modifier: Modifier = Modifier) {
+fun Dashboard(modifier: Modifier = Modifier) {
 
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
 
@@ -20,7 +20,7 @@ fun About(modifier: Modifier = Modifier) {
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = stringResource(id = R.string.route_about),
+                title = stringResource(id = R.string.route_dashboard),
                 scrollBehavior = topAppBarScrollBehavior,
             )
         },
