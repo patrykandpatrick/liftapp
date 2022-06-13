@@ -18,7 +18,7 @@ import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 @Composable
 fun ListItem(
     title: String,
-    description: String,
+    description: String? = null,
     iconPainter: Painter?,
     onClick: (() -> Unit)? = null,
 ) {
@@ -47,11 +47,13 @@ fun ListItem(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (description != null) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

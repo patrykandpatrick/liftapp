@@ -1,19 +1,20 @@
 package com.patrykandpatryk.liftapp.feature.about.ui
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
+import com.patrykandpatryk.liftapp.feature.about.navigation.destinations
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,15 +34,14 @@ fun More(
         },
     ) { paddingValues ->
 
-        Column(modifier = Modifier.padding(paddingValues)) {
-            Button(onClick = { navigate(Routes.Settings.value) }) {
-                Text(text = stringResource(id = R.string.route_settings))
-            }
-            Button(onClick = { navigate(Routes.About.value) }) {
-                Text(text = stringResource(id = R.string.route_about))
-            }
-            Button(onClick = { navigate(Routes.OneRepMax.value) }) {
-                Text(text = stringResource(id = R.string.route_one_rep_max))
+        LazyColumn(modifier = Modifier.padding(paddingValues)) {
+
+            items(destinations) { destination ->
+
+                ListItem(
+                    title = stringResource(id = destination.titleResourceId),
+                    iconPainter = painterResource(id = destination.iconResourceId),
+                ) { navigate(destination.route) }
             }
         }
     }
