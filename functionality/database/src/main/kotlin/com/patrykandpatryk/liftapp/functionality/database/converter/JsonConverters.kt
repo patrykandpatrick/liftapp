@@ -4,6 +4,7 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementValues
 import com.patrykandpatryk.liftapp.domain.model.Name
+import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import javax.inject.Inject
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -25,4 +26,10 @@ class JsonConverters @Inject constructor(
 
     @TypeConverter
     fun toMeasurementValues(string: String): MeasurementValues = json.decodeFromString(string)
+
+    @TypeConverter
+    fun toString(muscles: List<Muscle>): String = json.encodeToString(muscles)
+
+    @TypeConverter
+    fun toMuscles(string: String): List<Muscle> = json.decodeFromString(string)
 }

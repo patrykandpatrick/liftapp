@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "01ecd4fcfcc747f7c4c89214fbd29e47",
+    "identityHash": "f327fa4bde9ae7413fb50500e2bb0a71",
     "entities": [
       {
         "tableName": "measurement",
@@ -130,6 +130,84 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "exercise",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `exercise_type` TEXT NOT NULL, `main_muscles` TEXT NOT NULL, `secondary_muscles` TEXT NOT NULL, `tertiary_muscles` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseType",
+            "columnName": "exercise_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mainMuscles",
+            "columnName": "main_muscles",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "secondaryMuscles",
+            "columnName": "secondary_muscles",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tertiaryMuscles",
+            "columnName": "tertiary_muscles",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_exercise_name",
+            "unique": false,
+            "columnNames": [
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_name` ON `${TABLE_NAME}` (`name`)"
+          },
+          {
+            "name": "index_exercise_exercise_type",
+            "unique": false,
+            "columnNames": [
+              "exercise_type"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_exercise_type` ON `${TABLE_NAME}` (`exercise_type`)"
+          },
+          {
+            "name": "index_exercise_main_muscles",
+            "unique": false,
+            "columnNames": [
+              "main_muscles"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_main_muscles` ON `${TABLE_NAME}` (`main_muscles`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [
@@ -140,7 +218,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '01ecd4fcfcc747f7c4c89214fbd29e47')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f327fa4bde9ae7413fb50500e2bb0a71')"
     ]
   }
 }

@@ -2,10 +2,10 @@ package com.patrykandpatryk.liftapp.functionality.database.converter
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
+import com.patrykandpatryk.liftapp.functionality.database.di.DatabaseDateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
-import com.patrykandpatryk.liftapp.functionality.database.di.DatabaseDateFormat
 
 @ProvidedTypeConverter
 class DateConverters @Inject constructor(

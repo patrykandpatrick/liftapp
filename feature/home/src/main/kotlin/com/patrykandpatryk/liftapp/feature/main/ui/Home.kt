@@ -12,16 +12,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
@@ -29,10 +33,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.anim.EXIT_ANIM_DURATION
 import com.patrykandpatryk.liftapp.core.ui.anim.slideAndFadeIn
+import com.patrykandpatryk.liftapp.feature.main.HomeViewModel
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -41,10 +47,17 @@ fun Home(
     parentNavController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val viewModel: HomeViewModel = hiltViewModel()
+    val snackbarHostState = remember { SnackbarHostState() }
+    CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
+
     val navController = rememberAnimatedNavController()
 
     Scaffold(
         modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             NavigationBarWithPadding(
                 navController = navController,

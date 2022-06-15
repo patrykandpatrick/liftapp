@@ -316,6 +316,7 @@ ext {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":feature:dashboard")],
                 [configuration: "implementation", dependency: project(":feature:body")],
+                [configuration: "implementation", dependency: project(":feature:exercise")],
                 [configuration: "implementation", dependency: project(":feature:more")],
         ]
         dependencies.addAll(featureModuleDependencies())
@@ -330,9 +331,11 @@ ext {
             [configuration: "implementation", dependency: database.room],
             [configuration: "implementation", dependency: database.roomKtx],
             [configuration: "implementation", dependency: serialization.kotlinxSerialization],
+            [configuration: "implementation", dependency: logging.timber],
             [configuration: "ksp", dependency: database.roomCompiler],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "testImplementation", dependency: testing.junit],
     ]
 
     storageModuleDependencies = [
