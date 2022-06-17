@@ -38,7 +38,7 @@ fun Exercises(
                 title = stringResource(id = R.string.route_exercises),
                 scrollBehavior = topAppBarScrollBehavior,
             )
-        }
+        },
     ) { paddingValues ->
 
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
