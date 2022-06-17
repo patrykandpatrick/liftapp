@@ -19,7 +19,7 @@ import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 fun ListItem(
     title: String,
     description: String? = null,
-    iconPainter: Painter?,
+    iconPainter: Painter? = null,
     onClick: (() -> Unit)? = null,
 ) {
     Row(

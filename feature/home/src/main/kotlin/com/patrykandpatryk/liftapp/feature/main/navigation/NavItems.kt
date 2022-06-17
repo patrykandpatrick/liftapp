@@ -27,8 +27,8 @@ val navBarRoutes: List<NavItemRoute>
                 route = Routes.Home.Exercises.value,
                 titleRes = R.string.route_exercises,
                 iconRes = R.drawable.ic_more_horizontal,
-                content = { _, modifier, _, _ ->
-                    Exercises(modifier = modifier)
+                content = { _, modifier, padding, _ ->
+                    Exercises(modifier = modifier, padding = padding)
                 },
             ),
             NavItemRoute(
