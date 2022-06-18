@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.ListItem
+import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 
@@ -27,7 +28,7 @@ fun Exercises(
 
     val viewModel: ExerciseViewModel = hiltViewModel()
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
-    val exercises by viewModel.exercises.collectAsState(emptyList())
+    val groupedExercises by viewModel.groupedExercises.collectAsState()
 
     Scaffold(
         modifier = modifier
@@ -42,8 +43,16 @@ fun Exercises(
     ) { paddingValues ->
 
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
-            items(exercises) { exercise ->
-                ListItem(title = exercise.name)
+
+            groupedExercises.forEach { (character, exercises) ->
+
+                item {
+                    ListSectionTitle(title = character)
+                }
+
+                items(exercises) { exercise ->
+                    ListItem(title = exercise.name)
+                }
             }
         }
     }
