@@ -9,6 +9,7 @@ import java.text.Collator
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
@@ -19,9 +20,15 @@ class GetExercisesItemsUseCase @Inject constructor(
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
 ) {
 
-    operator fun invoke(): Flow<List<ExercisesItem>> = repository
-        .getAllExercises()
-        .map { exercises ->
+    operator fun invoke(
+        query: Flow<String>,
+        // TODO add sorting type (Exercise#name, Exercise#exerciseType, Exercise#mainMuscle)
+    ): Flow<List<ExercisesItem>> =
+        combine(
+            repository.getAllExercises(),
+            query,
+        ) { exercises, searchQuery ->
+            // TODO filter with searchQuery
             exercises
                 .sortedWith { exercise1, exercise2 ->
                     collator.compare(exercise1.name, exercise2.name)
