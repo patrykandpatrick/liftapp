@@ -20,4 +20,21 @@
     <string name="one_rep_max">One-Rep Max</string>
     <string name="one_rep_max_description">1RM is the greatest weight you can lift once. It helps determine strength and best exercise load.</string>
     <string name="reps">Reps</string>
+    <string name="and_in_a_list">&amp;</string>
+
+    <string name="muscle_abductors">Abductors</string>
+    <string name="muscle_abs">Abs</string>
+    <string name="muscle_adductors">Adductors</string>
+    <string name="muscle_biceps">Biceps</string>
+    <string name="muscle_calves">Calves</string>
+    <string name="muscle_chest">Chest</string>
+    <string name="muscle_forearms">Forearms</string>
+    <string name="muscle_glutes">Glutes</string>
+    <string name="muscle_hamstrings">Hamstrings</string>
+    <string name="muscle_lats">Lats</string>
+    <string name="muscle_lower_back">Lower Back</string>
+    <string name="muscle_quadriceps">Quadriceps</string>
+    <string name="muscle_shoulders">Shoulders</string>
+    <string name="muscle_traps">Traps</string>
+    <string name="muscle_triceps">Triceps</string>
 </resources>

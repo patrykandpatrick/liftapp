@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
@@ -28,7 +29,7 @@ fun Exercises(
 
     val viewModel: ExerciseViewModel = hiltViewModel()
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
-    val groupedExercises by viewModel.groupedExercises.collectAsState()
+    val exercises by viewModel.exercises.collectAsState()
 
     Scaffold(
         modifier = modifier
@@ -44,14 +45,22 @@ fun Exercises(
 
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
 
-            groupedExercises.forEach { (character, exercises) ->
+            items(
+                items = exercises,
+                key = { it.key },
+            ) { item ->
 
-                item {
-                    ListSectionTitle(title = character)
-                }
-
-                items(exercises) { exercise ->
-                    ListItem(title = exercise.name)
+                when (item) {
+                    is ExercisesItem.Exercise -> {
+                        ListItem(
+                            title = item.name,
+                            description = item.muscles,
+                            iconPainter = painterResource(id = item.iconRes),
+                        )
+                    }
+                    is ExercisesItem.Header -> {
+                        ListSectionTitle(title = item.title)
+                    }
                 }
             }
         }
