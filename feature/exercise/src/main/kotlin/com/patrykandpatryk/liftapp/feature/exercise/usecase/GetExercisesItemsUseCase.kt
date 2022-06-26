@@ -55,11 +55,18 @@ class GetExercisesItemsUseCase @Inject constructor(
         )
     }
 
-    private fun List<Exercise>.group(groupBy: GroupBy) = groupBy { exercise ->
-        when (groupBy) {
-            GroupBy.Name -> exercise.name[0].toString()
-            GroupBy.ExerciseType -> exercise.exerciseType.name
-            GroupBy.MainMuscle -> exercise.mainMuscles[0].name // FIXME
+    private fun List<Exercise>.group(groupBy: GroupBy) = when (groupBy) {
+        GroupBy.Name -> groupBy { exercise -> exercise.name[0].toString() }
+        GroupBy.ExerciseType -> groupBy { exercise -> exercise.exerciseType.name }
+        GroupBy.MainMuscles -> {
+
+            flatMap { exercise -> exercise.mainMuscles }
+                .toSet()
+                .associate { muscle ->
+                    muscle.name to filter { exercise ->
+                        exercise.mainMuscles.contains(element = muscle)
+                    }
+                }
         }
     }
 
