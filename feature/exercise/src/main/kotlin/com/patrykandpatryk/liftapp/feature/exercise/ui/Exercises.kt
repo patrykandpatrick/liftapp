@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.feature.exercise.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,7 @@ import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 import com.patrykandpatryk.liftapp.feature.exercise.model.GroupBy
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 fun Exercises(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
@@ -94,13 +95,17 @@ fun Exercises(
                 when (item) {
                     is ExercisesItem.Exercise -> {
                         ListItem(
+                            modifier = Modifier.animateItemPlacement(),
                             title = item.name,
                             description = item.muscles,
                             iconPainter = painterResource(id = item.iconRes),
                         )
                     }
                     is ExercisesItem.Header -> {
-                        ListSectionTitle(title = item.title)
+                        ListSectionTitle(
+                            title = item.title,
+                            modifier = Modifier.animateItemPlacement(),
+                        )
                     }
                 }
             }

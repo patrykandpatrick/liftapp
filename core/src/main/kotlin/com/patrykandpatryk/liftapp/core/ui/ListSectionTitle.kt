@@ -9,9 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ListSectionTitle(title: String) {
+fun ListSectionTitle(
+    title: String,
+    modifier: Modifier = Modifier,
+) {
 
-    Box(modifier = Modifier.padding(all = 16.dp)) {
+    Box(modifier = modifier.padding(all = 16.dp)) {
 
         Text(
             text = title,

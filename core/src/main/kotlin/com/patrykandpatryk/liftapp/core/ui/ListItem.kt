@@ -21,13 +21,14 @@ import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 @Composable
 fun ListItem(
     title: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     iconPainter: Painter? = null,
     onClick: (() -> Unit)? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .thenIfNotNull(value = onClick) { clickable(onClick = it) }
             .padding(all = 16.dp),
