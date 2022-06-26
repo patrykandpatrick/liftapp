@@ -27,5 +27,8 @@ val Muscle.stringRes: Int
 
 fun Muscle.getName(context: Context): String = context.getString(stringRes)
 
-@Composable
-fun Muscle.getName(): String = stringResource(stringRes)
+val Muscle.prettyName: String
+    @Composable
+    get() = stringResource(stringRes)
+
+val getMusclePrettyName: @Composable (Muscle) -> String = { it.prettyName }

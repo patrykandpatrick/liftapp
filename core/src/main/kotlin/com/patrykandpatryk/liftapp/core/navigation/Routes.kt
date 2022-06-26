@@ -27,4 +27,5 @@ object Routes {
     val About = Route(value = "about")
     val Settings = Route(value = "settings")
     val OneRepMax = Route(value = "one_rep_max")
+    val NewExercise = Route(value = "new_exercise")
 }

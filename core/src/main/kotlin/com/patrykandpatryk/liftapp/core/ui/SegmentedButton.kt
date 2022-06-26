@@ -49,7 +49,7 @@ fun SegmentedButtonContainer(
             .border(
                 width = MaterialTheme.dimens.strokeWidth,
                 color = MaterialTheme.colorScheme.outline,
-                shape = PillShape
+                shape = PillShape,
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -116,7 +116,7 @@ fun RowScope.SegmentedButton(
         horizontalArrangement = Arrangement.spacedBy(
             space = MaterialTheme.dimens.padding.segmentedButtonElement,
             alignment = Alignment.CenterHorizontally,
-        )
+        ),
     ) {
 
         val iconPainter = if (selected) painterResource(id = R.drawable.ic_check) else icon
@@ -137,7 +137,7 @@ fun RowScope.SegmentedButton(
                 .align(Alignment.CenterVertically),
             text = text,
             color = tint,
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
         )
     }
 }

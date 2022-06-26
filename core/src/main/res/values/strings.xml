@@ -37,4 +37,20 @@
     <string name="muscle_shoulders">Shoulders</string>
     <string name="muscle_traps">Traps</string>
     <string name="muscle_triceps">Triceps</string>
+
+    <string name="exercise_type_weight">Weight</string>
+    <string name="exercise_type_calisthenics">Calisthenics</string>
+    <string name="exercise_type_reps">Reps</string>
+    <string name="exercise_type_cardio">Cardio</string>
+    <string name="exercise_type_time">Time</string>
+
+    <string name="generic_name">Name</string>
+    <string name="generic_type">Type</string>
+    <string name="generic_main_muscles">Main Muscles</string>
+    <string name="generic_secondary_muscles">Secondary Muscles</string>
+    <string name="generic_tertiary_muscles">Tertiary Muscles</string>
+
+    <string name="action_save">Save</string>
+    <string name="action_new_exercise">New exercise</string>
+    <string name="title_new_exercise">New exercise</string>
 </resources>

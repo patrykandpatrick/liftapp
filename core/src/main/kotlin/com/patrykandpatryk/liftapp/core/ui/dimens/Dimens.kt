@@ -27,6 +27,14 @@ data class Dimens(
     )
 }
 
+val PortraitDimens = Dimens()
+
+val LandscapeDimens = Dimens(
+    padding = Dimens.Padding(
+        contentHorizontal = 56.dp,
+    ),
+)
+
 internal val LocalDimens = staticCompositionLocalOf { Dimens() }
 
 val MaterialTheme.dimens: Dimens

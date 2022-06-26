@@ -15,6 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
@@ -25,6 +27,7 @@ import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 fun Exercises(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
+    navigate: (String) -> Unit,
 ) {
 
     val viewModel: ExerciseViewModel = hiltViewModel()
@@ -39,6 +42,13 @@ fun Exercises(
             TopAppBar(
                 title = stringResource(id = R.string.route_exercises),
                 scrollBehavior = topAppBarScrollBehavior,
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = stringResource(id = R.string.action_new_exercise),
+                icon = painterResource(id = R.drawable.ic_add),
+                onClick = { navigate(Routes.NewExercise.value) },
             )
         },
     ) { paddingValues ->

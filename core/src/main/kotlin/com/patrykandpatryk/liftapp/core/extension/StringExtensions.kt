@@ -1,5 +1,9 @@
 package com.patrykandpatryk.liftapp.core.extension
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.patrykandpatryk.liftapp.core.R
+
 const val LIST_SEPARATOR = ", "
 
 private fun String.prepForConversionToNumber() =
@@ -29,3 +33,9 @@ inline fun <T> Collection<T>.joinToPrettyString(
 
     return builder.toString()
 }
+
+@Composable
+inline fun <T> Collection<T>.joinToPrettyString(toString: @Composable (T) -> String): String = joinToPrettyString(
+    andText = stringResource(id = R.string.and_in_a_list),
+    toString = { toString(it) },
+)
