@@ -51,6 +51,6 @@
     <string name="generic_tertiary_muscles">Tertiary Muscles</string>
 
     <string name="action_save">Save</string>
-    <string name="action_new_exercise">New exercise</string>
-    <string name="title_new_exercise">New exercise</string>
+    <string name="action_new_exercise">New Exercise</string>
+    <string name="title_new_exercise">New Exercise</string>
 </resources>
