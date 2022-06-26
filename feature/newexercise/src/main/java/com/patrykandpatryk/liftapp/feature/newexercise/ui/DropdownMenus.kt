@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.feature.newexercise.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.resource.prettyName
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
@@ -32,6 +34,8 @@ fun <T> DropdownMenu(
     onClick: (T) -> Unit,
     modifier: Modifier = Modifier,
     disabledItems: Collection<T>? = null,
+    hasError: Boolean = false,
+    errorText: String? = null,
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -45,6 +49,8 @@ fun <T> DropdownMenu(
         modifier = modifier,
         multiSelection = false,
         disabledItems = disabledItems,
+        hasError = hasError,
+        errorText = errorText,
     )
 }
 
@@ -62,6 +68,8 @@ fun <T> DropdownMenu(
     modifier: Modifier = Modifier,
     multiSelection: Boolean = true,
     disabledItems: Collection<T>? = null,
+    hasError: Boolean = false,
+    errorText: String? = null,
 ) {
     ExposedDropdownMenuBox(
         modifier = modifier,
@@ -69,16 +77,22 @@ fun <T> DropdownMenu(
         onExpandedChange = onExpandedChange,
     ) {
 
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true,
-            value = getItemsText(selectedItems),
-            onValueChange = {},
-            label = { Text(text = label) },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-        )
+        Column {
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                readOnly = true,
+                value = getItemsText(selectedItems),
+                onValueChange = {},
+                label = { Text(text = label) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+            )
+
+            if (errorText != null) {
+                SupportingText(visible = hasError, text = errorText)
+            }
+        }
 
         ExposedDropdownMenu(
             expanded = expanded,

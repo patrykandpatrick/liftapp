@@ -53,4 +53,7 @@
     <string name="action_save">Save</string>
     <string name="action_new_exercise">New Exercise</string>
     <string name="title_new_exercise">New Exercise</string>
+
+    <string name="error_x_empty">%s cannot be empty.</string>
+    <string name="error_pick_main_muscles">Pick at least one main muscle.</string>
 </resources>

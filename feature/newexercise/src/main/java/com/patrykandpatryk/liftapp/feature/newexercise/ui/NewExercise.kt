@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.patrykandpatryk.liftapp.feature.newexercise.ui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -8,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -18,8 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -31,6 +38,7 @@ import com.patrykandpatryk.liftapp.core.extension.isLandscape
 import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
+import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.resource.getMusclePrettyName
@@ -39,7 +47,7 @@ import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.feature.newexercise.state.ScreenState
+import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
 
 @Composable
 fun NewExercise(
@@ -56,6 +64,7 @@ fun NewExercise(
         updateMainMuscles = viewModel::updateMainMuscles,
         updateSecondaryMuscles = viewModel::updateSecondaryMuscles,
         updateTertiaryMuscles = viewModel::updateTertiaryMuscles,
+        onSave = { if (viewModel.save()) popBackStack() },
         popBackStack = popBackStack,
     )
 }
@@ -64,12 +73,13 @@ fun NewExercise(
 @Composable
 private fun NewExercise(
     modifier: Modifier = Modifier,
-    state: ScreenState,
+    state: NewExerciseState,
     updateName: (String) -> Unit,
     updateExerciseType: (ExerciseType) -> Unit,
     updateMainMuscles: (Muscle) -> Unit,
     updateSecondaryMuscles: (Muscle) -> Unit,
     updateTertiaryMuscles: (Muscle) -> Unit,
+    onSave: () -> Unit,
     popBackStack: () -> Unit,
 ) {
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
@@ -90,9 +100,10 @@ private fun NewExercise(
                 modifier = Modifier.navigationBarsPadding(),
                 text = stringResource(id = R.string.action_save),
                 icon = painterResource(id = R.drawable.ic_save),
-                onClick = { popBackStack() },
+                onClick = onSave,
             )
         },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -120,7 +131,7 @@ private fun NewExercise(
 
 @Composable
 private fun ColumnScope.Content(
-    state: ScreenState,
+    state: NewExerciseState,
     updateName: (String) -> Unit,
     updateExerciseType: (ExerciseType) -> Unit,
     updateMainMuscles: (Muscle) -> Unit,
@@ -133,14 +144,29 @@ private fun ColumnScope.Content(
     val (secondaryMusclesExpanded, setSecondaryMusclesExpanded) = remember { mutableStateOf(false) }
     val (tertiaryMusclesExpanded, setTertiaryMusclesExpanded) = remember { mutableStateOf(false) }
 
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = state.name,
-        onValueChange = updateName,
-        label = { Text(text = stringResource(id = R.string.generic_name)) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-    )
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    Column {
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.name.value,
+            onValueChange = updateName,
+            label = { Text(text = stringResource(id = R.string.generic_name)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions {
+                keyboardController?.hide()
+                focusManager.clearFocus(force = true)
+            },
+            isError = state.showNameError,
+        )
+
+        SupportingText(
+            visible = state.showNameError,
+            text = stringResource(id = R.string.error_x_empty, stringResource(id = R.string.generic_name)),
+        )
+    }
 
     DropdownMenu(
         expanded = typeExpanded,
@@ -155,13 +181,15 @@ private fun ColumnScope.Content(
     DropdownMenu(
         expanded = mainMusclesExpanded,
         onExpandedChange = setMainMusclesExpanded,
-        selectedItems = state.mainMuscles,
+        selectedItems = state.mainMuscles.value,
         items = remember { Muscle.values().toList() },
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
         label = stringResource(id = R.string.generic_main_muscles),
         onClick = updateMainMuscles,
         disabledItems = state.disabledMainMuscles,
+        hasError = state.showMainMusclesError,
+        errorText = stringResource(id = R.string.error_pick_main_muscles),
     )
 
     DropdownMenu(
@@ -221,12 +249,13 @@ fun PreviewNewExerciseDarkLandscape() {
 private fun PreviewNewExercise(darkTheme: Boolean) {
     LiftAppTheme(darkTheme = darkTheme) {
         NewExercise(
-            state = ScreenState(),
+            state = NewExerciseState.Invalid(),
             updateName = {},
             updateExerciseType = {},
             updateMainMuscles = {},
             updateSecondaryMuscles = {},
             updateTertiaryMuscles = {},
+            onSave = {},
             popBackStack = {},
         )
     }
