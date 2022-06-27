@@ -89,7 +89,7 @@ fun Exercises(
 
             items(
                 items = exercises,
-                // key = { it.key }, FIXME
+                key = { it.key },
             ) { item ->
 
                 when (item) {

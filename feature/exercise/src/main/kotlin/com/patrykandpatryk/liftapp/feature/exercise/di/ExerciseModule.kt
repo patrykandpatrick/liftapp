@@ -14,5 +14,6 @@ import dagger.hilt.components.SingletonComponent
 interface ExerciseModule {
 
     @Binds
-    fun bindExerciseToItemMapper(mapper: ExerciseToItemMapper): Mapper<Exercise, ExercisesItem.Exercise>
+    fun bindExerciseToItemMapper(mapper: ExerciseToItemMapper):
+        Mapper<Pair<Exercise, String>, ExercisesItem.Exercise>
 }

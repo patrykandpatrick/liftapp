@@ -12,17 +12,22 @@ import javax.inject.Inject
 
 class ExerciseToItemMapper @Inject constructor(
     private val application: Application,
-) : Mapper<Exercise, ExercisesItem.Exercise> {
+) : Mapper<@JvmSuppressWildcards Pair<Exercise, String>, ExercisesItem.Exercise> {
 
-    override fun map(input: Exercise): ExercisesItem.Exercise =
-        ExercisesItem.Exercise(
-            id = input.id,
-            name = input.name,
-            muscles = input
+    override fun map(input: Pair<Exercise, String>): ExercisesItem.Exercise {
+
+        val (exercise, key) = input
+
+        return ExercisesItem.Exercise(
+            id = exercise.id,
+            name = exercise.name,
+            key = key,
+            muscles = exercise
                 .mainMuscles
                 .joinToPrettyString(
                     andText = application.getString(R.string.and_in_a_list),
                 ) { muscle -> application.getString(muscle.stringRes) },
-            iconRes = input.exerciseType.iconRes,
+            iconRes = exercise.exerciseType.iconRes,
         )
+    }
 }

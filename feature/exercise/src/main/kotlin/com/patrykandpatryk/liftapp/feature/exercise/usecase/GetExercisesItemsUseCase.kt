@@ -1,12 +1,15 @@
 package com.patrykandpatryk.liftapp.feature.exercise.usecase
 
+import android.app.Application
 import com.patrykandpatryk.liftapp.core.search.SearchAlgorithm
+import com.patrykandpatryk.liftapp.core.ui.resource.getName
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.feature.exercise.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercise.ui.ExercisesItem
+import com.patrykandpatryk.vico.core.extension.orZero
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -17,9 +20,10 @@ import javax.inject.Inject
 class GetExercisesItemsUseCase @Inject constructor(
     private val collator: Collator,
     private val repository: ExerciseRepository,
-    private val mapExercises: Mapper<Exercise, ExercisesItem.Exercise>,
+    private val mapExercises: Mapper<Pair<Exercise, String>, ExercisesItem.Exercise>,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val searchAlgorithm: SearchAlgorithm,
+    private val application: Application,
 ) {
 
     operator fun invoke(
@@ -35,7 +39,11 @@ class GetExercisesItemsUseCase @Inject constructor(
             .sortByName()
             .search(query = latestQuery)
             .run {
-                if (latestQuery.isNotEmpty()) return@run mapExercises(input = this)
+                if (latestQuery.isNotEmpty()) return@run mapExercises(
+                    input = map { exercise ->
+                        exercise to exercise.id.toString()
+                    },
+                )
                 group(groupBy = latestGroupBy)
                     .run { if (latestGroupBy != GroupBy.Name) sortByHeader() else this }
                     .toExerciseItems()
@@ -63,7 +71,7 @@ class GetExercisesItemsUseCase @Inject constructor(
             flatMap { exercise -> exercise.mainMuscles }
                 .toSet()
                 .associate { muscle ->
-                    muscle.name to filter { exercise ->
+                    muscle.getName(application) to filter { exercise ->
                         exercise.mainMuscles.contains(element = muscle)
                     }
                 }
@@ -77,10 +85,24 @@ class GetExercisesItemsUseCase @Inject constructor(
         )
     }
 
-    private fun Map<String, List<Exercise>>.toExerciseItems() = flatMap { (header, exercises) ->
-        buildList {
-            add(ExercisesItem.Header(header))
-            addAll(mapExercises(exercises))
+    private fun Map<String, List<Exercise>>.toExerciseItems(): List<ExercisesItem> {
+
+        val idToIndexOfLast = mutableMapOf<Long, Int>()
+
+        return flatMap { (header, exercises) ->
+            buildList {
+                add(ExercisesItem.Header(header))
+                addAll(
+                    elements = exercises.map { exercise ->
+                        val occurrenceIndex = idToIndexOfLast
+                            .get(key = exercise.id)
+                            ?.let { index -> index + 1 }
+                            .orZero
+                            .also { index -> idToIndexOfLast[exercise.id] = index }
+                        mapExercises(exercise to "${exercise.id}-$occurrenceIndex")
+                    },
+                )
+            }
         }
     }
 }
