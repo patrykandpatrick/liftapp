@@ -50,6 +50,5 @@ android {
 
         jvmTarget = "11"
         freeCompilerArgs += ["-Xjvm-default=all-compatibility", "-opt-in=kotlin.RequiresOptIn"]
-        useIR = true
     }
 }
