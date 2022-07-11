@@ -20,7 +20,7 @@ class ExerciseToItemMapper @Inject constructor(
 
         return ExercisesItem.Exercise(
             id = exercise.id,
-            name = exercise.name,
+            name = exercise.displayName,
             key = key,
             muscles = exercise
                 .mainMuscles

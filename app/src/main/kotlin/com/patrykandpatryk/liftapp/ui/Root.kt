@@ -66,7 +66,10 @@ fun Root(modifier: Modifier = Modifier) {
                     OneRepMax(parentNavController = navController)
                 }
 
-                composable(route = Routes.NewExercise.value) {
+                composable(
+                    route = Routes.NewExercise.value,
+                    arguments = Routes.NewExercise.navArguments,
+                ) {
                     NewExercise(popBackStack = { navController.popBackStack() })
                 }
             }

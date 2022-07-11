@@ -12,7 +12,8 @@ class ExerciseEntityToDomainMapper @Inject constructor(
     override fun map(input: ExerciseEntity): Exercise =
         Exercise(
             id = input.id,
-            name = nameResolver.getResolvedString(input.name),
+            displayName = nameResolver.getResolvedString(input.name),
+            name = input.name,
             exerciseType = input.exerciseType,
             mainMuscles = input.mainMuscles,
             secondaryMuscles = input.secondaryMuscles,

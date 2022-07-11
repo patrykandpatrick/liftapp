@@ -52,19 +52,19 @@ class GetExercisesItemsUseCase @Inject constructor(
 
     private fun List<Exercise>.search(query: String) = searchAlgorithm(
         entities = this,
-        selector = { exercise -> exercise.name },
+        selector = { exercise -> exercise.displayName },
         query = query,
     )
 
     private fun List<Exercise>.sortByName() = sortedWith { exercise1, exercise2 ->
         collator.compare(
-            exercise1.name,
-            exercise2.name,
+            exercise1.displayName,
+            exercise2.displayName,
         )
     }
 
     private fun List<Exercise>.group(groupBy: GroupBy) = when (groupBy) {
-        GroupBy.Name -> groupBy { exercise -> exercise.name[0].toString() }
+        GroupBy.Name -> groupBy { exercise -> exercise.displayName[0].toString() }
         GroupBy.ExerciseType -> groupBy { exercise -> exercise.exerciseType.name }
         GroupBy.MainMuscles -> {
 

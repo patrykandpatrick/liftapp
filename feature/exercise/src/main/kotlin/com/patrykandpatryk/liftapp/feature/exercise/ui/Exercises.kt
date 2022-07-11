@@ -80,7 +80,7 @@ fun Exercises(
             ExtendedFloatingActionButton(
                 text = stringResource(id = R.string.action_new_exercise),
                 icon = painterResource(id = R.drawable.ic_add),
-                onClick = { navigate(Routes.NewExercise.value) },
+                onClick = { navigate(Routes.NewExercise.create()) },
             )
         },
     ) { paddingValues ->
@@ -95,7 +95,9 @@ fun Exercises(
                 when (item) {
                     is ExercisesItem.Exercise -> {
                         ListItem(
-                            modifier = Modifier.animateItemPlacement(),
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .clickable { navigate(Routes.NewExercise.create(item.id)) }, // TODO Should navigate to Exercise Details.
                             title = item.name,
                             description = item.muscles,
                             iconPainter = painterResource(id = item.iconRes),

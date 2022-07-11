@@ -14,11 +14,11 @@ import javax.inject.Singleton
 class UiLogger @Inject constructor(
     @IsDebug private val isDebug: Boolean,
     private val exceptionMapper: Mapper<DisplayableException, String>,
-) : Timber.Tree() {
+) : Timber.Tree(), LogPublisher {
 
     private val events = MutableSharedFlow<UiMessage>(extraBufferCapacity = 3)
 
-    val messages = events.asSharedFlow()
+    override val messages = events.asSharedFlow()
 
     override fun isLoggable(tag: String?, priority: Int): Boolean =
         isDebug || tag == Constants.Logging.DISPLAYABLE_ERROR

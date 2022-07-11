@@ -6,39 +6,61 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatryk.liftapp.core.logging.LogPublisher
+import com.patrykandpatryk.liftapp.core.logging.UiLogger
+import com.patrykandpatryk.liftapp.core.viewmodel.SavedStateHandleViewModel
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.InsertExercisesUseCase
+import com.patrykandpatryk.liftapp.domain.exercise.UpdateExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.extension.toggle
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
+import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
+import com.patrykandpatryk.liftapp.domain.validation.Validable
 import com.patrykandpatryk.liftapp.domain.validation.toInValid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
+import com.patrykandpatryk.liftapp.feature.newexercise.di.ExerciseId
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 private const val STATE_KEY = "screen_state"
 
 @HiltViewModel
 class NewExerciseViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    private val logger: UiLogger,
+    @ExerciseId private val exerciseId: Long?,
+    private val getExercise: GetExerciseUseCase,
+    override val savedStateHandle: SavedStateHandle,
     private val insertExercise: InsertExercisesUseCase,
+    private val updateExercise: UpdateExercisesUseCase,
+    private val exerciseToStateMapper: Mapper<Exercise, NewExerciseState>,
     private val stateToInsertExercise: Mapper<NewExerciseState.Valid, Exercise.Insert>,
-) : ViewModel() {
+    private val stateToUpdateExercise: Mapper<NewExerciseState.Valid, Exercise.Update>,
+) : ViewModel(), SavedStateHandleViewModel, LogPublisher by logger {
 
-    internal var state: NewExerciseState by mutableStateOf(
-        value = savedStateHandle[STATE_KEY] ?: NewExerciseState.Invalid(),
-    )
+    init {
+        exerciseId?.also(::loadExerciseState)
+    }
+
+    internal var state: NewExerciseState by saveable(STATE_KEY) {
+        mutableStateOf(NewExerciseState.Invalid())
+    }
 
     fun updateName(name: String) {
-        val validableName = if (name.isBlank()) {
-            name.toInValid()
+        val validableName: Validable<Name> = if (name.isBlank()) {
+            Name.Raw(name).toInValid()
         } else {
-            name.toValid()
+            Name.Raw(name).toValid()
         }
-        state = state.copyState(name = validableName)
+        state = state.copyState(
+            name = validableName,
+            displayName = name,
+        )
     }
 
     fun updateExerciseType(type: ExerciseType) {
@@ -66,9 +88,7 @@ class NewExerciseViewModel @Inject constructor(
     fun save(): Boolean {
         return when (val state = state) {
             is NewExerciseState.Valid -> {
-                viewModelScope.launch {
-                    insertExercise(stateToInsertExercise(state))
-                }
+                insertOrUpdateExercise(state)
                 true
             }
             is NewExerciseState.Invalid -> {
@@ -78,7 +98,22 @@ class NewExerciseViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        savedStateHandle[STATE_KEY] = state
+    private fun insertOrUpdateExercise(state: NewExerciseState.Valid) {
+        viewModelScope.launch {
+            if (exerciseId != null) {
+                updateExercise(stateToUpdateExercise(state))
+            } else {
+                insertExercise(stateToInsertExercise(state))
+            }
+        }
+    }
+
+    private fun loadExerciseState(exerciseId: Long) {
+        viewModelScope.launch {
+            getExercise(exerciseId)
+                .firstOrNull()
+                ?.let(exerciseToStateMapper::invoke)
+                ?.also { existingExerciseState -> state = existingExerciseState }
+        }
     }
 }

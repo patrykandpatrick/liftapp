@@ -6,8 +6,11 @@ import kotlinx.serialization.Serializable
 sealed class Name : java.io.Serializable {
 
     @Serializable
-    class Raw(val value: String) : Name()
+    open class Raw(val value: String) : Name()
 
     @Serializable
     class Resource(val resourceName: String) : Name()
+
+    @Serializable
+    object Empty : Raw("")
 }

@@ -15,6 +15,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -64,5 +65,6 @@ fun topAppBarScrollBehavior(): TopAppBarScrollBehavior {
     return TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         decayAnimationSpec = decayAnimationSpec,
         canScroll = { true },
+        state = rememberTopAppBarScrollState(),
     )
 }

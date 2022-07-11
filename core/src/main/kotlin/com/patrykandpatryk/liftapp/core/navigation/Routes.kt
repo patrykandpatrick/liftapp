@@ -1,5 +1,8 @@
 package com.patrykandpatryk.liftapp.core.navigation
 
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 open class Route(val value: String) {
 
     fun createDestination(vararg arguments: Pair<String, Any>): String =
@@ -27,5 +30,13 @@ object Routes {
     val About = Route(value = "about")
     val Settings = Route(value = "settings")
     val OneRepMax = Route(value = "one_rep_max")
-    val NewExercise = Route(value = "new_exercise")
+
+    object NewExercise : Route(value = "new_exercise?$ARG_ID{$ARG_ID}") {
+
+        val navArguments = listOf(
+            navArgument(ARG_ID) { type = NavType.LongType },
+        )
+
+        fun create(exerciseId: Long = 0) = value.replace("{$ARG_ID}", exerciseId.toString())
+    }
 }

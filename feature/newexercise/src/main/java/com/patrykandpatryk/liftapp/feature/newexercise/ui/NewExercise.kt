@@ -18,6 +18,8 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,7 @@ import com.patrykandpatryk.liftapp.core.extension.ProvideLandscapeMode
 import com.patrykandpatryk.liftapp.core.extension.isLandscape
 import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.core.extension.thenIf
+import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
@@ -56,6 +59,9 @@ fun NewExercise(
 ) {
     val viewModel: NewExerciseViewModel = hiltViewModel()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
+
     NewExercise(
         modifier = modifier,
         state = viewModel.state,
@@ -66,6 +72,7 @@ fun NewExercise(
         updateTertiaryMuscles = viewModel::updateTertiaryMuscles,
         onSave = { if (viewModel.save()) popBackStack() },
         popBackStack = popBackStack,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -81,6 +88,7 @@ private fun NewExercise(
     updateTertiaryMuscles: (Muscle) -> Unit,
     onSave: () -> Unit,
     popBackStack: () -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
 
@@ -104,6 +112,7 @@ private fun NewExercise(
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -150,7 +159,7 @@ private fun ColumnScope.Content(
     Column {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.name.value,
+            value = state.displayName,
             onValueChange = updateName,
             label = { Text(text = stringResource(id = R.string.generic_name)) },
             singleLine = true,
@@ -257,6 +266,7 @@ private fun PreviewNewExercise(darkTheme: Boolean) {
             updateTertiaryMuscles = {},
             onSave = {},
             popBackStack = {},
+            snackbarHostState = SnackbarHostState(),
         )
     }
 }
