@@ -7,7 +7,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
-import com.patrykandpatryk.liftapp.domain.validation.toInValid
+import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -87,10 +87,10 @@ sealed class NewExerciseState {
     @Parcelize
     @Immutable
     data class Invalid(
-        override val name: Validatable<Name> = Name.Empty.toInValid(),
+        override val name: Validatable<Name> = Name.Empty.toInvalid(),
         override val displayName: String = Name.Empty.value,
         override val type: ExerciseType = ExerciseType.Cardio,
-        override val mainMuscles: Validatable<List<Muscle>> = emptyList<Muscle>().toInValid(),
+        override val mainMuscles: Validatable<List<Muscle>> = emptyList<Muscle>().toInvalid(),
         override val secondaryMuscles: List<Muscle> = emptyList(),
         override val tertiaryMuscles: List<Muscle> = emptyList(),
         override val showErrors: Boolean = false,

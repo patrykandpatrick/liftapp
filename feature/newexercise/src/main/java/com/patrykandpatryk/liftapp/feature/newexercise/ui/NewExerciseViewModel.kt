@@ -19,7 +19,7 @@ import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
-import com.patrykandpatryk.liftapp.domain.validation.toInValid
+import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newexercise.di.ExerciseId
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
@@ -53,7 +53,7 @@ class NewExerciseViewModel @Inject constructor(
 
     fun updateName(name: String) {
         val validatableName: Validatable<Name> = if (name.isBlank()) {
-            Name.Raw(name).toInValid()
+            Name.Raw(name).toInvalid()
         } else {
             Name.Raw(name).toValid()
         }
@@ -70,7 +70,7 @@ class NewExerciseViewModel @Inject constructor(
     fun updateMainMuscles(muscle: Muscle) {
         val updatedMuscle = state.mainMuscles.value.toggle(muscle)
         val mainMusclesValidatable = if (updatedMuscle.isEmpty()) {
-            updatedMuscle.toInValid()
+            updatedMuscle.toInvalid()
         } else {
             updatedMuscle.toValid()
         }

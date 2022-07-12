@@ -18,4 +18,4 @@ sealed class Validatable<T>(val value: T, val isValid: Boolean) : Serializable {
 
 fun <T> T.toValid() = Validatable.Valid(this)
 
-fun <T> T.toInValid() = Validatable.Invalid(this)
+fun <T> T.toInvalid() = Validatable.Invalid(this)
