@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.exercise.mapper
+package com.patrykandpatryk.liftapp.feature.exercises.mapper
 
 import android.app.Application
 import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
@@ -7,7 +7,7 @@ import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.core.ui.resource.stringRes
-import com.patrykandpatryk.liftapp.feature.exercise.ui.ExercisesItem
+import com.patrykandpatryk.liftapp.feature.exercises.ui.ExercisesItem
 import javax.inject.Inject
 
 class ExerciseToItemMapper @Inject constructor(

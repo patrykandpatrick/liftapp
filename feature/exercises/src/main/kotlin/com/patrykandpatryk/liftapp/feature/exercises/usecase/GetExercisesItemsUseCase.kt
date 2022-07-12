@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.exercise.usecase
+package com.patrykandpatryk.liftapp.feature.exercises.usecase
 
 import android.app.Application
 import com.patrykandpatryk.liftapp.core.search.SearchAlgorithm
@@ -7,8 +7,8 @@ import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import com.patrykandpatryk.liftapp.feature.exercise.model.GroupBy
-import com.patrykandpatryk.liftapp.feature.exercise.ui.ExercisesItem
+import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
+import com.patrykandpatryk.liftapp.feature.exercises.ui.ExercisesItem
 import com.patrykandpatryk.vico.core.extension.orZero
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

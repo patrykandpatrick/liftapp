@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.exercise.ui
+package com.patrykandpatryk.liftapp.feature.exercises.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -29,7 +29,7 @@ import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
-import com.patrykandpatryk.liftapp.feature.exercise.model.GroupBy
+import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -97,7 +97,7 @@ fun Exercises(
                         ListItem(
                             modifier = Modifier
                                 .animateItemPlacement()
-                                .clickable { navigate(Routes.NewExercise.create(item.id)) }, // TODO Should navigate to Exercise Details.
+                                .clickable { navigate(Routes.NewExercise.create(item.id)) },
                             title = item.name,
                             description = item.muscles,
                             iconPainter = painterResource(id = item.iconRes),

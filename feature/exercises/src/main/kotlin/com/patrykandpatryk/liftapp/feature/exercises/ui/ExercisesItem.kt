@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.exercise.ui
+package com.patrykandpatryk.liftapp.feature.exercises.ui
 
 import androidx.annotation.DrawableRes
 

@@ -30,5 +30,5 @@ include ":feature:body"
 include ":functionality:database"
 include ":functionality:preference"
 include ":functionality:storage"
-include ":feature:exercise"
+include ":feature:exercises"
 include ':feature:newexercise'

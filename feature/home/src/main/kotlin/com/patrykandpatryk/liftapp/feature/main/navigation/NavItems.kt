@@ -9,7 +9,7 @@ import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.feature.dashboard.ui.Dashboard
 import com.patrykandpatryk.liftapp.feature.about.ui.More
 import com.patrykandpatryk.liftapp.feature.body.ui.Body
-import com.patrykandpatryk.liftapp.feature.exercise.ui.Exercises
+import com.patrykandpatryk.liftapp.feature.exercises.ui.Exercises
 
 @Stable
 val navBarRoutes: List<NavItemRoute>

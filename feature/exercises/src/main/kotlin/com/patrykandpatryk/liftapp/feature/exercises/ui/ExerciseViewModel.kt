@@ -1,9 +1,9 @@
-package com.patrykandpatryk.liftapp.feature.exercise.ui
+package com.patrykandpatryk.liftapp.feature.exercises.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatryk.liftapp.feature.exercise.model.GroupBy
-import com.patrykandpatryk.liftapp.feature.exercise.usecase.GetExercisesItemsUseCase
+import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
+import com.patrykandpatryk.liftapp.feature.exercises.usecase.GetExercisesItemsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
