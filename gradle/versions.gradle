@@ -26,7 +26,7 @@ ext {
             kotlinxSerialization         : "1.3.2",
             kotlinxSerializationConverter: "0.8.0",
             lifecycleRuntime             : "2.4.0",
-            material3                    : "1.0.0-alpha12",
+            material3                    : "1.0.0-alpha14",
             mockk                        : "1.12.2",
             ossLicensesPlugin            : "0.10.4",
             ossLicenses                  : "17.0.0",
