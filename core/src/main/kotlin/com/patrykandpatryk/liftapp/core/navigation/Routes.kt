@@ -39,4 +39,11 @@ object Routes {
 
         fun create(exerciseId: Long = 0) = value.replace("{$ARG_ID}", exerciseId.toString())
     }
+
+    object Exercise : Route(value = "exercise?$ARG_ID{$ARG_ID}") {
+
+        val navArguments = listOf(navArgument(ARG_ID) { type = NavType.LongType })
+
+        fun create(exerciseId: Long = 0) = value.replace("{$ARG_ID}", exerciseId.toString())
+    }
 }

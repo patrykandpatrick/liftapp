@@ -97,7 +97,7 @@ fun Exercises(
                         ListItem(
                             modifier = Modifier
                                 .animateItemPlacement()
-                                .clickable { navigate(Routes.NewExercise.create(item.id)) },
+                                .clickable { navigate(Routes.Exercise.create(item.id)) },
                             title = item.name,
                             description = item.muscles,
                             iconPainter = painterResource(id = item.iconRes),
