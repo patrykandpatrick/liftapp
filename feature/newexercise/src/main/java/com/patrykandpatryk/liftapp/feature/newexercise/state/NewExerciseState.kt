@@ -6,7 +6,7 @@ import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.domain.validation.Validable
+import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.toInValid
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -14,10 +14,10 @@ import kotlinx.parcelize.Parcelize
 sealed class NewExerciseState {
 
     abstract val id: Long
-    abstract val name: Validable<Name>
+    abstract val name: Validatable<Name>
     abstract val displayName: String
     abstract val type: ExerciseType
-    abstract val mainMuscles: Validable<List<Muscle>>
+    abstract val mainMuscles: Validatable<List<Muscle>>
     abstract val secondaryMuscles: List<Muscle>
     abstract val tertiaryMuscles: List<Muscle>
 
@@ -36,14 +36,14 @@ sealed class NewExerciseState {
         get() = showErrors && mainMuscles.isInvalid
 
     fun copyState(
-        name: Validable<Name> = this.name,
+        name: Validatable<Name> = this.name,
         displayName: String = this.displayName,
         type: ExerciseType = this.type,
-        mainMuscles: Validable<List<Muscle>> = this.mainMuscles,
+        mainMuscles: Validatable<List<Muscle>> = this.mainMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,
     ): NewExerciseState = when {
-        name is Validable.Valid && mainMuscles is Validable.Valid -> Valid(
+        name is Validatable.Valid && mainMuscles is Validatable.Valid -> Valid(
             name = name,
             displayName = displayName,
             type = type,
@@ -67,10 +67,10 @@ sealed class NewExerciseState {
     @Parcelize
     @Immutable
     data class Valid(
-        override val name: Validable.Valid<Name>,
+        override val name: Validatable.Valid<Name>,
         override val displayName: String,
         override val type: ExerciseType,
-        override val mainMuscles: Validable.Valid<List<Muscle>>,
+        override val mainMuscles: Validatable.Valid<List<Muscle>>,
         override val secondaryMuscles: List<Muscle>,
         override val tertiaryMuscles: List<Muscle>,
         override val id: Long = ID_NOT_SET,
@@ -87,10 +87,10 @@ sealed class NewExerciseState {
     @Parcelize
     @Immutable
     data class Invalid(
-        override val name: Validable<Name> = Name.Empty.toInValid(),
+        override val name: Validatable<Name> = Name.Empty.toInValid(),
         override val displayName: String = Name.Empty.value,
         override val type: ExerciseType = ExerciseType.Cardio,
-        override val mainMuscles: Validable<List<Muscle>> = emptyList<Muscle>().toInValid(),
+        override val mainMuscles: Validatable<List<Muscle>> = emptyList<Muscle>().toInValid(),
         override val secondaryMuscles: List<Muscle> = emptyList(),
         override val tertiaryMuscles: List<Muscle> = emptyList(),
         override val showErrors: Boolean = false,

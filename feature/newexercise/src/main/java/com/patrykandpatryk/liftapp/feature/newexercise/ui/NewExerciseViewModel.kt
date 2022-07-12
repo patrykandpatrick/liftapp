@@ -18,7 +18,7 @@ import com.patrykandpatryk.liftapp.domain.extension.toggle
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.domain.validation.Validable
+import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.toInValid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newexercise.di.ExerciseId
@@ -52,13 +52,13 @@ class NewExerciseViewModel @Inject constructor(
     }
 
     fun updateName(name: String) {
-        val validableName: Validable<Name> = if (name.isBlank()) {
+        val validatableName: Validatable<Name> = if (name.isBlank()) {
             Name.Raw(name).toInValid()
         } else {
             Name.Raw(name).toValid()
         }
         state = state.copyState(
-            name = validableName,
+            name = validatableName,
             displayName = name,
         )
     }
@@ -69,12 +69,12 @@ class NewExerciseViewModel @Inject constructor(
 
     fun updateMainMuscles(muscle: Muscle) {
         val updatedMuscle = state.mainMuscles.value.toggle(muscle)
-        val mainMusclesValidable = if (updatedMuscle.isEmpty()) {
+        val mainMusclesValidatable = if (updatedMuscle.isEmpty()) {
             updatedMuscle.toInValid()
         } else {
             updatedMuscle.toValid()
         }
-        state = state.copyState(mainMuscles = mainMusclesValidable)
+        state = state.copyState(mainMuscles = mainMusclesValidatable)
     }
 
     fun updateSecondaryMuscles(muscle: Muscle) {
