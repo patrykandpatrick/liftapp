@@ -52,7 +52,7 @@ class SearchAlgorithmImpl @Inject constructor() : SearchAlgorithm {
         candidate
             .takeIf { query.length >= FUZZY_SEARCH_MIN_LENGTH }
             ?.indices
-            ?.take(n = (candidate.length - query.length).coerceAtLeast(minimumValue = 0))
+            ?.take(n = (candidate.length - query.length + 1).coerceAtLeast(minimumValue = 0))
             ?.forEach { potentialIndex ->
 
                 var mismatches = 0
