@@ -3,32 +3,38 @@ package com.patrykandpatryk.liftapp.feature.exercises.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
-import com.patrykandpatryk.liftapp.core.ui.TopAppBar
-import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
+import com.patrykandpatryk.liftapp.core.ui.SearchBar
+import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 
 @Composable
@@ -40,42 +46,12 @@ fun Exercises(
 ) {
 
     val viewModel: ExerciseViewModel = hiltViewModel()
-    val topAppBarScrollBehavior = topAppBarScrollBehavior()
     val exercises by viewModel.exercises.collectAsState()
     val query by viewModel.query.collectAsState()
     val groupBy by viewModel.groupBy.collectAsState()
 
     Scaffold(
-        modifier = modifier
-            .padding(padding)
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
-        topBar = {
-            Column {
-
-                TopAppBar(
-                    title = stringResource(id = R.string.route_exercises),
-                    scrollBehavior = topAppBarScrollBehavior,
-                )
-
-                TextField(
-                    value = query,
-                    onValueChange = viewModel::setQuery,
-                )
-
-                Row {
-
-                    GroupBy.values().forEach {
-
-                        Text(
-                            text = it.name,
-                            modifier = Modifier
-                                .background(color = if (groupBy == it) Color.Green else Color.Transparent)
-                                .clickable { viewModel.setGroupBy(groupBy = it) },
-                        )
-                    }
-                }
-            }
-        },
+        modifier = modifier.padding(padding),
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = stringResource(id = R.string.action_new_exercise),
@@ -85,32 +61,69 @@ fun Exercises(
         },
     ) { paddingValues ->
 
-        LazyColumn(modifier = Modifier.padding(paddingValues)) {
+        Box(modifier = Modifier.padding(paddingValues)) {
 
-            items(
-                items = exercises,
-                key = { it.key },
-            ) { item ->
+            LazyColumn(
+                contentPadding = WindowInsets.statusBars.toPaddingValues(
+                    additionalTop = MaterialTheme.dimens.padding.contentHorizontal * 2 +
+                        MaterialTheme.dimens.height.searchBar,
+                ),
+            ) {
 
-                when (item) {
-                    is ExercisesItem.Exercise -> {
-                        ListItem(
-                            modifier = Modifier
-                                .animateItemPlacement()
-                                .clickable { navigate(Routes.Exercise.create(item.id)) },
-                            title = item.name,
-                            description = item.muscles,
-                            iconPainter = painterResource(id = item.iconRes),
-                        )
+                item {
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(space = 8.dp)) {
+
+                        GroupBy.values().forEach {
+
+                            Text(
+                                text = it.name,
+                                modifier = Modifier
+                                    .background(color = if (groupBy == it) Color.Green else Color.Transparent)
+                                    .clickable { viewModel.setGroupBy(groupBy = it) },
+                            )
+                        }
                     }
-                    is ExercisesItem.Header -> {
-                        ListSectionTitle(
-                            title = item.title,
-                            modifier = Modifier.animateItemPlacement(),
-                        )
+                }
+
+                items(
+                    items = exercises,
+                    key = { it.key },
+                ) { item ->
+
+                    when (item) {
+                        is ExercisesItem.Exercise -> {
+                            ListItem(
+                                modifier = Modifier
+                                    .animateItemPlacement()
+                                    .clickable { navigate(Routes.Exercise.create(item.id)) },
+                                title = item.name,
+                                description = item.muscles,
+                                iconPainter = painterResource(id = item.iconRes),
+                            )
+                        }
+                        is ExercisesItem.Header -> {
+                            ListSectionTitle(
+                                title = item.title,
+                                modifier = Modifier.animateItemPlacement(),
+                            )
+                        }
                     }
                 }
             }
+
+            SearchBar(
+                value = query,
+                onValueChange = viewModel::setQuery,
+                modifier = Modifier
+                    .align(alignment = Alignment.TopCenter)
+                    .statusBarsPadding()
+                    .padding(
+                        start = MaterialTheme.dimens.padding.contentHorizontal,
+                        end = MaterialTheme.dimens.padding.contentHorizontal,
+                        top = MaterialTheme.dimens.padding.contentHorizontal,
+                    ),
+            )
         }
     }
 }

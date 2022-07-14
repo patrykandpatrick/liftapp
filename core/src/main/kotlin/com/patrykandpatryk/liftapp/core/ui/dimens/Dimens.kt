@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 @Immutable
 data class Dimens(
     val padding: Padding = Padding(),
+    val height: Height = Height(),
     val strokeWidth: Dp = 1.dp,
     val verticalItemSpacing: Dp = 16.dp,
 ) {
@@ -26,6 +27,13 @@ data class Dimens(
         val segmentedButtonElement: Dp = 8.dp,
         val supportingTextHorizontal: Dp = 16.dp,
         val supportingTextVertical: Dp = 4.dp,
+        val searchBarLeadingIconStart: Dp = 12.dp,
+        val searchBarTextStart: Dp = 12.dp,
+    )
+
+    @Immutable
+    data class Height(
+        val searchBar: Dp = 48.dp,
     )
 }
 
