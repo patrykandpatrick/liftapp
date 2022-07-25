@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 
 @Composable
@@ -59,8 +60,15 @@ fun TopAppBar(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun topAppBarScrollBehavior(): TopAppBarScrollBehavior =
-    TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        decayAnimationSpec = rememberSplineBasedDecay(),
-        state = rememberTopAppBarScrollState(),
-    )
+fun topAppBarScrollBehavior(): TopAppBarScrollBehavior {
+
+    val animSpec = rememberSplineBasedDecay<Float>()
+    val state = rememberTopAppBarScrollState()
+
+    return remember(key1 = animSpec, key2 = state) {
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+            decayAnimationSpec = animSpec,
+            state = state,
+        )
+    }
+}
