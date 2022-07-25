@@ -2,11 +2,10 @@ package com.patrykandpatryk.liftapp.functionality.database.measurement
 
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
+import com.patrykandpatryk.liftapp.domain.measurement.Measurement
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementRepository
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementType
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementValues
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
-import com.patrykandpatryk.liftapp.domain.model.Name
 import java.util.Date
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -28,15 +27,18 @@ class MeasurementRepositoryImpl @Inject constructor(
             .map(measurementWithLatestEntryToDomainMapper::invoke)
 
     override suspend fun insertMeasurement(
-        name: Name,
-        type: MeasurementType,
+        measurement: Measurement.Insert,
     ) = withContext(dispatcher) {
         dao.insert(
             MeasurementEntity(
-                name = name,
-                type = type,
+                name = measurement.name,
+                type = measurement.type,
             ),
         )
+    }
+
+    override suspend fun insertMeasurements(measurements: List<Measurement.Insert>) {
+        measurements.forEach { measurement -> insertMeasurement(measurement) }
     }
 
     override suspend fun insertMeasurementEntry(
