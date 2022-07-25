@@ -38,7 +38,7 @@ val navBarRoutes: List<NavItemRoute>
             NavItemRoute(
                 route = Routes.Home.Body.value,
                 titleRes = R.string.route_body,
-                iconRes = R.drawable.ic_more_horizontal,
+                iconRes = R.drawable.ic_weightscale,
                 content = { _, modifier, _, _ ->
                     Body(modifier = modifier)
                 },
