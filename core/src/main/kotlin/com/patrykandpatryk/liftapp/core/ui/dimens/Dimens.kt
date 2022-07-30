@@ -14,6 +14,7 @@ data class Dimens(
     val height: Height = Height(),
     val strokeWidth: Dp = 1.dp,
     val verticalItemSpacing: Dp = 16.dp,
+    val iconButton: IconButton = IconButton(),
 ) {
 
     @Immutable
@@ -32,6 +33,12 @@ data class Dimens(
     )
 
     @Immutable
+    data class IconButton(
+        val minTouchTarget: Dp = 48.dp,
+        val rippleRadius: Dp = 20.dp,
+    )
+
+    @Immutable
     data class Height(
         val searchBar: Dp = 48.dp,
     )
@@ -45,7 +52,7 @@ val LandscapeDimens = Dimens(
     ),
 )
 
-internal val LocalDimens = staticCompositionLocalOf { Dimens() }
+val LocalDimens = staticCompositionLocalOf { Dimens() }
 
 val MaterialTheme.dimens: Dimens
     @Composable
