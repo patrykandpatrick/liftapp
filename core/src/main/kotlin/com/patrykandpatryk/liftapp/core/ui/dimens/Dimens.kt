@@ -20,7 +20,9 @@ data class Dimens(
     @Immutable
     data class Padding(
         val contentHorizontal: Dp = 16.dp,
+        val contentHorizontalSmall: Dp = 8.dp,
         val contentVertical: Dp = 20.dp,
+        val contentVerticalSmall: Dp = 12.dp,
         val itemHorizontal: Dp = 16.dp,
         val itemVertical: Dp = 16.dp,
         val segmentedButtonHorizontal: Dp = 12.dp,
