@@ -14,6 +14,7 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.about.ui.About
 import com.patrykandpatryk.liftapp.feature.exercise.ui.Exercise
@@ -44,6 +45,9 @@ fun Root(modifier: Modifier = Modifier) {
         ModalBottomSheetLayout(
             modifier = modifier,
             bottomSheetNavigator = bottomSheetNavigator,
+            sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+            sheetContentColor = MaterialTheme.colorScheme.onSurface,
+            sheetShape = BottomSheetShape,
         ) {
 
             AnimatedNavHost(
