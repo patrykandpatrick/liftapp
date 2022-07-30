@@ -7,6 +7,7 @@ import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -22,6 +23,13 @@ class ExerciseRepositoryImpl @Inject constructor(
         exerciseDao
             .getAllExercises()
             .map(entityToDomain::invoke)
+            .flowOn(dispatcher)
+
+    override fun getExercise(id: Long): Flow<Exercise?> =
+        exerciseDao
+            .getExercise(id)
+            .map { entity -> entity?.let(entityToDomain::invoke) }
+            .flowOn(dispatcher)
 
     override suspend fun insert(exercise: Exercise.Insert): Long = withContext(dispatcher) {
         exerciseDao.insert(insertToEntity(exercise))

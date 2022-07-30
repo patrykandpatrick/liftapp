@@ -262,7 +262,7 @@ ext {
             [configuration: "implementation", dependency: ui.appcompat],
             [configuration: "implementation", dependency: ui.coil],
             [configuration: "implementation", dependency: ui.composeUi],
-            [configuration: "debugImplementation", dependency: ui.composeUiTooling],
+            [configuration: "implementation", dependency: ui.composeUiTooling],
             [configuration: "debugImplementation", dependency: ui.composeUiTestManifest],
             [configuration: "implementation", dependency: ui.composeMaterial],
             [configuration: "implementation", dependency: ui.composeMaterial3],
@@ -294,6 +294,8 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:settings")],
                 [configuration: "implementation", dependency: project(":feature:about")],
                 [configuration: "implementation", dependency: project(":feature:onerepmax")],
+                [configuration: "implementation", dependency: project(":feature:newexercise")],
+                [configuration: "implementation", dependency: project(":feature:exercise")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
@@ -316,7 +318,7 @@ ext {
         def dependencies = [
                 [configuration: "implementation", dependency: project(":feature:dashboard")],
                 [configuration: "implementation", dependency: project(":feature:body")],
-                [configuration: "implementation", dependency: project(":feature:exercise")],
+                [configuration: "implementation", dependency: project(":feature:exercises")],
                 [configuration: "implementation", dependency: project(":feature:more")],
         ]
         dependencies.addAll(featureModuleDependencies())

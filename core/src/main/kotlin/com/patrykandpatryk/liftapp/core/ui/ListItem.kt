@@ -12,19 +12,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 
 @Composable
 fun ListItem(
     title: String,
+    modifier: Modifier = Modifier,
     description: String? = null,
     iconPainter: Painter? = null,
     onClick: (() -> Unit)? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .thenIfNotNull(value = onClick) { clickable(onClick = it) }
             .padding(all = 16.dp),
@@ -56,4 +60,48 @@ fun ListItem(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewTitleItem() {
+    ListItem(title = "This is a title")
+}
+
+@Preview
+@Composable
+fun PreviewTitleWithDescItem() {
+    ListItem(
+        title = "This is a title",
+        description = "This is a description",
+    )
+}
+
+@Preview
+@Composable
+fun PreviewTitleWithDescAndIconItem() {
+    ListItem(
+        title = "This is a title",
+        description = "This is a description",
+        iconPainter = painterResource(id = R.drawable.ic_distance),
+    )
+}
+
+@Preview
+@Composable
+fun PreviewTitleWithLongDescAndIconItem() {
+    ListItem(
+        title = "This is a title",
+        description = "This is a description \nwith two lines",
+        iconPainter = painterResource(id = R.drawable.ic_distance),
+    )
+}
+
+@Preview
+@Composable
+fun PreviewTitleWithIconItem() {
+    ListItem(
+        title = "This is a title",
+        iconPainter = painterResource(id = R.drawable.ic_distance),
+    )
 }

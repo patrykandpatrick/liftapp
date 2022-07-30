@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Muscle {
-    Abs,
     Abductors,
     Adductors,
+    Abs,
     Biceps,
     Calves,
     Chest,

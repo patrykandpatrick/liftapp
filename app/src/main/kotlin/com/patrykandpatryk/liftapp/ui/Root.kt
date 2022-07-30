@@ -16,7 +16,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.about.ui.About
+import com.patrykandpatryk.liftapp.feature.exercise.ui.Exercise
 import com.patrykandpatryk.liftapp.feature.main.ui.Home
+import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.onerepmax.ui.OneRepMax
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
 
@@ -63,6 +65,20 @@ fun Root(modifier: Modifier = Modifier) {
 
                 composable(route = Routes.OneRepMax.value) {
                     OneRepMax(parentNavController = navController)
+                }
+
+                composable(
+                    route = Routes.NewExercise.value,
+                    arguments = Routes.NewExercise.navArguments,
+                ) {
+                    NewExercise(popBackStack = { navController.popBackStack() })
+                }
+
+                composable(
+                    route = Routes.Exercise.value,
+                    arguments = Routes.Exercise.navArguments,
+                ) {
+                    Exercise()
                 }
             }
         }

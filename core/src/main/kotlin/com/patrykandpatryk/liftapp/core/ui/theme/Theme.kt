@@ -5,6 +5,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import com.patrykandpatryk.liftapp.core.extension.isLandscape
+import com.patrykandpatryk.liftapp.core.ui.dimens.LandscapeDimens
+import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.dimens.PortraitDimens
 
 private val LightColorScheme = lightColorScheme(
     primary = Colors.Light.primary,
@@ -71,9 +76,13 @@ fun LiftAppTheme(
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content,
-    )
+    val dimens = if (isLandscape) LandscapeDimens else PortraitDimens
+
+    CompositionLocalProvider(LocalDimens provides dimens) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content,
+        )
+    }
 }

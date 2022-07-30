@@ -5,7 +5,8 @@ complexity:
         ignoreDefaultParameters: true
         ignoreAnnotated:
             - "Composable"
-            - "LongParameterListDrawFunction"
+            - "Inject"
+            - "HiltViewModel"
     TooManyFunctions:
         thresholdInFiles: 999
         ignoreDeprecated: true
