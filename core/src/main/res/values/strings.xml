@@ -53,6 +53,8 @@
     <string name="action_save">Save</string>
     <string name="action_close">Close</string>
     <string name="action_new_exercise">New Exercise</string>
+    <string name="action_increase">Increase</string>
+    <string name="action_decrease">Decrease</string>
     <string name="title_new_exercise">New Exercise</string>
 
     <string name="error_x_empty">%s cannot be empty.</string>
