@@ -51,7 +51,7 @@ fun IconButton(
                     radius = LocalDimens.current.iconButton.rippleRadius,
                 ),
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         val contentColor = colors.contentColor(enabled).value
         CompositionLocalProvider(LocalContentColor provides contentColor, content = content)

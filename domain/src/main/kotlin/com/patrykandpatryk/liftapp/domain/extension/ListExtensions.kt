@@ -6,3 +6,8 @@ fun <T> Collection<T>.toggle(item: T): List<T> =
     } else {
         plus(item)
     }
+
+operator fun <T> List<T>.set(index: Int, value: T): List<T> =
+    mapIndexed { i, t ->
+        if (i == index) value else t
+    }

@@ -6,9 +6,9 @@ import androidx.compose.runtime.remember
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.feature.dashboard.ui.Dashboard
 import com.patrykandpatryk.liftapp.feature.about.ui.More
 import com.patrykandpatryk.liftapp.feature.body.ui.Body
+import com.patrykandpatryk.liftapp.feature.dashboard.ui.Dashboard
 import com.patrykandpatryk.liftapp.feature.exercises.ui.Exercises
 
 @Stable
@@ -39,8 +39,11 @@ val navBarRoutes: List<NavItemRoute>
                 route = Routes.Home.Body.value,
                 titleRes = R.string.route_body,
                 iconRes = R.drawable.ic_weightscale,
-                content = { _, modifier, _, _ ->
-                    Body(modifier = modifier)
+                content = { _, modifier, _, navigate ->
+                    Body(
+                        modifier = modifier,
+                        navigate = navigate,
+                    )
                 },
             ),
             NavItemRoute(

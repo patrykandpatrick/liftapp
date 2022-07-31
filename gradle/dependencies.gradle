@@ -296,6 +296,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:onerepmax")],
                 [configuration: "implementation", dependency: project(":feature:newexercise")],
                 [configuration: "implementation", dependency: project(":feature:exercise")],
+                [configuration: "implementation", dependency: project(":feature:bodyrecord")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],

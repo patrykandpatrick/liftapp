@@ -1,18 +1,30 @@
+@file:OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+
 package com.patrykandpatryk.liftapp.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.SwipeableDefaults
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
-import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.patrykandpatryk.liftapp.bodyrecord.ui.InsertBodyRecord
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -22,12 +34,17 @@ import com.patrykandpatryk.liftapp.feature.main.ui.Home
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.onerepmax.ui.OneRepMax
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
+import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class)
 fun Root(modifier: Modifier = Modifier) {
 
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val bottomSheetState = rememberModalBottomSheetState(
+        ModalBottomSheetValue.Hidden,
+        SwipeableDefaults.AnimationSpec,
+    )
+
+    val bottomSheetNavigator = rememberBottomSheetNavigator(bottomSheetState)
     val navController = rememberAnimatedNavController(bottomSheetNavigator)
     val systemUiController = rememberSystemUiController()
     val darkTheme = isSystemInDarkTheme()
@@ -71,6 +88,17 @@ fun Root(modifier: Modifier = Modifier) {
                     OneRepMax(parentNavController = navController)
                 }
 
+                bottomSheet(
+                    route = Routes.InsertBodyRecord.value,
+                    arguments = Routes.InsertBodyRecord.navArguments,
+                ) {
+                    val scope = rememberCoroutineScope()
+
+                    InsertBodyRecord(
+                        onCloseClick = { scope.launch { bottomSheetState.hide() } },
+                    )
+                }
+
                 composable(
                     route = Routes.NewExercise.value,
                     arguments = Routes.NewExercise.navArguments,
@@ -87,4 +115,11 @@ fun Root(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+@Composable
+fun rememberBottomSheetNavigator(
+    sheetState: ModalBottomSheetState,
+): BottomSheetNavigator = remember(sheetState) {
+    BottomSheetNavigator(sheetState = sheetState)
 }

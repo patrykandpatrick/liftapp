@@ -14,13 +14,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun Body(modifier: Modifier = Modifier) {
+fun Body(
+    modifier: Modifier = Modifier,
+    navigate: (String) -> Unit,
+) {
 
     val topAppBarScrollBehavior = topAppBarScrollBehavior()
 
@@ -47,6 +51,7 @@ fun Body(modifier: Modifier = Modifier) {
                 ListItem(
                     title = item.title,
                     iconPainter = painterResource(id = item.iconRes),
+                    onClick = { navigate(Routes.InsertBodyRecord.create(item.id)) },
                 )
             }
         }

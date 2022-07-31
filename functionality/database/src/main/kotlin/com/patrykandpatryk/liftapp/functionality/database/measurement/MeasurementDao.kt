@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MeasurementDao {
 
+    @Query("SELECT * FROM measurement WHERE id = :id")
+    fun getMeasurement(id: Long): Flow<MeasurementEntity>
+
     @Query("SELECT * FROM measurement")
     fun getMeasurements(): Flow<List<MeasurementEntity>>
 

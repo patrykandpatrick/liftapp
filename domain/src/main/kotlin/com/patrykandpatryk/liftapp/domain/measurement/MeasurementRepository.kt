@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface MeasurementRepository {
 
+    fun getMeasurement(id: Long): Flow<Measurement>
+
     fun getAllMeasurements(): Flow<List<MeasurementWithLatestEntry>>
 
     suspend fun insertMeasurement(measurement: Measurement.Insert)

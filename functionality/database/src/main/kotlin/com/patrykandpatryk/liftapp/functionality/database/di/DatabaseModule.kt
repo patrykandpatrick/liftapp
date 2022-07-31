@@ -6,6 +6,7 @@ import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
+import com.patrykandpatryk.liftapp.domain.measurement.Measurement
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementEntry
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementRepository
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
@@ -20,6 +21,8 @@ import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseInser
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseUpdateToEntityMapper
 import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementDao
+import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntity
+import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntityToDomainMapper
 import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntryEntityToDomainMapper
 import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementWithLatestEntryToDomainMeasurementMapper
@@ -36,6 +39,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 interface DatabaseModule {
+
+    @Binds
+    fun bindMeasurementEntityToDomainMapper(
+        mapper: MeasurementEntityToDomainMapper,
+    ): Mapper<MeasurementEntity, Measurement>
 
     @Binds
     fun bindMeasurementWithLatestEntryToDomainMapper(
