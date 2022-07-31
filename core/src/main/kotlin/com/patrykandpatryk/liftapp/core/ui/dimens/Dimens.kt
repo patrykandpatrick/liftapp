@@ -54,6 +54,17 @@ val LandscapeDimens = Dimens(
     ),
 )
 
+val DialogDimens: Dimens
+    @Composable get() =
+        LocalDimens.current.run {
+            copy(
+                padding = padding.copy(
+                    contentHorizontal = 24.dp,
+                    contentVertical = 12.dp,
+                ),
+            )
+        }
+
 val LocalDimens = staticCompositionLocalOf { Dimens() }
 
 val MaterialTheme.dimens: Dimens
