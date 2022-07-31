@@ -43,7 +43,7 @@ class InsertBodyRecordViewModel @Inject constructor(
 
         savedStateHandle[MODEL_KEY] = when (action) {
             is BodyAction.IncrementValue -> {
-                val newValue = (decimalFormat.parseFloatOrNull(model.values[action.index].value) ?: 0f)
+                val newValue = model.values[action.index].value.parse()
                     .plus(action.incrementBy)
                     .let(validator::validate)
                     .map(decimalFormat::format)
@@ -51,10 +51,10 @@ class InsertBodyRecordViewModel @Inject constructor(
                 model.mutate(values = values.set(action.index, newValue))
             }
             is BodyAction.SetValue -> {
-                val newValue = decimalFormat.parseFloatOrNull(action.value)
-                    ?.let(validator::validate)
-                    ?.map { action.value }
-                    ?: return
+                val newValue =
+                    action.value.parse()
+                        .let(validator::validate)
+                        .map { action.value }
 
                 model.mutate(values = values.set(action.index, newValue))
             }
@@ -64,4 +64,7 @@ class InsertBodyRecordViewModel @Inject constructor(
             }
         }
     }
+
+    private fun String.parse(): Float =
+        toFloatOrNull() ?: decimalFormat.parseFloatOrNull(this) ?: 0f
 }
