@@ -30,8 +30,7 @@ data class Dimens(
         val segmentedButtonElement: Dp = 8.dp,
         val supportingTextHorizontal: Dp = 16.dp,
         val supportingTextVertical: Dp = 4.dp,
-        val searchBarLeadingIconStart: Dp = 12.dp,
-        val searchBarTextStart: Dp = 12.dp,
+        val exercisesControlsVertical: Dp = 8.dp,
     )
 
     @Immutable

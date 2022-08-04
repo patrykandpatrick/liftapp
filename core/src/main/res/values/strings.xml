@@ -49,6 +49,8 @@
     <string name="generic_main_muscles">Main Muscles</string>
     <string name="generic_secondary_muscles">Secondary Muscles</string>
     <string name="generic_tertiary_muscles">Tertiary Muscles</string>
+    <string name="generic_search">Search</string>
+    <string name="generic_group_by">Group By</string>
 
     <string name="action_save">Save</string>
     <string name="action_close">Close</string>

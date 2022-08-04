@@ -262,7 +262,7 @@ ext {
             [configuration: "implementation", dependency: ui.appcompat],
             [configuration: "implementation", dependency: ui.coil],
             [configuration: "implementation", dependency: ui.composeUi],
-            [configuration: "debugImplementation", dependency: ui.composeUiTooling],
+            [configuration: "implementation", dependency: ui.composeUiTooling],
             [configuration: "debugImplementation", dependency: ui.composeUiTestManifest],
             [configuration: "implementation", dependency: ui.composeMaterial],
             [configuration: "implementation", dependency: ui.composeMaterial3],
