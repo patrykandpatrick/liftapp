@@ -4,10 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementValues
-import java.util.Date
+import java.util.*
 
 @Entity(
     tableName = "measurement_entry",
@@ -17,12 +16,6 @@ import java.util.Date
             parentColumns = ["id"],
             childColumns = ["parent_id"],
             onDelete = CASCADE,
-        ),
-    ],
-    indices = [
-        Index(
-            "entry_id", "parent_id", "timestamp", "timestamp",
-            orders = [Index.Order.ASC, Index.Order.ASC, Index.Order.DESC, Index.Order.ASC],
         ),
     ],
 )
