@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f327fa4bde9ae7413fb50500e2bb0a71",
+    "identityHash": "6e2630151ed53660fd6502cbdcf7b311",
     "entities": [
       {
         "tableName": "measurement",
@@ -72,23 +72,6 @@
           ]
         },
         "indices": [
-          {
-            "name": "index_measurement_entry_entry_id_parent_id_timestamp_timestamp",
-            "unique": false,
-            "columnNames": [
-              "entry_id",
-              "parent_id",
-              "timestamp",
-              "timestamp"
-            ],
-            "orders": [
-              "ASC",
-              "ASC",
-              "DESC",
-              "ASC"
-            ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_measurement_entry_entry_id_parent_id_timestamp_timestamp` ON `${TABLE_NAME}` (`entry_id` ASC, `parent_id` ASC, `timestamp` DESC, `timestamp` ASC)"
-          },
           {
             "name": "index_measurement_entry_entry_id",
             "unique": false,
@@ -218,7 +201,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f327fa4bde9ae7413fb50500e2bb0a71')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e2630151ed53660fd6502cbdcf7b311')"
     ]
   }
 }
