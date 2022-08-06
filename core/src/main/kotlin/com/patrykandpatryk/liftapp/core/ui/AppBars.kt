@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.animation.rememberSplineBasedDecay
@@ -21,7 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.rememberTopAppBarScrollState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -40,7 +42,7 @@ fun TopAppBar(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val topAppBarColors = TopAppBarDefaults.largeTopAppBarColors()
-    val scrollFraction = scrollBehavior?.scrollFraction ?: 0f
+    val scrollFraction = scrollBehavior?.state?.collapsedFraction ?: 0f
     val containerColor by topAppBarColors.containerColor(scrollFraction)
 
     Column {
@@ -76,7 +78,7 @@ fun TopAppBar(
 fun topAppBarScrollBehavior(): TopAppBarScrollBehavior {
 
     val animSpec = rememberSplineBasedDecay<Float>()
-    val state = rememberTopAppBarScrollState()
+    val state = rememberTopAppBarState()
 
     return remember(key1 = animSpec, key2 = state) {
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(

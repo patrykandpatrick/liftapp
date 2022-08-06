@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.patrykandpatryk.liftapp.feature.onerepmax.ui
 
 import androidx.compose.foundation.layout.Arrangement
