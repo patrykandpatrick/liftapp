@@ -49,7 +49,7 @@ fun <T> DropdownMenu(
         modifier = modifier,
         multiSelection = false,
         disabledItems = disabledItems,
-        hasError = hasError,
+        isError = hasError,
         errorText = errorText,
     )
 }
@@ -68,7 +68,7 @@ fun <T> DropdownMenu(
     modifier: Modifier = Modifier,
     multiSelection: Boolean = true,
     disabledItems: Collection<T>? = null,
-    hasError: Boolean = false,
+    isError: Boolean = false,
     errorText: String? = null,
 ) {
     ExposedDropdownMenuBox(
@@ -90,7 +90,11 @@ fun <T> DropdownMenu(
             )
 
             if (errorText != null) {
-                SupportingText(visible = hasError, text = errorText)
+                SupportingText(
+                    visible = isError,
+                    text = errorText,
+                    isError = isError,
+                )
             }
         }
 

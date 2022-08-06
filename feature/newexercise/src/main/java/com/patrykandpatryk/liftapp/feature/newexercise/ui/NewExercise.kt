@@ -174,6 +174,7 @@ private fun ColumnScope.Content(
         SupportingText(
             visible = state.showNameError,
             text = stringResource(id = R.string.error_x_empty, stringResource(id = R.string.generic_name)),
+            isError = true,
         )
     }
 
@@ -197,7 +198,7 @@ private fun ColumnScope.Content(
         label = stringResource(id = R.string.generic_main_muscles),
         onClick = updateMainMuscles,
         disabledItems = state.disabledMainMuscles,
-        hasError = state.showMainMusclesError,
+        isError = state.showMainMusclesError,
         errorText = stringResource(id = R.string.error_pick_main_muscles),
     )
 

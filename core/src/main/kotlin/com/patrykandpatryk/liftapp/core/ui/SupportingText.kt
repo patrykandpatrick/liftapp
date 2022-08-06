@@ -15,13 +15,16 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 
 @Composable
 fun ColumnScope.SupportingText(
-    visible: Boolean,
     text: String,
     modifier: Modifier = Modifier,
+    visible: Boolean = true,
+    isError: Boolean = false,
 ) {
+    val contentColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+
     AnimatedVisibility(visible = visible) {
         CompositionLocalProvider(
-            LocalContentColor provides MaterialTheme.colorScheme.error,
+            LocalContentColor provides contentColor,
             LocalTextStyle provides MaterialTheme.typography.bodySmall,
         ) {
             Box(
