@@ -64,6 +64,19 @@
     <string name="picker_date">Date</string>
     <string name="picker_time">Time</string>
 
+    <string name="picker_time_title">Select time</string>
+    <string name="picker_time_hour">Hour</string>
+    <string name="picker_time_minute">Minute</string>
+    <string name="picker_time_colon" translatable="false">:</string>
+    <string name="picker_time_am" translatable="false">AM</string>
+    <string name="picker_time_pm" translatable="false">PM</string>
+
+    <string name="settings_time_and_date">Time &amp; Date</string>
+    <string name="settings_hour_format">Hour format</string>
+    <string name="settings_hour_format_option_12">12H</string>
+    <string name="settings_hour_format_option_24">24H</string>
+    <string name="settings_hour_format_option_auto">Auto</string>
+
     <string name="error_x_empty">%s cannot be empty.</string>
     <string name="error_pick_main_muscles">Pick at least one main muscle.</string>
     <string name="error_must_be_higher_than_zero">The value must be higher than zero.</string>

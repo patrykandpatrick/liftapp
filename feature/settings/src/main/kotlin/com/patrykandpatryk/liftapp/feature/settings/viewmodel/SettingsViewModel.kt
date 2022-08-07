@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.feature.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -25,6 +26,12 @@ class SettingsViewModel @Inject constructor(
     fun setDistanceUnit(value: DistanceUnit) {
         viewModelScope.launch {
             preferenceRepository.distanceUnit.set(value = value)
+        }
+    }
+
+    fun setHourFormat(value: HourFormat) {
+        viewModelScope.launch {
+            preferenceRepository.hourFormat.set(value = value)
         }
     }
 }

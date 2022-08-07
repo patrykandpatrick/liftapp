@@ -17,6 +17,7 @@ import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
+import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
@@ -45,9 +46,11 @@ fun Settings(
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxHeight(),
         ) {
+
             item {
                 ListSectionTitle(title = stringResource(id = R.string.units))
             }
+
             item {
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.distance),
@@ -58,6 +61,7 @@ fun Settings(
                     iconPainter = painterResource(id = R.drawable.ic_distance),
                 )
             }
+
             item {
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.mass),
@@ -66,6 +70,21 @@ fun Settings(
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setMassUnit,
                     iconPainter = painterResource(id = R.drawable.ic_weight),
+                )
+            }
+
+            item {
+                ListSectionTitle(title = stringResource(id = R.string.settings_time_and_date))
+            }
+
+            item {
+                EnumPreferenceListItem(
+                    title = stringResource(id = R.string.settings_hour_format),
+                    selectedValue = allPreferences?.hourFormat,
+                    values = HourFormat.values(),
+                    iconPainter = painterResource(id = R.drawable.ic_time),
+                    getValueTitle = { stringResource(id = it.stringResourceId) },
+                    onValueChange = viewModel::setHourFormat,
                 )
             }
         }
