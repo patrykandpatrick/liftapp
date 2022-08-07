@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.animation.rememberSplineBasedDecay
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -74,7 +71,6 @@ fun TopAppBar(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun topAppBarScrollBehavior(): TopAppBarScrollBehavior {
 
     val animSpec = rememberSplineBasedDecay<Float>()

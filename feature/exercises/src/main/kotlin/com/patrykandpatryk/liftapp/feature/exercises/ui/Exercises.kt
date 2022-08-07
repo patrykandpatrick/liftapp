@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.exercises.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -40,7 +38,6 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 fun Exercises(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
@@ -126,7 +123,6 @@ fun Exercises(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun Controls(
     groupBy: GroupBy,
     onGroupBySelection: (GroupBy) -> Unit,

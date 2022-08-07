@@ -49,6 +49,20 @@ android {
     kotlinOptions {
 
         jvmTarget = "11"
-        freeCompilerArgs += ["-Xjvm-default=all-compatibility", "-opt-in=kotlin.RequiresOptIn"]
+        freeCompilerArgs += [
+                "-Xjvm-default=all-compatibility",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xcontext-receivers",
+                "-opt-in=kotlin.time.ExperimentalTime",
+                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-opt-in=androidx.compose.ui.text.ExperimentalTextApi",
+                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi",
+                "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
+        ]
     }
 }

@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.feature.newexercise.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -54,7 +53,6 @@ fun <T> DropdownMenu(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> DropdownMenu(
     expanded: Boolean,

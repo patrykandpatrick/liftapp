@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui.button
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun IconButton(
     onClick: () -> Unit,

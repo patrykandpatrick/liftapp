@@ -1,8 +1,6 @@
-@file:OptIn(ExperimentalTextApi::class)
 package com.patrykandpatryk.liftapp.core.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 
 private val platformTextStyle = PlatformTextStyle(

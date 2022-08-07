@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.feature.body.ui
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,7 +19,6 @@ import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun Body(
     modifier: Modifier = Modifier,
     navigate: (String) -> Unit,

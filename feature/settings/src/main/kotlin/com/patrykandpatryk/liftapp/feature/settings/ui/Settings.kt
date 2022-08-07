@@ -2,7 +2,6 @@ package com.patrykandpatryk.liftapp.feature.settings.ui
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,7 +22,6 @@ import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun Settings(
     parentNavController: NavController,
     modifier: Modifier = Modifier,
