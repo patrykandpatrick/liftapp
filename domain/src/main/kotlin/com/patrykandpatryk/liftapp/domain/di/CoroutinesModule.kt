@@ -18,6 +18,10 @@ interface CoroutinesModule {
         fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 
         @Provides
+        @MainDispatcher.Immediate
+        fun provideMainImmediateDispatcher(): CoroutineDispatcher = Dispatchers.Main.immediate
+
+        @Provides
         @DefaultDispatcher
         fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 
