@@ -12,6 +12,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import java.text.Collator
 import java.text.DecimalFormat
+import kotlinx.coroutines.CoroutineExceptionHandler
+import timber.log.Timber
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -35,5 +37,11 @@ interface CoreModule {
         @Provides
         @Integer
         fun provideIntegerFormat(): DecimalFormat = DecimalFormat("#")
+
+        @Provides
+        fun provideCoroutineExceptionHandler(): CoroutineExceptionHandler =
+            CoroutineExceptionHandler { coroutineContext, throwable ->
+                Timber.e("Uncaught exception in $coroutineContext", throwable)
+            }
     }
 }
