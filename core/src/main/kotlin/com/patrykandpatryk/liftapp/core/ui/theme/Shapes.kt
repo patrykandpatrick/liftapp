@@ -14,4 +14,5 @@ val BottomSheetShape = RoundedCornerShape(
 
 val Shapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(16.dp),
 )
