@@ -80,4 +80,11 @@
     <string name="error_x_empty">%s cannot be empty.</string>
     <string name="error_pick_main_muscles">Pick at least one main muscle.</string>
     <string name="error_must_be_higher_than_zero">The value must be higher than zero.</string>
+
+    <string name="time_format_short_12h">hh:mm a</string>
+    <string name="time_format_short_24h">HH:mm</string>
+    <string name="time_format_long_12h">hh:mm:ss a</string>
+    <string name="time_format_long_24h">HH:mm:ss</string>
+    <string name="date_format_short">d MMMM</string>
+    <string name="date_format_long">EEEE, d MMMM</string>
 </resources>

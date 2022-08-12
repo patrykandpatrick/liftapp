@@ -12,9 +12,10 @@ import androidx.compose.ui.unit.dp
 data class Dimens(
     val dialog: Dialog = Dialog(),
     val height: Height = Height(),
+    val iconButton: IconButton = IconButton(),
+    val padding: Padding = Padding(),
     val strokeWidth: Dp = 1.dp,
     val verticalItemSpacing: Dp = 16.dp,
-    val iconButton: IconButton = IconButton(),
 ) {
 
     @Immutable
@@ -22,8 +23,8 @@ data class Dimens(
         val contentHorizontal: Dp = 16.dp,
         val contentHorizontalSmall: Dp = 8.dp,
         val contentVertical: Dp = 20.dp,
-        val contentVerticalSmall: Dp = 12.dp,
         val itemHorizontal: Dp = 16.dp,
+        val itemHorizontalSmall: Dp = 8.dp,
         val itemVertical: Dp = 16.dp,
         val segmentedButtonHorizontal: Dp = 12.dp,
         val segmentedButtonVertical: Dp = 12.dp,
@@ -68,7 +69,7 @@ val DialogDimens: Dimens
             copy(
                 padding = padding.copy(
                     contentHorizontal = 24.dp,
-                    contentVertical = 12.dp,
+                    contentVertical = 24.dp,
                 ),
             )
         }
