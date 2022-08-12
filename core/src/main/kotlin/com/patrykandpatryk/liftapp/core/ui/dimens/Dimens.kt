@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 data class Dimens(
-    val padding: Padding = Padding(),
+    val dialog: Dialog = Dialog(),
     val height: Height = Height(),
     val strokeWidth: Dp = 1.dp,
     val verticalItemSpacing: Dp = 16.dp,
@@ -42,6 +42,15 @@ data class Dimens(
     @Immutable
     data class Height(
         val searchBar: Dp = 48.dp,
+    )
+
+    @Immutable
+    data class Dialog(
+        val minWidth: Dp = 280.dp,
+        val maxWidth: Dp = 560.dp,
+        val paddingMedium: Dp = 16.dp,
+        val paddingLarge: Dp = 24.dp,
+        val tonalElevation: Dp = 6.dp,
     )
 }
 

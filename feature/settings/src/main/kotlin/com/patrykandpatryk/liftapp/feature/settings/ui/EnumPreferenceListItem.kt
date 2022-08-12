@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.patrykandpatryk.liftapp.core.ui.DialogContent
 import com.patrykandpatryk.liftapp.core.ui.ListItem
+import com.patrykandpatryk.liftapp.core.ui.dialog.DialogButtons
 
 @Composable
 fun <T : Enum<T>> EnumPreferenceListItem(
@@ -46,9 +47,7 @@ fun <T : Enum<T>> EnumPreferenceListItem(
             DialogContent(
                 title = title,
                 actions = {
-                    TextButton(onClick = { dialogVisible = false }) {
-                        Text(text = stringResource(id = android.R.string.cancel))
-                    }
+                    DialogButtons(onNegativeButtonClick = { dialogVisible = false })
                 },
             ) {
                 values.forEach { value ->

@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 
 @Composable
 fun DialogContent(
@@ -20,7 +21,7 @@ fun DialogContent(
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 6.dp,
+        tonalElevation = LocalDimens.current.dialog.tonalElevation,
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Column {
