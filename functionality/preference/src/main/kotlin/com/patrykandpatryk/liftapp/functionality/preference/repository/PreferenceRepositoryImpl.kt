@@ -46,7 +46,7 @@ class PreferenceRepositoryImpl @Inject constructor(
         AllPreferences(
             massUnit = massUnit.getFromPreferences(preferences = preferences),
             distanceUnit = distanceUnit.getFromPreferences(preferences = preferences),
-            hourFormat = hourFormat.getFromPreferences(preferences = preferences)
+            hourFormat = hourFormat.getFromPreferences(preferences = preferences),
         )
     }
 }

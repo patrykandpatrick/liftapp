@@ -9,13 +9,13 @@ private val platformTextStyle = PlatformTextStyle(
 
 val Typography = Typography().run {
     copy(
-     displayLarge = displayLarge.copy(platformStyle = platformTextStyle),
-     displayMedium = displayMedium.copy(platformStyle = platformTextStyle),
-     displaySmall = displaySmall.copy(platformStyle = platformTextStyle),
-     headlineLarge = headlineLarge.copy(platformStyle = platformTextStyle),
-     headlineMedium = headlineMedium.copy(platformStyle = platformTextStyle),
-     headlineSmall = headlineSmall.copy(platformStyle = platformTextStyle),
-     titleLarge = titleLarge.copy(platformStyle = platformTextStyle),
-     titleMedium = titleMedium.copy(platformStyle = platformTextStyle),
+        displayLarge = displayLarge.copy(platformStyle = platformTextStyle),
+        displayMedium = displayMedium.copy(platformStyle = platformTextStyle),
+        displaySmall = displaySmall.copy(platformStyle = platformTextStyle),
+        headlineLarge = headlineLarge.copy(platformStyle = platformTextStyle),
+        headlineMedium = headlineMedium.copy(platformStyle = platformTextStyle),
+        headlineSmall = headlineSmall.copy(platformStyle = platformTextStyle),
+        titleLarge = titleLarge.copy(platformStyle = platformTextStyle),
+        titleMedium = titleMedium.copy(platformStyle = platformTextStyle),
     )
 }
