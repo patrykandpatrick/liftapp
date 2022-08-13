@@ -21,11 +21,11 @@ plugins {
     id "org.jetbrains.kotlin.android" version "$kotlin_version" apply false
     id "com.google.devtools.ksp" version "1.7.10-1.0.6" apply false
     id "org.jetbrains.kotlin.jvm" version "$kotlin_version" apply false
-    id "io.gitlab.arturbosch.detekt" version "1.20.0"
+    id "io.gitlab.arturbosch.detekt" version "1.21.0"
 }
 
 dependencies {
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.20.0"
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0"
 }
 
 detekt {
