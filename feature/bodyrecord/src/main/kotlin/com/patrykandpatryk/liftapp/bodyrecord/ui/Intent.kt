@@ -1,0 +1,12 @@
+package com.patrykandpatryk.liftapp.bodyrecord.ui
+
+sealed class Intent {
+
+    object Save : Intent()
+
+    class SetValue(val index: Int, val value: String) : Intent()
+
+    class IncrementValue(val index: Int, val incrementBy: Float) : Intent()
+
+    class SetTime(val hour: Int, val minute: Int) : Intent()
+}

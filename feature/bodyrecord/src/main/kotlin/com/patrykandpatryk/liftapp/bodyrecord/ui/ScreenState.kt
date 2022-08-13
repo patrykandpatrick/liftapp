@@ -1,11 +1,13 @@
 package com.patrykandpatryk.liftapp.bodyrecord.ui
 
 import android.os.Parcelable
+import androidx.compose.runtime.Stable
+import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
-sealed class BodyModel {
+internal sealed class ScreenState : Parcelable {
 
     abstract val name: String
 
@@ -13,14 +15,20 @@ sealed class BodyModel {
 
     abstract val showErrors: Boolean
 
+    abstract val is24H: Boolean
+
+    abstract val formattedDate: FormattedDate
+
     abstract fun mutate(
         name: String = this.name,
         values: List<Validatable<String>> = this.values,
+        formattedDate: FormattedDate = this.formattedDate,
         showErrors: Boolean = false,
-    ): BodyModel
+    ): ScreenState
 
+    @Stable
     @Parcelize
-    object Loading : BodyModel(), Parcelable {
+    internal object Loading : ScreenState() {
 
         @IgnoredOnParcel
         override val name: String = ""
@@ -31,47 +39,64 @@ sealed class BodyModel {
         @IgnoredOnParcel
         override val showErrors: Boolean = false
 
+        @IgnoredOnParcel
+        override val is24H: Boolean = false
+
+        @IgnoredOnParcel
+        override val formattedDate: FormattedDate = FormattedDate.Empty
+
         override fun mutate(
             name: String,
             values: List<Validatable<String>>,
+            formattedDate: FormattedDate,
             showErrors: Boolean,
-        ): BodyModel = this
+        ): ScreenState = this
     }
 
+    @Stable
     @Parcelize
-    data class Insert(
+    internal data class Insert(
         override val name: String,
         override val values: List<Validatable<String>>,
+        override val formattedDate: FormattedDate,
+        override val is24H: Boolean = false,
         override val showErrors: Boolean = false,
-    ) : BodyModel(), Parcelable {
+    ) : ScreenState() {
 
         override fun mutate(
             name: String,
             values: List<Validatable<String>>,
+            formattedDate: FormattedDate,
             showErrors: Boolean,
-        ): BodyModel = copy(
+        ): ScreenState = copy(
             name = name,
             values = values,
             showErrors = showErrors,
+            formattedDate = formattedDate,
         )
     }
 
+    @Stable
     @Parcelize
-    data class Update(
+    internal data class Update(
         val recordId: Long,
         override val name: String,
         override val values: List<Validatable<String>>,
+        override val formattedDate: FormattedDate,
+        override val is24H: Boolean,
         override val showErrors: Boolean = false,
-    ) : BodyModel(), Parcelable {
+    ) : ScreenState() {
 
         override fun mutate(
             name: String,
             values: List<Validatable<String>>,
+            formattedDate: FormattedDate,
             showErrors: Boolean,
-        ): BodyModel = copy(
+        ): ScreenState = copy(
             name = name,
             values = values,
             showErrors = showErrors,
+            formattedDate = formattedDate,
         )
     }
 }
