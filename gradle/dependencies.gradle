@@ -81,16 +81,6 @@ ext {
     ]
 
     def navigation = [
-            destinations   : [
-                    group  : "io.github.raamcosta.compose-destinations",
-                    name   : "animations-core",
-                    version: versions.destinations,
-            ],
-            destinationsKsp: [
-                    group  : "io.github.raamcosta.compose-destinations",
-                    name   : "ksp",
-                    version: versions.destinations,
-            ],
             hilt           : [
                     group  : "androidx.hilt",
                     name   : "hilt-navigation-compose",
