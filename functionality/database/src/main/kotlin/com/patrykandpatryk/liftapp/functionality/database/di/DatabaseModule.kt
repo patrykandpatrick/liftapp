@@ -12,7 +12,7 @@ import com.patrykandpatryk.liftapp.domain.measurement.MeasurementRepository
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
 import com.patrykandpatryk.liftapp.functionality.database.Database
 import com.patrykandpatryk.liftapp.functionality.database.DatabaseCallback
-import com.patrykandpatryk.liftapp.functionality.database.converter.DateConverters
+import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConverters
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
@@ -33,7 +33,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import javax.inject.Singleton
 
 @Module
@@ -89,14 +89,14 @@ interface DatabaseModule {
         fun provideDatabase(
             application: Application,
             jsonConverters: JsonConverters,
-            dateConverters: DateConverters,
+            calendarConverters: CalendarConverters,
             databaseCallback: DatabaseCallback,
         ): Database =
             Room
                 .databaseBuilder(application, Database::class.java, Constants.Database.Name)
                 .addCallback(databaseCallback)
                 .addTypeConverter(jsonConverters)
-                .addTypeConverter(dateConverters)
+                .addTypeConverter(calendarConverters)
                 .build()
 
         @Provides

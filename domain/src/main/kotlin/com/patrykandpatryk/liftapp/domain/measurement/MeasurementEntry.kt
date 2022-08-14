@@ -1,9 +1,9 @@
 package com.patrykandpatryk.liftapp.domain.measurement
 
-import java.util.Date
+import java.util.Calendar
 
 class MeasurementEntry(
     val values: MeasurementValues,
     val type: MeasurementType,
-    val timestamp: Date,
+    val timestamp: Calendar,
 )

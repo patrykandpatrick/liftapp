@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementValues
-import java.util.*
+import java.util.Calendar
 
 @Entity(
     tableName = "measurement_entry",
@@ -27,5 +27,5 @@ class MeasurementEntryEntity(
     val parentId: Long,
     val values: MeasurementValues,
     @ColumnInfo(index = true)
-    val timestamp: Date,
+    val timestamp: Calendar,
 )

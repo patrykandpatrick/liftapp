@@ -8,7 +8,7 @@ import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 

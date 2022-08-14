@@ -6,7 +6,7 @@ import com.patrykandpatryk.liftapp.domain.measurement.Measurement
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementRepository
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementValues
 import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
-import java.util.Date
+import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -48,7 +48,7 @@ class MeasurementRepositoryImpl @Inject constructor(
     override suspend fun insertMeasurementEntry(
         parentId: Long,
         values: MeasurementValues,
-        timestamp: Date,
+        timestamp: Calendar,
     ) = withContext(dispatcher) {
         dao.insert(
             MeasurementEntryEntity(

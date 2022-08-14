@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.domain.measurement
 
-import java.util.Date
+import java.util.Calendar
 import kotlinx.coroutines.flow.Flow
 
 interface MeasurementRepository {
@@ -16,6 +16,6 @@ interface MeasurementRepository {
     suspend fun insertMeasurementEntry(
         parentId: Long,
         values: MeasurementValues,
-        timestamp: Date,
+        timestamp: Calendar,
     )
 }

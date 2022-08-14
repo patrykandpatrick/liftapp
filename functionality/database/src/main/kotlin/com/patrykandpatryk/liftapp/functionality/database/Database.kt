@@ -3,7 +3,7 @@ package com.patrykandpatryk.liftapp.functionality.database
 import androidx.room.BuiltInTypeConverters
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.patrykandpatryk.liftapp.functionality.database.converter.DateConverters
+import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConverters
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
@@ -27,7 +27,7 @@ import com.patrykandpatryk.liftapp.functionality.database.measurement.Measuremen
 @TypeConverters(
     value = [
         JsonConverters::class,
-        DateConverters::class,
+        CalendarConverters::class,
     ],
     builtInTypeConverters = BuiltInTypeConverters(
         enums = BuiltInTypeConverters.State.ENABLED,
