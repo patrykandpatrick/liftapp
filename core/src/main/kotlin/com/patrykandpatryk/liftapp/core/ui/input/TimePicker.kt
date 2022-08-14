@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -58,9 +59,10 @@ import java.text.DecimalFormat
 fun TimePicker(
     state: TimePickerState,
     modifier: Modifier = Modifier,
-    properties: DialogProperties = DialogProperties(),
+    properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     onTimePicked: (hour: Int, minute: Int) -> Unit,
 ) {
+
     CompositionLocalProvider(LocalDimens provides DialogDimens) {
 
         if (state.isShowing) {
@@ -75,13 +77,18 @@ fun TimePicker(
                         .widthIn(
                             min = LocalDimens.current.dialog.minWidth,
                             max = LocalDimens.current.dialog.maxWidth,
-                        ),
+                        ).width(IntrinsicSize.Min),
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = LocalDimens.current.dialog.tonalElevation,
                     shape = MaterialTheme.shapes.extraLarge,
                 ) {
 
                     TimePickerContent(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = LocalDimens.current.padding.contentHorizontal,
+                                vertical = LocalDimens.current.padding.contentVertical,
+                            ),
                         state = state,
                         onNegativeButtonClick = { state.isShowing = false },
                         onPositiveButtonClick = {
@@ -98,6 +105,7 @@ fun TimePicker(
 @Composable
 private fun TimePickerContent(
     state: TimePickerState,
+    modifier: Modifier = Modifier,
     onPositiveButtonClick: () -> Unit,
     onNegativeButtonClick: () -> Unit,
 ) {
@@ -105,16 +113,13 @@ private fun TimePickerContent(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = Modifier
-            .padding(
-                horizontal = LocalDimens.current.padding.contentHorizontal,
-                vertical = LocalDimens.current.padding.contentVertical,
-            ),
+        modifier = modifier,
     ) {
         Text(
+            modifier = Modifier.padding(bottom = LocalDimens.current.padding.itemVertical),
             text = stringResource(id = R.string.picker_time_title),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.titleSmall,
         )
 
         Row(
