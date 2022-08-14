@@ -3,13 +3,13 @@ package com.patrykandpatryk.liftapp.feature.body.ui
 import androidx.annotation.DrawableRes
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementType
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.body.BodyType
+import com.patrykandpatryk.liftapp.domain.body.BodyWithLatestEntry
 import javax.inject.Inject
 
-class BodyItemMapper @Inject constructor() : Mapper<MeasurementWithLatestEntry, BodyItem> {
+class BodyItemMapper @Inject constructor() : Mapper<BodyWithLatestEntry, BodyItem> {
 
-    override fun map(input: MeasurementWithLatestEntry): BodyItem = BodyItem(
+    override fun map(input: BodyWithLatestEntry): BodyItem = BodyItem(
         id = input.id,
         iconRes = input.type.iconRes,
         title = input.name,
@@ -23,11 +23,11 @@ class BodyItemMapper @Inject constructor() : Mapper<MeasurementWithLatestEntry, 
             },
     )
 
-    private val MeasurementType.iconRes: Int
+    private val BodyType.iconRes: Int
         @DrawableRes get() = when (this) {
-            MeasurementType.Weight -> R.drawable.ic_weightscale
-            MeasurementType.Length -> R.drawable.ic_distance
-            MeasurementType.LengthTwoSides -> R.drawable.ic_distance
-            MeasurementType.Percentage -> R.drawable.ic_donut
+            BodyType.Weight -> R.drawable.ic_weightscale
+            BodyType.Length -> R.drawable.ic_distance
+            BodyType.LengthTwoSides -> R.drawable.ic_distance
+            BodyType.Percentage -> R.drawable.ic_donut
         }
 }

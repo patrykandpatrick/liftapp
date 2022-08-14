@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.body.di
 
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.body.BodyWithLatestEntry
 import com.patrykandpatryk.liftapp.feature.body.ui.BodyItem
 import com.patrykandpatryk.liftapp.feature.body.ui.BodyItemMapper
 import dagger.Binds
@@ -14,5 +14,5 @@ import dagger.hilt.android.components.ViewModelComponent
 interface BodyModule {
 
     @Binds
-    fun bindBodyItemMapper(mapper: BodyItemMapper): Mapper<MeasurementWithLatestEntry, BodyItem>
+    fun bindBodyItemMapper(mapper: BodyItemMapper): Mapper<BodyWithLatestEntry, BodyItem>
 }

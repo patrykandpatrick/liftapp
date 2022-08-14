@@ -1,9 +1,9 @@
-package com.patrykandpatryk.liftapp.domain.measurement
+package com.patrykandpatryk.liftapp.domain.body
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class MeasurementType(val fields: Int) {
+enum class BodyType(val fields: Int) {
     Weight(fields = 1),
     Length(fields = 1),
     LengthTwoSides(fields = 2),

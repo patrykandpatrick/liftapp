@@ -1,15 +1,15 @@
-package com.patrykandpatryk.liftapp.domain.measurement
+package com.patrykandpatryk.liftapp.domain.body
 
 import com.patrykandpatryk.liftapp.domain.model.Name
 
-data class Measurement(
+data class Body(
     val id: Long,
     val name: String,
-    val type: MeasurementType,
+    val type: BodyType,
 ) {
 
     data class Insert(
         val name: Name,
-        val type: MeasurementType,
+        val type: BodyType,
     )
 }

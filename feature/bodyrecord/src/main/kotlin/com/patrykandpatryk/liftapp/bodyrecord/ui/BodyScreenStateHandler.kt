@@ -13,7 +13,7 @@ import com.patrykandpatryk.liftapp.domain.di.MainDispatcher
 import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.format.Formatter.NumberFormat
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementRepository
+import com.patrykandpatryk.liftapp.domain.body.BodyRepository
 import com.patrykandpatryk.liftapp.domain.message.LocalizableMessage
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
@@ -36,7 +36,7 @@ internal class BodyScreenStateHandler @Inject constructor(
     @BodyId val id: Long,
     private val formatter: Formatter,
     exceptionHandler: CoroutineExceptionHandler,
-    private val repository: MeasurementRepository,
+    private val repository: BodyRepository,
     private val savedStateHandle: SavedStateHandle,
     @HigherThanZero private val validator: Validator<Float>,
     @MainDispatcher.Immediate private val dispatcher: CoroutineDispatcher,
@@ -58,10 +58,10 @@ internal class BodyScreenStateHandler @Inject constructor(
     }
 
     private suspend fun getInitialState(id: Long): ScreenState {
-        val measurement = repository.getMeasurement(id).first()
+        val body = repository.getBody(id).first()
         return ScreenState.Insert(
-            name = measurement.name,
-            values = List(size = measurement.type.fields) {
+            name = body.name,
+            values = List(size = body.type.fields) {
                 Validatable.Invalid(
                     value = "",
                     message = LocalizableMessage(R.string.error_must_be_higher_than_zero),

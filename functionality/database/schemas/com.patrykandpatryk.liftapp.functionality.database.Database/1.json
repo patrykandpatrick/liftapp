@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6e2630151ed53660fd6502cbdcf7b311",
+    "identityHash": "557315fce7ef53a5f282d9a477f92b04",
     "entities": [
       {
-        "tableName": "measurement",
+        "tableName": "body",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL)",
         "fields": [
           {
@@ -37,8 +37,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "measurement_entry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `parent_id` INTEGER NOT NULL, `values` TEXT NOT NULL, `timestamp` TEXT NOT NULL, FOREIGN KEY(`parent_id`) REFERENCES `measurement`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "body_entry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `parent_id` INTEGER NOT NULL, `values` TEXT NOT NULL, `timestamp` TEXT NOT NULL, FOREIGN KEY(`parent_id`) REFERENCES `body`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -73,36 +73,36 @@
         },
         "indices": [
           {
-            "name": "index_measurement_entry_entry_id",
+            "name": "index_body_entry_entry_id",
             "unique": false,
             "columnNames": [
               "entry_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_measurement_entry_entry_id` ON `${TABLE_NAME}` (`entry_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_body_entry_entry_id` ON `${TABLE_NAME}` (`entry_id`)"
           },
           {
-            "name": "index_measurement_entry_parent_id",
+            "name": "index_body_entry_parent_id",
             "unique": false,
             "columnNames": [
               "parent_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_measurement_entry_parent_id` ON `${TABLE_NAME}` (`parent_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_body_entry_parent_id` ON `${TABLE_NAME}` (`parent_id`)"
           },
           {
-            "name": "index_measurement_entry_timestamp",
+            "name": "index_body_entry_timestamp",
             "unique": false,
             "columnNames": [
               "timestamp"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_measurement_entry_timestamp` ON `${TABLE_NAME}` (`timestamp`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_body_entry_timestamp` ON `${TABLE_NAME}` (`timestamp`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "measurement",
+            "table": "body",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -195,13 +195,13 @@
     ],
     "views": [
       {
-        "viewName": "measurement_with_latest_entry",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT measurement.*, latest_entry.* FROM measurement LEFT JOIN (SELECT * FROM measurement_entry AS entry WHERE entry.timestamp IN(SELECT MAX(E.timestamp) FROM measurement_entry AS E GROUP BY E.parent_id) ORDER BY entry.entry_id DESC) AS latest_entry ON measurement.id = latest_entry.parent_id"
+        "viewName": "body_with_latest_entry",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT body.*, latest_entry.* FROM body LEFT JOIN (SELECT * FROM body_entry AS entry WHERE entry.timestamp IN(SELECT MAX(E.timestamp) FROM body_entry AS E GROUP BY E.parent_id) ORDER BY entry.entry_id DESC) AS latest_entry ON body.id = latest_entry.parent_id"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e2630151ed53660fd6502cbdcf7b311')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '557315fce7ef53a5f282d9a477f92b04')"
     ]
   }
 }

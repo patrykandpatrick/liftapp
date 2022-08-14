@@ -6,10 +6,10 @@ import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import com.patrykandpatryk.liftapp.domain.measurement.Measurement
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementEntry
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementRepository
-import com.patrykandpatryk.liftapp.domain.measurement.MeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.body.Body
+import com.patrykandpatryk.liftapp.domain.body.BodyEntry
+import com.patrykandpatryk.liftapp.domain.body.BodyRepository
+import com.patrykandpatryk.liftapp.domain.body.BodyWithLatestEntry
 import com.patrykandpatryk.liftapp.functionality.database.Database
 import com.patrykandpatryk.liftapp.functionality.database.DatabaseCallback
 import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConverters
@@ -20,13 +20,13 @@ import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntit
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseInsertToEntityMapper
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseUpdateToEntityMapper
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementDao
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntity
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntityToDomainMapper
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntryEntityToDomainMapper
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementRepositoryImpl
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementWithLatestEntryToDomainMeasurementMapper
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementWithLatestEntryView
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyDao
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntity
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntityToDomainMapper
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntryEntityToDomainMapper
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyRepositoryImpl
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyWithLatestEntryToDomainBodyMapper
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyWithLatestEntryView
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -41,19 +41,19 @@ import javax.inject.Singleton
 interface DatabaseModule {
 
     @Binds
-    fun bindMeasurementEntityToDomainMapper(
-        mapper: MeasurementEntityToDomainMapper,
-    ): Mapper<MeasurementEntity, Measurement>
+    fun bindBodyEntityToDomainMapper(
+        mapper: BodyEntityToDomainMapper,
+    ): Mapper<BodyEntity, Body>
 
     @Binds
-    fun bindMeasurementWithLatestEntryToDomainMapper(
-        mapper: MeasurementWithLatestEntryToDomainMeasurementMapper,
-    ): Mapper<MeasurementWithLatestEntryView, MeasurementWithLatestEntry>
+    fun bindBodyWithLatestEntryToDomainMapper(
+        mapper: BodyWithLatestEntryToDomainBodyMapper,
+    ): Mapper<BodyWithLatestEntryView, BodyWithLatestEntry>
 
     @Binds
-    fun bindMeasurementWithLatestEntryViewToDomainMapper(
-        mapper: MeasurementEntryEntityToDomainMapper,
-    ): Mapper<MeasurementWithLatestEntryView, MeasurementEntry?>
+    fun bindBodyWithLatestEntryViewToDomainMapper(
+        mapper: BodyEntryEntityToDomainMapper,
+    ): Mapper<BodyWithLatestEntryView, BodyEntry?>
 
     @Binds
     fun bindExerciseEntityToDomainMapper(
@@ -71,7 +71,7 @@ interface DatabaseModule {
     ): Mapper<Exercise.Update, ExerciseEntity.Update>
 
     @Binds
-    fun bindMeasurementRepository(repository: MeasurementRepositoryImpl): MeasurementRepository
+    fun bindBodyRepository(repository: BodyRepositoryImpl): BodyRepository
 
     @Binds
     fun bindExerciseRepository(repository: ExerciseRepositoryImpl): ExerciseRepository
@@ -100,8 +100,8 @@ interface DatabaseModule {
                 .build()
 
         @Provides
-        fun provideMeasurementDao(database: Database): MeasurementDao =
-            database.measurementDao
+        fun provideBodyDao(database: Database): BodyDao =
+            database.bodyDao
 
         @Provides
         fun provideExerciseDao(database: Database): ExerciseDao =

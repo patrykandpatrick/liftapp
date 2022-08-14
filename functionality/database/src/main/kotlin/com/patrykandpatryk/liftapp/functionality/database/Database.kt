@@ -7,19 +7,19 @@ import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConv
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntity
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementDao
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementEntryEntity
-import com.patrykandpatryk.liftapp.functionality.database.measurement.MeasurementWithLatestEntryView
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntity
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyDao
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntryEntity
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyWithLatestEntryView
 
 @androidx.room.Database(
     entities = [
-        MeasurementEntity::class,
-        MeasurementEntryEntity::class,
+        BodyEntity::class,
+        BodyEntryEntity::class,
         ExerciseEntity::class,
     ],
     views = [
-        MeasurementWithLatestEntryView::class,
+        BodyWithLatestEntryView::class,
     ],
     version = 1,
     exportSchema = true,
@@ -35,7 +35,7 @@ import com.patrykandpatryk.liftapp.functionality.database.measurement.Measuremen
 )
 abstract class Database : RoomDatabase() {
 
-    abstract val measurementDao: MeasurementDao
+    abstract val bodyDao: BodyDao
 
     abstract val exerciseDao: ExerciseDao
 }
