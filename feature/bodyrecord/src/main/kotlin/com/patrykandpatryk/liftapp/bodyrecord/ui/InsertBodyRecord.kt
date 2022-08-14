@@ -32,8 +32,10 @@ import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.state.onClick
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.input.DatePicker
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
 import com.patrykandpatryk.liftapp.core.ui.input.TimePicker
+import com.patrykandpatryk.liftapp.core.ui.input.rememberDatePickerState
 import com.patrykandpatryk.liftapp.core.ui.input.rememberTimePickerState
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -72,12 +74,20 @@ private fun InsertBodyRecord(
 
     val timePickerState = rememberTimePickerState(
         is24h = state.is24H,
-        hour = state.formattedDate.hours,
-        minute = state.formattedDate.minutes,
+        hour = state.formattedDate.hour,
+        minute = state.formattedDate.minute,
+    )
+
+    val datePickerState = rememberDatePickerState(
+        millis = state.formattedDate.millis,
     )
 
     TimePicker(state = timePickerState) { hour, minute ->
         actionHandler(Intent.SetTime(hour, minute))
+    }
+
+    DatePicker(state = datePickerState) { year, month, day ->
+        actionHandler(Intent.SetDate(year, month, day))
     }
 
     Column(
@@ -112,11 +122,16 @@ private fun InsertBodyRecord(
                 horizontalArrangement = Arrangement.spacedBy(space = dimens.padding.itemHorizontal),
             ) {
 
+                val dateInteractionSource = remember { MutableInteractionSource() }
+                    .onClick(datePickerState::show)
+
                 OutlinedTextField(
                     modifier = Modifier.weight(1f),
+                    readOnly = true,
                     value = state.formattedDate.dateShort,
                     onValueChange = {},
                     label = { Text(text = stringResource(id = R.string.picker_date)) },
+                    interactionSource = dateInteractionSource,
                 )
 
                 val timeInteractionSource = remember { MutableInteractionSource() }

@@ -4,8 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.bodyrecord.di.BodyId
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
+import com.patrykandpatryk.liftapp.domain.date.day
 import com.patrykandpatryk.liftapp.domain.date.hour
 import com.patrykandpatryk.liftapp.domain.date.minute
+import com.patrykandpatryk.liftapp.domain.date.month
+import com.patrykandpatryk.liftapp.domain.date.year
 import com.patrykandpatryk.liftapp.domain.di.MainDispatcher
 import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
@@ -77,6 +80,7 @@ internal class BodyScreenStateHandler @Inject constructor(
                 is Intent.IncrementValue -> incrementValue(model, intent)
                 is Intent.SetValue -> setValue(model, intent)
                 is Intent.SetTime -> setTime(model, intent)
+                is Intent.SetDate -> setDate(model, intent)
                 is Intent.Save -> save(model)
             }
         }
@@ -103,6 +107,13 @@ internal class BodyScreenStateHandler @Inject constructor(
     private suspend fun setTime(model: ScreenState, intent: Intent.SetTime): ScreenState {
         calendar.hour = intent.hour
         calendar.minute = intent.minute
+        return model.mutate(formattedDate = formatter.getFormattedDate(calendar))
+    }
+
+    private suspend fun setDate(model: ScreenState, intent: Intent.SetDate): ScreenState {
+        calendar.year = intent.year
+        calendar.month = intent.month
+        calendar.day = intent.day
         return model.mutate(formattedDate = formatter.getFormattedDate(calendar))
     }
 

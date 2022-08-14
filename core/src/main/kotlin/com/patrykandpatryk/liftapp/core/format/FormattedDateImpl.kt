@@ -1,9 +1,12 @@
 package com.patrykandpatryk.liftapp.core.format
 
 import androidx.compose.runtime.Stable
+import com.patrykandpatryk.liftapp.domain.date.day
 import com.patrykandpatryk.liftapp.domain.date.hour
 import com.patrykandpatryk.liftapp.domain.date.minute
+import com.patrykandpatryk.liftapp.domain.date.month
 import com.patrykandpatryk.liftapp.domain.date.second
+import com.patrykandpatryk.liftapp.domain.date.year
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import java.util.Calendar
 
@@ -16,13 +19,19 @@ internal class FormattedDateImpl(
     calendar: Calendar,
 ) : FormattedDate {
 
+    override val year: Int = calendar.year
+
+    override val month: Int = calendar.month
+
+    override val day: Int = calendar.day
+
+    override val hour: Int = calendar.hour
+
+    override val minute: Int = calendar.minute
+
+    override val second: Int = calendar.second
+
     override val millis: Long = calendar.timeInMillis
-
-    override val hours: Int = calendar.hour
-
-    override val minutes: Int = calendar.minute
-
-    override val seconds: Int = calendar.second
 
     override fun compareTo(other: FormattedDate): Int = millis.compareTo(other.millis)
 
@@ -37,9 +46,6 @@ internal class FormattedDateImpl(
         if (timeShort != other.timeShort) return false
         if (timeLong != other.timeLong) return false
         if (millis != other.millis) return false
-        if (hours != other.hours) return false
-        if (minutes != other.minutes) return false
-        if (seconds != other.seconds) return false
 
         return true
     }
@@ -50,9 +56,6 @@ internal class FormattedDateImpl(
         result = 31 * result + timeShort.hashCode()
         result = 31 * result + timeLong.hashCode()
         result = 31 * result + millis.hashCode()
-        result = 31 * result + hours
-        result = 31 * result + minutes
-        result = 31 * result + seconds
         return result
     }
 }

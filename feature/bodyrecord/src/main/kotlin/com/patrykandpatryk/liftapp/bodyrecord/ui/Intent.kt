@@ -9,4 +9,6 @@ sealed class Intent {
     class IncrementValue(val index: Int, val incrementBy: Float) : Intent()
 
     class SetTime(val hour: Int, val minute: Int) : Intent()
+
+    class SetDate(val year: Int, val month: Int, val day: Int) : Intent()
 }

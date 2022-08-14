@@ -18,6 +18,7 @@ fun DialogButtons(
     onPositiveButtonClick: (() -> Unit)? = null,
     positiveButtonText: String = stringResource(id = android.R.string.ok),
     negativeButtonText: String = stringResource(id = android.R.string.cancel),
+    isPositiveButtonEnabled: Boolean = true,
 ) {
 
     Row(
@@ -35,7 +36,10 @@ fun DialogButtons(
         }
 
         if (onPositiveButtonClick != null) {
-            TextButton(onClick = onPositiveButtonClick) {
+            TextButton(
+                onClick = onPositiveButtonClick,
+                enabled = isPositiveButtonEnabled,
+            ) {
                 Text(text = positiveButtonText)
             }
         }
