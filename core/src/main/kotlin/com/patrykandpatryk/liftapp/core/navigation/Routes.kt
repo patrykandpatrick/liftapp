@@ -31,7 +31,7 @@ object Routes {
     val Settings = Route(value = "settings")
     val OneRepMax = Route(value = "one_rep_max")
 
-    object InsertBodyRecord : Route(value = "insert_body_record/{$ARG_ID}") {
+    object InsertBodyEntry : Route(value = "insert_body_entry/{$ARG_ID}") {
 
         val navArguments = listOf(
             navArgument(ARG_ID) { type = NavType.LongType },

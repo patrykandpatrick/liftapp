@@ -26,7 +26,7 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.patrykandpatryk.liftapp.bodyrecord.ui.InsertBodyRecord
+import com.patrykandpatryk.liftapp.bodyentry.ui.InsertBodyEntry
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.dimens.DialogDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -93,12 +93,12 @@ fun Root(modifier: Modifier = Modifier) {
                 }
 
                 bottomSheet(
-                    route = Routes.InsertBodyRecord.value,
-                    arguments = Routes.InsertBodyRecord.navArguments,
+                    route = Routes.InsertBodyEntry.value,
+                    arguments = Routes.InsertBodyEntry.navArguments,
                 ) {
                     val scope = rememberCoroutineScope()
 
-                    InsertBodyRecord(
+                    InsertBodyEntry(
                         onCloseClick = { scope.launch { bottomSheetState.hide() } },
                     )
                 }

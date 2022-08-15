@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.bodyrecord.ui
+package com.patrykandpatryk.liftapp.bodyentry.ui
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
@@ -46,12 +46,12 @@ import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 
 @Composable
-fun InsertBodyRecord(
+fun InsertBodyEntry(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
-    val viewModel: InsertBodyRecordViewModel = hiltViewModel()
+    val viewModel: InsertBodyEntryViewModel = hiltViewModel()
     val bodyModel by viewModel.state.collectAsState()
 
     BackHandler(enabled = true, onBack = onCloseClick)
@@ -62,7 +62,7 @@ fun InsertBodyRecord(
         }
     }
 
-    InsertBodyRecord(
+    InsertBodyEntry(
         state = bodyModel,
         actionHandler = viewModel::handleIntent,
         onCloseClick = onCloseClick,
@@ -71,7 +71,7 @@ fun InsertBodyRecord(
 }
 
 @Composable
-private fun InsertBodyRecord(
+private fun InsertBodyEntry(
     state: ScreenState,
     actionHandler: (Intent) -> Unit,
     onCloseClick: () -> Unit,
@@ -220,7 +220,7 @@ private fun getIncrement(long: Boolean) =
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewInsertBodyRecord() {
+fun PreviewInsertBodyEntry() {
     LiftAppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Surface(
@@ -230,7 +230,7 @@ fun PreviewInsertBodyRecord() {
                 shape = BottomSheetShape,
                 shadowElevation = 8.dp,
             ) {
-                InsertBodyRecord(
+                InsertBodyEntry(
                     state = ScreenState.Insert(
                         name = "Weight",
                         values = List(size = 1) { Validatable.Valid("65") },

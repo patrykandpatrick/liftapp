@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.bodyrecord.di
+package com.patrykandpatryk.liftapp.bodyentry.di
 
 import javax.inject.Qualifier
 

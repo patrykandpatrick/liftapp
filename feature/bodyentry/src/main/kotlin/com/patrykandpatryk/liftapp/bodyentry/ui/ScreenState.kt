@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.bodyrecord.ui
+package com.patrykandpatryk.liftapp.bodyentry.ui
 
 import android.os.Parcelable
 import androidx.compose.runtime.Stable

@@ -1,7 +1,7 @@
-package com.patrykandpatryk.liftapp.bodyrecord.ui
+package com.patrykandpatryk.liftapp.bodyentry.ui
 
 import androidx.lifecycle.SavedStateHandle
-import com.patrykandpatryk.liftapp.bodyrecord.di.BodyId
+import com.patrykandpatryk.liftapp.bodyentry.di.BodyId
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
 import com.patrykandpatryk.liftapp.domain.body.BodyRepository
