@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.state.onClick
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
@@ -54,6 +55,12 @@ fun InsertBodyRecord(
     val bodyModel by viewModel.state.collectAsState()
 
     BackHandler(enabled = true, onBack = onCloseClick)
+
+    viewModel.events.collectInComposable { event ->
+        when (event) {
+            Event.EntrySaved -> onCloseClick()
+        }
+    }
 
     InsertBodyRecord(
         state = bodyModel,

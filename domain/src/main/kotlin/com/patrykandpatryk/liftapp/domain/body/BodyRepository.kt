@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.domain.body
 
-import java.util.Calendar
 import kotlinx.coroutines.flow.Flow
 
 interface BodyRepository {
@@ -16,6 +15,6 @@ interface BodyRepository {
     suspend fun insertBodyEntry(
         parentId: Long,
         values: BodyValues,
-        timestamp: Calendar,
+        timestamp: Long,
     )
 }

@@ -65,3 +65,8 @@ fun getMillisFor(
             this.minute = minute
             this.second = second
         }.timeInMillis
+
+fun Long.millisToCalendar(): Calendar =
+    Calendar
+        .getInstance()
+        .also { it.timeInMillis = this }

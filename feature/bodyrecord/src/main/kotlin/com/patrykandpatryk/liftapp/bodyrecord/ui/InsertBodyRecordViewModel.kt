@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class InsertBodyRecordViewModel @Inject constructor(
-    private val stateHandler: ScreenStateHandler<ScreenState, Intent>,
-) : ViewModel(stateHandler), ScreenStateHandler<ScreenState, Intent> by stateHandler
+    private val stateHandler: ScreenStateHandler<ScreenState, Intent, Event>,
+) : ViewModel(stateHandler), ScreenStateHandler<ScreenState, Intent, Event> by stateHandler

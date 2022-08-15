@@ -6,7 +6,7 @@ import com.patrykandpatryk.liftapp.domain.body.Body
 import com.patrykandpatryk.liftapp.domain.body.BodyRepository
 import com.patrykandpatryk.liftapp.domain.body.BodyValues
 import com.patrykandpatryk.liftapp.domain.body.BodyWithLatestEntry
-import java.util.Calendar
+import com.patrykandpatryk.liftapp.domain.date.millisToCalendar
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -48,13 +48,13 @@ class BodyRepositoryImpl @Inject constructor(
     override suspend fun insertBodyEntry(
         parentId: Long,
         values: BodyValues,
-        timestamp: Calendar,
+        timestamp: Long,
     ) = withContext(dispatcher) {
         dao.insert(
             BodyEntryEntity(
                 parentId = parentId,
                 values = values,
-                timestamp = timestamp,
+                timestamp = timestamp.millisToCalendar(),
             ),
         )
     }

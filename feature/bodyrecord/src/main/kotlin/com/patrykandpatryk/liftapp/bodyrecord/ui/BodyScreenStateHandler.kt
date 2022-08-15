@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.bodyrecord.di.BodyId
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
+import com.patrykandpatryk.liftapp.domain.body.BodyRepository
+import com.patrykandpatryk.liftapp.domain.body.BodyValues
 import com.patrykandpatryk.liftapp.domain.date.day
 import com.patrykandpatryk.liftapp.domain.date.hour
 import com.patrykandpatryk.liftapp.domain.date.minute
@@ -13,7 +15,6 @@ import com.patrykandpatryk.liftapp.domain.di.MainDispatcher
 import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.format.Formatter.NumberFormat
-import com.patrykandpatryk.liftapp.domain.body.BodyRepository
 import com.patrykandpatryk.liftapp.domain.message.LocalizableMessage
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -40,12 +42,14 @@ internal class BodyScreenStateHandler @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     @HigherThanZero private val validator: Validator<Float>,
     @MainDispatcher.Immediate private val dispatcher: CoroutineDispatcher,
-) : ScreenStateHandler<ScreenState, Intent> {
+) : ScreenStateHandler<ScreenState, Intent, Event> {
 
     private val scope = CoroutineScope(dispatcher + SupervisorJob() + exceptionHandler)
 
     override val state: StateFlow<ScreenState> = savedStateHandle
         .getStateFlow<ScreenState>(SCREEN_STATE_KEY, ScreenState.Loading)
+
+    override val events: MutableSharedFlow<Event> = MutableSharedFlow(replay = 1)
 
     private val calendar = Calendar.getInstance()
 
@@ -117,9 +121,28 @@ internal class BodyScreenStateHandler @Inject constructor(
         return model.mutate(formattedDate = formatter.getFormattedDate(calendar))
     }
 
-    private fun save(model: ScreenState): ScreenState {
+    private suspend fun save(model: ScreenState): ScreenState {
         return if (model.values.any { it.isInvalid }) model.mutate(showErrors = true)
-        else model
+        else {
+            repository.insertBodyEntry(
+                parentId = id,
+                values = model.values.toBodyValues(),
+                timestamp = model.formattedDate.millis,
+            )
+            events.emit(Event.EntrySaved)
+            model
+        }
+    }
+
+    private fun List<Validatable<String>>.toBodyValues() = when (size) {
+        1 -> BodyValues.Single(
+            value = get(0).value.parse(),
+        )
+        2 -> BodyValues.Double(
+            left = get(0).value.parse(),
+            right = get(1).value.parse(),
+        )
+        else -> error("Tried to convert $size items into `BodyValues`.")
     }
 
     private fun String.parse(): Float =
