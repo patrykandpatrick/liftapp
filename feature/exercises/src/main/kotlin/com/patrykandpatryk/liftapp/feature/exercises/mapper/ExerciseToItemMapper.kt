@@ -14,7 +14,7 @@ class ExerciseToItemMapper @Inject constructor(
     private val application: Application,
 ) : Mapper<@JvmSuppressWildcards Pair<Exercise, String>, ExercisesItem.Exercise> {
 
-    override fun map(input: Pair<Exercise, String>): ExercisesItem.Exercise {
+    override suspend fun map(input: Pair<Exercise, String>): ExercisesItem.Exercise {
 
         val (exercise, key) = input
 

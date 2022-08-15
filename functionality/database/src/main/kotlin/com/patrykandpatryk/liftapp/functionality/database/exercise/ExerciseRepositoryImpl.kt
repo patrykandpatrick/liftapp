@@ -28,7 +28,7 @@ class ExerciseRepositoryImpl @Inject constructor(
     override fun getExercise(id: Long): Flow<Exercise?> =
         exerciseDao
             .getExercise(id)
-            .map { entity -> entity?.let(entityToDomain::invoke) }
+            .map { entity -> entity?.let { entityToDomain(it) } }
             .flowOn(dispatcher)
 
     override suspend fun insert(exercise: Exercise.Insert): Long = withContext(dispatcher) {

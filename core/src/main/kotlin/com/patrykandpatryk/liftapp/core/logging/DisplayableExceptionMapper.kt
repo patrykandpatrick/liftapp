@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class DisplayableExceptionMapper @Inject constructor() : Mapper<DisplayableException, String> {
 
-    override fun map(input: DisplayableException): String = when (input) {
+    override suspend fun map(input: DisplayableException): String = when (input) {
         is DisplayableException.Text -> input.message
     }
 }

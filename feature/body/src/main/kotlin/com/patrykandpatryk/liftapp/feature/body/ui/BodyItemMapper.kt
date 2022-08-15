@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class BodyItemMapper @Inject constructor() : Mapper<BodyWithLatestEntry, BodyItem> {
 
-    override fun map(input: BodyWithLatestEntry): BodyItem = BodyItem(
+    override suspend fun map(input: BodyWithLatestEntry): BodyItem = BodyItem(
         id = input.id,
         iconRes = input.type.iconRes,
         title = input.name,

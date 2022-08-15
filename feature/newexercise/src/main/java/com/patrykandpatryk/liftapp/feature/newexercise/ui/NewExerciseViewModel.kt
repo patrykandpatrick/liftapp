@@ -112,7 +112,7 @@ class NewExerciseViewModel @Inject constructor(
         viewModelScope.launch {
             getExercise(exerciseId)
                 .firstOrNull()
-                ?.let(exerciseToStateMapper::invoke)
+                ?.let { exerciseToStateMapper(it) }
                 ?.also { existingExerciseState -> state = existingExerciseState }
         }
     }

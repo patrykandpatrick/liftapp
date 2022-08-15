@@ -11,7 +11,7 @@ class BodyEntityToDomainMapper @Inject constructor(
     private val nameResolver: NameResolver,
 ) : Mapper<BodyEntity, Body> {
 
-    override fun map(input: BodyEntity): Body = Body(
+    override suspend fun map(input: BodyEntity): Body = Body(
         id = input.id,
         name = nameResolver.getResolvedString(input.name),
         type = input.type,
@@ -23,7 +23,7 @@ class BodyWithLatestEntryToDomainBodyMapper @Inject constructor(
     private val nameResolver: NameResolver,
 ) : Mapper<BodyWithLatestEntryView, BodyWithLatestEntry> {
 
-    override fun map(input: BodyWithLatestEntryView): BodyWithLatestEntry =
+    override suspend fun map(input: BodyWithLatestEntryView): BodyWithLatestEntry =
         BodyWithLatestEntry(
             id = input.body.id,
             name = nameResolver.getResolvedString(input.body.name),
@@ -35,7 +35,7 @@ class BodyWithLatestEntryToDomainBodyMapper @Inject constructor(
 class BodyEntryEntityToDomainMapper @Inject constructor() :
     Mapper<BodyWithLatestEntryView, BodyEntry?> {
 
-    override fun map(input: BodyWithLatestEntryView): BodyEntry? =
+    override suspend fun map(input: BodyWithLatestEntryView): BodyEntry? =
         input.entry?.let { entry ->
             BodyEntry(
                 values = entry.values,
