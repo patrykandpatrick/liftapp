@@ -54,7 +54,7 @@ internal class BodyScreenStateHandler @Inject constructor(
     private val calendar = Calendar.getInstance()
 
     init {
-        if (savedStateHandle.get<ScreenState>(SCREEN_STATE_KEY) == ScreenState.Loading) {
+        if (state.value == ScreenState.Loading) {
             scope.launch {
                 savedStateHandle[SCREEN_STATE_KEY] = getInitialState(id)
             }
