@@ -264,6 +264,7 @@ fun DatePickerPreview() {
         DatePicker(
             state = rememberDatePickerState(
                 millis = getMillisFor(year = 2022, month = 8, day = 13),
+                isShowing = true,
             ),
             onTimePicked = { _, _, _ -> },
         )
