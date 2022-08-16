@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalViewConfiguration
 import kotlinx.coroutines.delay
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.map
 
 @SuppressLint("ComposableNaming")
 @Composable
+@NonRestartableComposable
 fun InteractionSource.onRepeatedLongPress(
     repeatLongClicks: Boolean,
     action: () -> Unit,
