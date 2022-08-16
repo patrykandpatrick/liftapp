@@ -8,6 +8,8 @@ interface BodyRepository {
 
     fun getAllBodies(): Flow<List<BodyWithLatestEntry>>
 
+    fun getEntries(bodyId: Long): Flow<List<BodyEntry>>
+
     suspend fun insertBody(body: Body.Insert)
 
     suspend fun insertBodies(bodies: List<Body.Insert>)

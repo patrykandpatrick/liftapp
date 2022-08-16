@@ -23,6 +23,7 @@ import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseUpdat
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyDao
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntity
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntityToDomainMapper
+import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntryEntity
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntryEntityToDomainMapper
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyWithLatestEntryToDomainBodyMapper
@@ -53,7 +54,7 @@ interface DatabaseModule {
     @Binds
     fun bindBodyWithLatestEntryViewToDomainMapper(
         mapper: BodyEntryEntityToDomainMapper,
-    ): Mapper<BodyWithLatestEntryView, BodyEntry?>
+    ): Mapper<BodyEntryEntity, BodyEntry>
 
     @Binds
     fun bindExerciseEntityToDomainMapper(

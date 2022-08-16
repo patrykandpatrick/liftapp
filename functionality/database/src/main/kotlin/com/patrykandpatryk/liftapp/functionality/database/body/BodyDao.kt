@@ -17,6 +17,9 @@ interface BodyDao {
     @Query("SELECT * FROM body_with_latest_entry")
     fun getBodiesWithLatestEntries(): Flow<List<BodyWithLatestEntryView>>
 
+    @Query("SELECT * FROM body_entry WHERE parent_id = :bodyId ORDER BY timestamp DESC")
+    fun getBodyEntries(bodyId: Long): Flow<List<BodyEntryEntity>>
+
     @Insert
     suspend fun insert(body: BodyEntity)
 

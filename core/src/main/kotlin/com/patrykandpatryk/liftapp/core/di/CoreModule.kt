@@ -1,12 +1,16 @@
 package com.patrykandpatryk.liftapp.core.di
 
 import com.patrykandpatryk.liftapp.core.format.FormatterImpl
+import com.patrykandpatryk.liftapp.core.mapper.BodyEntriesToChartEntriesMapper
 import com.patrykandpatryk.liftapp.core.ui.name.NameResolverImpl
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZeroValidator
+import com.patrykandpatryk.liftapp.domain.body.BodyEntry
 import com.patrykandpatryk.liftapp.domain.format.Formatter
+import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.NameResolver
 import com.patrykandpatryk.liftapp.domain.validation.Validator
+import com.patrykandpatryk.vico.core.entry.ChartEntry
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,6 +30,11 @@ internal interface CoreModule {
 
     @Binds
     fun bindFormatter(formatter: FormatterImpl): Formatter
+
+    @Binds
+    fun bindBodyEntriesToChartEntriesMapper(
+        mapper: BodyEntriesToChartEntriesMapper,
+    ): Mapper<List<BodyEntry>, List<List<ChartEntry>>>
 
     companion object {
 

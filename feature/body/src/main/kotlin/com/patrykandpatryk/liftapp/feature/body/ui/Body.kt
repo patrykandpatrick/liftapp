@@ -49,7 +49,7 @@ fun Body(
                 ListItem(
                     title = item.title,
                     iconPainter = painterResource(id = item.iconRes),
-                    onClick = { navigate(Routes.InsertBodyEntry.create(item.id)) },
+                    onClick = { navigate(Routes.BodyDetails.create(item.id)) },
                 )
             }
         }

@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
+import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 
 @Composable
 fun ListItem(
@@ -31,7 +32,10 @@ fun ListItem(
         modifier = modifier
             .fillMaxWidth()
             .thenIfNotNull(value = onClick) { clickable(onClick = it) }
-            .padding(all = 16.dp),
+            .padding(
+                vertical = LocalDimens.current.padding.itemVertical,
+                horizontal = LocalDimens.current.padding.contentHorizontal,
+            ),
     ) {
 
         if (iconPainter != null) {

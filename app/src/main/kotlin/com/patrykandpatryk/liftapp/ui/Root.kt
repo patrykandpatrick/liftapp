@@ -33,6 +33,7 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.about.ui.About
+import com.patrykandpatryk.liftapp.feature.bodydetails.ui.BodyDetails
 import com.patrykandpatryk.liftapp.feature.exercise.ui.Exercise
 import com.patrykandpatryk.liftapp.feature.main.ui.Home
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
@@ -90,6 +91,16 @@ fun Root(modifier: Modifier = Modifier) {
 
                 composable(route = Routes.OneRepMax.value) {
                     OneRepMax(parentNavController = navController)
+                }
+
+                composable(
+                    route = Routes.BodyDetails.value,
+                    arguments = Routes.BodyDetails.navArguments,
+                ) {
+                    BodyDetails(
+                        navigate = navController::navigate,
+                        navigateBack = navController::popBackStack,
+                    )
                 }
 
                 bottomSheet(

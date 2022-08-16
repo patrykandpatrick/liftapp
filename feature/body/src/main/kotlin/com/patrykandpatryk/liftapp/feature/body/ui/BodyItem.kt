@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.body.ui
 
 import androidx.annotation.DrawableRes
+import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 
 data class BodyItem(
     val id: Long,
@@ -10,7 +11,7 @@ data class BodyItem(
 ) {
 
     data class LatestRecord(
-        val date: String,
+        val formattedDate: FormattedDate,
         val value: String,
     )
 }

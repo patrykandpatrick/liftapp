@@ -1,9 +1,9 @@
 package com.patrykandpatryk.liftapp.domain.body
 
-import java.util.Calendar
+import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 
 class BodyEntry(
+    val id: Long,
     val values: BodyValues,
-    val type: BodyType,
-    val timestamp: Calendar,
+    val formattedDate: FormattedDate,
 )

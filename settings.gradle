@@ -34,3 +34,4 @@ include ":feature:exercises"
 include ":feature:exercise"
 include ":feature:newexercise"
 include ':feature:bodyentry'
+include ':feature:bodydetails'

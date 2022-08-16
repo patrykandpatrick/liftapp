@@ -17,7 +17,7 @@ class BodyItemMapper @Inject constructor() : Mapper<BodyWithLatestEntry, BodyIte
             .latestEntry
             ?.let { entry ->
                 BodyItem.LatestRecord(
-                    date = entry.timestamp.toString(), // FIXME
+                    formattedDate = entry.formattedDate,
                     value = entry.values.toString(), // FIXME
                 )
             },
