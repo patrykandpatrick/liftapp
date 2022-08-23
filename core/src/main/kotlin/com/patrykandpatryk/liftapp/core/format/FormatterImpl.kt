@@ -1,19 +1,18 @@
 package com.patrykandpatryk.liftapp.core.format
 
-import android.app.Application
-import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.text.StringProvider
+import kotlinx.coroutines.flow.first
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
 
 internal class FormatterImpl @Inject constructor(
-    private val application: Application,
+    private val stringProvider: StringProvider,
     private val preferences: PreferenceRepository,
 ) : Formatter {
 
@@ -59,23 +58,23 @@ internal class FormatterImpl @Inject constructor(
     private suspend fun Formatter.DateFormat.getSimpleDateFormat(): SimpleDateFormat = when (this) {
         Formatter.DateFormat.TimeShort -> getTimeShortPattern()
         Formatter.DateFormat.TimeLong -> getTimeLongPattern()
-        Formatter.DateFormat.DateShort -> application.getString(R.string.date_format_short)
-        Formatter.DateFormat.DateLong -> application.getString(R.string.date_format_long)
+        Formatter.DateFormat.DateShort -> stringProvider.dateFormatShort
+        Formatter.DateFormat.DateLong -> stringProvider.dateFormatLong
     }.let(::SimpleDateFormat)
 
     private suspend fun getTimeShortPattern(): String =
         if (is24H()) {
-            R.string.time_format_short_24h
+            stringProvider.timeFormatShort24h
         } else {
-            R.string.time_format_short_12h
-        }.let(application::getString)
+            stringProvider.timeFormatShort12h
+        }
 
     private suspend fun getTimeLongPattern(): String =
         if (is24H()) {
-            R.string.time_format_long_24h
+            stringProvider.timeFormatLong24h
         } else {
-            R.string.time_format_long_12h
-        }.let(application::getString)
+            stringProvider.timeFormatLong12h
+        }
 
     override fun formatNumber(
         number: Number,
