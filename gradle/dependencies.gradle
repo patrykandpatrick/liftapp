@@ -347,6 +347,9 @@ ext {
             [configuration: "implementation", dependency: storage.optoDomain],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "testImplementation", dependency: testing.junit],
+            [configuration: "testImplementation", dependency: testing.mockk],
+            [configuration: "testImplementation", dependency: project(":domain-testing")],
     ]
 
     dataModuleDependencies = [
@@ -357,16 +360,25 @@ ext {
             [configuration: "api", dependency: logging.timber],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "testImplementation", dependency: testing.junit],
+            [configuration: "testImplementation", dependency: testing.mockk],
+            [configuration: "testImplementation", dependency: project(":domain-testing")],
     ]
 
     domainModuleDependencies = [
             [configuration: "implementation", dependency: di.hiltCore],
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
-            [configuration: "implementation", dependency: storage.optoDomain],
+            [configuration: "api", dependency: storage.optoDomain],
             [configuration: "api", dependency: serialization.kotlinxSerialization],
             [configuration: "testImplementation", dependency: kotlin.test],
             [configuration: "kapt", dependency: di.hiltCompiler],
+    ]
+
+    domainTestModuleDependencies = [
+            [configuration: "api", dependency: project(":domain")],
+            [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
+            [configuration: "implementation", dependency: kotlin.stdLib],
     ]
 
     homeModuleDependencies = [
