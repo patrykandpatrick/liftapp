@@ -50,10 +50,6 @@ class TestPreferenceRepository : PreferenceRepository {
 
             override val key: Unit = Unit
 
-            override val parse: (String) -> T = { TODO() }
-
-            override val save: (T) -> String = { TODO() }
-
             override fun get(): Flow<T> = impl
 
             override suspend fun update(block: (T) -> T) {
