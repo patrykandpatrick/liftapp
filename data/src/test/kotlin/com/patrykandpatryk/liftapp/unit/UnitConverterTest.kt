@@ -173,12 +173,6 @@ class UnitConverterTest {
         override val key: Unit
             get() = TODO("Not yet implemented")
 
-        override val parse: (String) -> T
-            get() = TODO("Not yet implemented")
-
-        override val save: (T) -> String
-            get() = TODO("Not yet implemented")
-
         override fun get(): Flow<T> = get()
 
         override suspend fun set(value: T) {
