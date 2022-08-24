@@ -10,12 +10,12 @@ import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykmichalik.opto.core.PreferenceImpl
 import com.patrykmichalik.opto.core.PreferenceManager
 import com.patrykmichalik.opto.core.getFromPreferences
-import com.patrykmichalik.opto.domain.Preference
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 private const val KEY_MASS_UNIT = "mass_unit"
 private const val KEY_DISTANCE_UNIT = "distance_unit"
@@ -54,7 +54,7 @@ class PreferenceRepositoryImpl @Inject constructor(
 private inline fun <reified E : Enum<E>> PreferenceManager.enumPreference(
     key: String,
     defaultValue: E,
-): Preference<E, String, Preferences.Key<String>> = preference(
+): PreferenceImpl<E, String> = preference(
     stringPreferencesKey(key),
     defaultValue = defaultValue,
     parse = { E::class.java.getMethod("valueOf", String::class.java).invoke(null, it) as E },

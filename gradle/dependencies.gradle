@@ -359,6 +359,7 @@ ext {
             [configuration: "implementation", dependency: kotlin.stdLib],
             [configuration: "api", dependency: logging.timber],
             [configuration: "kapt", dependency: di.hiltCompiler],
+            [configuration: "implementation", dependency: storage.optoDomain],
             [configuration: "testImplementation", dependency: kotlin.test],
             [configuration: "testImplementation", dependency: testing.junit],
             [configuration: "testImplementation", dependency: testing.mockk],
