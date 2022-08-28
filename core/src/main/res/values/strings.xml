@@ -73,7 +73,7 @@
     <string name="picker_date_title">Select date</string>
     <string name="picker_date_action_title">Chosen date</string>
     <string name="picker_date_input_title">Date</string>
-    <string name="picker_date_input_error">Incorrect format.\nUse the %1$s format,\ne.g. %2$s</string>
+    <string name="picker_date_input_error">Incorrect format. Use the %1$s format—e.g., %2$s.</string>
     <string name="picker_date_input_date_format">d.M.yy</string>
     <string name="picker_date_output_date_format">d MMM yyyy</string>
     <string name="picker_date_example_date_format">dd.MM.yyyy</string>

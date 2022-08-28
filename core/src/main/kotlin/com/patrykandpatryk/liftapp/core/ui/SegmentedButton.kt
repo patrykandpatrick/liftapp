@@ -58,9 +58,8 @@ fun SegmentedButtonContainer(
                 shape = shape,
             ),
         verticalAlignment = Alignment.CenterVertically,
-    ) {
-        buttons()
-    }
+        content = buttons,
+    )
 }
 
 @Composable
@@ -96,9 +95,8 @@ fun VerticalSegmentedButtonContainer(
                 shape = shape,
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        buttons()
-    }
+        content = buttons,
+    )
 }
 
 @Composable
@@ -119,9 +117,7 @@ fun <T> VerticalSegmentedButtonContainer(
 }
 
 @Composable
-fun VerticalDivider(
-    modifier: Modifier = Modifier,
-) {
+fun VerticalDivider(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.outline)
@@ -215,8 +211,7 @@ private fun SegmentedButton(
 
         if (iconPainter != null) {
             Icon(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
+                modifier = Modifier.align(Alignment.CenterVertically),
                 painter = iconPainter,
                 contentDescription = null,
                 tint = tint,
@@ -224,8 +219,7 @@ private fun SegmentedButton(
         }
 
         Text(
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
+            modifier = Modifier.align(Alignment.CenterVertically),
             text = text,
             color = tint,
             style = MaterialTheme.typography.labelLarge,
@@ -294,8 +288,7 @@ fun PreviewVerticalSegmentedButtonWithNoIcons() {
             var selectedIndex by remember { mutableStateOf(1) }
 
             VerticalSegmentedButtonContainer(
-                modifier = Modifier
-                    .padding(16.dp),
+                modifier = Modifier.padding(16.dp),
                 items = listOf("First Item", "Second Item"),
             ) { index, text ->
                 SegmentedButton(

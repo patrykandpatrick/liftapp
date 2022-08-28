@@ -38,13 +38,11 @@ internal class FormattedDateImpl(
 
         other as FormattedDateImpl
 
-        if (dateShort != other.dateShort) return false
-        if (dateLong != other.dateLong) return false
-        if (timeShort != other.timeShort) return false
-        if (timeLong != other.timeLong) return false
-        if (millis != other.millis) return false
-
-        return true
+        return dateShort == other.dateShort &&
+            dateLong == other.dateLong &&
+            timeShort == other.timeShort &&
+            timeLong == other.timeLong &&
+            millis == other.millis
     }
 
     override fun hashCode(): Int {

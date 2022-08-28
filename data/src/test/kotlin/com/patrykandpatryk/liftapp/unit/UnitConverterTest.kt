@@ -18,7 +18,7 @@ class UnitConverterTest {
         4.2f,
         9.99f,
         69f,
-        123.45f
+        123.45f,
     )
 
     private val preferenceRepository = TestPreferenceRepository()

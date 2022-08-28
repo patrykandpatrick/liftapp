@@ -163,7 +163,7 @@ fun NumberInput(
         AnimatedVisibility(visible = isError && (errorMessage != null || supportingText != null)) {
 
             Text(
-                text = errorMessage ?: supportingText ?: "",
+                text = errorMessage ?: supportingText.orEmpty(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.run { if (errorMessage != null) error else onSurface },
                 modifier = Modifier.padding(top = 4.dp, start = 16.dp),

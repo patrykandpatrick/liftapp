@@ -82,8 +82,8 @@ class FormatterImpl @Inject constructor(
         postfix: String?,
     ): String = numbers.joinToString(
         separator = separator,
-        prefix = prefix ?: "",
-        postfix = postfix ?: "",
+        prefix = prefix.orEmpty(),
+        postfix = postfix.orEmpty(),
     ) { number ->
         when (format) {
             Formatter.NumberFormat.Decimal -> decimalFormat.format(number)

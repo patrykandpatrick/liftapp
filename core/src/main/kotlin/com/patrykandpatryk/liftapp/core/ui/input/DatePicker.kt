@@ -81,11 +81,10 @@ fun DatePicker(
                 ) {
 
                     DatePickerContent(
-                        modifier = Modifier
-                            .padding(
-                                horizontal = LocalDimens.current.padding.contentHorizontal,
-                                vertical = LocalDimens.current.padding.contentVertical,
-                            ),
+                        modifier = Modifier.padding(
+                            horizontal = LocalDimens.current.padding.contentHorizontal,
+                            vertical = LocalDimens.current.padding.contentVertical,
+                        ),
                         state = state,
                         onPositiveButtonClick = onClick@{
                             val calendar = state.resolvedDate ?: return@onClick
@@ -202,7 +201,7 @@ class DatePickerState(
 
     var isShowing: Boolean by mutableStateOf(isShowing)
 
-    var input: String by mutableStateOf(millis?.let(exampleDateFormat::format) ?: "")
+    var input: String by mutableStateOf(millis?.let(exampleDateFormat::format).orEmpty())
 
     fun show() {
         isShowing = true

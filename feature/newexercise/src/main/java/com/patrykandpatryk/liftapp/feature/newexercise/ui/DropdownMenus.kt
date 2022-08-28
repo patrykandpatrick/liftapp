@@ -42,7 +42,7 @@ fun <T> DropdownMenu(
         selectedItems = listOf(selectedItem),
         items = items,
         getItemText = getItemText,
-        getItemsText = { collection -> collection.firstOrNull()?.let { getItemText(it) } ?: "" },
+        getItemsText = { collection -> collection.firstOrNull()?.let { getItemText(it) }.orEmpty() },
         label = label,
         onClick = onClick,
         modifier = modifier,

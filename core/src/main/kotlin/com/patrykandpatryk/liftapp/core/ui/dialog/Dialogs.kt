@@ -22,13 +22,11 @@ fun DialogButtons(
 ) {
 
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement
-            .spacedBy(
-                space = LocalDimens.current.padding.itemHorizontalSmall,
-                alignment = Alignment.End,
-            ),
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(
+            space = LocalDimens.current.padding.itemHorizontalSmall,
+            alignment = Alignment.End,
+        ),
     ) {
 
         TextButton(onClick = onNegativeButtonClick) {

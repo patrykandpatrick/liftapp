@@ -156,12 +156,8 @@ fun NavGraphBuilder.bottomSheet(
             },
         ).apply {
             this.route = route
-            arguments.forEach { (argumentName, argument) ->
-                addArgument(argumentName, argument)
-            }
-            deepLinks.forEach { deepLink ->
-                addDeepLink(deepLink)
-            }
+            arguments.forEach { (argumentName, argument) -> addArgument(argumentName, argument) }
+            deepLinks.forEach(::addDeepLink)
         },
     )
 }

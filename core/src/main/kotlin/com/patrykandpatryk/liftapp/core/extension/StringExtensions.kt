@@ -41,4 +41,4 @@ inline fun <T> Collection<T>.joinToPrettyString(toString: @Composable (T) -> Str
 )
 
 val String?.nonBlankOrNull: String?
-    get() = this?.takeIf { it.isNotBlank() }
+    get() = this?.takeIf(String::isNotBlank)

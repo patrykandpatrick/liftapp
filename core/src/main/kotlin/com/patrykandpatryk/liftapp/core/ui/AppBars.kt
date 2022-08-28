@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.vico.core.extension.orZero
 
 @Composable
 fun TopAppBar(
@@ -39,7 +40,7 @@ fun TopAppBar(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val topAppBarColors = TopAppBarDefaults.largeTopAppBarColors()
-    val scrollFraction = scrollBehavior?.state?.collapsedFraction ?: 0f
+    val scrollFraction = scrollBehavior?.state?.collapsedFraction.orZero
     val containerColor by topAppBarColors.containerColor(scrollFraction)
 
     Column {
@@ -111,8 +112,7 @@ fun DialogTopBar(
         ) {
 
             Icon(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
+                modifier = Modifier.align(Alignment.CenterVertically),
                 imageVector = Icons.Outlined.Close,
                 tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = stringResource(id = R.string.action_close),
@@ -127,7 +127,7 @@ fun PreviewDialogTopBar() {
     Surface {
         DialogTopBar(
             title = "Title",
-            onCloseClick = { },
+            onCloseClick = {},
         )
     }
 }

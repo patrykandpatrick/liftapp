@@ -56,7 +56,7 @@ internal interface CoreModule {
         @Provides
         fun provideCoroutineExceptionHandler(): CoroutineExceptionHandler =
             CoroutineExceptionHandler { coroutineContext, throwable ->
-                Timber.e(throwable, "Uncaught exception in $coroutineContext")
+                Timber.e(throwable, "Uncaught exception in $coroutineContext.")
             }
     }
 }
