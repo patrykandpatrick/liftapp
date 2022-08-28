@@ -77,7 +77,9 @@ fun TimePicker(
                         .widthIn(
                             min = LocalDimens.current.dialog.minWidth,
                             max = LocalDimens.current.dialog.maxWidth,
-                        ).width(IntrinsicSize.Min),
+                        )
+                        .width(IntrinsicSize.Min)
+                        .padding(all = LocalDimens.current.dialog.paddingLarge),
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = LocalDimens.current.dialog.tonalElevation,
                     shape = MaterialTheme.shapes.extraLarge,

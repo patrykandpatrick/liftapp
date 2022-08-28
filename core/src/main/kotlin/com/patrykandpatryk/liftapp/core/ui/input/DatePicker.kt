@@ -42,13 +42,13 @@ import com.patrykandpatryk.liftapp.domain.date.isValid
 import com.patrykandpatryk.liftapp.domain.date.month
 import com.patrykandpatryk.liftapp.domain.date.safeParseToCalendar
 import com.patrykandpatryk.liftapp.domain.date.year
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun DatePicker(
@@ -73,7 +73,8 @@ fun DatePicker(
                             min = LocalDimens.current.dialog.minWidth,
                             max = LocalDimens.current.dialog.maxWidth,
                         )
-                        .width(IntrinsicSize.Min),
+                        .width(IntrinsicSize.Min)
+                        .padding(all = LocalDimens.current.dialog.paddingLarge),
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = LocalDimens.current.dialog.tonalElevation,
                     shape = MaterialTheme.shapes.extraLarge,
