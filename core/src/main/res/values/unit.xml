@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unit_kilometer" translatable="false">km</string>
+    <string name="unit_meter" translatable="false">m</string>
+    <string name="unit_centimeter" translatable="false">cm</string>
+    <string name="unit_mile" translatable="false">mi</string>
+    <string name="unit_foot" translatable="false">ft</string>
+    <string name="unit_inch" translatable="false">in</string>
+    <string name="unit_kilogram" translatable="false">kg</string>
+    <string name="unit_pound" translatable="false">lb</string>
+    <string name="unit_percentage" translatable="false">%</string>
+</resources>

@@ -5,8 +5,7 @@ import androidx.annotation.StringRes
 import com.patrykandpatryk.liftapp.core.R.string
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
-import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import javax.inject.Inject
 
 class StringProviderImpl @Inject constructor(
@@ -31,11 +30,9 @@ class StringProviderImpl @Inject constructor(
     override val timeFormatLong12h: String
         get() = string(string.time_format_long_12h)
 
-    override fun getDisplayUnit(unit: MassUnit): String =
+    override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
         string(unit.stringResourceId)
-
-    override fun getDisplayUnit(unit: DistanceUnit): String =
-        string(unit.stringResourceId)
+            .let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
 
     private fun string(@StringRes id: Int): String =
         application.getString(id)

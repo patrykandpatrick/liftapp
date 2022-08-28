@@ -3,8 +3,10 @@ package com.patrykandpatryk.liftapp.testing
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykmichalik.opto.domain.Preference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +18,13 @@ class TestPreferenceRepository : PreferenceRepository {
 
     override val massUnit: Preference<MassUnit, String, *> = preference(MassUnit.Kilograms)
 
-    override val distanceUnit: Preference<DistanceUnit, String, *> = preference(DistanceUnit.Kilometers)
+    override val longDistanceUnit: Preference<LongDistanceUnit, String, *> = preference(LongDistanceUnit.Kilometer)
+
+    override val mediumDistanceUnit: Flow<MediumDistanceUnit> = longDistanceUnit.get()
+        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingMediumDistanceUnit() }
+
+    override val shortDistanceUnit: Flow<ShortDistanceUnit> = longDistanceUnit.get()
+        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingShortDistanceUnit() }
 
     override val hourFormat: Preference<HourFormat, String, *> = preference(HourFormat.H24)
 
@@ -31,12 +39,14 @@ class TestPreferenceRepository : PreferenceRepository {
 
     override val allPreferences: Flow<AllPreferences> = combine(
         massUnit.get(),
-        distanceUnit.get(),
+        longDistanceUnit.get(),
         hourFormat.get()
-    ) { massUnit, distanceUnit, hourFormat ->
+    ) { massUnit, longDistanceUnit, hourFormat ->
         AllPreferences(
             massUnit = massUnit,
-            distanceUnit = distanceUnit,
+            longDistanceUnit = longDistanceUnit,
+            mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
+            shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
             hourFormat = hourFormat,
         )
     }

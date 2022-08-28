@@ -12,7 +12,13 @@ interface Formatter {
 
     suspend fun is24H(): Boolean
 
-    fun formatNumber(number: Number, format: NumberFormat): String
+    fun formatNumber(
+        vararg numbers: Number,
+        format: NumberFormat,
+        separator: String = " | ",
+        prefix: String? = null,
+        postfix: String? = null,
+    ): String
 
     fun parseFloatOrZero(value: String): Float
 

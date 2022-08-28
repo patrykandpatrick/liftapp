@@ -1,16 +1,13 @@
-package com.patrykandpatryk.liftapp.core.format
+package com.patrykandpatryk.liftapp.domain.format
 
-import androidx.compose.runtime.Stable
 import com.patrykandpatryk.liftapp.domain.date.day
 import com.patrykandpatryk.liftapp.domain.date.hour
 import com.patrykandpatryk.liftapp.domain.date.minute
 import com.patrykandpatryk.liftapp.domain.date.month
 import com.patrykandpatryk.liftapp.domain.date.second
 import com.patrykandpatryk.liftapp.domain.date.year
-import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import java.util.Calendar
 
-@Stable
 internal class FormattedDateImpl(
     override val dateShort: String,
     override val dateLong: String,

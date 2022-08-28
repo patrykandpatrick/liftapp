@@ -1,8 +1,13 @@
 package com.patrykandpatryk.liftapp.testing
 
+import com.patrykandpatryk.liftapp.domain.extension.getTypeErrorMessage
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.PercentageUnit
+import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 
 object TestStringProvider : StringProvider {
 
@@ -13,13 +18,16 @@ object TestStringProvider : StringProvider {
     override val timeFormatLong24h: String = "HH:mm:ss"
     override val timeFormatLong12h: String = "hh:mm:ss a"
 
-    override fun getDisplayUnit(unit: MassUnit): String = when (unit) {
+    override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String = when (unit) {
         MassUnit.Kilograms -> "kg"
         MassUnit.Pounds -> "lb"
-    }
-
-    override fun getDisplayUnit(unit: DistanceUnit): String = when (unit) {
-        DistanceUnit.Kilometers -> "km"
-        DistanceUnit.Miles -> "mi"
-    }
+        LongDistanceUnit.Kilometer -> "km"
+        LongDistanceUnit.Mile -> "mi"
+        MediumDistanceUnit.Meter -> "m"
+        MediumDistanceUnit.Foot -> "ft"
+        ShortDistanceUnit.Centimeter -> "cm"
+        ShortDistanceUnit.Inch -> "in"
+        PercentageUnit -> "%"
+        else -> getTypeErrorMessage(unit = unit)
+    }.let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
 }

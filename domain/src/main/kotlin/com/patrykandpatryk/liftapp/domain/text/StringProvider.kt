@@ -1,7 +1,6 @@
 package com.patrykandpatryk.liftapp.domain.text
 
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
-import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 
 interface StringProvider {
 
@@ -12,7 +11,8 @@ interface StringProvider {
     val timeFormatLong24h: String
     val timeFormatLong12h: String
 
-    fun getDisplayUnit(unit: MassUnit): String
-
-    fun getDisplayUnit(unit: DistanceUnit): String
+    fun getDisplayUnit(
+        unit: ValueUnit,
+        respectLeadingSpaceSetting: Boolean = true,
+    ): String
 }

@@ -18,7 +18,7 @@ import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
 
@@ -54,8 +54,8 @@ fun Settings(
             item {
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.distance),
-                    selectedValue = allPreferences?.distanceUnit,
-                    values = DistanceUnit.values(),
+                    selectedValue = allPreferences?.longDistanceUnit,
+                    values = LongDistanceUnit.values(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setDistanceUnit,
                     iconPainter = painterResource(id = R.drawable.ic_distance),

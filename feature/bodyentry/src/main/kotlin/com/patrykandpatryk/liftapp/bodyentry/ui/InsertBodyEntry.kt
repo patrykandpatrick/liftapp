@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
+import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.state.onClick
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -43,6 +44,7 @@ import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants.Input.INCREMENT_LONG
 import com.patrykandpatryk.liftapp.domain.Constants.Input.INCREMENT_SHORT
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
+import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 
 @Composable
@@ -184,6 +186,7 @@ private fun NumberInput(
             actionHandler(Intent.SetValue(index = index, value = value))
         },
         hint = stringResource(id = R.string.value),
+        suffix = stringResource(id = screenState.unit.stringResourceId),
         onMinusClick = { long ->
             actionHandler(
                 Intent.IncrementValue(
@@ -236,6 +239,7 @@ fun PreviewInsertBodyEntry() {
                         values = List(size = 1) { Validatable.Valid("65") },
                         formattedDate = FormattedDate.Empty,
                         is24H = false,
+                        unit = MassUnit.Kilograms,
                     ),
                     actionHandler = {},
                     onCloseClick = {},

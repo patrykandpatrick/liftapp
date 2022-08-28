@@ -8,8 +8,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykmichalik.opto.core.PreferenceImpl
 import com.patrykmichalik.opto.core.PreferenceManager
 import com.patrykmichalik.opto.core.getFromPreferences
@@ -28,7 +30,13 @@ class PreferenceRepositoryImpl @Inject constructor(
 
     override val massUnit = enumPreference(KEY_MASS_UNIT, MassUnit.Kilograms)
 
-    override val distanceUnit = enumPreference(KEY_DISTANCE_UNIT, DistanceUnit.Kilometers)
+    override val longDistanceUnit = enumPreference(KEY_DISTANCE_UNIT, LongDistanceUnit.Kilometer)
+
+    override val mediumDistanceUnit: Flow<MediumDistanceUnit> = longDistanceUnit.get()
+        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingMediumDistanceUnit() }
+
+    override val shortDistanceUnit: Flow<ShortDistanceUnit> = longDistanceUnit.get()
+        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingShortDistanceUnit() }
 
     override val hourFormat = enumPreference(KEY_HOUR_FORMAT, HourFormat.Auto)
 
@@ -43,9 +51,14 @@ class PreferenceRepositoryImpl @Inject constructor(
             }
 
     override val allPreferences = preferencesDataStore.data.map { preferences ->
+
+        val longDistanceUnit = longDistanceUnit.getFromPreferences(preferences = preferences)
+
         AllPreferences(
             massUnit = massUnit.getFromPreferences(preferences = preferences),
-            distanceUnit = distanceUnit.getFromPreferences(preferences = preferences),
+            longDistanceUnit = longDistanceUnit,
+            mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
+            shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
             hourFormat = hourFormat.getFromPreferences(preferences = preferences),
         )
     }

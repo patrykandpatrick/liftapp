@@ -1,7 +1,5 @@
-package com.patrykandpatryk.liftapp.core.format
+package com.patrykandpatryk.liftapp.domain.format
 
-import com.patrykandpatryk.liftapp.domain.format.FormattedDate
-import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import kotlinx.coroutines.flow.first
@@ -11,7 +9,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import javax.inject.Inject
 
-internal class FormatterImpl @Inject constructor(
+class FormatterImpl @Inject constructor(
     private val stringProvider: StringProvider,
     private val preferences: PreferenceRepository,
 ) : Formatter {
@@ -77,11 +75,20 @@ internal class FormatterImpl @Inject constructor(
         }
 
     override fun formatNumber(
-        number: Number,
+        vararg numbers: Number,
         format: Formatter.NumberFormat,
-    ): String = when (format) {
-        Formatter.NumberFormat.Decimal -> decimalFormat.format(number)
-        Formatter.NumberFormat.Integer -> integerFormat.format(number)
+        separator: String,
+        prefix: String?,
+        postfix: String?,
+    ): String = numbers.joinToString(
+        separator = separator,
+        prefix = prefix ?: "",
+        postfix = postfix ?: "",
+    ) { number ->
+        when (format) {
+            Formatter.NumberFormat.Decimal -> decimalFormat.format(number)
+            Formatter.NumberFormat.Integer -> integerFormat.format(number)
+        }
     }
 
     override fun parseFloatOrZero(value: String): Float =

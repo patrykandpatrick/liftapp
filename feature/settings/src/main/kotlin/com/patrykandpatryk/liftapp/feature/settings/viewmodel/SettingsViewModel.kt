@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,9 +23,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setDistanceUnit(value: DistanceUnit) {
+    fun setDistanceUnit(value: LongDistanceUnit) {
         viewModelScope.launch {
-            preferenceRepository.distanceUnit.set(value = value)
+            preferenceRepository.longDistanceUnit.set(value = value)
         }
     }
 

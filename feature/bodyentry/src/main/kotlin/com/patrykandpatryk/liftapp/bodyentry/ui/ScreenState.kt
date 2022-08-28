@@ -3,6 +3,8 @@ package com.patrykandpatryk.liftapp.bodyentry.ui
 import android.os.Parcelable
 import androidx.compose.runtime.Stable
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
+import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -18,6 +20,8 @@ internal sealed class ScreenState : Parcelable {
     abstract val is24H: Boolean
 
     abstract val formattedDate: FormattedDate
+
+    abstract val unit: ValueUnit
 
     abstract fun mutate(
         name: String = this.name,
@@ -45,6 +49,9 @@ internal sealed class ScreenState : Parcelable {
         @IgnoredOnParcel
         override val formattedDate: FormattedDate = FormattedDate.Empty
 
+        @IgnoredOnParcel
+        override val unit: ValueUnit = MassUnit.Kilograms
+
         override fun mutate(
             name: String,
             values: List<Validatable<String>>,
@@ -59,6 +66,7 @@ internal sealed class ScreenState : Parcelable {
         override val name: String,
         override val values: List<Validatable<String>>,
         override val formattedDate: FormattedDate,
+        override val unit: ValueUnit,
         override val is24H: Boolean = false,
         override val showErrors: Boolean = false,
     ) : ScreenState() {
@@ -83,6 +91,7 @@ internal sealed class ScreenState : Parcelable {
         override val name: String,
         override val values: List<Validatable<String>>,
         override val formattedDate: FormattedDate,
+        override val unit: ValueUnit,
         override val is24H: Boolean,
         override val showErrors: Boolean = false,
     ) : ScreenState() {

@@ -10,13 +10,10 @@ import com.patrykandpatryk.liftapp.domain.body.BodyWithLatestEntry
 import com.patrykandpatryk.liftapp.domain.date.millisToCalendar
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class BodyRepositoryImpl @Inject constructor(
     private val dao: BodyDao,

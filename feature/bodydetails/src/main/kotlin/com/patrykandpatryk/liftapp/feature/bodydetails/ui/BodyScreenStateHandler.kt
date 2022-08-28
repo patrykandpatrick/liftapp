@@ -7,9 +7,9 @@ import com.patrykandpatryk.liftapp.domain.body.BodyValues
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
 import com.patrykandpatryk.liftapp.feature.bodydetails.di.BodyId
 import com.patrykandpatryk.vico.core.entry.ChartEntry
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -19,10 +19,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 class BodyScreenStateHandler @Inject constructor(
     @BodyId bodyId: Long,
     repository: BodyRepository,
+    private val unitConverter: UnitConverter,
     exceptionHandler: CoroutineExceptionHandler,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
     private val chartEntriesMapper: Mapper<List<BodyEntry>, List<List<ChartEntry>>>,
@@ -61,9 +63,16 @@ class BodyScreenStateHandler @Inject constructor(
         )
     }
 
-    private fun BodyValues.toPrettyValue(): String = when (this) {
-        is BodyValues.Double -> "$left | $right" // TODO
-        is BodyValues.Single -> value.toString() // TODO
+    private suspend fun BodyValues.toPrettyValue(): String = when (this) {
+        is BodyValues.Double -> unitConverter.convertToPreferredUnitAndFormat(
+            from = unit,
+            left,
+            right,
+        )
+        is BodyValues.Single -> unitConverter.convertToPreferredUnitAndFormat(
+            from = unit,
+            value,
+        )
     }
 
     override fun handleIntent(intent: Unit) = Unit
