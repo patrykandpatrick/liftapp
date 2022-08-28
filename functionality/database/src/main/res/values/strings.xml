@@ -102,4 +102,14 @@
     <string name="ex_wipers">Wiper</string>
     <string name="ex_z_curls">Zottman Curl</string>
 
+    <string name="body_body_weight">Weight</string>
+    <string name="body_fat_percentage">Fat Percentage</string>
+    <string name="body_muscle_percentage">Muscle Percentage</string>
+    <string name="body_forearm_circumference">Forearm Circumference</string>
+    <string name="body_bicep_circumference">Bicep Circumference</string>
+    <string name="body_chest_circumference">Chest Circumference</string>
+    <string name="body_ab_circumference">Ab Circumference</string>
+    <string name="body_glute_circumference">Glute Circumference</string>
+    <string name="body_thigh_circumference">Thigh Circumference</string>
+    <string name="body_calf_circumference">Calf Circumference</string>
 </resources>

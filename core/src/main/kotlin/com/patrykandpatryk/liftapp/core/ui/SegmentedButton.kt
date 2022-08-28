@@ -1,11 +1,14 @@
 package com.patrykandpatryk.liftapp.core.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -15,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,30 +45,31 @@ import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
 @Composable
 fun SegmentedButtonContainer(
     modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
     buttons: @Composable RowScope.() -> Unit,
 ) {
     Row(
         modifier = modifier
             .height(IntrinsicSize.Max)
-            .clip(PillShape)
+            .clip(shape)
             .border(
                 width = MaterialTheme.dimens.strokeWidth,
                 color = MaterialTheme.colorScheme.outline,
-                shape = PillShape,
+                shape = shape,
             ),
         verticalAlignment = Alignment.CenterVertically,
-    ) {
-        buttons()
-    }
+        content = buttons,
+    )
 }
 
 @Composable
 fun <T> SegmentedButtonContainer(
     items: List<T>,
     modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
     getItem: @Composable RowScope.(Int, T) -> Unit,
 ) {
-    SegmentedButtonContainer(modifier = modifier) {
+    SegmentedButtonContainer(modifier = modifier, shape = shape) {
         items.forEachIndexed { index, item ->
             getItem(index, item)
             if (index < items.lastIndex) {
@@ -74,9 +80,44 @@ fun <T> SegmentedButtonContainer(
 }
 
 @Composable
-fun VerticalDivider(
+fun VerticalSegmentedButtonContainer(
     modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
+    buttons: @Composable ColumnScope.() -> Unit,
 ) {
+    Column(
+        modifier = modifier
+            .width(IntrinsicSize.Max)
+            .clip(shape)
+            .border(
+                width = MaterialTheme.dimens.strokeWidth,
+                color = MaterialTheme.colorScheme.outline,
+                shape = shape,
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = buttons,
+    )
+}
+
+@Composable
+fun <T> VerticalSegmentedButtonContainer(
+    items: List<T>,
+    modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
+    getItem: @Composable ColumnScope.(Int, T) -> Unit,
+) {
+    VerticalSegmentedButtonContainer(modifier = modifier, shape = shape) {
+        items.forEachIndexed { index, item ->
+            getItem(index, item)
+            if (index < items.lastIndex) {
+                Divider()
+            }
+        }
+    }
+}
+
+@Composable
+fun VerticalDivider(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.outline)
@@ -92,12 +133,53 @@ fun RowScope.SegmentedButton(
     selected: Boolean,
     modifier: Modifier = Modifier,
     icon: Painter? = null,
+    showIcon: Boolean = true,
+) {
+    com.patrykandpatryk.liftapp.core.ui.SegmentedButton(
+        text = text,
+        onClick = onClick,
+        selected = selected,
+        icon = icon,
+        modifier = modifier
+            .fillMaxHeight()
+            .weight(weight = 1f),
+        showIcon = showIcon,
+    )
+}
+
+@Composable
+fun ColumnScope.SegmentedButton(
+    text: String,
+    onClick: () -> Unit,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    icon: Painter? = null,
+    showIcon: Boolean = icon != null,
+) {
+    com.patrykandpatryk.liftapp.core.ui.SegmentedButton(
+        text = text,
+        onClick = onClick,
+        selected = selected,
+        icon = icon,
+        modifier = modifier
+            .fillMaxWidth()
+            .weight(weight = 1f, fill = false),
+        showIcon = showIcon,
+    )
+}
+
+@Composable
+private fun SegmentedButton(
+    text: String,
+    onClick: () -> Unit,
+    selected: Boolean,
+    showIcon: Boolean,
+    modifier: Modifier = Modifier,
+    icon: Painter? = null,
 ) {
     Row(
         modifier = modifier
             .background(color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
-            .weight(weight = 1f)
-            .fillMaxHeight()
             .clickable(
                 onClick = onClick,
                 interactionSource = remember { MutableInteractionSource() },
@@ -119,13 +201,17 @@ fun RowScope.SegmentedButton(
         ),
     ) {
 
-        val iconPainter = if (selected) painterResource(id = R.drawable.ic_check) else icon
+        val iconPainter = when {
+            showIcon.not() -> null
+            selected -> painterResource(id = R.drawable.ic_check)
+            else -> icon
+        }
+
         val tint = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
 
         if (iconPainter != null) {
             Icon(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
+                modifier = Modifier.align(Alignment.CenterVertically),
                 painter = iconPainter,
                 contentDescription = null,
                 tint = tint,
@@ -133,8 +219,7 @@ fun RowScope.SegmentedButton(
         }
 
         Text(
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
+            modifier = Modifier.align(Alignment.CenterVertically),
             text = text,
             color = tint,
             style = MaterialTheme.typography.labelLarge,
@@ -142,10 +227,11 @@ fun RowScope.SegmentedButton(
     }
 }
 
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview
 @Composable
 fun PreviewSegmentedButtonWithIcons() {
-    LiftAppTheme(darkTheme = false) {
+    LiftAppTheme {
         Surface {
 
             var selectedIndex by remember { mutableStateOf(1) }
@@ -167,10 +253,11 @@ fun PreviewSegmentedButtonWithIcons() {
     }
 }
 
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview
 @Composable
 fun PreviewSegmentedButtonWithNoIcons() {
-    LiftAppTheme(darkTheme = true) {
+    LiftAppTheme {
         Surface {
 
             var selectedIndex by remember { mutableStateOf(1) }
@@ -179,6 +266,29 @@ fun PreviewSegmentedButtonWithNoIcons() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+                items = listOf("First Item", "Second Item"),
+            ) { index, text ->
+                SegmentedButton(
+                    text = text,
+                    onClick = { selectedIndex = index },
+                    selected = selectedIndex == index,
+                )
+            }
+        }
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
+@Composable
+fun PreviewVerticalSegmentedButtonWithNoIcons() {
+    LiftAppTheme {
+        Surface {
+
+            var selectedIndex by remember { mutableStateOf(1) }
+
+            VerticalSegmentedButtonContainer(
+                modifier = Modifier.padding(16.dp),
                 items = listOf("First Item", "Second Item"),
             ) { index, text ->
                 SegmentedButton(

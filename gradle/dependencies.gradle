@@ -81,16 +81,6 @@ ext {
     ]
 
     def navigation = [
-            destinations   : [
-                    group  : "io.github.raamcosta.compose-destinations",
-                    name   : "animations-core",
-                    version: versions.destinations,
-            ],
-            destinationsKsp: [
-                    group  : "io.github.raamcosta.compose-destinations",
-                    name   : "ksp",
-                    version: versions.destinations,
-            ],
             hilt           : [
                     group  : "androidx.hilt",
                     name   : "hilt-navigation-compose",
@@ -296,6 +286,8 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:onerepmax")],
                 [configuration: "implementation", dependency: project(":feature:newexercise")],
                 [configuration: "implementation", dependency: project(":feature:exercise")],
+                [configuration: "implementation", dependency: project(":feature:bodyentry")],
+                [configuration: "implementation", dependency: project(":feature:bodydetails")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
@@ -355,6 +347,9 @@ ext {
             [configuration: "implementation", dependency: storage.optoDomain],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "testImplementation", dependency: testing.junit],
+            [configuration: "testImplementation", dependency: testing.mockk],
+            [configuration: "testImplementation", dependency: project(":domain-testing")],
     ]
 
     dataModuleDependencies = [
@@ -362,19 +357,29 @@ ext {
             [configuration: "implementation", dependency: di.hilt],
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
+            [configuration: "implementation", dependency: storage.optoDomain],
             [configuration: "api", dependency: logging.timber],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "testImplementation", dependency: testing.junit],
+            [configuration: "testImplementation", dependency: testing.mockk],
+            [configuration: "testImplementation", dependency: project(":domain-testing")],
     ]
 
     domainModuleDependencies = [
             [configuration: "implementation", dependency: di.hiltCore],
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
-            [configuration: "implementation", dependency: storage.optoDomain],
+            [configuration: "api", dependency: storage.optoDomain],
             [configuration: "api", dependency: serialization.kotlinxSerialization],
             [configuration: "testImplementation", dependency: kotlin.test],
             [configuration: "kapt", dependency: di.hiltCompiler],
+    ]
+
+    domainTestModuleDependencies = [
+            [configuration: "api", dependency: project(":domain")],
+            [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
+            [configuration: "implementation", dependency: kotlin.stdLib],
     ]
 
     homeModuleDependencies = [

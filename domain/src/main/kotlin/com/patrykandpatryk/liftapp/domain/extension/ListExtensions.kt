@@ -6,3 +6,16 @@ fun <T> Collection<T>.toggle(item: T): List<T> =
     } else {
         plus(item)
     }
+
+operator fun <T> List<T>.set(index: Int, value: T): List<T> =
+    mapIndexed { i, t ->
+        if (i == index) value else t
+    }
+
+fun <T> MutableList<T>.getOrPut(index: Int, put: () -> T): T =
+    if (index < size) get(index)
+    else {
+        val newValue = put()
+        add(newValue)
+        newValue
+    }

@@ -2,7 +2,6 @@ package com.patrykandpatryk.liftapp.feature.settings.ui
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,12 +17,12 @@ import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
-import com.patrykandpatryk.liftapp.domain.unit.DistanceUnit
+import com.patrykandpatryk.liftapp.domain.date.HourFormat
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun Settings(
     parentNavController: NavController,
     modifier: Modifier = Modifier,
@@ -47,19 +46,22 @@ fun Settings(
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxHeight(),
         ) {
+
             item {
                 ListSectionTitle(title = stringResource(id = R.string.units))
             }
+
             item {
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.distance),
-                    selectedValue = allPreferences?.distanceUnit,
-                    values = DistanceUnit.values(),
+                    selectedValue = allPreferences?.longDistanceUnit,
+                    values = LongDistanceUnit.values(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setDistanceUnit,
                     iconPainter = painterResource(id = R.drawable.ic_distance),
                 )
             }
+
             item {
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.mass),
@@ -68,6 +70,21 @@ fun Settings(
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setMassUnit,
                     iconPainter = painterResource(id = R.drawable.ic_weight),
+                )
+            }
+
+            item {
+                ListSectionTitle(title = stringResource(id = R.string.settings_time_and_date))
+            }
+
+            item {
+                EnumPreferenceListItem(
+                    title = stringResource(id = R.string.settings_hour_format),
+                    selectedValue = allPreferences?.hourFormat,
+                    values = HourFormat.values(),
+                    iconPainter = painterResource(id = R.drawable.ic_time),
+                    getValueTitle = { stringResource(id = it.stringResourceId) },
+                    onValueChange = viewModel::setHourFormat,
                 )
             }
         }

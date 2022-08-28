@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.patrykandpatryk.liftapp.feature.newexercise.ui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -24,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
@@ -76,7 +72,6 @@ fun NewExercise(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NewExercise(
     modifier: Modifier = Modifier,
@@ -174,6 +169,7 @@ private fun ColumnScope.Content(
         SupportingText(
             visible = state.showNameError,
             text = stringResource(id = R.string.error_x_empty, stringResource(id = R.string.generic_name)),
+            isError = true,
         )
     }
 
@@ -197,7 +193,7 @@ private fun ColumnScope.Content(
         label = stringResource(id = R.string.generic_main_muscles),
         onClick = updateMainMuscles,
         disabledItems = state.disabledMainMuscles,
-        hasError = state.showMainMusclesError,
+        isError = state.showMainMusclesError,
         errorText = stringResource(id = R.string.error_pick_main_muscles),
     )
 

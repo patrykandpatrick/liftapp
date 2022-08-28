@@ -39,3 +39,6 @@ inline fun <T> Collection<T>.joinToPrettyString(toString: @Composable (T) -> Str
     andText = stringResource(id = R.string.and_in_a_list),
     toString = { toString(it) },
 )
+
+val String?.nonBlankOrNull: String?
+    get() = this?.takeIf(String::isNotBlank)

@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.feature.newexercise.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -43,18 +42,17 @@ fun <T> DropdownMenu(
         selectedItems = listOf(selectedItem),
         items = items,
         getItemText = getItemText,
-        getItemsText = { collection -> collection.firstOrNull()?.let { getItemText(it) } ?: "" },
+        getItemsText = { collection -> collection.firstOrNull()?.let { getItemText(it) }.orEmpty() },
         label = label,
         onClick = onClick,
         modifier = modifier,
         multiSelection = false,
         disabledItems = disabledItems,
-        hasError = hasError,
+        isError = hasError,
         errorText = errorText,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> DropdownMenu(
     expanded: Boolean,
@@ -68,7 +66,7 @@ fun <T> DropdownMenu(
     modifier: Modifier = Modifier,
     multiSelection: Boolean = true,
     disabledItems: Collection<T>? = null,
-    hasError: Boolean = false,
+    isError: Boolean = false,
     errorText: String? = null,
 ) {
     ExposedDropdownMenuBox(
@@ -90,7 +88,11 @@ fun <T> DropdownMenu(
             )
 
             if (errorText != null) {
-                SupportingText(visible = hasError, text = errorText)
+                SupportingText(
+                    visible = isError,
+                    text = errorText,
+                    isError = isError,
+                )
             }
         }
 

@@ -85,7 +85,7 @@ class GetExercisesItemsUseCase @Inject constructor(
         )
     }
 
-    private fun Map<String, List<Exercise>>.toExerciseItems(): List<ExercisesItem> {
+    private suspend fun Map<String, List<Exercise>>.toExerciseItems(): List<ExercisesItem> {
 
         val idToIndexOfLast = mutableMapOf<Long, Int>()
 

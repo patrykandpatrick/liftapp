@@ -9,7 +9,7 @@ class ExerciseEntityToDomainMapper @Inject constructor(
     private val nameResolver: NameResolver,
 ) : Mapper<ExerciseEntity, Exercise> {
 
-    override fun map(input: ExerciseEntity): Exercise =
+    override suspend fun map(input: ExerciseEntity): Exercise =
         Exercise(
             id = input.id,
             displayName = nameResolver.getResolvedString(input.name),
@@ -23,7 +23,7 @@ class ExerciseEntityToDomainMapper @Inject constructor(
 
 class ExerciseInsertToEntityMapper @Inject constructor() : Mapper<Exercise.Insert, ExerciseEntity> {
 
-    override fun map(input: Exercise.Insert): ExerciseEntity =
+    override suspend fun map(input: Exercise.Insert): ExerciseEntity =
         ExerciseEntity(
             name = input.name,
             exerciseType = input.exerciseType,
@@ -35,7 +35,7 @@ class ExerciseInsertToEntityMapper @Inject constructor() : Mapper<Exercise.Inser
 
 class ExerciseUpdateToEntityMapper @Inject constructor() : Mapper<Exercise.Update, ExerciseEntity.Update> {
 
-    override fun map(input: Exercise.Update): ExerciseEntity.Update =
+    override suspend fun map(input: Exercise.Update): ExerciseEntity.Update =
         ExerciseEntity.Update(
             id = input.id,
             name = input.name,
