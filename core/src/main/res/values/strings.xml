@@ -51,6 +51,8 @@
 
     <string name="action_save">Save</string>
     <string name="action_close">Close</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
     <string name="action_new_exercise">New Exercise</string>
     <string name="action_increase">Increase</string>
     <string name="action_decrease">Decrease</string>
