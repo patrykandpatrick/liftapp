@@ -29,7 +29,7 @@ ext {
             mockk                        : "1.12.5",
             ossLicensesPlugin            : "0.10.4",
             ossLicenses                  : "17.0.0",
-            opto                         : "1.0.14",
+            opto                         : "1.0.15",
             retrofit                     : "2.9.0",
             room                         : "2.5.0-alpha03",
             viewmodel                    : "2.5.1",
