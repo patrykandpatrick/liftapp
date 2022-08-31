@@ -87,7 +87,7 @@ internal sealed class ScreenState : Parcelable {
     @Stable
     @Parcelize
     internal data class Update(
-        val recordId: Long,
+        val entryId: Long,
         override val name: String,
         override val values: List<Validatable<String>>,
         override val formattedDate: FormattedDate,

@@ -21,8 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
-import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.navigation.Routes.InsertBodyEntry
 import com.patrykandpatryk.liftapp.core.ui.ListItem
+import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
+import com.patrykandpatryk.liftapp.core.ui.OptionItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
@@ -30,6 +32,7 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 
 @Composable
@@ -46,6 +49,7 @@ fun BodyDetails(
     BodyDetails(
         navigate = navigate,
         navigateBack = navigateBack,
+        onIntent = viewModel::handleIntent,
         state = state,
         modelProducer = viewModel.chartModelProducer,
         modifier = modifier,
@@ -56,6 +60,7 @@ fun BodyDetails(
 private fun BodyDetails(
     navigate: (String) -> Unit,
     navigateBack: () -> Unit,
+    onIntent: (Intent) -> Unit,
     state: ScreenState,
     modelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
@@ -78,7 +83,7 @@ private fun BodyDetails(
                 modifier = Modifier.navigationBarsPadding(),
                 text = { Text(text = stringResource(id = R.string.action_new_entry)) },
                 icon = { Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null) },
-                onClick = { navigate(Routes.InsertBodyEntry.create(state.bodyId)) },
+                onClick = { navigate(InsertBodyEntry.create(state.bodyId)) },
             )
         },
     ) { paddingValues ->
@@ -97,7 +102,9 @@ private fun BodyDetails(
                         bottom = LocalDimens.current.padding.itemVertical,
                         start = LocalDimens.current.padding.contentHorizontal,
                     ),
-                    chart = lineChart(),
+                    chart = lineChart(
+                        axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f),
+                    ),
                     chartModelProducer = modelProducer,
                     startAxis = startAxis(
                         maxLabelCount = 3,
@@ -119,10 +126,30 @@ private fun BodyDetails(
 
             items(items = state.entries, key = { it.id }) { entry ->
 
-                ListItem(
-                    modifier = Modifier.animateItemPlacement(),
-                    title = entry.value,
-                    description = entry.date,
+                ListItemWithOptions(
+                    mainContent = {
+                        ListItem(
+                            modifier = Modifier.animateItemPlacement(),
+                            title = entry.value,
+                            description = entry.date,
+                        )
+                    },
+                    optionItems = listOf(
+                        OptionItem(
+                            iconPainter = painterResource(id = R.drawable.ic_edit),
+                            label = stringResource(id = R.string.action_edit),
+                            onClick = {
+                                navigate(InsertBodyEntry.create(state.bodyId, entry.id))
+                            },
+                        ),
+                        OptionItem(
+                            iconPainter = painterResource(id = R.drawable.ic_delete),
+                            label = stringResource(id = R.string.action_delete),
+                            onClick = {},
+                        ),
+                    ),
+                    isExpanded = entry.isExpanded,
+                    setExpanded = { onIntent(Intent.ExpandItem(id = entry.id)) },
                 )
             }
         }

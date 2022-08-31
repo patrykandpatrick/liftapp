@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.bodyentry.ui
 
 import androidx.lifecycle.SavedStateHandle
+import com.patrykandpatryk.liftapp.bodyentry.di.BodyEntryId
 import com.patrykandpatryk.liftapp.bodyentry.di.BodyId
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
@@ -25,6 +26,8 @@ import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.domain.validation.map
+import com.patrykandpatryk.liftapp.domain.validation.toInvalid
+import com.patrykandpatryk.liftapp.domain.validation.toValid
 import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -41,6 +44,7 @@ private const val SCREEN_STATE_KEY = "screen_state"
 
 internal class BodyScreenStateHandler @Inject constructor(
     @BodyId val id: Long,
+    @BodyEntryId val entryId: Long,
     private val formatter: Formatter,
     exceptionHandler: CoroutineExceptionHandler,
     private val repository: BodyRepository,
@@ -68,7 +72,8 @@ internal class BodyScreenStateHandler @Inject constructor(
     }
 
     private suspend fun getInitialState(id: Long): ScreenState {
-        val body = repository.getBody(id).first()
+        val body = repository.getBodyWithLatestEntry(id).first()
+        val entry = repository.getEntry(entryId)
         val unit = when (body.type) {
             BodyType.Weight -> preferences.massUnit.getFirst()
             BodyType.Length,
@@ -77,18 +82,23 @@ internal class BodyScreenStateHandler @Inject constructor(
             BodyType.Percentage -> PercentageUnit
         }
 
-        return ScreenState.Insert(
-            name = body.name,
-            values = List(size = body.type.fields) {
-                Validatable.Invalid(
-                    value = "",
-                    message = LocalizableMessage(R.string.error_must_be_higher_than_zero),
-                )
-            },
-            unit = unit,
-            is24H = formatter.is24H(),
-            formattedDate = formatter.getFormattedDate(calendar),
-        )
+        return when (entry) {
+            null -> ScreenState.Insert(
+                name = body.name,
+                values = body.latestEntry?.values.toValidatableStrings(body.type.fields),
+                unit = unit,
+                is24H = formatter.is24H(),
+                formattedDate = formatter.getFormattedDate(calendar),
+            )
+            else -> ScreenState.Update(
+                entryId = entryId,
+                name = body.name,
+                values = entry.values.toValidatableStrings(body.type.fields),
+                unit = entry.values.unit,
+                is24H = formatter.is24H(),
+                formattedDate = entry.formattedDate,
+            )
+        }
     }
 
     override fun handleIntent(intent: Intent) {
@@ -137,15 +147,27 @@ internal class BodyScreenStateHandler @Inject constructor(
     }
 
     private suspend fun save(model: ScreenState): ScreenState {
-        return if (model.values.any { it.isInvalid }) model.mutate(showErrors = true)
-        else {
-            repository.insertBodyEntry(
-                parentId = id,
-                values = model.values.toBodyValues(unit = model.unit),
-                timestamp = model.formattedDate.millis,
-            )
-            events.emit(Event.EntrySaved)
-            model
+        return when {
+            model.values.any { it.isInvalid } -> model.mutate(showErrors = true)
+            model is ScreenState.Update -> {
+                repository.updateBodyEntry(
+                    entryId = model.entryId,
+                    parentId = id,
+                    values = model.values.toBodyValues(unit = model.unit),
+                    timestamp = model.formattedDate.millis,
+                )
+                events.emit(Event.EntrySaved)
+                model
+            }
+            else -> {
+                repository.insertBodyEntry(
+                    parentId = id,
+                    values = model.values.toBodyValues(unit = model.unit),
+                    timestamp = model.formattedDate.millis,
+                )
+                events.emit(Event.EntrySaved)
+                model
+            }
         }
     }
 
@@ -162,6 +184,21 @@ internal class BodyScreenStateHandler @Inject constructor(
             unit = unit,
         )
         else -> error("Tried to convert $size items into `BodyValues`.")
+    }
+
+    private fun BodyValues?.toValidatableStrings(fieldCount: Int): List<Validatable<String>> = buildList {
+        when (this@toValidatableStrings) {
+            is BodyValues.Double -> {
+                add(left.toString().toValid())
+                add(right.toString().toValid())
+            }
+            is BodyValues.Single -> {
+                add(value.toString().toValid())
+            }
+            null -> repeat(fieldCount) {
+                add("".toInvalid(LocalizableMessage(R.string.error_must_be_higher_than_zero)))
+            }
+        }
     }
 
     private fun String.parse(): Float =

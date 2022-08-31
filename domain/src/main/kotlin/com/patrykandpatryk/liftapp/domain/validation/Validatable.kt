@@ -22,7 +22,7 @@ sealed class Validatable<T>(val value: T, val isValid: Boolean) : Serializable {
 
 fun <T> T.toValid() = Validatable.Valid(this)
 
-fun <T> T.toInvalid() = Validatable.Invalid(this)
+fun <T> T.toInvalid(message: LocalizableMessage? = null) = Validatable.Invalid(this, message)
 
 fun <T> T.validate(validator: Validator<T>): Validatable<T> = validator.validate(this)
 

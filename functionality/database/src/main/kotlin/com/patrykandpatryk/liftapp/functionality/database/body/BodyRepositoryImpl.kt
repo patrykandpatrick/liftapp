@@ -29,6 +29,12 @@ class BodyRepositoryImpl @Inject constructor(
             .map(bodyEntityMapper::invoke)
             .flowOn(dispatcher)
 
+    override fun getBodyWithLatestEntry(id: Long): Flow<BodyWithLatestEntry> =
+        dao
+            .getBodyWithLatestEntry(id)
+            .map(bodyWithLatestEntryMapper::invoke)
+            .flowOn(dispatcher)
+
     override fun getAllBodies(): Flow<List<BodyWithLatestEntry>> =
         dao
             .getBodiesWithLatestEntries()
@@ -40,6 +46,12 @@ class BodyRepositoryImpl @Inject constructor(
             .getBodyEntries(bodyId)
             .map(bodyEntryMapper::invoke)
             .flowOn(dispatcher)
+
+    override suspend fun getEntry(entryId: Long): BodyEntry? = withContext(dispatcher) {
+        dao
+            .getBodyEntry(entryId)
+            ?.let { entry -> bodyEntryMapper(entry) }
+    }
 
     override suspend fun insertBody(
         body: Body.Insert,
@@ -63,6 +75,22 @@ class BodyRepositoryImpl @Inject constructor(
     ) = withContext(dispatcher) {
         dao.insert(
             BodyEntryEntity(
+                parentId = parentId,
+                values = values,
+                timestamp = timestamp.millisToCalendar(),
+            ),
+        )
+    }
+
+    override suspend fun updateBodyEntry(
+        entryId: Long,
+        parentId: Long,
+        values: BodyValues,
+        timestamp: Long,
+    ) = withContext(dispatcher) {
+        dao.update(
+            BodyEntryEntity(
+                id = entryId,
                 parentId = parentId,
                 values = values,
                 timestamp = timestamp.millisToCalendar(),

@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
 class BodyDetailsViewModel @Inject constructor(
-    screenStateHandler: ScreenStateHandler<ScreenState, Unit, Unit>,
-) : ViewModel(), ScreenStateHandler<ScreenState, Unit, Unit> by screenStateHandler {
+    screenStateHandler: ScreenStateHandler<ScreenState, Intent, Unit>,
+) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Unit> by screenStateHandler {
 
     val chartModelProducer = ChartEntryModelProducer()
 

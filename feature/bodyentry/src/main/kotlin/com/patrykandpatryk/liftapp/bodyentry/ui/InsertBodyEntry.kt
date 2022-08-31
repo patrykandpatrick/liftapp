@@ -66,7 +66,7 @@ fun InsertBodyEntry(
 
     InsertBodyEntry(
         state = bodyModel,
-        actionHandler = viewModel::handleIntent,
+        onIntent = viewModel::handleIntent,
         onCloseClick = onCloseClick,
         modifier = modifier,
     )
@@ -75,7 +75,7 @@ fun InsertBodyEntry(
 @Composable
 private fun InsertBodyEntry(
     state: ScreenState,
-    actionHandler: (Intent) -> Unit,
+    onIntent: (Intent) -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -92,11 +92,11 @@ private fun InsertBodyEntry(
     )
 
     TimePicker(state = timePickerState) { hour, minute ->
-        actionHandler(Intent.SetTime(hour, minute))
+        onIntent(Intent.SetTime(hour, minute))
     }
 
     DatePicker(state = datePickerState) { year, month, day ->
-        actionHandler(Intent.SetDate(year, month, day))
+        onIntent(Intent.SetDate(year, month, day))
     }
 
     Column(
@@ -123,7 +123,7 @@ private fun InsertBodyEntry(
                     screenState = state,
                     index = index,
                     validatable = validatable,
-                    actionHandler = actionHandler,
+                    actionHandler = onIntent,
                 )
             }
 
@@ -158,7 +158,7 @@ private fun InsertBodyEntry(
 
             FilledTonalButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { actionHandler(Intent.Save) },
+                onClick = { onIntent(Intent.Save) },
             ) {
 
                 Text(
@@ -241,7 +241,7 @@ fun PreviewInsertBodyEntry() {
                         is24H = false,
                         unit = MassUnit.Kilograms,
                     ),
-                    actionHandler = {},
+                    onIntent = {},
                     onCloseClick = {},
                 )
             }

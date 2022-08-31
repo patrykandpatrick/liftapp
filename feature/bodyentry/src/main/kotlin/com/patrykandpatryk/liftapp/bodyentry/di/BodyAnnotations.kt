@@ -4,3 +4,6 @@ import javax.inject.Qualifier
 
 @Qualifier
 annotation class BodyId
+
+@Qualifier
+annotation class BodyEntryId

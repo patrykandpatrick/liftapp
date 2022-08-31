@@ -38,5 +38,6 @@ sealed class ScreenState(
         val id: Long,
         val value: String,
         val date: String,
+        val isExpanded: Boolean,
     )
 }

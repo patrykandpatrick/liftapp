@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.navigation.Routes.ARG_ID
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.feature.bodydetails.ui.BodyScreenStateHandler
+import com.patrykandpatryk.liftapp.feature.bodydetails.ui.Intent
 import com.patrykandpatryk.liftapp.feature.bodydetails.ui.ScreenState
 import dagger.Binds
 import dagger.Module
@@ -16,7 +17,7 @@ import dagger.hilt.android.components.ViewModelComponent
 internal interface BodyDetailsModule {
 
     @Binds
-    fun bindBodyDetailsHandler(handler: BodyScreenStateHandler): ScreenStateHandler<ScreenState, Unit, Unit>
+    fun bindBodyDetailsHandler(handler: BodyScreenStateHandler): ScreenStateHandler<ScreenState, Intent, Unit>
 
     companion object {
 
