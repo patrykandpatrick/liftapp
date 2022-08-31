@@ -9,7 +9,7 @@ import androidx.room.Embedded
             "LEFT JOIN " +
             "(SELECT * FROM body_entry AS entry WHERE entry.timestamp IN" +
             "(SELECT MAX(E.timestamp) FROM body_entry AS E GROUP BY E.parent_id) " +
-            "ORDER BY entry.entry_id DESC LIMIT 1) " +
+            "GROUP BY entry.parent_id ORDER BY entry.entry_id DESC) " +
             "AS latest_entry ON body.id = latest_entry.parent_id",
     viewName = "body_with_latest_entry",
 )
