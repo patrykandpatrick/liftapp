@@ -2,7 +2,6 @@ package com.patrykandpatryk.liftapp.feature.newexercise.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -134,7 +133,7 @@ private fun NewExercise(
 }
 
 @Composable
-private fun ColumnScope.Content(
+private fun Content(
     state: NewExerciseState,
     updateName: (String) -> Unit,
     updateExerciseType: (ExerciseType) -> Unit,
@@ -222,7 +221,7 @@ private fun ColumnScope.Content(
     )
 }
 
-@Preview()
+@Preview
 @Composable
 fun PreviewNewExerciseLight() {
     PreviewNewExercise(darkTheme = false)

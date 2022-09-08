@@ -104,7 +104,7 @@ private fun BodyDetails(
                         start = LocalDimens.current.padding.contentHorizontal,
                     ),
                     /* TODO: Replace with the following once Vico 1.5.0 has been released.
-                    lineChart(
+                    chart = lineChart(
                         axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f),
                     ), */
                     chart = lineChart(),
