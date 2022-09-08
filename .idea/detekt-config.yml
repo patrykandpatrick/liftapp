@@ -31,6 +31,8 @@ style:
             - "1"
             - "2"
             - "100"
+    ForbiddenComment:
+        active: false
 naming:
     FunctionNaming:
         ignoreAnnotated:
