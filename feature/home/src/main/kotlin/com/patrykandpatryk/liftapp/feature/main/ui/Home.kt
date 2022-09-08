@@ -2,25 +2,20 @@ package com.patrykandpatryk.liftapp.feature.main.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -94,35 +89,26 @@ private fun NavigationBarWithPadding(
     navItemRoutes: Collection<NavItemRoute>,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 3.dp,
-        modifier = modifier,
-    ) {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination by derivedStateOf { currentBackStackEntry?.destination }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination by derivedStateOf { currentBackStackEntry?.destination }
 
-        NavigationBar(
-            containerColor = Color.Transparent,
-            modifier = Modifier.navigationBarsPadding(),
-        ) {
-            navItemRoutes.forEach { menuRoute ->
-                NavigationBarItem(
-                    selected = currentDestination?.hierarchy?.any {
-                        it.route == menuRoute.route
-                    } ?: false,
-                    onClick = { navController.navigate(menuRoute.route) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = menuRoute.iconRes),
-                            contentDescription = stringResource(id = menuRoute.titleRes),
-                        )
-                    },
-                    label = {
-                        Text(text = stringResource(id = menuRoute.titleRes))
-                    },
-                )
-            }
+    NavigationBar(modifier = modifier) {
+        navItemRoutes.forEach { menuRoute ->
+            NavigationBarItem(
+                selected = currentDestination?.hierarchy?.any {
+                    it.route == menuRoute.route
+                } ?: false,
+                onClick = { navController.navigate(menuRoute.route) },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = menuRoute.iconRes),
+                        contentDescription = stringResource(id = menuRoute.titleRes),
+                    )
+                },
+                label = {
+                    Text(text = stringResource(id = menuRoute.titleRes))
+                },
+            )
         }
     }
 }

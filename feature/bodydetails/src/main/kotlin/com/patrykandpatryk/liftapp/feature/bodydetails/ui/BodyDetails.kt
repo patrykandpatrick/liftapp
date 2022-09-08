@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,12 +28,12 @@ import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
 import com.patrykandpatryk.liftapp.core.ui.OptionItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
-import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
+/* TODO: Uncomment the following once Vico 1.5.0 has been released.
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider */
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 
 @Composable
@@ -66,7 +67,7 @@ private fun BodyDetails(
     modifier: Modifier = Modifier,
 ) {
 
-    val topAppBarScrollBehavior = topAppBarScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -102,9 +103,11 @@ private fun BodyDetails(
                         bottom = LocalDimens.current.padding.itemVertical,
                         start = LocalDimens.current.padding.contentHorizontal,
                     ),
-                    chart = lineChart(
+                    /* TODO: Replace with the following once Vico 1.5.0 has been released.
+                    lineChart(
                         axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f),
-                    ),
+                    ), */
+                    chart = lineChart(),
                     chartModelProducer = modelProducer,
                     startAxis = startAxis(
                         maxLabelCount = 3,

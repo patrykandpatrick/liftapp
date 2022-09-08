@@ -1,14 +1,8 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
@@ -18,19 +12,14 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.vico.core.extension.orZero
 
 @Composable
 fun TopAppBar(
@@ -39,50 +28,22 @@ fun TopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    val topAppBarColors = TopAppBarDefaults.largeTopAppBarColors()
-    val scrollFraction = scrollBehavior?.state?.collapsedFraction.orZero
-    val containerColor by topAppBarColors.containerColor(scrollFraction)
+    LargeTopAppBar(
+        scrollBehavior = scrollBehavior,
+        title = { Text(text = title) },
+        actions = actions,
+        navigationIcon = {
+            if (onBackClick != null) {
+                IconButton(onClick = onBackClick) {
 
-    Column {
-
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = containerColor)
-                .statusBarsPadding(),
-        )
-
-        LargeTopAppBar(
-            scrollBehavior = scrollBehavior,
-            title = { Text(text = title) },
-            navigationIcon = {
-                if (onBackClick != null) {
-                    IconButton(onClick = onBackClick) {
-
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
-                            contentDescription = stringResource(id = R.string.action_close),
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        contentDescription = stringResource(id = R.string.action_close),
+                    )
                 }
-            },
-            actions = actions,
-        )
-    }
-}
-
-@Composable
-fun topAppBarScrollBehavior(): TopAppBarScrollBehavior {
-
-    val animSpec = rememberSplineBasedDecay<Float>()
-    val state = rememberTopAppBarState()
-
-    return remember(key1 = animSpec, key2 = state) {
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-            decayAnimationSpec = animSpec,
-            state = state,
-        )
-    }
+            }
+        },
+    )
 }
 
 @Composable

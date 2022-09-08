@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,7 +17,6 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
-import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 
 @Composable
 fun Body(
@@ -24,7 +24,7 @@ fun Body(
     navigate: (String) -> Unit,
 ) {
 
-    val topAppBarScrollBehavior = topAppBarScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val viewModel: BodyViewModel = hiltViewModel()
     val items by viewModel.bodyItems.collectAsState()

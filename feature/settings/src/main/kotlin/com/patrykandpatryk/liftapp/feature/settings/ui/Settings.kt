@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.feature.settings.ui
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,7 +17,6 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
-import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -27,7 +27,7 @@ fun Settings(
     parentNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    val topAppBarScrollBehavior = topAppBarScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val viewModel = hiltViewModel<SettingsViewModel>()
     val allPreferences by viewModel.allPreferences.collectAsState(initial = null)
 

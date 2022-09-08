@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +28,6 @@ import com.patrykandpatryk.liftapp.core.extension.formatValue
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.Info
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
-import com.patrykandpatryk.liftapp.core.ui.topAppBarScrollBehavior
 import com.patrykandpatryk.liftapp.feature.onerepmax.viewmodel.OneRepMaxViewModel
 
 @Composable
@@ -35,7 +35,7 @@ fun OneRepMax(
     parentNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    val topAppBarScrollBehavior = topAppBarScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val viewModel = hiltViewModel<OneRepMaxViewModel>()
     val uiState by viewModel.oneRepMaxUiStateStateFlow.collectAsState()
     val context = LocalContext.current

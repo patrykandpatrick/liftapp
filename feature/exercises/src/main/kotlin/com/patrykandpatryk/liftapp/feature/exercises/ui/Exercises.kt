@@ -3,13 +3,10 @@ package com.patrykandpatryk.liftapp.feature.exercises.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,14 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
@@ -50,7 +45,7 @@ fun Exercises(
     val groupBy by viewModel.groupBy.collectAsState()
 
     Scaffold(
-        modifier = modifier.padding(padding),
+        modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = stringResource(id = R.string.action_new_exercise),
@@ -58,66 +53,56 @@ fun Exercises(
                 onClick = { navigate(Routes.NewExercise.create()) },
             )
         },
-    ) { paddingValues ->
-
-        Box(modifier = Modifier.padding(paddingValues)) {
-
-            LazyColumn(
-                contentPadding = WindowInsets.statusBars.toPaddingValues(
-                    additionalTop = MaterialTheme.dimens.padding.contentHorizontal * 2 +
-                        MaterialTheme.dimens.height.searchBar,
-                ),
-            ) {
-
-                if (query.isEmpty()) {
-
-                    item {
-
-                        Controls(
-                            groupBy = groupBy,
-                            onGroupBySelection = viewModel::setGroupBy,
-                        )
-                    }
-                }
-
-                items(
-                    items = exercises,
-                    key = { it.key },
-                ) { item ->
-
-                    when (item) {
-                        is ExercisesItem.Exercise -> {
-                            ListItem(
-                                modifier = Modifier
-                                    .animateItemPlacement()
-                                    .clickable { navigate(Routes.Exercise.create(item.id)) },
-                                title = item.name,
-                                description = item.muscles,
-                                iconPainter = painterResource(id = item.iconRes),
-                            )
-                        }
-                        is ExercisesItem.Header -> {
-                            ListSectionTitle(
-                                title = item.title,
-                                modifier = Modifier.animateItemPlacement(),
-                            )
-                        }
-                    }
-                }
-            }
-
+        topBar = {
             SearchBar(
                 value = query,
                 onValueChange = viewModel::setQuery,
                 modifier = Modifier
-                    .align(alignment = Alignment.TopCenter)
                     .statusBarsPadding()
-                    .padding(
-                        start = MaterialTheme.dimens.padding.contentHorizontal,
-                        end = MaterialTheme.dimens.padding.contentHorizontal,
-                        top = MaterialTheme.dimens.padding.contentHorizontal,
-                    ),
+                    .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
             )
+        },
+    ) { internalPadding ->
+
+        LazyColumn(
+            contentPadding = PaddingValues(top = internalPadding.calculateTopPadding()),
+        ) {
+
+            if (query.isEmpty()) {
+
+                item {
+
+                    Controls(
+                        groupBy = groupBy,
+                        onGroupBySelection = viewModel::setGroupBy,
+                    )
+                }
+            }
+
+            items(
+                items = exercises,
+                key = { it.key },
+            ) { item ->
+
+                when (item) {
+                    is ExercisesItem.Exercise -> {
+                        ListItem(
+                            title = item.name,
+                            description = item.muscles,
+                            iconPainter = painterResource(id = item.iconRes),
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .clickable { navigate(Routes.Exercise.create(item.id)) },
+                        )
+                    }
+                    is ExercisesItem.Header -> {
+                        ListSectionTitle(
+                            title = item.title,
+                            modifier = Modifier.animateItemPlacement(),
+                        )
+                    }
+                }
+            }
         }
     }
 }
