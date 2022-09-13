@@ -1,8 +1,10 @@
 package com.patrykandpatryk.liftapp.feature.main.ui
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.material.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -16,10 +18,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -29,17 +31,32 @@ import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.anim.EXIT_ANIM_DURATION
 import com.patrykandpatryk.liftapp.core.ui.anim.slideAndFadeIn
+import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.main.HomeViewModel
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 
 @Composable
 fun Home(
-    parentNavController: NavHostController,
+    parentNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
     val snackbarHostState = remember { SnackbarHostState() }
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
+
+    HomeScaffold(
+        navigate = parentNavController::navigate,
+        snackbarHostState = snackbarHostState,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun HomeScaffold(
+    navigate: (String) -> Unit,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+) {
 
     val navController = rememberAnimatedNavController()
 
@@ -75,7 +92,7 @@ fun Home(
                         entry = backStackEntry,
                         modifier = Modifier,
                         padding = paddingValues,
-                        navigate = parentNavController::navigate,
+                        navigate = navigate,
                     )
                 }
             }
@@ -94,15 +111,19 @@ private fun NavigationBarWithPadding(
 
     NavigationBar(modifier = modifier) {
         navItemRoutes.forEach { menuRoute ->
+            val selected by derivedStateOf {
+                currentDestination?.hierarchy?.any { it.route == menuRoute.route } ?: false
+            }
             NavigationBarItem(
-                selected = currentDestination?.hierarchy?.any {
-                    it.route == menuRoute.route
-                } ?: false,
+                selected = selected,
                 onClick = { navController.navigate(menuRoute.route) },
                 icon = {
                     Icon(
-                        painter = painterResource(id = menuRoute.iconRes),
+                        painter = painterResource(
+                            id = if (selected) menuRoute.selectedIconRes else menuRoute.deselectedIconRes,
+                        ),
                         contentDescription = stringResource(id = menuRoute.titleRes),
+                        tint = LocalContentColor.current,
                     )
                 },
                 label = {
@@ -110,5 +131,17 @@ private fun NavigationBarWithPadding(
                 },
             )
         }
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun HomePreview() {
+    LiftAppTheme {
+        HomeScaffold(
+            navigate = {},
+            snackbarHostState = remember { SnackbarHostState() },
+        )
     }
 }

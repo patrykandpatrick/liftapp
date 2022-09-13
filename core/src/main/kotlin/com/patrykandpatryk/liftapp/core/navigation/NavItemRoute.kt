@@ -12,7 +12,8 @@ import androidx.navigation.NavBackStackEntry
 data class NavItemRoute(
     val route: String,
     @StringRes val titleRes: Int,
-    @DrawableRes val iconRes: Int,
+    @DrawableRes val deselectedIconRes: Int,
+    @DrawableRes val selectedIconRes: Int = deselectedIconRes,
     val content: @Composable (
         entry: NavBackStackEntry,
         modifier: Modifier,

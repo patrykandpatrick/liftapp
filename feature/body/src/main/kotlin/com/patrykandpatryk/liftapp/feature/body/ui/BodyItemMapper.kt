@@ -25,7 +25,7 @@ class BodyItemMapper @Inject constructor() : Mapper<BodyWithLatestEntry, BodyIte
 
     private val BodyType.iconRes: Int
         @DrawableRes get() = when (this) {
-            BodyType.Weight -> R.drawable.ic_weightscale
+            BodyType.Weight -> R.drawable.ic_weightscale_outline
             BodyType.Length -> R.drawable.ic_distance
             BodyType.LengthTwoSides -> R.drawable.ic_distance
             BodyType.Percentage -> R.drawable.ic_donut

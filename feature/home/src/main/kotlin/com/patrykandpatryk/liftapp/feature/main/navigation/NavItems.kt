@@ -18,7 +18,8 @@ val navBarRoutes: List<NavItemRoute>
             NavItemRoute(
                 route = Routes.Home.Dashboard.value,
                 titleRes = R.string.route_dashboard,
-                iconRes = R.drawable.ic_dashboard,
+                deselectedIconRes = R.drawable.ic_dashboard,
+                selectedIconRes = R.drawable.ic_dashboard_filled,
                 content = { _, modifier, _, _ ->
                     Dashboard(modifier = modifier)
                 },
@@ -26,7 +27,8 @@ val navBarRoutes: List<NavItemRoute>
             NavItemRoute(
                 route = Routes.Home.Exercises.value,
                 titleRes = R.string.route_exercises,
-                iconRes = R.drawable.ic_more_horizontal,
+                deselectedIconRes = R.drawable.ic_weightlifter_down,
+                selectedIconRes = R.drawable.ic_weightlifter_up,
                 content = { _, modifier, padding, navigate ->
                     Exercises(
                         modifier = modifier,
@@ -38,7 +40,8 @@ val navBarRoutes: List<NavItemRoute>
             NavItemRoute(
                 route = Routes.Home.Body.value,
                 titleRes = R.string.route_body,
-                iconRes = R.drawable.ic_weightscale,
+                deselectedIconRes = R.drawable.ic_weightscale_outline,
+                selectedIconRes = R.drawable.ic_weightscale_filled,
                 content = { _, modifier, _, navigate ->
                     Body(
                         modifier = modifier,
@@ -49,7 +52,7 @@ val navBarRoutes: List<NavItemRoute>
             NavItemRoute(
                 route = Routes.Home.More.value,
                 titleRes = R.string.route_more,
-                iconRes = R.drawable.ic_more_horizontal,
+                deselectedIconRes = R.drawable.ic_more_horizontal,
                 content = { _, modifier, _, navigate ->
                     More(
                         modifier = modifier,
