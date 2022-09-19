@@ -7,3 +7,8 @@ dependencies {
         add(it.configuration, it.dependency, it.options)
     }
 }
+
+android {
+
+    namespace "com.patrykandpatryk.liftapp.feature.home"
+}

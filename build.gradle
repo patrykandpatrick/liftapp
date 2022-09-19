@@ -1,23 +1,27 @@
 import io.gitlab.arturbosch.detekt.Detekt
 
 buildscript {
+
     apply from: "gradle/versions.gradle"
     apply from: "gradle/dependencies.gradle"
 
     dependencies {
+
         classpath "com.google.dagger:hilt-android-gradle-plugin:2.43.2"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "com.google.android.gms:oss-licenses-plugin:$versions.ossLicensesPlugin"
     }
 
     repositories {
+
         gradlePluginPortal()
     }
 }
 
 plugins {
-    id "com.android.application" version "7.2.2" apply false
-    id "com.android.library" version "7.2.2" apply false
+
+    id "com.android.application" version "7.3.0" apply false
+    id "com.android.library" version "7.3.0" apply false
     id "org.jetbrains.kotlin.android" version "$kotlin_version" apply false
     id "com.google.devtools.ksp" version "$kotlin_version-1.0.6" apply false
     id "org.jetbrains.kotlin.jvm" version "$kotlin_version" apply false
@@ -25,19 +29,25 @@ plugins {
 }
 
 dependencies {
+
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0"
 }
 
 detekt {
+
     buildUponDefaultConfig = true
     source = files("app", "core", "domain", "feature", "functionality")
     config = files(".idea/detekt-config.yml")
 }
 
 tasks.withType(Detekt).configureEach {
+
     jvmTarget = "11"
+
     reports {
+
         html {
+
             enabled = true
             destination = file("build/reports/detekt/detekt.html")
         }
@@ -45,6 +55,7 @@ tasks.withType(Detekt).configureEach {
 }
 
 task detektFix(type: Detekt) {
+
     autoCorrect = true
     buildUponDefaultConfig = true
     source = files("app", "core", "domain", "feature", "functionality")
@@ -52,5 +63,6 @@ task detektFix(type: Detekt) {
 }
 
 task clean(type: Delete) {
+
     delete rootProject.buildDir
 }
