@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 @Immutable
 data class Dimens(
     val card: Card = Card(),
+    val chip: Chip = Chip(),
     val dialog: Dialog = Dialog(),
     val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
@@ -60,6 +61,11 @@ data class Dimens(
     data class Card(
         val smallElevation: Dp = 4.dp,
         val smallCornerRadius: Dp = 16.dp,
+    )
+
+    @Immutable
+    data class Chip(
+        val iconSize: Dp = 18.dp,
     )
 }
 

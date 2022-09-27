@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.feature.exercises.ui
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -7,11 +8,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.Icon
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +33,7 @@ import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.SearchBar
+import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 
@@ -95,6 +100,7 @@ fun Exercises(
                                 .clickable { navigate(Routes.Exercise.create(item.id)) },
                         )
                     }
+
                     is ExercisesItem.Header -> {
                         ListSectionTitle(
                             title = item.title,
@@ -130,10 +136,21 @@ private fun Controls(
         ) {
 
             GroupBy.values().forEach {
-
+                val selected = groupBy == it
                 FilterChip(
-                    selected = groupBy == it,
+                    modifier = Modifier.animateContentSize(),
+                    selected = selected,
                     onClick = { onGroupBySelection(it) },
+                    leadingIcon = {
+                        if (selected) {
+                            Icon(
+                                modifier = Modifier.size(LocalDimens.current.chip.iconSize),
+                                painter = painterResource(id = R.drawable.ic_check),
+                                contentDescription = null,
+                                tint = LocalContentColor.current,
+                            )
+                        }
+                    },
                     label = { Text(text = stringResource(id = it.labelResourceId)) },
                 )
             }
