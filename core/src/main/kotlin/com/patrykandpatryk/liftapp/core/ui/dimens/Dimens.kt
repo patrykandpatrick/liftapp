@@ -16,6 +16,7 @@ data class Dimens(
     val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
     val padding: Padding = Padding(),
+    val routine: Routine = Routine(),
     val strokeWidth: Dp = 1.dp,
     val verticalItemSpacing: Dp = 16.dp,
 ) {
@@ -61,11 +62,18 @@ data class Dimens(
     data class Card(
         val smallElevation: Dp = 4.dp,
         val smallCornerRadius: Dp = 16.dp,
+        val contentPaddingHorizontal: Dp = 16.dp,
+        val contentPaddingVertical: Dp = 16.dp,
     )
 
     @Immutable
     data class Chip(
         val iconSize: Dp = 18.dp,
+    )
+
+    @Immutable
+    data class Routine(
+        val minCardWidth: Dp = 140.dp,
     )
 }
 

@@ -35,3 +35,4 @@ include ":feature:newexercise"
 include ":feature:bodyentry"
 include ":feature:bodydetails"
 include ":domain-testing"
+include ':feature:routines'

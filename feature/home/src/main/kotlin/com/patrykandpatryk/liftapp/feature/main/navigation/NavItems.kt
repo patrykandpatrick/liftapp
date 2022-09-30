@@ -10,6 +10,7 @@ import com.patrykandpatryk.liftapp.feature.about.ui.More
 import com.patrykandpatryk.liftapp.feature.body.ui.Body
 import com.patrykandpatryk.liftapp.feature.dashboard.ui.Dashboard
 import com.patrykandpatryk.liftapp.feature.exercises.ui.Exercises
+import com.patrykandpatryk.liftapp.feature.routines.ui.Routines
 
 @Stable
 val navBarRoutes: List<NavItemRoute>
@@ -22,6 +23,19 @@ val navBarRoutes: List<NavItemRoute>
                 selectedIconRes = R.drawable.ic_dashboard_filled,
                 content = { _, modifier, _, _ ->
                     Dashboard(modifier = modifier)
+                },
+            ),
+            NavItemRoute(
+                route = Routes.Home.Routines.value,
+                titleRes = R.string.route_routines,
+                deselectedIconRes = R.drawable.ic_routines_outlined,
+                selectedIconRes = R.drawable.ic_routines_filled,
+                content = { _, modifier, padding, navigate ->
+                    Routines(
+                        modifier = modifier,
+                        padding = padding,
+                        navigate = navigate,
+                    )
                 },
             ),
             NavItemRoute(

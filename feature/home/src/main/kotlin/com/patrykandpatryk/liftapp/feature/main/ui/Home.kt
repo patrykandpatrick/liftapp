@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -107,7 +108,9 @@ private fun NavigationBarWithPadding(
     modifier: Modifier = Modifier,
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination by derivedStateOf { currentBackStackEntry?.destination }
+    val currentDestination by remember {
+        derivedStateOf { currentBackStackEntry?.destination }
+    }
 
     NavigationBar(modifier = modifier) {
         navItemRoutes.forEach { menuRoute ->
@@ -127,8 +130,12 @@ private fun NavigationBarWithPadding(
                     )
                 },
                 label = {
-                    Text(text = stringResource(id = menuRoute.titleRes))
+                    Text(
+                        text = stringResource(id = menuRoute.titleRes),
+                        textAlign = TextAlign.Center,
+                    )
                 },
+                alwaysShowLabel = false,
             )
         }
     }

@@ -288,6 +288,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:exercise")],
                 [configuration: "implementation", dependency: project(":feature:bodyentry")],
                 [configuration: "implementation", dependency: project(":feature:bodydetails")],
+                [configuration: "implementation", dependency: project(":feature:routines")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
@@ -312,6 +313,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:body")],
                 [configuration: "implementation", dependency: project(":feature:exercises")],
                 [configuration: "implementation", dependency: project(":feature:more")],
+                [configuration: "implementation", dependency: project(":feature:routines")],
         ]
         dependencies.addAll(featureModuleDependencies())
         dependencies
