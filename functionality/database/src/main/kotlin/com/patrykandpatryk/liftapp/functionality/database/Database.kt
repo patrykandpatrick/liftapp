@@ -11,15 +11,22 @@ import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntity
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyDao
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntryEntity
 import com.patrykandpatryk.liftapp.functionality.database.body.BodyWithLatestEntryView
+import com.patrykandpatryk.liftapp.functionality.database.routine.ExerciseWithRoutineEntity
+import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
+import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineEntity
+import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExerciseNamesView
 
 @androidx.room.Database(
     entities = [
         BodyEntity::class,
         BodyEntryEntity::class,
         ExerciseEntity::class,
+        RoutineEntity::class,
+        ExerciseWithRoutineEntity::class,
     ],
     views = [
         BodyWithLatestEntryView::class,
+        RoutineWithExerciseNamesView::class,
     ],
     version = 1,
     exportSchema = true,
@@ -38,4 +45,6 @@ abstract class Database : RoomDatabase() {
     abstract val bodyDao: BodyDao
 
     abstract val exerciseDao: ExerciseDao
+
+    abstract val routineDao: RoutineDao
 }

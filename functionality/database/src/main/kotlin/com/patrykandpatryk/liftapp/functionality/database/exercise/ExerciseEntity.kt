@@ -9,7 +9,7 @@ import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 
 @Entity(tableName = "exercise")
-data class ExerciseEntity(
+class ExerciseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = ID_NOT_SET,
     @ColumnInfo(index = true)

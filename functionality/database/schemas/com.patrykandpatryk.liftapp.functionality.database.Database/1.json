@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f03fc2207d03b895a8fdd8dbe4a429f0",
+    "identityHash": "31a765f7b4ec9e34935eaf68cee419f3",
     "entities": [
       {
         "tableName": "body",
@@ -191,17 +191,97 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "routine",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "exercise_with_routine",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, PRIMARY KEY(`routine_id`, `exercise_id`), FOREIGN KEY(`routine_id`) REFERENCES `routine`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_id`) REFERENCES `exercise`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "routineId",
+            "columnName": "routine_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseId",
+            "columnName": "exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "routine_id",
+            "exercise_id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "routine",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "routine_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "exercise",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "exercise_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [
       {
         "viewName": "body_with_latest_entry",
         "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT body.*, latest_entry.* FROM body LEFT JOIN (SELECT * FROM body_entry AS entry WHERE entry.timestamp IN(SELECT MAX(E.timestamp) FROM body_entry AS E GROUP BY E.parent_id) GROUP BY entry.parent_id ORDER BY entry.entry_id DESC) AS latest_entry ON body.id = latest_entry.parent_id"
+      },
+      {
+        "viewName": "routine_with_exercise_names",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT routine.*, GROUP_CONCAT(exercise.name, ', ') AS exercise_names FROM exercise_with_routine ewr LEFT JOIN routine ON routine.id = ewr.routine_id LEFT JOIN exercise ON exercise.id = ewr.exercise_id GROUP BY routine.id"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f03fc2207d03b895a8fdd8dbe4a429f0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '31a765f7b4ec9e34935eaf68cee419f3')"
     ]
   }
 }
