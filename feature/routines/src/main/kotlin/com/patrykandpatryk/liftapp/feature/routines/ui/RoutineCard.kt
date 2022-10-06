@@ -41,7 +41,7 @@ fun RoutineCard(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
             )
 
             Text(
@@ -54,6 +54,7 @@ fun RoutineCard(
                     pop()
                 },
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
