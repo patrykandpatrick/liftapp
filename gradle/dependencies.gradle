@@ -273,6 +273,7 @@ ext {
             [configuration: "testImplementation", dependency: testing.junit],
             [configuration: "testImplementation", dependency: testing.junitExt],
             [configuration: "testImplementation", dependency: kotlin.test],
+            [configuration: "testImplementation", dependency: project(":domain-testing")],
     ]
 
     appModuleDependencies = {
@@ -289,6 +290,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:bodyentry")],
                 [configuration: "implementation", dependency: project(":feature:bodydetails")],
                 [configuration: "implementation", dependency: project(":feature:routines")],
+                [configuration: "implementation", dependency: project(":feature:newroutine")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],

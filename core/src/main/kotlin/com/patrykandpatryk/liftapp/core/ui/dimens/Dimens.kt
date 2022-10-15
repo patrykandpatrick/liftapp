@@ -15,6 +15,7 @@ data class Dimens(
     val dialog: Dialog = Dialog(),
     val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
+    val input: Input = Input(),
     val padding: Padding = Padding(),
     val routine: Routine = Routine(),
     val strokeWidth: Dp = 1.dp,
@@ -69,6 +70,11 @@ data class Dimens(
     @Immutable
     data class Chip(
         val iconSize: Dp = 18.dp,
+    )
+
+    @Immutable
+    data class Input(
+        val nameMaxLines: Int = 3,
     )
 
     @Immutable

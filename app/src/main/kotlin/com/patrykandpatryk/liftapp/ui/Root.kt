@@ -37,6 +37,7 @@ import com.patrykandpatryk.liftapp.feature.bodydetails.ui.BodyDetails
 import com.patrykandpatryk.liftapp.feature.exercise.ui.Exercise
 import com.patrykandpatryk.liftapp.feature.main.ui.Home
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
+import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutine
 import com.patrykandpatryk.liftapp.feature.onerepmax.ui.OneRepMax
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
 import kotlinx.coroutines.launch
@@ -91,6 +92,10 @@ fun Root(modifier: Modifier = Modifier) {
 
                 composable(route = Routes.OneRepMax.value) {
                     OneRepMax(parentNavController = navController)
+                }
+
+                composable(route = Routes.NewRoutine.value) {
+                    NewRoutine(popBackStack = navController::popBackStack)
                 }
 
                 composable(

@@ -12,6 +12,9 @@ class StringProviderImpl @Inject constructor(
     private val application: Application,
 ) : StringProvider {
 
+    override val name: String
+        get() = string(string.generic_name)
+
     override val dateFormatShort: String
         get() = string(string.date_format_short)
 
@@ -30,10 +33,23 @@ class StringProviderImpl @Inject constructor(
     override val timeFormatLong12h: String
         get() = string(string.time_format_long_12h)
 
+    override val errorMustBeHigherThanZero: String
+        get() = string(string.error_must_be_higher_than_zero)
+
     override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
         string(unit.stringResourceId)
             .let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
 
-    private fun string(@StringRes id: Int): String =
-        application.getString(id)
+    override fun quoted(value: String): String = string(string.generic_quoted, value)
+
+    override fun getErrorNameTooLong(actual: Int, limit: Int): String =
+        string(string.error_name_too_long, actual, limit)
+
+    override fun getErrorCannotBeEmpty(name: String): String =
+        string(string.error_x_empty, name)
+
+    private fun string(
+        @StringRes id: Int,
+        vararg formatArgs: Any,
+    ): String = application.getString(id, *formatArgs)
 }

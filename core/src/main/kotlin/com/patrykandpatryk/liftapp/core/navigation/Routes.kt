@@ -33,6 +33,7 @@ object Routes {
     val About = Route(value = "about")
     val Settings = Route(value = "settings")
     val OneRepMax = Route(value = "one_rep_max")
+    val NewRoutine = Route(value = "new_routine")
 
     object InsertBodyEntry : Route(value = "insert_body_entry/{$ARG_ID}?$ARG_ENTRY_ID={$ARG_ENTRY_ID}") {
 
@@ -61,7 +62,8 @@ object Routes {
         fun create(bodyId: Long) = value.replace("{$ARG_ID}", bodyId.toString())
     }
 
-    object NewExercise : Route(value = "new_exercise?$ARG_ID{$ARG_ID}") {
+    // TODO convert to two destinations (new & edit)
+    object NewExercise : Route(value = "new_exercise?$ARG_ID={$ARG_ID}") {
 
         val navArguments = listOf(
             navArgument(ARG_ID) { type = NavType.LongType },
@@ -72,8 +74,19 @@ object Routes {
 
     object Exercise : Route(value = "exercise?$ARG_ID{$ARG_ID}") {
 
-        val navArguments = listOf(navArgument(ARG_ID) { type = NavType.LongType })
+        val navArguments = listOf(
+            navArgument(ARG_ID) { type = NavType.LongType },
+        )
 
         fun create(exerciseId: Long = 0) = value.replace("{$ARG_ID}", exerciseId.toString())
+    }
+
+    object EditRoutine : Route(value = "edit_routine/{$ARG_ID}") {
+
+        val navArguments = listOf(
+            navArgument(ARG_ID) { type = NavType.LongType },
+        )
+
+        fun create(exerciseId: Long) = value.replace("{$ARG_ID}", exerciseId.toString())
     }
 }

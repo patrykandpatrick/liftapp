@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.calculateEndPadding
 import com.patrykandpatryk.liftapp.core.extension.calculateStartPadding
+import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -69,7 +70,7 @@ private fun Routines(
             ExtendedFloatingActionButton(
                 text = stringResource(id = R.string.action_new_routine),
                 icon = painterResource(id = R.drawable.ic_add),
-                onClick = { },
+                onClick = { navigate(Routes.NewRoutine.createDestination()) },
             )
         },
         topBar = {

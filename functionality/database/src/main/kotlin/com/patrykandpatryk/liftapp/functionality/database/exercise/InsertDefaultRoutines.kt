@@ -22,7 +22,7 @@ class InsertDefaultRoutines @Inject constructor(
             RoutineEntity(name = "Sample 4"),
             RoutineEntity(name = "Sample 5"),
         ).map { routine ->
-            val routineId = routineDao.insert(routine)
+            val routineId = routineDao.upsert(routine)
             repeat(random.nextInt(6, 9)) {
                 routineDao.insert(
                     ExerciseWithRoutineEntity(

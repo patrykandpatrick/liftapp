@@ -4,6 +4,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.model.NameResolver
+import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseNames
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
@@ -38,4 +39,20 @@ class RoutineWithExercisesToDomainMapper @Inject constructor(
             exercises = input.exercises.map { exerciseMapper(it) },
         )
     }
+}
+
+class RoutineToEntityMapper @Inject constructor() : Mapper<Routine, RoutineEntity> {
+
+    override suspend fun map(input: Routine): RoutineEntity = RoutineEntity(
+        id = input.id,
+        name = input.name,
+    )
+}
+
+class RoutineToDomainMapper @Inject constructor() : Mapper<RoutineEntity, Routine> {
+
+    override suspend fun map(input: RoutineEntity): Routine = Routine(
+        id = input.id,
+        name = input.name,
+    )
 }

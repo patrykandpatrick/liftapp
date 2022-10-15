@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.domain.validation
 
-import com.patrykandpatryk.liftapp.domain.message.LocalizableMessage
 import java.io.Serializable
 
 sealed class Validatable<T>(val value: T, val isValid: Boolean) : Serializable {
@@ -12,7 +11,7 @@ sealed class Validatable<T>(val value: T, val isValid: Boolean) : Serializable {
 
     class Invalid<T>(
         value: T,
-        val message: LocalizableMessage? = null,
+        val message: String? = null,
     ) : Validatable<T>(value, false)
 
     companion object {
@@ -22,7 +21,7 @@ sealed class Validatable<T>(val value: T, val isValid: Boolean) : Serializable {
 
 fun <T> T.toValid() = Validatable.Valid(this)
 
-fun <T> T.toInvalid(message: LocalizableMessage? = null) = Validatable.Invalid(this, message)
+fun <T> T.toInvalid(message: String? = null) = Validatable.Invalid(this, message)
 
 fun <T> T.validate(validator: Validator<T>): Validatable<T> = validator.validate(this)
 

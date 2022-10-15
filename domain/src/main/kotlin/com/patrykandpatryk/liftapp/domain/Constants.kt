@@ -23,5 +23,7 @@ object Constants {
         const val BODY_MAX_LENGTH_METRIC = 200f
         const val BODY_MAX_LENGTH_IMPERIAL = 80f
         const val BODY_MAX_PERCENTAGE = 100f
+
+        const val NAME_MAX_CHARS = 60
     }
 }

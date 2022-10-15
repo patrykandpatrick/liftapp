@@ -5,6 +5,8 @@ import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
 import com.patrykandpatryk.liftapp.core.ui.name.NameResolverImpl
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZeroValidator
+import com.patrykandpatryk.liftapp.core.validation.Name
+import com.patrykandpatryk.liftapp.core.validation.NameValidator
 import com.patrykandpatryk.liftapp.domain.body.BodyEntry
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.NameResolver
@@ -36,14 +38,18 @@ internal interface CoreModule {
     @Binds
     fun bindStringProvider(provider: StringProviderImpl): StringProvider
 
+    @Binds
+    @Name
+    fun bindNameValidator(validator: NameValidator): Validator<String>
+
+    @Binds
+    @HigherThanZero
+    fun bindHigherThanZeroValidatorValidator(validator: HigherThanZeroValidator): Validator<Float>
+
     companion object {
 
         @Provides
         fun provideCollator(): Collator = Collator.getInstance()
-
-        @Provides
-        @HigherThanZero
-        fun provideHigherThanZeroValidator(): Validator<Float> = HigherThanZeroValidator
 
         @Provides
         @Decimal

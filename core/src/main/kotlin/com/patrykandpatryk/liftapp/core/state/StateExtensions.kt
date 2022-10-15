@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SnapshotMutationPolicy
 import androidx.compose.runtime.rememberUpdatedState
 import kotlinx.coroutines.flow.collectLatest
 
@@ -21,3 +22,8 @@ fun <T : InteractionSource> T.onClick(onClick: suspend () -> Unit): T {
 
     return this
 }
+
+fun <T> equivalentSnapshotPolicy(isEquivalent: (new: T, previous: T) -> Boolean): SnapshotMutationPolicy<T> =
+    object : SnapshotMutationPolicy<T> {
+        override fun equivalent(a: T, b: T): Boolean = isEquivalent(a, b)
+    }

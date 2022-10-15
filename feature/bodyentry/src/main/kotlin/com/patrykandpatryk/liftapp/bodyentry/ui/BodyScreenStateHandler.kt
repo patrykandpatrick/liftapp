@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.bodyentry.ui
 import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.bodyentry.di.BodyEntryId
 import com.patrykandpatryk.liftapp.bodyentry.di.BodyId
-import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
 import com.patrykandpatryk.liftapp.domain.body.BodyRepository
 import com.patrykandpatryk.liftapp.domain.body.BodyType
@@ -18,9 +17,9 @@ import com.patrykandpatryk.liftapp.domain.extension.getFirst
 import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.format.Formatter.NumberFormat
-import com.patrykandpatryk.liftapp.domain.message.LocalizableMessage
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.PercentageUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
@@ -28,8 +27,6 @@ import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.domain.validation.map
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
-import java.util.Calendar
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -39,6 +36,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import javax.inject.Inject
 
 private const val SCREEN_STATE_KEY = "screen_state"
 
@@ -48,6 +47,7 @@ internal class BodyScreenStateHandler @Inject constructor(
     private val formatter: Formatter,
     exceptionHandler: CoroutineExceptionHandler,
     private val repository: BodyRepository,
+    private val stringProvider: StringProvider,
     private val preferences: PreferenceRepository,
     private val savedStateHandle: SavedStateHandle,
     @HigherThanZero private val validator: Validator<Float>,
@@ -196,7 +196,7 @@ internal class BodyScreenStateHandler @Inject constructor(
                 add(value.toString().toValid())
             }
             null -> repeat(fieldCount) {
-                add("".toInvalid(LocalizableMessage(R.string.error_must_be_higher_than_zero)))
+                add("".toInvalid(stringProvider.errorMustBeHigherThanZero))
             }
         }
     }
