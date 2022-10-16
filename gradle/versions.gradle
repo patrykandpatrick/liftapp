@@ -35,6 +35,6 @@ ext {
             viewmodel                    : "2.5.1",
             testCore                     : "1.3.0",
             timber                       : "5.0.1",
-            vico                         : "1.4.3",
+            vico                         : "1.5.0",
     ]
 }

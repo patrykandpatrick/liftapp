@@ -32,8 +32,7 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
-/* TODO: Uncomment the following once Vico 1.5.0 has been released.
-import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider */
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 
 @Composable
@@ -103,11 +102,9 @@ private fun BodyDetails(
                         bottom = LocalDimens.current.padding.itemVertical,
                         start = LocalDimens.current.padding.contentHorizontal,
                     ),
-                    /* TODO: Replace with the following once Vico 1.5.0 has been released.
                     chart = lineChart(
                         axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f),
-                    ), */
-                    chart = lineChart(),
+                    ),
                     chartModelProducer = modelProducer,
                     startAxis = startAxis(
                         maxLabelCount = 3,
