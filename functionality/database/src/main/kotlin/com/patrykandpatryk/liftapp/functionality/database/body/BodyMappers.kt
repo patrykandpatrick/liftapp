@@ -28,7 +28,7 @@ class BodyWithLatestEntryToDomainBodyMapper @Inject constructor(
         id = input.body.id,
         name = nameResolver.getResolvedString(input.body.name),
         type = input.body.type,
-        latestEntry = input.entry?.let { entryToDomainMapper.invoke(it) },
+        latestEntry = input.entry?.let { entryToDomainMapper(it) },
     )
 }
 

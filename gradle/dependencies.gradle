@@ -362,6 +362,7 @@ ext {
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
             [configuration: "implementation", dependency: storage.optoDomain],
+            [configuration: "implementation", dependency: storage.optoCore],
             [configuration: "api", dependency: logging.timber],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],

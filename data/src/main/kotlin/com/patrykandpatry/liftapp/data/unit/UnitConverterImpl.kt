@@ -11,6 +11,7 @@ import com.patrykandpatryk.liftapp.domain.unit.PercentageUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
+import com.patrykmichalik.opto.core.first
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -73,7 +74,7 @@ class UnitConverterImpl @Inject constructor(
     }
 
     private suspend fun getPreferredLongDistanceUnit(): LongDistanceUnit =
-        preferences.longDistanceUnit.get().first()
+        preferences.longDistanceUnit.first()
 
     private suspend fun getPreferredMediumDistanceUnit(): MediumDistanceUnit =
         preferences.mediumDistanceUnit.first()
@@ -82,5 +83,5 @@ class UnitConverterImpl @Inject constructor(
         preferences.shortDistanceUnit.first()
 
     private suspend fun getPreferredMassUnit(): MassUnit =
-        preferences.massUnit.get().first()
+        preferences.massUnit.first()
 }
