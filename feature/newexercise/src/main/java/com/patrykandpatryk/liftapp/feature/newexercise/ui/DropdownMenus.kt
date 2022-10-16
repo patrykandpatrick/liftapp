@@ -77,7 +77,9 @@ fun <T> DropdownMenu(
 
         Column {
             OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth(),
                 readOnly = true,
                 value = getItemsText(selectedItems),
                 onValueChange = {},

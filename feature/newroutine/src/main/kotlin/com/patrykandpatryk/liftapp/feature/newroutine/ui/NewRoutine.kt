@@ -3,9 +3,12 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumedWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,8 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
-import com.patrykandpatryk.liftapp.core.extension.isLandscape
-import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.state.equivalentSnapshotPolicy
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
@@ -81,6 +82,7 @@ fun NewRoutine(
 }
 
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun NewRoutine(
     modifier: Modifier = Modifier,
     state: ScreenState,
@@ -93,9 +95,7 @@ private fun NewRoutine(
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier = modifier
-            .thenIf(isLandscape) { navigationBarsPadding() }
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = stringResource(id = R.string.title_new_routine),
@@ -106,8 +106,8 @@ private fun NewRoutine(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 modifier = Modifier
-                    .imePadding()
-                    .navigationBarsPadding(),
+                    .consumedWindowInsets(insets = WindowInsets.navigationBars)
+                    .imePadding(),
                 text = stringResource(id = R.string.action_save),
                 icon = painterResource(id = R.drawable.ic_save),
                 onClick = { onIntent(Intent.Save) },
