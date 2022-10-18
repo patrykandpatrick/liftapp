@@ -13,7 +13,6 @@ import com.patrykandpatryk.liftapp.domain.date.minute
 import com.patrykandpatryk.liftapp.domain.date.month
 import com.patrykandpatryk.liftapp.domain.date.year
 import com.patrykandpatryk.liftapp.domain.di.MainDispatcher
-import com.patrykandpatryk.liftapp.domain.extension.getFirst
 import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.format.Formatter.NumberFormat
@@ -27,6 +26,7 @@ import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.domain.validation.map
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
+import com.patrykmichalik.opto.core.first
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -75,7 +75,7 @@ internal class BodyScreenStateHandler @Inject constructor(
         val body = repository.getBodyWithLatestEntry(id).first()
         val entry = repository.getEntry(entryId)
         val unit = when (body.type) {
-            BodyType.Weight -> preferences.massUnit.getFirst()
+            BodyType.Weight -> preferences.massUnit.first()
             BodyType.Length,
             BodyType.LengthTwoSides,
             -> preferences.shortDistanceUnit.first()
