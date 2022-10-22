@@ -50,7 +50,7 @@ fun SearchBar(
     val clearFocusAndValue = {
         focusManager.clearFocus()
         if (value.isNotEmpty()) onValueChange("")
-    }.also { BackHandler(onBack = it) }
+    }.also { BackHandler(enabled = focused, onBack = it) }
 
     Surface(
         tonalElevation = 3.dp,
