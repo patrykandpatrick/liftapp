@@ -42,8 +42,8 @@ import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 @Composable
 fun Exercises(
     modifier: Modifier = Modifier,
-    padding: PaddingValues,
     navigate: (String) -> Unit,
+    padding: PaddingValues = PaddingValues(),
 ) {
 
     val viewModel: ExerciseViewModel = hiltViewModel()
@@ -107,7 +107,9 @@ fun Exercises(
                     is ExercisesItem.Header -> {
                         ListSectionTitle(
                             title = item.title,
-                            modifier = Modifier.animateItemPlacement(),
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .padding(start = 48.dp),
                         )
                     }
                 }
