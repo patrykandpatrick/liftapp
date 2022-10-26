@@ -1,16 +1,20 @@
 package com.patrykandpatryk.liftapp.feature.exercises.ui
 
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
 
 sealed class ExercisesItem(open val key: Any) {
 
+    @Immutable
     class Header(val title: String) : ExercisesItem(title)
 
-    class Exercise(
+    @Immutable
+    data class Exercise(
         val id: Long,
-        key: Any,
+        override val key: Any,
         val name: String,
         val muscles: String,
         @DrawableRes val iconRes: Int,
+        val checked: Boolean = false,
     ) : ExercisesItem(key)
 }

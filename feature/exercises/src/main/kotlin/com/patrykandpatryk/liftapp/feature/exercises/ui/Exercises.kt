@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -30,7 +32,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.getBottom
+import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
@@ -38,6 +43,8 @@ import com.patrykandpatryk.liftapp.core.ui.SearchBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
+import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
+import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 
 @Composable
 fun Exercises(
@@ -45,11 +52,26 @@ fun Exercises(
     navigate: (String) -> Unit,
     padding: PaddingValues = PaddingValues(),
 ) {
-
     val viewModel: ExerciseViewModel = hiltViewModel()
-    val exercises by viewModel.exercises.collectAsState()
-    val query by viewModel.query.collectAsState()
-    val groupBy by viewModel.groupBy.collectAsState()
+    val state by viewModel.state.collectAsState()
+
+    Exercises(
+        modifier = modifier,
+        navigate = navigate,
+        padding = padding,
+        state = state,
+        onIntent = viewModel::handleIntent,
+    )
+}
+
+@Composable
+private fun Exercises(
+    modifier: Modifier = Modifier,
+    navigate: (String) -> Unit,
+    padding: PaddingValues = PaddingValues(),
+    state: ScreenState,
+    onIntent: (Intent) -> Unit,
+) {
 
     Scaffold(
         modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
@@ -58,12 +80,16 @@ fun Exercises(
                 text = stringResource(id = R.string.action_new_exercise),
                 icon = painterResource(id = R.drawable.ic_add),
                 onClick = { navigate(Routes.NewExercise.create()) },
+                modifier = Modifier
+                    .thenIf(padding.calculateBottomPadding() == 0.dp) {
+                        padding(WindowInsets.navigationBars.asPaddingValues())
+                    },
             )
         },
         topBar = {
             SearchBar(
-                value = query,
-                onValueChange = viewModel::setQuery,
+                value = state.query,
+                onValueChange = { onIntent(Intent.SetQuery(it)) },
                 modifier = Modifier
                     .statusBarsPadding()
                     .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
@@ -73,35 +99,56 @@ fun Exercises(
     ) { internalPadding ->
 
         LazyColumn(
-            contentPadding = PaddingValues(top = internalPadding.calculateTopPadding()),
+            contentPadding = PaddingValues(
+                top = internalPadding.calculateTopPadding(),
+                bottom = if (padding.calculateBottomPadding() == 0.dp) {
+                    WindowInsets.navigationBars.getBottom()
+                } else {
+                    0.dp
+                },
+            ),
         ) {
 
-            if (query.isEmpty()) {
+            if (state.query.isEmpty()) {
 
                 item {
 
                     Controls(
-                        groupBy = groupBy,
-                        onGroupBySelection = viewModel::setGroupBy,
+                        groupBy = state.groupBy,
+                        onGroupBySelection = { onIntent(Intent.SetGroupBy(it)) },
                     )
                 }
             }
 
             items(
-                items = exercises,
+                items = state.exercises,
                 key = { it.key },
             ) { item ->
 
                 when (item) {
                     is ExercisesItem.Exercise -> {
-                        ListItem(
-                            title = item.name,
-                            description = item.muscles,
-                            iconPainter = painterResource(id = item.iconRes),
-                            modifier = Modifier
-                                .animateItemPlacement()
-                                .clickable { navigate(Routes.Exercise.create(item.id)) },
-                        )
+                        if (state.pickingMode) {
+                            CheckableListItem(
+                                title = item.name,
+                                description = item.muscles,
+                                modifier = Modifier
+                                    .animateItemPlacement()
+                                    .clickable { navigate(Routes.Exercise.create(item.id)) },
+                                checked = item.checked,
+                                onCheckedChange = { checked ->
+                                    onIntent(Intent.SetExerciseChecked(item.id, checked))
+                                },
+                            )
+                        } else {
+                            ListItem(
+                                title = item.name,
+                                description = item.muscles,
+                                iconPainter = painterResource(id = item.iconRes),
+                                modifier = Modifier
+                                    .animateItemPlacement()
+                                    .clickable { navigate(Routes.Exercise.create(item.id)) },
+                            )
+                        }
                     }
 
                     is ExercisesItem.Header -> {

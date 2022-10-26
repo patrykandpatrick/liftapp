@@ -104,7 +104,7 @@ object Routes {
     object Exercises : Route(value = "exercises?$ARG_PICKING_MODE={$ARG_PICKING_MODE}") {
 
         override val navArguments: List<NamedNavArgument> = listOf(
-            navArgument(ARG_PICKING_MODE) { type = NavType.BoolType }
+            navArgument(ARG_PICKING_MODE) { type = NavType.BoolType },
         )
 
         fun create(pickExercises: Boolean) =
@@ -125,7 +125,7 @@ fun NavGraphBuilder.composable(
 
 fun NavGraphBuilder.bottomSheet(
     route: Route,
-    content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+    content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) {
     bottomSheet(
         route = route.value,
