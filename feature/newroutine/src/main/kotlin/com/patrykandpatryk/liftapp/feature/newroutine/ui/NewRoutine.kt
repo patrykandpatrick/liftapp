@@ -6,13 +6,19 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumedWindowInsets
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -24,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -31,16 +38,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
+import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.state.equivalentSnapshotPolicy
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
+import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.domain.Event
@@ -50,6 +61,7 @@ import com.patrykandpatryk.liftapp.feature.newroutine.domain.ScreenState
 @Composable
 fun NewRoutine(
     popBackStack: () -> Unit,
+    navigate: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -71,6 +83,7 @@ fun NewRoutine(
         snackbarHostState = snackbarHostState,
         popBackStack = popBackStack,
         nameErrorText = errorMessage,
+        navigate = navigate,
     )
 
     viewModel.events.collectInComposable { event ->
@@ -89,6 +102,7 @@ private fun NewRoutine(
     onIntent: (Intent) -> Unit,
     snackbarHostState: SnackbarHostState,
     popBackStack: () -> Unit,
+    navigate: (String) -> Unit,
     nameErrorText: String,
 ) {
 
@@ -125,6 +139,7 @@ private fun NewRoutine(
                 state = state,
                 onIntent = onIntent,
                 nameErrorText = nameErrorText,
+                navigate = navigate,
             )
         }
     }
@@ -135,6 +150,7 @@ private fun ColumnScope.Content(
     state: ScreenState,
     onIntent: (Intent) -> Unit,
     nameErrorText: String,
+    navigate: (String) -> Unit,
 ) {
 
     OutlinedTextField(
@@ -152,6 +168,45 @@ private fun ColumnScope.Content(
         visible = state.showErrors,
         isError = true,
     )
+
+    ListSectionTitle(title = stringResource(id = R.string.title_exercises))
+
+    EmptyState()
+
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = { navigate(Routes.Exercises.create(pickExercises = true)) },
+    ) {
+
+        Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
+
+        Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
+
+        Text(text = stringResource(id = R.string.action_add_exercise))
+    }
+}
+
+@Composable
+private fun ColumnScope.EmptyState() {
+
+    Icon(
+        modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .padding(vertical = MaterialTheme.dimens.verticalItemSpacing)
+            .size(128.dp),
+        painter = painterResource(id = R.drawable.ic_weightlifter_down),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.44f),
+    )
+
+    Text(
+        modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .padding(bottom = MaterialTheme.dimens.verticalItemSpacing),
+        text = stringResource(id = R.string.state_no_exercises),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Preview
@@ -167,6 +222,7 @@ fun NewRoutinePreview() {
             onIntent = {},
             popBackStack = {},
             nameErrorText = "",
+            navigate = {},
         )
     }
 }
