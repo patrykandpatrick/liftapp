@@ -55,17 +55,27 @@ class SearchAlgorithmImpl @Inject constructor() : SearchAlgorithm {
             ?.take(n = (candidate.length - query.length + 1).coerceAtLeast(minimumValue = 0))
             ?.forEach { potentialIndex ->
 
-                var mismatches = 0
+                var mismatchCount = 0
 
-                candidate
+                val substring = candidate
                     .substring(range = potentialIndex until potentialIndex + query.length)
                     .lowercase()
-                    .forEachIndexed { charIndex, char ->
 
-                        if (query[charIndex].lowercaseChar() != char) mismatches++
-                    }
+                for (i in substring.indices) {
 
-                if (mismatches == 1) return potentialIndex to true
+                    val mismatch = query[i].lowercaseChar() != substring[i]
+                    val noSwap = i == 0 ||
+                        (
+                            query[i].lowercaseChar() != substring[i - 1] ||
+                                query[i - 1].lowercaseChar() != substring[i]
+                            )
+
+                    if (mismatch && noSwap) mismatchCount++
+                }
+
+                if (mismatchCount <= getMaxMismatchCount(queryLength = query.length)) {
+                    return potentialIndex to true
+                }
             }
 
         return null
@@ -75,6 +85,9 @@ class SearchAlgorithmImpl @Inject constructor() : SearchAlgorithm {
         indexOfMatch: Int,
         selector: (T) -> String,
     ) = indexOfMatch == 0 || beforeNaturalMatchPosition.contains(selector(this)[indexOfMatch - 1])
+
+    private fun getMaxMismatchCount(queryLength: Int) =
+        (queryLength - FUZZY_SEARCH_MIN_LENGTH) / MAX_MISMATCH_COUNT_STEP_LENGTH + 1
 
     private data class SearchInfo<R>(
         val entity: R,
@@ -97,6 +110,7 @@ class SearchAlgorithmImpl @Inject constructor() : SearchAlgorithm {
     private companion object {
 
         const val FUZZY_SEARCH_MIN_LENGTH = 3
+        const val MAX_MISMATCH_COUNT_STEP_LENGTH = 4
         val beforeNaturalMatchPosition = listOf(' ', '-')
     }
 }

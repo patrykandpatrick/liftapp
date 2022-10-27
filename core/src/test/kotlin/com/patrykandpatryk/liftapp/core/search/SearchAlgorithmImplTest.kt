@@ -23,10 +23,18 @@ class SearchAlgorithmImplTest {
     }
 
     @Test
-    fun `Typos are handled properly`() {
+    fun `Mistyped letters are handled properly`() {
         assertContentEquals(
             expected = listOf("Pineapple"),
             actual = search(query = "Ppneapple"),
+        )
+    }
+
+    @Test
+    fun `Swapped letters are handled properly`() {
+        assertContentEquals(
+            expected = listOf("Cherry"),
+            actual = search(query = "Cheryr"),
         )
     }
 
