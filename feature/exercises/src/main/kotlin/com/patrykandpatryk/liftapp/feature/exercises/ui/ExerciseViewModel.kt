@@ -82,7 +82,10 @@ class ExerciseViewModel @Inject constructor(
                 checkedExerciseIds.remove(exerciseId)
             }
             state.update { state ->
-                state.copy(exercises = state.exercises.updateCheckedState())
+                state.copy(
+                    exercises = state.exercises.updateCheckedState(),
+                    selectedItemCount = checkedExerciseIds.size,
+                )
             }
         }
     }

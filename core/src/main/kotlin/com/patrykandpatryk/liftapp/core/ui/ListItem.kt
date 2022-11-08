@@ -1,6 +1,10 @@
 package com.patrykandpatryk.liftapp.core.ui
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,19 +17,24 @@ import androidx.compose.material3.LocalMinimumTouchTargetEnforcement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.scaleCornerSize
 import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 
 @Composable
@@ -62,9 +71,29 @@ fun CheckableListItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
+
+    val animationFraction by animateFloatAsState(
+        targetValue = if (checked) 1f else 0f,
+        animationSpec = tween(),
+    )
+
+    val shape = MaterialTheme.shapes.small.scaleCornerSize(animationFraction)
+
     ListItem(
         title = title,
-        modifier = modifier,
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme
+                    .surfaceColorAtElevation(MaterialTheme.dimens.list.checkedItemTonalElevation)
+                    .copy(alpha = animationFraction),
+                shape = shape,
+            )
+            .border(
+                width = MaterialTheme.dimens.strokeWidth,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = animationFraction),
+                shape = shape,
+            )
+            .clip(shape),
         description = description,
         icon = {
             CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
@@ -192,10 +221,27 @@ fun PreviewTitleWithIconItem() {
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewCheckableListItem() {
+fun PreviewCheckableListItemChecked() {
     LiftAppTheme {
         Surface {
             val (checked, setChecked) = remember { mutableStateOf(true) }
+            CheckableListItem(
+                title = "This is a title",
+                description = "This is a description",
+                checked = checked,
+                onCheckedChange = setChecked,
+            )
+        }
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PreviewCheckableListItemUnchecked() {
+    LiftAppTheme {
+        Surface {
+            val (checked, setChecked) = remember { mutableStateOf(false) }
             CheckableListItem(
                 title = "This is a title",
                 description = "This is a description",

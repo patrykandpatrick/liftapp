@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.feature.exercises.ui
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
@@ -15,20 +17,34 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
@@ -42,6 +58,7 @@ import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.SearchBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
+import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
@@ -50,6 +67,7 @@ import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 fun Exercises(
     modifier: Modifier = Modifier,
     navigate: (String) -> Unit,
+    navigateBack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
 ) {
     val viewModel: ExerciseViewModel = hiltViewModel()
@@ -58,6 +76,7 @@ fun Exercises(
     Exercises(
         modifier = modifier,
         navigate = navigate,
+        navigateBack = navigateBack,
         padding = padding,
         state = state,
         onIntent = viewModel::handleIntent,
@@ -68,37 +87,49 @@ fun Exercises(
 private fun Exercises(
     modifier: Modifier = Modifier,
     navigate: (String) -> Unit,
+    navigateBack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
     state: ScreenState,
     onIntent: (Intent) -> Unit,
 ) {
 
+    val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = stringResource(id = R.string.action_new_exercise),
-                icon = painterResource(id = R.drawable.ic_add),
-                onClick = { navigate(Routes.NewExercise.create()) },
-                modifier = Modifier
-                    .thenIf(padding.calculateBottomPadding() == 0.dp) {
-                        padding(WindowInsets.navigationBars.asPaddingValues())
-                    },
-            )
+            if (state.pickingMode.not()) {
+                ExtendedFloatingActionButton(
+                    text = stringResource(id = R.string.action_new_exercise),
+                    icon = painterResource(id = R.drawable.ic_add),
+                    onClick = { navigate(Routes.NewExercise.create()) },
+                    modifier = Modifier
+                        .thenIf(padding.calculateBottomPadding() == 0.dp) {
+                            padding(WindowInsets.navigationBars.asPaddingValues())
+                        },
+                )
+            }
         },
         topBar = {
-            SearchBar(
-                value = state.query,
-                onValueChange = { onIntent(Intent.SetQuery(it)) },
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
+            TopBar(
+                state = state,
+                topAppBarScrollBehavior = topAppBarScrollBehavior,
+                onIntent = onIntent,
+                navigateBack = navigateBack,
             )
+        },
+        bottomBar = {
+            if (state.pickingMode) {
+                BottomBar(navigate = navigate)
+            }
         },
         contentWindowInsets = WindowInsets.statusBars,
     ) { internalPadding ->
 
         LazyColumn(
+            modifier = Modifier
+                .thenIf(state.pickingMode) { nestedScroll(topAppBarScrollBehavior.nestedScrollConnection) },
+            verticalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = PaddingValues(
                 top = internalPadding.calculateTopPadding(),
                 bottom = if (padding.calculateBottomPadding() == 0.dp) {
@@ -127,28 +158,12 @@ private fun Exercises(
 
                 when (item) {
                     is ExercisesItem.Exercise -> {
-                        if (state.pickingMode) {
-                            CheckableListItem(
-                                title = item.name,
-                                description = item.muscles,
-                                modifier = Modifier
-                                    .animateItemPlacement()
-                                    .clickable { navigate(Routes.Exercise.create(item.id)) },
-                                checked = item.checked,
-                                onCheckedChange = { checked ->
-                                    onIntent(Intent.SetExerciseChecked(item.id, checked))
-                                },
-                            )
-                        } else {
-                            ListItem(
-                                title = item.name,
-                                description = item.muscles,
-                                iconPainter = painterResource(id = item.iconRes),
-                                modifier = Modifier
-                                    .animateItemPlacement()
-                                    .clickable { navigate(Routes.Exercise.create(item.id)) },
-                            )
-                        }
+                        ExerciseItem(
+                            state = state,
+                            item = item,
+                            onIntent = onIntent,
+                            navigate = navigate,
+                        )
                     }
 
                     is ExercisesItem.Header -> {
@@ -162,6 +177,117 @@ private fun Exercises(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LazyItemScope.ExerciseItem(
+    state: ScreenState,
+    item: ExercisesItem.Exercise,
+    onIntent: (Intent) -> Unit,
+    navigate: (String) -> Unit,
+) {
+    if (state.pickingMode) {
+        CheckableListItem(
+            title = item.name,
+            description = item.muscles,
+            modifier = Modifier
+                .padding(horizontal = MaterialTheme.dimens.list.checkedItemHorizontalPadding)
+                .animateItemPlacement(),
+            checked = item.checked,
+            onCheckedChange = { checked ->
+                onIntent(Intent.SetExerciseChecked(item.id, checked))
+            },
+        )
+    } else {
+        ListItem(
+            title = item.name,
+            description = item.muscles,
+            iconPainter = painterResource(id = item.iconRes),
+            modifier = Modifier
+                .animateItemPlacement()
+                .clickable { navigate(Routes.Exercise.create(item.id)) },
+        )
+    }
+}
+
+@Composable
+private fun TopBar(
+    state: ScreenState,
+    topAppBarScrollBehavior: TopAppBarScrollBehavior,
+    onIntent: (Intent) -> Unit,
+    navigateBack: () -> Unit,
+) {
+    if (state.pickingMode) {
+        Column {
+
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.title_x_selected, state.selectedItemCount),
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Start,
+                    )
+                },
+                scrollBehavior = topAppBarScrollBehavior,
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = stringResource(id = R.string.action_close),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                },
+            )
+
+            SearchBar(
+                value = state.query,
+                onValueChange = { onIntent(Intent.SetQuery(it)) },
+                modifier = Modifier
+                    .padding(
+                        all = MaterialTheme.dimens.padding.contentHorizontal,
+                    ),
+            )
+        }
+    } else {
+        SearchBar(
+            value = state.query,
+            onValueChange = { onIntent(Intent.SetQuery(it)) },
+            modifier = Modifier
+                .statusBarsPadding()
+                .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
+        )
+    }
+}
+
+@Composable
+private fun BottomBar(
+    navigate: (String) -> Unit,
+) {
+    BottomAppBar(
+        contentPadding = PaddingValues(
+            start = 4.dp,
+            end = 16.dp,
+        ),
+    ) {
+
+        IconButton(onClick = { navigate(Routes.NewExercise.create()) }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_add),
+                contentDescription = stringResource(id = R.string.action_new_exercise),
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        ExtendedFloatingActionButton(
+            text = stringResource(id = R.string.action_done),
+            icon = painterResource(id = R.drawable.ic_check),
+            onClick = { /*TODO*/ },
+            modifier = Modifier.align(Alignment.CenterVertically),
+            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+        )
     }
 }
 
@@ -207,5 +333,37 @@ private fun Controls(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(device = Devices.TABLET)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.TABLET)
+@Composable
+fun ExercisesPreview() {
+    LiftAppTheme {
+        Exercises(
+            navigate = {},
+            state = getScreenState(pickingMode = false),
+            onIntent = {},
+            navigateBack = {},
+        )
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(device = Devices.TABLET)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.TABLET)
+@Composable
+fun ExercisesPreviewPickingMode() {
+    LiftAppTheme {
+        Exercises(
+            navigate = {},
+            state = getScreenState(pickingMode = true),
+            onIntent = {},
+            navigateBack = {},
+        )
     }
 }

@@ -129,6 +129,7 @@ fun Root(modifier: Modifier = Modifier) {
                 composable(route = Routes.Exercises) {
                     Exercises(
                         navigate = navController::navigate,
+                        navigateBack = navController::popBackStack,
                     )
                 }
             }

@@ -1,5 +1,7 @@
 package com.patrykandpatryk.liftapp.core.ui
 
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,6 +15,7 @@ fun ExtendedFloatingActionButton(
     icon: Painter?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
 ) {
     androidx.compose.material3.ExtendedFloatingActionButton(
         text = {
@@ -33,5 +36,6 @@ fun ExtendedFloatingActionButton(
         },
         onClick = onClick,
         modifier = modifier,
+        elevation = elevation,
     )
 }

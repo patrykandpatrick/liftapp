@@ -17,9 +17,12 @@ data class Dimens(
     val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
     val input: Input = Input(),
+    val list: List = List(),
     val padding: Padding = Padding(),
     val routine: Routine = Routine(),
+    val searchBar: SearchBar = SearchBar(),
     val strokeWidth: Dp = 1.dp,
+    val toolbar: Toolbar = Toolbar(),
     val verticalItemSpacing: Dp = 16.dp,
 ) {
 
@@ -79,8 +82,24 @@ data class Dimens(
     )
 
     @Immutable
+    data class List(
+        val checkedItemHorizontalPadding: Dp = 4.dp,
+        val checkedItemTonalElevation: Dp = 2.dp,
+    )
+
+    @Immutable
     data class Routine(
         val minCardWidth: Dp = 140.dp,
+    )
+
+    @Immutable
+    data class Toolbar(
+        val height: Dp = 56.dp,
+    )
+
+    @Immutable
+    data class SearchBar(
+        val tonalElevation: Dp = 3.dp,
     )
 
     @Immutable

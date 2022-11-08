@@ -7,4 +7,5 @@ data class ScreenState(
     val exercises: List<ExercisesItem> = emptyList(),
     val query: String = "",
     val groupBy: GroupBy = GroupBy.Name,
+    val selectedItemCount: Int = 0,
 )

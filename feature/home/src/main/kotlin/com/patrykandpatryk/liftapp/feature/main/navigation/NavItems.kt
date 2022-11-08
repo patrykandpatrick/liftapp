@@ -48,6 +48,7 @@ val navBarRoutes: List<NavItemRoute>
                         modifier = modifier,
                         padding = padding,
                         navigate = navigate,
+                        navigateBack = {},
                     )
                 },
             ),

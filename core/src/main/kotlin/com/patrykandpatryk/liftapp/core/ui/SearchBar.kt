@@ -32,7 +32,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.withColor
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
@@ -42,6 +42,7 @@ fun SearchBar(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    tonalElevation: Dp = MaterialTheme.dimens.searchBar.tonalElevation,
 ) {
     var focused by remember { mutableStateOf(value = false) }
     val focusRequester = remember { FocusRequester() }
@@ -53,7 +54,7 @@ fun SearchBar(
     }.also { BackHandler(enabled = focused, onBack = it) }
 
     Surface(
-        tonalElevation = 3.dp,
+        tonalElevation = tonalElevation,
         shape = CircleShape,
         modifier = modifier.height(MaterialTheme.dimens.height.searchBar),
     ) {
