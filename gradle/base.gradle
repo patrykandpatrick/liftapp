@@ -54,6 +54,7 @@ android {
                 "-opt-in=kotlin.RequiresOptIn",
                 "-Xcontext-receivers",
                 "-opt-in=kotlin.time.ExperimentalTime",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
                 "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
                 "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
