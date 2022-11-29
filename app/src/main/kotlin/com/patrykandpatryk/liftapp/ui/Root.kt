@@ -29,6 +29,7 @@ import com.patrykandpatryk.liftapp.bodyentry.ui.InsertBodyEntry
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.bottomSheet
 import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.ProvideNavHost
 import com.patrykandpatryk.liftapp.core.ui.dimens.DialogDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
@@ -75,62 +76,65 @@ fun Root(modifier: Modifier = Modifier) {
             sheetShape = BottomSheetShape,
         ) {
 
-            AnimatedNavHost(
-                navController = navController,
-                startDestination = Routes.Home.value,
-            ) {
+            ProvideNavHost(navHostController = navController) {
 
-                composable(route = Routes.Home) {
-                    Home(parentNavController = navController)
-                }
+                AnimatedNavHost(
+                    navController = navController,
+                    startDestination = Routes.Home.value,
+                ) {
 
-                composable(route = Routes.About) {
-                    About()
-                }
+                    composable(route = Routes.Home) {
+                        Home(parentNavController = navController)
+                    }
 
-                composable(route = Routes.Settings) {
-                    Settings(parentNavController = navController)
-                }
+                    composable(route = Routes.About) {
+                        About()
+                    }
 
-                composable(route = Routes.OneRepMax) {
-                    OneRepMax(parentNavController = navController)
-                }
+                    composable(route = Routes.Settings) {
+                        Settings(parentNavController = navController)
+                    }
 
-                composable(route = Routes.NewRoutine) {
-                    NewRoutine(
-                        popBackStack = navController::popBackStack,
-                        navigate = navController::navigate,
-                    )
-                }
+                    composable(route = Routes.OneRepMax) {
+                        OneRepMax(parentNavController = navController)
+                    }
 
-                composable(route = Routes.BodyDetails) {
-                    BodyDetails(
-                        navigate = navController::navigate,
-                        navigateBack = navController::popBackStack,
-                    )
-                }
+                    composable(route = Routes.NewRoutine) {
+                        NewRoutine(
+                            popBackStack = navController::popBackStack,
+                            navigate = navController::navigate,
+                        )
+                    }
 
-                bottomSheet(route = Routes.InsertBodyEntry) {
-                    val scope = rememberCoroutineScope()
+                    composable(route = Routes.BodyDetails) {
+                        BodyDetails(
+                            navigate = navController::navigate,
+                            navigateBack = navController::popBackStack,
+                        )
+                    }
 
-                    InsertBodyEntry(
-                        onCloseClick = { scope.launch { bottomSheetState.hide() } },
-                    )
-                }
+                    bottomSheet(route = Routes.InsertBodyEntry) {
+                        val scope = rememberCoroutineScope()
 
-                composable(route = Routes.NewExercise) {
-                    NewExercise(popBackStack = { navController.popBackStack() })
-                }
+                        InsertBodyEntry(
+                            onCloseClick = { scope.launch { bottomSheetState.hide() } },
+                        )
+                    }
 
-                composable(route = Routes.Exercise) {
-                    Exercise()
-                }
+                    composable(route = Routes.NewExercise) {
+                        NewExercise(popBackStack = { navController.popBackStack() })
+                    }
 
-                composable(route = Routes.Exercises) {
-                    Exercises(
-                        navigate = navController::navigate,
-                        navigateBack = navController::popBackStack,
-                    )
+                    composable(route = Routes.Exercise) {
+                        Exercise()
+                    }
+
+                    composable(route = Routes.Exercises) {
+                        Exercises(
+                            navigate = navController::navigate,
+                            navigateBack = navController::popBackStack,
+                        )
+                    }
                 }
             }
         }
