@@ -26,4 +26,9 @@ object Constants {
 
         const val NAME_MAX_CHARS = 60
     }
+
+    object Keys {
+
+        const val PICKED_EXERCISE_IDS = "pickedExerciseIds"
+    }
 }

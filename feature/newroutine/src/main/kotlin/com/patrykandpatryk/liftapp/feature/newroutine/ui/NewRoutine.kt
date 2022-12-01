@@ -13,13 +13,16 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -45,14 +48,17 @@ import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.provider.RegisterResultListener
 import com.patrykandpatryk.liftapp.core.state.equivalentSnapshotPolicy
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
+import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
-import com.patrykandpatryk.liftapp.core.ui.SupportingText
+import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.domain.Event
 import com.patrykandpatryk.liftapp.feature.newroutine.domain.Intent
@@ -75,6 +81,11 @@ fun NewRoutine(
     val snackbarHostState = remember { SnackbarHostState() }
 
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
+
+    RegisterResultListener(key = Constants.Keys.PICKED_EXERCISE_IDS) { pickedExerciseIds: List<Long> ->
+        viewModel.handleIntent(Intent.AddPickedExercises(pickedExerciseIds))
+        clearResult()
+    }
 
     NewRoutine(
         modifier = modifier,
@@ -130,12 +141,12 @@ private fun NewRoutine(
         floatingActionButtonPosition = FabPosition.Center,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(paddingValues)
                 .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
+            contentPadding = paddingValues,
         ) {
-            Content(
+            content(
                 state = state,
                 onIntent = onIntent,
                 nameErrorText = nameErrorText,
@@ -145,44 +156,82 @@ private fun NewRoutine(
     }
 }
 
-@Composable
-private fun ColumnScope.Content(
+private fun LazyListScope.content(
     state: ScreenState,
     onIntent: (Intent) -> Unit,
     nameErrorText: String,
     navigate: (String) -> Unit,
 ) {
+    item {
+        OutlinedTextField(
+            value = state.name.value,
+            onValueChange = { onIntent(Intent.UpdateName(it)) },
+            label = { Text(text = stringResource(id = R.string.generic_name)) },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { onIntent(Intent.Save) }),
+            maxLines = LocalDimens.current.input.nameMaxLines,
+            supportingText = nameErrorText,
+            isError = state.showErrors,
+            showSupportingText = state.showErrors,
+        )
 
-    OutlinedTextField(
-        value = state.name.value,
-        onValueChange = { onIntent(Intent.UpdateName(it)) },
-        label = { Text(text = stringResource(id = R.string.generic_name)) },
-        modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = { onIntent(Intent.Save) }),
-        maxLines = LocalDimens.current.input.nameMaxLines,
-    )
+        ListSectionTitle(
+            modifier = Modifier.padding(top = LocalDimens.current.verticalItemSpacing),
+            title = stringResource(id = R.string.title_exercises),
+        )
+    }
 
-    SupportingText(
-        text = nameErrorText,
-        visible = state.showErrors,
-        isError = true,
-    )
+    if (state.exercises.isEmpty()) {
+        item {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                EmptyState()
+            }
+        }
+    } else {
+        items(state.exercises, key = { it.id }) { item ->
+            ListItem(
+                modifier = Modifier.animateItemPlacement(),
+                title = item.name,
+                description = item.muscles,
+                iconPainter = painterResource(id = item.iconRes),
+                actions = {
+                    IconButton(onClick = { onIntent(Intent.RemovePickedExercise(item.id)) }) {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.ic_remove_circle,
+                            ),
+                            contentDescription = stringResource(id = R.string.list_remove),
+                        )
+                    }
+                },
+            )
+        }
+    }
 
-    ListSectionTitle(title = stringResource(id = R.string.title_exercises))
+    item(key = R.string.action_add_exercise) {
 
-    EmptyState()
+        Button(
+            modifier = Modifier
+                .animateItemPlacement()
+                .fillMaxWidth()
+                .padding(top = LocalDimens.current.verticalItemSpacing),
+            onClick = {
+                navigate(
+                    Routes.Exercises.create(
+                        pickExercises = true,
+                        disabledExerciseIds = state.exerciseIds,
+                    ),
+                )
+            },
+        ) {
 
-    Button(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { navigate(Routes.Exercises.create(pickExercises = true)) },
-    ) {
+            Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
 
-        Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
+            Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
 
-        Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
-
-        Text(text = stringResource(id = R.string.action_add_exercise))
+            Text(text = stringResource(id = R.string.action_add_exercise))
+        }
     }
 }
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.feature.exercises.di.DisabledExercises
 import com.patrykandpatryk.liftapp.feature.exercises.di.PickingMode
 import com.patrykandpatryk.liftapp.feature.exercises.model.Event
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
     @PickingMode val pickingMode: Boolean,
+    @DisabledExercises val disabledExercises: List<Long>,
     getExercisesItems: GetExercisesItemsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
@@ -49,7 +51,7 @@ class ExerciseViewModel @Inject constructor(
             .flowOn(dispatcher)
             .onEach { exercises ->
                 state.update { state ->
-                    state.copy(exercises = exercises.updateCheckedState())
+                    state.copy(exercises = exercises.updateState())
                 }
             }.launchIn(viewModelScope)
     }
@@ -58,6 +60,7 @@ class ExerciseViewModel @Inject constructor(
         is Intent.SetQuery -> setQuery(intent.query)
         is Intent.SetGroupBy -> setGroupBy(intent.groupBy)
         is Intent.SetExerciseChecked -> setExerciseChecked(intent.exerciseId, intent.checked)
+        is Intent.FinishPickingExercises -> finishPickingExercises()
     }
 
     private fun setQuery(query: String) {
@@ -83,23 +86,31 @@ class ExerciseViewModel @Inject constructor(
             }
             state.update { state ->
                 state.copy(
-                    exercises = state.exercises.updateCheckedState(),
+                    exercises = state.exercises.updateState(),
                     selectedItemCount = checkedExerciseIds.size,
                 )
             }
         }
     }
 
-    private fun List<ExercisesItem>.updateCheckedState(): List<ExercisesItem> =
+    private fun List<ExercisesItem>.updateState(): List<ExercisesItem> =
         map { exerciseItem ->
             if (exerciseItem is ExercisesItem.Exercise) {
+                val enabled = disabledExercises.contains(exerciseItem.id).not()
                 exerciseItem.copy(
-                    checked = checkedExerciseIds.contains(exerciseItem.id),
+                    checked = enabled && checkedExerciseIds.contains(exerciseItem.id),
+                    enabled = enabled,
                 )
             } else {
                 exerciseItem
             }
         }
+
+    private fun finishPickingExercises() {
+        viewModelScope.launch(dispatcher) {
+            events.emit(Event.OnExercisesPicked(checkedExerciseIds.toList()))
+        }
+    }
 
     override fun close() = Unit
 }

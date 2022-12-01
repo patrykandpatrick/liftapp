@@ -11,6 +11,8 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.material.bottomSheet
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 open class Route(val value: String) {
 
@@ -31,6 +33,7 @@ object Routes {
     const val ARG_ID = "id"
     const val ARG_ENTRY_ID = "entry_id"
     const val ARG_PICKING_MODE = "picking_mode"
+    const val DISABLED_EXERCISE_IDS = "disabled_exercise_ids"
 
     object Home : Route(value = "home") {
 
@@ -101,14 +104,21 @@ object Routes {
         fun create(exerciseId: Long) = value.replace("{$ARG_ID}", exerciseId.toString())
     }
 
-    object Exercises : Route(value = "exercises?$ARG_PICKING_MODE={$ARG_PICKING_MODE}") {
+    object Exercises : Route(
+        value = "exercises" +
+            "?$ARG_PICKING_MODE={$ARG_PICKING_MODE}" +
+            "?$DISABLED_EXERCISE_IDS={$DISABLED_EXERCISE_IDS}",
+    ) {
 
         override val navArguments: List<NamedNavArgument> = listOf(
             navArgument(ARG_PICKING_MODE) { type = NavType.BoolType },
+            navArgument(DISABLED_EXERCISE_IDS) { type = IdsType },
         )
 
-        fun create(pickExercises: Boolean) =
-            value.replace("{$ARG_PICKING_MODE}", pickExercises.toString())
+        fun create(pickExercises: Boolean, disabledExerciseIds: List<Long> = emptyList()) =
+            value
+                .replace("{$ARG_PICKING_MODE}", pickExercises.toString())
+                .replace("{$DISABLED_EXERCISE_IDS}", Json.encodeToString(disabledExerciseIds))
     }
 }
 

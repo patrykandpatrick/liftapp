@@ -6,6 +6,8 @@ interface ExerciseRepository {
 
     fun getAllExercises(): Flow<List<Exercise>>
 
+    fun getExercises(ids: List<Long>): Flow<List<Exercise>>
+
     fun getExercise(id: Long): Flow<Exercise?>
 
     suspend fun insert(exercise: Exercise.Insert): Long

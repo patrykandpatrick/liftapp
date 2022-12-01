@@ -25,6 +25,12 @@ class ExerciseRepositoryImpl @Inject constructor(
             .map(entityToDomain::invoke)
             .flowOn(dispatcher)
 
+    override fun getExercises(ids: List<Long>): Flow<List<Exercise>> =
+        exerciseDao
+            .getExercises(ids)
+            .map(entityToDomain::invoke)
+            .flowOn(dispatcher)
+
     override fun getExercise(id: Long): Flow<Exercise?> =
         exerciseDao
             .getExercise(id)

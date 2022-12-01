@@ -48,9 +48,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.provider.LocalNavHostController
+import com.patrykandpatryk.liftapp.core.provider.setResult
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
@@ -59,6 +62,8 @@ import com.patrykandpatryk.liftapp.core.ui.SearchBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.domain.Constants
+import com.patrykandpatryk.liftapp.feature.exercises.model.Event
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
@@ -72,6 +77,19 @@ fun Exercises(
 ) {
     val viewModel: ExerciseViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    val navHostController = LocalNavHostController.current
+
+    viewModel.events.collectInComposable { event ->
+        when (event) {
+            is Event.OnExercisesPicked -> {
+                navHostController?.setResult(
+                    key = Constants.Keys.PICKED_EXERCISE_IDS,
+                    result = event.exerciseIds,
+                )
+                navigateBack()
+            }
+        }
+    }
 
     Exercises(
         modifier = modifier,
@@ -120,7 +138,10 @@ private fun Exercises(
         },
         bottomBar = {
             if (state.pickingMode) {
-                BottomBar(navigate = navigate)
+                BottomBar(
+                    navigate = navigate,
+                    onIntent = onIntent,
+                )
             }
         },
         contentWindowInsets = WindowInsets.statusBars,
@@ -191,6 +212,7 @@ private fun LazyItemScope.ExerciseItem(
         CheckableListItem(
             title = item.name,
             description = item.muscles,
+            iconPainter = painterResource(id = item.iconRes),
             modifier = Modifier
                 .padding(horizontal = MaterialTheme.dimens.list.checkedItemHorizontalPadding)
                 .animateItemPlacement(),
@@ -198,6 +220,7 @@ private fun LazyItemScope.ExerciseItem(
             onCheckedChange = { checked ->
                 onIntent(Intent.SetExerciseChecked(item.id, checked))
             },
+            enabled = item.enabled,
         )
     } else {
         ListItem(
@@ -207,6 +230,7 @@ private fun LazyItemScope.ExerciseItem(
             modifier = Modifier
                 .animateItemPlacement()
                 .clickable { navigate(Routes.Exercise.create(item.id)) },
+            enabled = item.enabled,
         )
     }
 }
@@ -264,6 +288,7 @@ private fun TopBar(
 @Composable
 private fun BottomBar(
     navigate: (String) -> Unit,
+    onIntent: (Intent) -> Unit,
 ) {
     BottomAppBar(
         contentPadding = PaddingValues(
@@ -284,7 +309,7 @@ private fun BottomBar(
         ExtendedFloatingActionButton(
             text = stringResource(id = R.string.action_done),
             icon = painterResource(id = R.drawable.ic_check),
-            onClick = { /*TODO*/ },
+            onClick = { onIntent(Intent.FinishPickingExercises) },
             modifier = Modifier.align(Alignment.CenterVertically),
             elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
         )

@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.annotation.StringRes
 import com.patrykandpatryk.liftapp.core.R.string
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
+import com.patrykandpatryk.liftapp.core.ui.resource.stringRes
+import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import javax.inject.Inject
@@ -11,6 +13,9 @@ import javax.inject.Inject
 class StringProviderImpl @Inject constructor(
     private val application: Application,
 ) : StringProvider {
+
+    override val andInAList: String
+        get() = string(string.and_in_a_list)
 
     override val name: String
         get() = string(string.generic_name)
@@ -47,6 +52,9 @@ class StringProviderImpl @Inject constructor(
 
     override fun getErrorCannotBeEmpty(name: String): String =
         string(string.error_x_empty, name)
+
+    override fun getMuscleName(muscle: Muscle): String =
+        string(muscle.stringRes)
 
     private fun string(
         @StringRes id: Int,

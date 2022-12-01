@@ -12,6 +12,9 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercise")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
 
+    @Query("SELECT * FROM exercise WHERE id in (:ids)")
+    fun getExercises(ids: List<Long>): Flow<List<ExerciseEntity>>
+
     @Query("SELECT * FROM exercise WHERE id = :id")
     fun getExercise(id: Long): Flow<ExerciseEntity?>
 

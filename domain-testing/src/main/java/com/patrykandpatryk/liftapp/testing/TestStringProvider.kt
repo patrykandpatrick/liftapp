@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.testing
 
 import com.patrykandpatryk.liftapp.domain.extension.getTypeErrorMessage
+import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -11,6 +12,7 @@ import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 
 object TestStringProvider : StringProvider {
 
+    override val andInAList: String = "&"
     override val name: String = "Name"
 
     override val dateFormatShort: String = "d MMMM"
@@ -38,6 +40,8 @@ object TestStringProvider : StringProvider {
     override fun quoted(value: String): String = "”%s“".format(value)
 
     override fun getErrorCannotBeEmpty(name: String): String = "%s cannot be empty.".format(name)
+
+    override fun getMuscleName(muscle: Muscle): String = muscle.name
 
     override fun getErrorNameTooLong(actual: Int, limit: Int): String =
         "The name is too long (%1\$d/%2\$d).".format(actual, limit)

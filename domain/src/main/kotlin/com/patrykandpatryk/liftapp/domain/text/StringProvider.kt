@@ -1,10 +1,12 @@
 package com.patrykandpatryk.liftapp.domain.text
 
 import com.patrykandpatryk.liftapp.domain.Constants
+import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 
 interface StringProvider {
 
+    val andInAList: String
     val name: String
 
     val dateFormatShort: String
@@ -26,4 +28,6 @@ interface StringProvider {
     fun getErrorNameTooLong(actual: Int, limit: Int = Constants.Input.NAME_MAX_CHARS): String
 
     fun getErrorCannotBeEmpty(name: String): String
+
+    fun getMuscleName(muscle: Muscle): String
 }
