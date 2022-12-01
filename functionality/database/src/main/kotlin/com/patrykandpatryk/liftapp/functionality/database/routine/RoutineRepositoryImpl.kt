@@ -42,4 +42,21 @@ class RoutineRepositoryImpl @Inject constructor(
     override suspend fun upsert(routine: Routine): Long = withContext(NonCancellable) {
         routineDao.upsert(routine = routineToEntityMapper(routine))
     }
+
+    override suspend fun insert(name: String, exerciseIds: List<Long>): Long {
+        val routineId = routineDao.insert(
+            routine = RoutineEntity(
+                name = name,
+            ),
+        )
+
+        exerciseIds.map { exerciseId ->
+            ExerciseWithRoutineEntity(
+                routineId = routineId,
+                exerciseId = exerciseId,
+            )
+        }.also { exerciseWithRoutineEntities -> routineDao.insert(exerciseWithRoutineEntities) }
+
+        return routineId
+    }
 }

@@ -22,5 +22,11 @@ interface RoutineDao {
     suspend fun upsert(routine: RoutineEntity): Long
 
     @Insert
+    suspend fun insert(routine: RoutineEntity): Long
+
+    @Insert
     suspend fun insert(exerciseWithRoutine: ExerciseWithRoutineEntity)
+
+    @Insert
+    suspend fun insert(exerciseWithRoutine: List<ExerciseWithRoutineEntity>)
 }

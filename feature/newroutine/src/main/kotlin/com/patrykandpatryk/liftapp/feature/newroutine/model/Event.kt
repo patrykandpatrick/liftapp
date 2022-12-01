@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.newroutine.domain
+package com.patrykandpatryk.liftapp.feature.newroutine.model
 
 sealed class Event {
 

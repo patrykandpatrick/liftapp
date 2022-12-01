@@ -67,9 +67,9 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.validation.toValid
-import com.patrykandpatryk.liftapp.feature.newroutine.domain.Event
-import com.patrykandpatryk.liftapp.feature.newroutine.domain.Intent
-import com.patrykandpatryk.liftapp.feature.newroutine.domain.ScreenState
+import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
+import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
+import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
 import com.patrykandpatryk.vico.core.extension.orZero
 
 @Composable

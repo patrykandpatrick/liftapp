@@ -7,20 +7,17 @@ import com.patrykandpatryk.liftapp.core.extension.update
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.core.validation.Name
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
-import com.patrykandpatryk.liftapp.domain.exercise.Exercise
-import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import com.patrykandpatryk.liftapp.domain.routine.Routine
-import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.di.RoutineId
-import com.patrykandpatryk.liftapp.feature.newroutine.domain.Event
-import com.patrykandpatryk.liftapp.feature.newroutine.domain.Intent
-import com.patrykandpatryk.liftapp.feature.newroutine.domain.ScreenState
+import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
+import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
+import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
+import com.patrykandpatryk.liftapp.feature.newroutine.usecase.GetExerciseItemsUseCase
+import com.patrykandpatryk.liftapp.feature.newroutine.usecase.InsertRoutineUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -30,7 +27,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,9 +38,9 @@ private const val PICKED_EXERCISES_KEY = "pickedExercises"
 class NewRoutineViewModel @Inject constructor(
     @RoutineId private val routineId: Long?,
     private val savedState: SavedStateHandle,
-    private val routineRepository: RoutineRepository,
-    private val exerciseRepository: ExerciseRepository,
-    private val exerciseToItemMapper: Mapper<Exercise, ExerciseItem>,
+    private val getRoutine: GetRoutineUseCase,
+    private val insertRoutine: InsertRoutineUseCase,
+    private val getExerciseItems: GetExerciseItemsUseCase,
     exceptionHandler: CoroutineExceptionHandler,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
     @Name private val validateName: Validator<String>,
@@ -66,8 +62,7 @@ class NewRoutineViewModel @Inject constructor(
 
         savedState
             .getStateFlow(PICKED_EXERCISES_KEY, emptyList<Long>())
-            .flatMapLatest(exerciseRepository::getExercises)
-            .map(exerciseToItemMapper::invoke)
+            .flatMapLatest(getExerciseItems::invoke)
             .onEach { exercises ->
                 updateState { state -> state.mutate(exercises = exercises) }
             }
@@ -84,7 +79,7 @@ class NewRoutineViewModel @Inject constructor(
 
     private fun loadUpdateState(routineId: Long) {
         viewModelScope.launch(coroutineContext) {
-            val routine = routineRepository.getRoutine(routineId).first()
+            val routine = getRoutine(routineId).first()
 
             if (routine == null) {
                 events.emit(Event.RoutineNotFound)
@@ -106,7 +101,7 @@ class NewRoutineViewModel @Inject constructor(
     override fun handleIntent(intent: Intent) {
         when (intent) {
             is Intent.UpdateName -> updateName(intent.name)
-            is Intent.Save -> save()
+            is Intent.Save -> validateAndSave()
             is Intent.AddPickedExercises -> addPickedExercises(intent.exerciseIds)
             is Intent.RemovePickedExercise -> removePickedExercise(intent.exerciseId)
         }
@@ -133,22 +128,31 @@ class NewRoutineViewModel @Inject constructor(
         }
     }
 
-    private fun save() {
+    private fun validateAndSave() {
         val state = state.value
+        if (validateState(state)) save(state)
+    }
+
+    private fun validateState(state: ScreenState): Boolean {
         val name = state.name
 
-        if (name.isInvalid) {
+        return if (name.isInvalid) {
             updateState { it.mutate(showErrors = true) }
-        } else {
-            viewModelScope.launch(coroutineContext) {
-                routineRepository.upsert(
-                    Routine(
-                        id = routineId ?: ID_NOT_SET,
-                        name = name.value,
-                    ),
+            false
+        } else true
+    }
+
+    private fun save(state: ScreenState) {
+        viewModelScope.launch(coroutineContext) {
+            when (state) {
+                is ScreenState.Insert -> insertRoutine(
+                    name = state.name.value,
+                    exerciseIds = state.exerciseIds,
                 )
-                events.emit(Event.EntrySaved)
+                is ScreenState.Update -> TODO()
+                ScreenState.Loading -> error("Tried to save Routine in loading state")
             }
+            events.emit(Event.EntrySaved)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.newroutine.domain
+package com.patrykandpatryk.liftapp.feature.newroutine.model
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
