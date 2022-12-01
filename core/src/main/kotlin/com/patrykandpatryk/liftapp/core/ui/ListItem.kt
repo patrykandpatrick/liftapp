@@ -6,25 +6,27 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalMinimumTouchTargetEnforcement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -36,6 +38,7 @@ import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
 
 @Composable
 fun ListItem(
@@ -43,6 +46,8 @@ fun ListItem(
     modifier: Modifier = Modifier,
     description: String? = null,
     iconPainter: Painter? = null,
+    enabled: Boolean = true,
+    actions: @Composable RowScope.() -> Unit = {},
     onClick: (() -> Unit)? = null,
 ) {
     ListItem(
@@ -52,14 +57,22 @@ fun ListItem(
         icon = {
             if (iconPainter != null) {
                 Icon(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = PillShape,
+                        )
+                        .padding(8.dp),
                     painter = iconPainter,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 24.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         },
         onClick = onClick,
+        actions = actions,
+        enabled = enabled,
     )
 }
 
@@ -68,7 +81,9 @@ fun CheckableListItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
+    iconPainter: Painter? = null,
     checked: Boolean,
+    enabled: Boolean = true,
     onCheckedChange: (Boolean) -> Unit,
 ) {
 
@@ -82,12 +97,6 @@ fun CheckableListItem(
     ListItem(
         title = title,
         modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme
-                    .surfaceColorAtElevation(MaterialTheme.dimens.list.checkedItemTonalElevation)
-                    .copy(alpha = animationFraction),
-                shape = shape,
-            )
             .border(
                 width = MaterialTheme.dimens.strokeWidth,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = animationFraction),
@@ -96,16 +105,29 @@ fun CheckableListItem(
             .clip(shape),
         description = description,
         icon = {
-            CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
-                Checkbox(
+            if (iconPainter != null) {
+                Icon(
                     modifier = Modifier
-                        .padding(end = 24.dp),
-                    checked = checked,
-                    onCheckedChange = onCheckedChange,
+                        .size(40.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = PillShape,
+                        )
+                        .padding(8.dp),
+                    painter = iconPainter,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         },
+        actions = {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = if (enabled) onCheckedChange else null,
+            )
+        },
         onClick = { onCheckedChange(checked.not()) },
+        enabled = enabled,
     )
 }
 
@@ -115,13 +137,17 @@ fun ListItem(
     modifier: Modifier = Modifier,
     description: String? = null,
     icon: @Composable RowScope.() -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
         modifier = modifier
+            .alpha(if (enabled) 1f else ContentAlpha.disabled)
             .fillMaxWidth()
-            .thenIfNotNull(value = onClick) { clickable(onClick = it) }
+            .thenIfNotNull(value = onClick) { clickable(onClick = it, enabled = enabled) }
             .padding(
                 vertical = LocalDimens.current.padding.itemVertical,
                 horizontal = LocalDimens.current.padding.contentHorizontal,
@@ -130,7 +156,7 @@ fun ListItem(
 
         icon()
 
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
 
             Text(
                 text = title,
@@ -146,6 +172,8 @@ fun ListItem(
                 )
             }
         }
+
+        actions()
     }
 }
 
@@ -199,6 +227,26 @@ fun PreviewTitleWithLongDescAndIconItem() {
                 title = "This is a title",
                 description = "This is a description \nwith two lines",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
+                actions = {
+
+                    IconButton(onClick = { }) {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.ic_remove_circle,
+                            ),
+                            contentDescription = null,
+                        )
+                    }
+
+                    IconButton(onClick = { }) {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.ic_edit,
+                            ),
+                            contentDescription = null,
+                        )
+                    }
+                },
             )
         }
     }
@@ -228,6 +276,7 @@ fun PreviewCheckableListItemChecked() {
             CheckableListItem(
                 title = "This is a title",
                 description = "This is a description",
+                iconPainter = painterResource(id = R.drawable.ic_distance),
                 checked = checked,
                 onCheckedChange = setChecked,
             )
@@ -245,6 +294,7 @@ fun PreviewCheckableListItemUnchecked() {
             CheckableListItem(
                 title = "This is a title",
                 description = "This is a description",
+                iconPainter = painterResource(id = R.drawable.ic_distance),
                 checked = checked,
                 onCheckedChange = setChecked,
             )
