@@ -175,6 +175,7 @@ private fun Exercises(
             items(
                 items = state.exercises,
                 key = { it.key },
+                contentType = { it::class },
             ) { item ->
 
                 when (item) {
