@@ -1,9 +1,11 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumedWindowInsets
 import androidx.compose.foundation.layout.Spacer
@@ -32,10 +34,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -63,6 +70,7 @@ import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.domain.Event
 import com.patrykandpatryk.liftapp.feature.newroutine.domain.Intent
 import com.patrykandpatryk.liftapp.feature.newroutine.domain.ScreenState
+import com.patrykandpatryk.vico.core.extension.orZero
 
 @Composable
 fun NewRoutine(
@@ -118,9 +126,13 @@ private fun NewRoutine(
 ) {
 
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val density = LocalDensity.current.density
+    var fabTopToParentBottom by remember { mutableStateOf(0.dp) }
 
     Scaffold(
-        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = modifier
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .imePadding(),
         topBar = {
             TopAppBar(
                 title = stringResource(id = R.string.title_new_routine),
@@ -132,7 +144,11 @@ private fun NewRoutine(
             ExtendedFloatingActionButton(
                 modifier = Modifier
                     .consumedWindowInsets(insets = WindowInsets.navigationBars)
-                    .imePadding(),
+                    .onGloballyPositioned { coordinates ->
+                        val parentBottom = coordinates.parentLayoutCoordinates?.size?.height.orZero
+                        val fabTop = coordinates.positionInParent().y
+                        fabTopToParentBottom = ((parentBottom - fabTop) / density).dp
+                    },
                 text = stringResource(id = R.string.action_save),
                 icon = painterResource(id = R.drawable.ic_save),
                 onClick = { onIntent(Intent.Save) },
@@ -143,8 +159,11 @@ private fun NewRoutine(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
-                .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
-            contentPadding = paddingValues,
+                .padding(horizontal = LocalDimens.current.padding.contentHorizontal)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(
+                bottom = fabTopToParentBottom + LocalDimens.current.verticalItemSpacing,
+            ),
         ) {
             content(
                 state = state,
@@ -162,24 +181,32 @@ private fun LazyListScope.content(
     nameErrorText: String,
     navigate: (String) -> Unit,
 ) {
-    item {
-        OutlinedTextField(
-            value = state.name.value,
-            onValueChange = { onIntent(Intent.UpdateName(it)) },
-            label = { Text(text = stringResource(id = R.string.generic_name)) },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onIntent(Intent.Save) }),
-            maxLines = LocalDimens.current.input.nameMaxLines,
-            supportingText = nameErrorText,
-            isError = state.showErrors,
-            showSupportingText = state.showErrors,
-        )
+    stickyHeader {
 
-        ListSectionTitle(
-            modifier = Modifier.padding(top = LocalDimens.current.verticalItemSpacing),
-            title = stringResource(id = R.string.title_exercises),
-        )
+        Column(
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.surface,
+            ),
+        ) {
+
+            OutlinedTextField(
+                value = state.name.value,
+                onValueChange = { onIntent(Intent.UpdateName(it)) },
+                label = { Text(text = stringResource(id = R.string.generic_name)) },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { onIntent(Intent.Save) }),
+                maxLines = LocalDimens.current.input.nameMaxLines,
+                supportingText = nameErrorText,
+                isError = state.showErrors,
+                showSupportingText = state.showErrors,
+            )
+
+            ListSectionTitle(
+                modifier = Modifier.padding(top = LocalDimens.current.verticalItemSpacing),
+                title = stringResource(id = R.string.title_exercises),
+            )
+        }
     }
 
     if (state.exercises.isEmpty()) {
@@ -189,7 +216,11 @@ private fun LazyListScope.content(
             }
         }
     } else {
-        items(state.exercises, key = { it.id }) { item ->
+        items(
+            items = state.exercises,
+            key = { it.id },
+            contentType = { it::class },
+        ) { item ->
             ListItem(
                 modifier = Modifier.animateItemPlacement(),
                 title = item.name,
