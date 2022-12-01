@@ -13,4 +13,6 @@ interface ScreenStateHandler<ScreenState, Intent, Event> : Closeable {
     fun handleIntent(intent: Intent)
 
     operator fun invoke(intent: Intent) = handleIntent(intent)
+
+    override fun close() = Unit
 }
