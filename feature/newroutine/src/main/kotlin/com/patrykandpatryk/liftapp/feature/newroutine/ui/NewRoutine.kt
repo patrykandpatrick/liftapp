@@ -1,14 +1,16 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import android.content.res.Configuration
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumedWindowInsets
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
@@ -31,6 +33,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -64,6 +67,7 @@ import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
+import com.patrykandpatryk.liftapp.core.ui.theme.Colors.IllustrationAlpha
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.validation.toValid
@@ -212,7 +216,7 @@ private fun LazyListScope.content(
     if (state.exercises.isEmpty()) {
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
-                EmptyState()
+                EmptyState(state)
             }
         }
     } else {
@@ -267,7 +271,20 @@ private fun LazyListScope.content(
 }
 
 @Composable
-private fun ColumnScope.EmptyState() {
+private fun ColumnScope.EmptyState(state: ScreenState) {
+
+    val normalColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val errorColor = MaterialTheme.colorScheme.error
+
+    val color = remember { Animatable(normalColor) }
+
+    LaunchedEffect(key1 = state.showErrors) {
+        if (state.showErrors) {
+            color.animateTo(errorColor, tween())
+        } else {
+            color.animateTo(normalColor, tween())
+        }
+    }
 
     Icon(
         modifier = Modifier
@@ -276,7 +293,7 @@ private fun ColumnScope.EmptyState() {
             .size(128.dp),
         painter = painterResource(id = R.drawable.ic_weightlifter_down),
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.44f),
+        tint = color.value.copy(alpha = IllustrationAlpha),
     )
 
     Text(
@@ -285,7 +302,7 @@ private fun ColumnScope.EmptyState() {
             .padding(bottom = MaterialTheme.dimens.verticalItemSpacing),
         text = stringResource(id = R.string.state_no_exercises),
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        color = color.value,
     )
 }
 
