@@ -42,6 +42,7 @@ import com.patrykandpatryk.liftapp.feature.main.ui.Home
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutine
 import com.patrykandpatryk.liftapp.feature.onerepmax.ui.OneRepMax
+import com.patrykandpatryk.liftapp.feature.routine.ui.addRoutine
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
 import kotlinx.coroutines.launch
 
@@ -135,6 +136,11 @@ fun Root(modifier: Modifier = Modifier) {
                             navigateBack = navController::popBackStack,
                         )
                     }
+
+                    addRoutine(
+                        navigateBack = navController::popBackStack,
+                        navigate = navController::navigate,
+                    )
                 }
             }
         }

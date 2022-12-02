@@ -49,6 +49,16 @@ object Routes {
     val OneRepMax = Route(value = "one_rep_max")
     val NewRoutine = Route(value = "new_routine")
 
+    object Routine : Route(value = "routine/{$ARG_ID}") {
+
+        override val navArguments = listOf(
+            navArgument(ARG_ID) { type = NavType.LongType },
+        )
+
+        fun create(routineId: Long) =
+            value.replace("{$ARG_ID}", routineId.toString())
+    }
+
     object InsertBodyEntry : Route(value = "insert_body_entry/{$ARG_ID}?$ARG_ENTRY_ID={$ARG_ENTRY_ID}") {
 
         override val navArguments = listOf(
