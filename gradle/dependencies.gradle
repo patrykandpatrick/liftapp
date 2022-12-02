@@ -291,6 +291,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:bodyentry")],
                 [configuration: "implementation", dependency: project(":feature:bodydetails")],
                 [configuration: "implementation", dependency: project(":feature:routines")],
+                [configuration: "implementation", dependency: project(":feature:routine")],
                 [configuration: "implementation", dependency: project(":feature:newroutine")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
