@@ -1,14 +1,24 @@
 package com.patrykandpatryk.liftapp.core.provider
 
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.semantics.Role
 import androidx.navigation.NavHostController
+import com.patrykandpatryk.liftapp.core.navigation.NavHostNavigator
+import com.patrykandpatryk.liftapp.core.navigation.Navigator
+import com.patrykandpatryk.liftapp.core.navigation.StubNavigator
 
-val LocalNavHostController: ProvidableCompositionLocal<NavHostController?> = compositionLocalOf { null }
+val LocalNavigator: ProvidableCompositionLocal<Navigator> = compositionLocalOf { StubNavigator }
+
+val navigator: Navigator
+    @Composable get() = LocalNavigator.current
 
 fun interface ResultListenerScope {
 
@@ -17,10 +27,10 @@ fun interface ResultListenerScope {
 
 @Composable
 fun ProvideNavHost(navHostController: NavHostController, content: @Composable () -> Unit) {
-    CompositionLocalProvider(LocalNavHostController provides navHostController, content = content)
+    CompositionLocalProvider(LocalNavigator provides NavHostNavigator(navHostController), content = content)
 }
 
-fun <T> NavHostController.setResult(
+fun <T> Navigator.setResult(
     key: String,
     result: T,
     route: String = requireNotNull(previousBackStackEntry?.destination?.route),
@@ -30,7 +40,7 @@ fun <T> NavHostController.setResult(
 }
 
 @Composable
-fun <T> NavHostController.RegisterResultListener(
+fun <T> Navigator.RegisterResultListener(
     key: String,
     onResult: ResultListenerScope.(T) -> Unit,
 ) {
@@ -54,5 +64,22 @@ fun <T> RegisterResultListener(
     key: String,
     onResult: ResultListenerScope.(T) -> Unit,
 ) {
-    LocalNavHostController.current?.RegisterResultListener(key, onResult)
+    LocalNavigator.current.RegisterResultListener(key, onResult)
+}
+
+fun Modifier.onClickNavigate(
+    enabled: Boolean = true,
+    onClickLabel: String? = null,
+    role: Role? = null,
+    onGetRoute: () -> String,
+) = composed {
+
+    val navHostController = LocalNavigator.current
+
+    Modifier.clickable(
+        enabled = enabled,
+        onClickLabel = onClickLabel,
+        role = role,
+        onClick = { navHostController.navigate(onGetRoute()) },
+    )
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -27,10 +29,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
+import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.navigation.bottomSheet
 import com.patrykandpatryk.liftapp.core.state.onClick
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -46,6 +51,18 @@ import com.patrykandpatryk.liftapp.domain.Constants.Input.INCREMENT_SHORT
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
+import kotlinx.coroutines.launch
+
+fun NavGraphBuilder.addInsertBodyEntry(bottomSheetState: ModalBottomSheetState) {
+
+    bottomSheet(route = Routes.InsertBodyEntry) {
+        val scope = rememberCoroutineScope()
+
+        InsertBodyEntry(
+            onCloseClick = { scope.launch { bottomSheetState.hide() } },
+        )
+    }
+}
 
 @Composable
 fun InsertBodyEntry(

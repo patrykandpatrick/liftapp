@@ -20,9 +20,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
+import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.Routes.InsertBodyEntry
+import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
 import com.patrykandpatryk.liftapp.core.ui.OptionItem
@@ -35,10 +39,14 @@ import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 
+fun NavGraphBuilder.addBodyDetails() {
+
+    composable(route = Routes.BodyDetails) {
+        BodyDetails()
+    }
+}
 @Composable
 fun BodyDetails(
-    navigate: (String) -> Unit,
-    navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -47,8 +55,6 @@ fun BodyDetails(
     val state by viewModel.state.collectAsState()
 
     BodyDetails(
-        navigate = navigate,
-        navigateBack = navigateBack,
         onIntent = viewModel::handleIntent,
         state = state,
         modelProducer = viewModel.chartModelProducer,
@@ -58,8 +64,6 @@ fun BodyDetails(
 
 @Composable
 private fun BodyDetails(
-    navigate: (String) -> Unit,
-    navigateBack: () -> Unit,
     onIntent: (Intent) -> Unit,
     state: ScreenState,
     modelProducer: ChartEntryModelProducer,
@@ -67,6 +71,7 @@ private fun BodyDetails(
 ) {
 
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val navigator = navigator
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -74,7 +79,7 @@ private fun BodyDetails(
             TopAppBar(
                 title = state.name,
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = navigateBack,
+                onBackClick = navigator::popBackStack,
             )
         },
         floatingActionButton = {
@@ -83,7 +88,7 @@ private fun BodyDetails(
                 modifier = Modifier.navigationBarsPadding(),
                 text = { Text(text = stringResource(id = R.string.action_new_entry)) },
                 icon = { Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null) },
-                onClick = { navigate(InsertBodyEntry.create(state.bodyId)) },
+                onClick = { navigator.navigate(InsertBodyEntry.create(state.bodyId)) },
             )
         },
     ) { paddingValues ->
@@ -139,7 +144,7 @@ private fun BodyDetails(
                             iconPainter = painterResource(id = R.drawable.ic_edit),
                             label = stringResource(id = R.string.action_edit),
                             onClick = {
-                                navigate(InsertBodyEntry.create(state.bodyId, entry.id))
+                                navigator.navigate(InsertBodyEntry.create(state.bodyId, entry.id))
                             },
                         ),
                         OptionItem(

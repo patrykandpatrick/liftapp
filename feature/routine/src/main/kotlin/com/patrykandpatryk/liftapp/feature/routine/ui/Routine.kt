@@ -10,39 +10,32 @@ import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 
-fun NavGraphBuilder.addRoutine(
-    navigateBack: () -> Unit,
-    navigate: (String) -> Unit,
-) {
+fun NavGraphBuilder.addRoutine() {
     composable(
         route = Routes.Routine,
     ) {
-
-        Routine(
-            navigateBack = navigateBack,
-            navigate = navigate,
-        )
+        Routine()
     }
 }
 
 @Suppress("UnusedPrivateMember")
 @Composable
 fun Routine(
-    navigateBack: () -> Unit,
-    navigate: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val navController = navigator
 
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 title = stringResource(id = R.string.route_routine),
-                onBackClick = navigateBack,
+                onBackClick = { navController.popBackStack() },
                 scrollBehavior = topAppBarScrollBehavior,
             )
         },

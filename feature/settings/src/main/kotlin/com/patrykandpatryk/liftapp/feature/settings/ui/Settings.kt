@@ -12,9 +12,12 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
+import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
@@ -22,14 +25,21 @@ import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
 
+fun NavGraphBuilder.addSettings() {
+
+    composable(route = Routes.Settings) {
+        Settings()
+    }
+}
+
 @Composable
 fun Settings(
-    parentNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val viewModel = hiltViewModel<SettingsViewModel>()
     val allPreferences by viewModel.allPreferences.collectAsState(initial = null)
+    val navigator = navigator
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -37,7 +47,7 @@ fun Settings(
             TopAppBar(
                 title = stringResource(id = R.string.route_settings),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = parentNavController::popBackStack,
+                onBackClick = navigator::popBackStack,
             )
         },
     ) { paddingValues ->

@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -30,15 +31,23 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.anim.EXIT_ANIM_DURATION
 import com.patrykandpatryk.liftapp.core.ui.anim.slideAndFadeIn
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.main.HomeViewModel
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 
+fun NavGraphBuilder.addHome() {
+
+    composable(route = Routes.Home) {
+        Home()
+    }
+}
+
 @Composable
 fun Home(
-    parentNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
@@ -46,7 +55,6 @@ fun Home(
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
     HomeScaffold(
-        navigate = parentNavController::navigate,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
     )
@@ -54,7 +62,6 @@ fun Home(
 
 @Composable
 private fun HomeScaffold(
-    navigate: (String) -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
@@ -74,7 +81,7 @@ private fun HomeScaffold(
         },
     ) { paddingValues ->
 
-        val navBarRoutes = navBarRoutes
+        val navigator = navigator
 
         AnimatedNavHost(
             route = Routes.Home.value,
@@ -93,7 +100,7 @@ private fun HomeScaffold(
                         entry = backStackEntry,
                         modifier = Modifier,
                         padding = paddingValues,
-                        navigate = navigate,
+                        navigate = navigator::navigate,
                     )
                 }
             }
@@ -147,7 +154,6 @@ private fun NavigationBarWithPadding(
 fun HomePreview() {
     LiftAppTheme {
         HomeScaffold(
-            navigate = {},
             snackbarHostState = remember { SnackbarHostState() },
         )
     }

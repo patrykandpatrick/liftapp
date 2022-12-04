@@ -47,12 +47,14 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.provider.LocalNavHostController
+import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.provider.setResult
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
@@ -68,33 +70,37 @@ import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 
+fun NavGraphBuilder.addExercises() {
+    composable(
+        route = Routes.Exercises,
+    ) {
+        Exercises()
+    }
+}
+
 @Composable
 fun Exercises(
     modifier: Modifier = Modifier,
-    navigate: (String) -> Unit,
-    navigateBack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
 ) {
     val viewModel: ExerciseViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
-    val navHostController = LocalNavHostController.current
+    val navigator = navigator
 
     viewModel.events.collectInComposable { event ->
         when (event) {
             is Event.OnExercisesPicked -> {
-                navHostController?.setResult(
+                navigator.setResult(
                     key = Constants.Keys.PICKED_EXERCISE_IDS,
                     result = event.exerciseIds,
                 )
-                navigateBack()
+                navigator.popBackStack()
             }
         }
     }
 
     Exercises(
         modifier = modifier,
-        navigate = navigate,
-        navigateBack = navigateBack,
         padding = padding,
         state = state,
         onIntent = viewModel::handleIntent,
@@ -104,14 +110,13 @@ fun Exercises(
 @Composable
 private fun Exercises(
     modifier: Modifier = Modifier,
-    navigate: (String) -> Unit,
-    navigateBack: () -> Unit,
     padding: PaddingValues = PaddingValues(),
     state: ScreenState,
     onIntent: (Intent) -> Unit,
 ) {
 
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val navigator = navigator
 
     Scaffold(
         modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
@@ -120,7 +125,7 @@ private fun Exercises(
                 ExtendedFloatingActionButton(
                     text = stringResource(id = R.string.action_new_exercise),
                     icon = painterResource(id = R.drawable.ic_add),
-                    onClick = { navigate(Routes.NewExercise.create()) },
+                    onClick = { navigator.navigate(Routes.NewExercise.create()) },
                     modifier = Modifier
                         .thenIf(padding.calculateBottomPadding() == 0.dp) {
                             padding(WindowInsets.navigationBars.asPaddingValues())
@@ -133,13 +138,12 @@ private fun Exercises(
                 state = state,
                 topAppBarScrollBehavior = topAppBarScrollBehavior,
                 onIntent = onIntent,
-                navigateBack = navigateBack,
+                navigateBack = { navigator.popBackStack() },
             )
         },
         bottomBar = {
             if (state.pickingMode) {
                 BottomBar(
-                    navigate = navigate,
                     onIntent = onIntent,
                 )
             }
@@ -184,7 +188,6 @@ private fun Exercises(
                             state = state,
                             item = item,
                             onIntent = onIntent,
-                            navigate = navigate,
                         )
                     }
 
@@ -207,8 +210,9 @@ private fun LazyItemScope.ExerciseItem(
     state: ScreenState,
     item: ExercisesItem.Exercise,
     onIntent: (Intent) -> Unit,
-    navigate: (String) -> Unit,
 ) {
+    val navigator = navigator
+
     if (state.pickingMode) {
         CheckableListItem(
             title = item.name,
@@ -230,7 +234,7 @@ private fun LazyItemScope.ExerciseItem(
             iconPainter = painterResource(id = item.iconRes),
             modifier = Modifier
                 .animateItemPlacement()
-                .clickable { navigate(Routes.Exercise.create(item.id)) },
+                .clickable { navigator.navigate(Routes.Exercise.create(item.id)) },
             enabled = item.enabled,
         )
     }
@@ -288,9 +292,9 @@ private fun TopBar(
 
 @Composable
 private fun BottomBar(
-    navigate: (String) -> Unit,
     onIntent: (Intent) -> Unit,
 ) {
+    val navigator = navigator
     BottomAppBar(
         contentPadding = PaddingValues(
             start = 4.dp,
@@ -298,7 +302,7 @@ private fun BottomBar(
         ),
     ) {
 
-        IconButton(onClick = { navigate(Routes.NewExercise.create()) }) {
+        IconButton(onClick = { navigator.navigate(Routes.NewExercise.create()) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_add),
                 contentDescription = stringResource(id = R.string.action_new_exercise),
@@ -370,11 +374,8 @@ private fun Controls(
 fun ExercisesPreview() {
     LiftAppTheme {
         Exercises(
-            navigate = {},
             state = getScreenState(pickingMode = false),
-            onIntent = {},
-            navigateBack = {},
-        )
+        ) {}
     }
 }
 
@@ -386,10 +387,7 @@ fun ExercisesPreview() {
 fun ExercisesPreviewPickingMode() {
     LiftAppTheme {
         Exercises(
-            navigate = {},
             state = getScreenState(pickingMode = true),
-            onIntent = {},
-            navigateBack = {},
-        )
+        ) {}
     }
 }

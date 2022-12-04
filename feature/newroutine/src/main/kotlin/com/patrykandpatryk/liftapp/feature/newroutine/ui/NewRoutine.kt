@@ -53,12 +53,15 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.provider.RegisterResultListener
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.state.equivalentSnapshotPolicy
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
@@ -76,10 +79,15 @@ import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
 import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
 import com.patrykandpatryk.vico.core.extension.orZero
 
+fun NavGraphBuilder.addNewRoutine() {
+
+    composable(route = Routes.NewRoutine) {
+        NewRoutine()
+    }
+}
+
 @Composable
 fun NewRoutine(
-    popBackStack: () -> Unit,
-    navigate: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -91,6 +99,7 @@ fun NewRoutine(
         ) { state.name.getMessageTextOrNull() ?: "" }
     }
     val snackbarHostState = remember { SnackbarHostState() }
+    val navigator = navigator
 
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
@@ -104,15 +113,13 @@ fun NewRoutine(
         state = state,
         onIntent = viewModel::handleIntent,
         snackbarHostState = snackbarHostState,
-        popBackStack = popBackStack,
         nameErrorText = errorMessage,
-        navigate = navigate,
     )
 
     viewModel.events.collectInComposable { event ->
         when (event) {
-            Event.EntrySaved -> popBackStack()
-            Event.RoutineNotFound -> popBackStack()
+            Event.EntrySaved -> navigator.popBackStack()
+            Event.RoutineNotFound -> navigator.popBackStack()
         }
     }
 }
@@ -124,13 +131,12 @@ private fun NewRoutine(
     state: ScreenState,
     onIntent: (Intent) -> Unit,
     snackbarHostState: SnackbarHostState,
-    popBackStack: () -> Unit,
-    navigate: (String) -> Unit,
     nameErrorText: String,
 ) {
 
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val density = LocalDensity.current.density
+    val navigator = navigator
     var fabTopToParentBottom by remember { mutableStateOf(0.dp) }
 
     Scaffold(
@@ -141,7 +147,7 @@ private fun NewRoutine(
             TopAppBar(
                 title = stringResource(id = R.string.title_new_routine),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = popBackStack,
+                onBackClick = navigator::popBackStack,
             )
         },
         floatingActionButton = {
@@ -173,7 +179,6 @@ private fun NewRoutine(
                 state = state,
                 onIntent = onIntent,
                 nameErrorText = nameErrorText,
-                navigate = navigate,
             )
         }
     }
@@ -183,7 +188,6 @@ private fun LazyListScope.content(
     state: ScreenState,
     onIntent: (Intent) -> Unit,
     nameErrorText: String,
-    navigate: (String) -> Unit,
 ) {
     stickyHeader {
 
@@ -246,13 +250,15 @@ private fun LazyListScope.content(
 
     item(key = R.string.action_add_exercise) {
 
+        val navigator = navigator
+
         Button(
             modifier = Modifier
                 .animateItemPlacement()
                 .fillMaxWidth()
                 .padding(top = LocalDimens.current.verticalItemSpacing),
             onClick = {
-                navigate(
+                navigator.navigate(
                     Routes.Exercises.create(
                         pickExercises = true,
                         disabledExerciseIds = state.exerciseIds,
@@ -317,9 +323,7 @@ fun NewRoutinePreview() {
             state = ScreenState.Insert(name = "Name".toValid()),
             snackbarHostState = SnackbarHostState(),
             onIntent = {},
-            popBackStack = {},
             nameErrorText = "",
-            navigate = {},
         )
     }
 }

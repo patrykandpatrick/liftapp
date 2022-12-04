@@ -22,23 +22,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.formatValue
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
+import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.Info
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.feature.onerepmax.viewmodel.OneRepMaxViewModel
 
+fun NavGraphBuilder.addOneRepMax() {
+
+    composable(route = Routes.OneRepMax) {
+        OneRepMax()
+    }
+}
 @Composable
 fun OneRepMax(
-    parentNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val viewModel = hiltViewModel<OneRepMaxViewModel>()
     val uiState by viewModel.oneRepMaxUiStateStateFlow.collectAsState()
     val context = LocalContext.current
+    val navigator = navigator
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -46,7 +55,7 @@ fun OneRepMax(
             TopAppBar(
                 title = stringResource(id = R.string.route_one_rep_max),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = parentNavController::popBackStack,
+                onBackClick = navigator::popBackStack,
             )
         },
     ) { paddingValues ->

@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NamedNavArgument
@@ -25,26 +24,23 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.patrykandpatryk.liftapp.bodyentry.ui.InsertBodyEntry
+import com.patrykandpatryk.liftapp.bodyentry.ui.addInsertBodyEntry
 import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.bottomSheet
-import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.provider.ProvideNavHost
 import com.patrykandpatryk.liftapp.core.ui.dimens.DialogDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.feature.about.ui.About
-import com.patrykandpatryk.liftapp.feature.bodydetails.ui.BodyDetails
-import com.patrykandpatryk.liftapp.feature.exercise.ui.Exercise
-import com.patrykandpatryk.liftapp.feature.exercises.ui.Exercises
-import com.patrykandpatryk.liftapp.feature.main.ui.Home
-import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
-import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutine
-import com.patrykandpatryk.liftapp.feature.onerepmax.ui.OneRepMax
+import com.patrykandpatryk.liftapp.feature.about.ui.addAbout
+import com.patrykandpatryk.liftapp.feature.bodydetails.ui.addBodyDetails
+import com.patrykandpatryk.liftapp.feature.exercise.ui.addExercise
+import com.patrykandpatryk.liftapp.feature.exercises.ui.addExercises
+import com.patrykandpatryk.liftapp.feature.main.ui.addHome
+import com.patrykandpatryk.liftapp.feature.newexercise.ui.addNewExercise
+import com.patrykandpatryk.liftapp.feature.newroutine.ui.addNewRoutine
+import com.patrykandpatryk.liftapp.feature.onerepmax.ui.addOneRepMax
 import com.patrykandpatryk.liftapp.feature.routine.ui.addRoutine
-import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
-import kotlinx.coroutines.launch
+import com.patrykandpatryk.liftapp.feature.settings.ui.addSettings
 
 @Composable
 fun Root(modifier: Modifier = Modifier) {
@@ -84,63 +80,27 @@ fun Root(modifier: Modifier = Modifier) {
                     startDestination = Routes.Home.value,
                 ) {
 
-                    composable(route = Routes.Home) {
-                        Home(parentNavController = navController)
-                    }
+                    addHome()
 
-                    composable(route = Routes.About) {
-                        About()
-                    }
+                    addAbout()
 
-                    composable(route = Routes.Settings) {
-                        Settings(parentNavController = navController)
-                    }
+                    addSettings()
 
-                    composable(route = Routes.OneRepMax) {
-                        OneRepMax(parentNavController = navController)
-                    }
+                    addOneRepMax()
 
-                    composable(route = Routes.NewRoutine) {
-                        NewRoutine(
-                            popBackStack = navController::popBackStack,
-                            navigate = navController::navigate,
-                        )
-                    }
+                    addNewRoutine()
 
-                    composable(route = Routes.BodyDetails) {
-                        BodyDetails(
-                            navigate = navController::navigate,
-                            navigateBack = navController::popBackStack,
-                        )
-                    }
+                    addBodyDetails()
 
-                    bottomSheet(route = Routes.InsertBodyEntry) {
-                        val scope = rememberCoroutineScope()
+                    addInsertBodyEntry(bottomSheetState = bottomSheetState)
 
-                        InsertBodyEntry(
-                            onCloseClick = { scope.launch { bottomSheetState.hide() } },
-                        )
-                    }
+                    addNewExercise()
 
-                    composable(route = Routes.NewExercise) {
-                        NewExercise(popBackStack = { navController.popBackStack() })
-                    }
+                    addExercise()
 
-                    composable(route = Routes.Exercise) {
-                        Exercise()
-                    }
+                    addExercises()
 
-                    composable(route = Routes.Exercises) {
-                        Exercises(
-                            navigate = navController::navigate,
-                            navigateBack = navController::popBackStack,
-                        )
-                    }
-
-                    addRoutine(
-                        navigateBack = navController::popBackStack,
-                        navigate = navController::navigate,
-                    )
+                    addRoutine()
                 }
             }
         }

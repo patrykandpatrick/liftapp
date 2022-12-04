@@ -35,12 +35,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.ProvideLandscapeMode
 import com.patrykandpatryk.liftapp.core.extension.isLandscape
 import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
+import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
@@ -52,12 +56,19 @@ import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
 
+fun NavGraphBuilder.addNewExercise() {
+
+    composable(route = Routes.NewExercise) {
+        NewExercise()
+    }
+}
+
 @Composable
 fun NewExercise(
     modifier: Modifier = Modifier,
-    popBackStack: () -> Unit,
 ) {
     val viewModel: NewExerciseViewModel = hiltViewModel()
+    val navigator = navigator
 
     val snackbarHostState = remember { SnackbarHostState() }
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
@@ -70,8 +81,7 @@ fun NewExercise(
         updateMainMuscles = viewModel::updateMainMuscles,
         updateSecondaryMuscles = viewModel::updateSecondaryMuscles,
         updateTertiaryMuscles = viewModel::updateTertiaryMuscles,
-        onSave = { if (viewModel.save()) popBackStack() },
-        popBackStack = popBackStack,
+        onSave = { if (viewModel.save()) navigator.popBackStack() },
         snackbarHostState = snackbarHostState,
     )
 }
@@ -87,10 +97,10 @@ private fun NewExercise(
     updateSecondaryMuscles: (Muscle) -> Unit,
     updateTertiaryMuscles: (Muscle) -> Unit,
     onSave: () -> Unit,
-    popBackStack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val navigator = navigator
 
     Scaffold(
         modifier = modifier
@@ -100,7 +110,7 @@ private fun NewExercise(
             TopAppBar(
                 title = stringResource(id = R.string.title_new_exercise),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = popBackStack,
+                onBackClick = { navigator.popBackStack() },
             )
         },
         floatingActionButton = {
@@ -268,7 +278,6 @@ private fun PreviewNewExercise(darkTheme: Boolean) {
             updateSecondaryMuscles = {},
             updateTertiaryMuscles = {},
             onSave = {},
-            popBackStack = {},
             snackbarHostState = SnackbarHostState(),
         )
     }
