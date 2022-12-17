@@ -57,7 +57,7 @@ fun BodyDetails(
     BodyDetails(
         onIntent = viewModel::handleIntent,
         state = state,
-        modelProducer = viewModel.chartModelProducer,
+        modelProducer = viewModel.chartEntryModelProducer,
         modifier = modifier,
     )
 }
