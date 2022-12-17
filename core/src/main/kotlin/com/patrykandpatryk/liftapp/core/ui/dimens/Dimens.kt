@@ -22,6 +22,7 @@ data class Dimens(
     val routine: Routine = Routine(),
     val searchBar: SearchBar = SearchBar(),
     val strokeWidth: Dp = 1.dp,
+    val tab: Tab = Tab(),
     val toolbar: Toolbar = Toolbar(),
     val verticalItemSpacing: Dp = 16.dp,
 ) {
@@ -90,6 +91,12 @@ data class Dimens(
     @Immutable
     data class Routine(
         val minCardWidth: Dp = 140.dp,
+    )
+
+    @Immutable
+    data class Tab(
+        val verticalPadding: Dp = 16.dp,
+        val iconToTextPadding: Dp = 4.dp,
     )
 
     @Immutable

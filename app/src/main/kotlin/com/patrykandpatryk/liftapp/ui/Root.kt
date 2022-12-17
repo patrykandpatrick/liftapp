@@ -33,7 +33,7 @@ import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.about.ui.addAbout
 import com.patrykandpatryk.liftapp.feature.bodydetails.ui.addBodyDetails
-import com.patrykandpatryk.liftapp.feature.exercise.ui.addExercise
+import com.patrykandpatryk.liftapp.feature.exercise.ui.addExerciseDetails
 import com.patrykandpatryk.liftapp.feature.exercises.ui.addExercises
 import com.patrykandpatryk.liftapp.feature.main.ui.addHome
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.addNewExercise
@@ -96,7 +96,7 @@ fun Root(modifier: Modifier = Modifier) {
 
                     addNewExercise()
 
-                    addExercise()
+                    addExerciseDetails()
 
                     addExercises()
 

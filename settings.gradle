@@ -30,7 +30,7 @@ include ":functionality:database"
 include ":functionality:preference"
 include ":functionality:storage"
 include ":feature:exercises"
-include ":feature:exercise"
+include ':feature:exercisedetails'
 include ":feature:newexercise"
 include ":feature:bodyentry"
 include ":feature:bodydetails"
