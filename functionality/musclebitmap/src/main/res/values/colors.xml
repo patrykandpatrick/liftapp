@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="border">#212121</color>
+    <color name="primary">#FF3333</color>
+    <color name="secondary">#70FF3838</color>
+    <color name="tertiary">#2DFF3838</color>
+</resources>

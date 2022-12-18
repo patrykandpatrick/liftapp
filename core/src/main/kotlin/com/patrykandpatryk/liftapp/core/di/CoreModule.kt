@@ -1,5 +1,8 @@
 package com.patrykandpatryk.liftapp.core.di
 
+import android.app.Application
+import android.content.Context
+import android.content.res.Resources
 import com.patrykandpatryk.liftapp.core.mapper.BodyEntriesToChartEntriesMapper
 import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
 import com.patrykandpatryk.liftapp.core.ui.name.NameResolverImpl
@@ -64,5 +67,13 @@ internal interface CoreModule {
             CoroutineExceptionHandler { coroutineContext, throwable ->
                 Timber.e(throwable, "Uncaught exception in $coroutineContext.")
             }
+
+        @Provides
+        fun provideContext(application: Application): Context =
+            application.applicationContext
+
+        @Provides
+        fun provideResources(context: Context): Resources =
+            context.resources
     }
 }

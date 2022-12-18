@@ -294,6 +294,7 @@ ext {
                 [configuration: "implementation", dependency: project(":feature:routine")],
                 [configuration: "implementation", dependency: project(":feature:newroutine")],
                 [configuration: "implementation", dependency: project(":functionality:database")],
+                [configuration: "implementation", dependency: project(":functionality:musclebitmap")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
         ]

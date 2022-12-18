@@ -1,0 +1,6 @@
+apply from: "$rootDir/gradle/functionality-module-base.gradle"
+
+android {
+
+    namespace "com.patrykandpatryk.liftapp.functionality.musclebitmap"
+}

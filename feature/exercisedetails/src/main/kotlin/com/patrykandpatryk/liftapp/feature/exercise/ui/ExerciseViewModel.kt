@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
+import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.feature.exercise.di.ExerciseId
 import com.patrykandpatryk.liftapp.feature.exercise.model.Event
@@ -30,6 +31,7 @@ class ExerciseViewModel @Inject constructor(
     getExercise: GetExerciseUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val logger: UiLogger,
+    private val muscleImageProvider: MuscleImageProvider,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
     private val eventChannel = Channel<Event>()
@@ -46,6 +48,13 @@ class ExerciseViewModel @Inject constructor(
                     Timber.e("Exercise with id $exerciseId not found!")
                     eventChannel.send(Event.ExerciseNotFound)
                 } else {
+
+                    muscleImageProvider.getMuscleImagePath(
+                        exercise.mainMuscles,
+                        exercise.secondaryMuscles,
+                        exercise.tertiaryMuscles,
+                    )
+
                     updateScreenState {
                         mutate(
                             name = exercise.displayName,
