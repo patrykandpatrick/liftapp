@@ -231,6 +231,11 @@ ext {
                     name   : "junit",
                     version: versions.junitExt,
             ],
+            jupiter: [
+                    group: "org.junit.jupiter",
+                    name: "junit-jupiter-params",
+                    version: versions.jupiter,
+            ],
             mockk   : [
                     group  : "io.mockk",
                     name   : "mockk",
@@ -324,19 +329,23 @@ ext {
         dependencies
     }
 
-    databaseModuleDependencies = [
+    functionalityModulesDependencies = [
             [configuration: "implementation", dependency: project(":domain")],
             [configuration: "implementation", dependency: di.hilt],
             [configuration: "implementation", dependency: kotlin.coroutinesAndroid],
             [configuration: "implementation", dependency: kotlin.stdLib],
-            [configuration: "implementation", dependency: database.room],
-            [configuration: "implementation", dependency: database.roomKtx],
             [configuration: "implementation", dependency: serialization.kotlinxSerialization],
             [configuration: "implementation", dependency: logging.timber],
-            [configuration: "ksp", dependency: database.roomCompiler],
             [configuration: "kapt", dependency: di.hiltCompiler],
             [configuration: "testImplementation", dependency: kotlin.test],
             [configuration: "testImplementation", dependency: testing.junit],
+            [configuration: "testImplementation", dependency: testing.jupiter],
+    ]
+
+    databaseModuleDependencies = [
+            [configuration: "implementation", dependency: database.room],
+            [configuration: "implementation", dependency: database.roomKtx],
+            [configuration: "ksp", dependency: database.roomCompiler],
     ]
 
     storageModuleDependencies = [

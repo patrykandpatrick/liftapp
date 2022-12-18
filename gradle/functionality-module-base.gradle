@@ -2,7 +2,9 @@ apply plugin: "com.android.library"
 apply from: "$rootDir/gradle/base.gradle"
 
 dependencies {
-    databaseModuleDependencies.each {
+
+    functionalityModulesDependencies.each {
+
         add(it.configuration, it.dependency, it.options)
     }
 }

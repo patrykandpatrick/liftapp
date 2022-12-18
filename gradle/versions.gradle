@@ -21,6 +21,7 @@ ext {
             hiltNavigation               : "1.1.0-alpha01",
             junit                        : "4.13.2",
             junitExt                     : "1.1.2",
+            jupiter                      : "5.9.1",
             kotlin                       : "$kotlin_version",
             kotlinxSerialization         : "1.4.0",
             kotlinxSerializationConverter: "0.8.0",
