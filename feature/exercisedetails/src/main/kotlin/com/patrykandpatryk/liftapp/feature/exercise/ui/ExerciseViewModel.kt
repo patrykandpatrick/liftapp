@@ -53,6 +53,7 @@ class ExerciseViewModel @Inject constructor(
                         exercise.mainMuscles,
                         exercise.secondaryMuscles,
                         exercise.tertiaryMuscles,
+                        isLight = false,
                     )
 
                     updateScreenState {

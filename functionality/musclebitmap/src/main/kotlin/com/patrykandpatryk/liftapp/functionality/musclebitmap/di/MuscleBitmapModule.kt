@@ -5,8 +5,11 @@ import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapConfig
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapGenerator
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapGeneratorImpl
-import com.patrykandpatryk.liftapp.functionality.musclebitmap.provider.MuscleImageProviderImpl
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.R
+import com.patrykandpatryk.liftapp.functionality.musclebitmap.model.NameInfoCoder
+import com.patrykandpatryk.liftapp.functionality.musclebitmap.model.NameInfoDecoder
+import com.patrykandpatryk.liftapp.functionality.musclebitmap.model.NameInfoEncoder
+import com.patrykandpatryk.liftapp.functionality.musclebitmap.provider.MuscleImageProviderImpl
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.provider.ResourceBitmapProvider
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.provider.ResourceBitmapProviderImpl
 import dagger.Binds
@@ -27,6 +30,12 @@ interface MuscleBitmapModule {
 
     @Binds
     fun bindMuscleImageProvider(provider: MuscleImageProviderImpl): MuscleImageProvider
+
+    @Binds
+    fun bindNameInfoEncoder(coder: NameInfoCoder): NameInfoEncoder
+
+    @Binds
+    fun bindNameInfoDecoder(coder: NameInfoCoder): NameInfoDecoder
 
     companion object {
 

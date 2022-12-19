@@ -1,6 +1,10 @@
 apply plugin: "com.android.library"
 apply from: "$rootDir/gradle/base.gradle"
 
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
 dependencies {
 
     functionalityModulesDependencies.each {
