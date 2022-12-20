@@ -22,7 +22,7 @@ class NameInfoCoderTest {
             primaryMuscles = nameInfo.mainMuscles,
             secondaryMuscles = nameInfo.secondaryMuscles,
             tertiaryMuscles = nameInfo.tertiaryMuscles,
-            isLight = nameInfo.isLight,
+            isDark = nameInfo.isDark,
         )
 
         val decoded = sut.decodeFromName(encoded)
@@ -39,19 +39,19 @@ class NameInfoCoderTest {
                     mainMuscles = listOf(Muscle.Triceps),
                     secondaryMuscles = listOf(Muscle.Shoulders),
                     tertiaryMuscles = listOf(Muscle.Forearms),
-                    isLight = true,
+                    isDark = true,
                 ),
                 NameInfo(
                     mainMuscles = listOf(Muscle.LowerBack, Muscle.Hamstrings),
                     secondaryMuscles = listOf(Muscle.Forearms, Muscle.Shoulders, Muscle.Quadriceps),
                     tertiaryMuscles = listOf(Muscle.Abs, Muscle.Quadriceps),
-                    isLight = true,
+                    isDark = true,
                 ),
                 NameInfo(
                     mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
                     secondaryMuscles = listOf(Muscle.Forearms, Muscle.Shoulders, Muscle.Quadriceps),
                     tertiaryMuscles = listOf(Muscle.Abs, Muscle.Quadriceps),
-                    isLight = false,
+                    isDark = false,
                 ),
             )
     }

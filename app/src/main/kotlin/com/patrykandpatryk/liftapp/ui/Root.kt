@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -43,7 +42,10 @@ import com.patrykandpatryk.liftapp.feature.routine.ui.addRoutine
 import com.patrykandpatryk.liftapp.feature.settings.ui.addSettings
 
 @Composable
-fun Root(modifier: Modifier = Modifier) {
+fun Root(
+    modifier: Modifier = Modifier,
+    darkTheme: Boolean,
+) {
 
     val bottomSheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden,
@@ -53,7 +55,6 @@ fun Root(modifier: Modifier = Modifier) {
     val bottomSheetNavigator = rememberBottomSheetNavigator(bottomSheetState)
     val navController = rememberAnimatedNavController(bottomSheetNavigator)
     val systemUiController = rememberSystemUiController()
-    val darkTheme = isSystemInDarkTheme()
 
     SideEffect {
         systemUiController.setSystemBarsColor(

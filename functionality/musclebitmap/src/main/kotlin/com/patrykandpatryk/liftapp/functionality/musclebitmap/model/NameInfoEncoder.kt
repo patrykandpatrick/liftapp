@@ -8,6 +8,6 @@ interface NameInfoEncoder {
         primaryMuscles: List<Muscle>,
         secondaryMuscles: List<Muscle>,
         tertiaryMuscles: List<Muscle>,
-        isLight: Boolean,
+        isDark: Boolean,
     ): String
 }

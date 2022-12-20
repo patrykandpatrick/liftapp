@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
+import com.patrykandpatryk.liftapp.core.android.IsDarkModeHandler
 import com.patrykandpatryk.liftapp.core.base64.AndroidBase64
 import com.patrykandpatryk.liftapp.core.mapper.BodyEntriesToChartEntriesMapper
 import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
@@ -12,6 +13,8 @@ import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZeroValidator
 import com.patrykandpatryk.liftapp.core.validation.Name
 import com.patrykandpatryk.liftapp.core.validation.NameValidator
+import com.patrykandpatryk.liftapp.domain.android.IsDarkModePublisher
+import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
 import com.patrykandpatryk.liftapp.domain.base64.Base64
 import com.patrykandpatryk.liftapp.domain.base64.JavaBase64
 import com.patrykandpatryk.liftapp.domain.body.BodyEntry
@@ -54,6 +57,12 @@ internal interface CoreModule {
     @Binds
     @HigherThanZero
     fun bindHigherThanZeroValidatorValidator(validator: HigherThanZeroValidator): Validator<Float>
+
+    @Binds
+    fun bindIsDarkModeReceiver(useCase: IsDarkModeHandler): IsDarkModeReceiver
+
+    @Binds
+    fun bindIsDarkModePublisher(useCase: IsDarkModeHandler): IsDarkModePublisher
 
     companion object {
 

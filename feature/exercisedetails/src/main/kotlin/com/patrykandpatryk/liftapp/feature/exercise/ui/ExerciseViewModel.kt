@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
+import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
@@ -16,8 +17,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,6 +33,7 @@ class ExerciseViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val logger: UiLogger,
     private val muscleImageProvider: MuscleImageProvider,
+    isDarkModeReceiver: IsDarkModeReceiver,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
     private val eventChannel = Channel<Event>()
@@ -42,27 +44,30 @@ class ExerciseViewModel @Inject constructor(
     override val events: Flow<Event> = eventChannel.receiveAsFlow()
 
     init {
-        getExercise(exerciseId)
-            .onEach { exercise ->
-                if (exercise == null) {
-                    Timber.e("Exercise with id $exerciseId not found!")
-                    eventChannel.send(Event.ExerciseNotFound)
-                } else {
+        combine(
+            getExercise(exerciseId),
+            isDarkModeReceiver(),
+        ) { exercise, isSystemInLightMode ->
+            if (exercise == null) {
+                Timber.e("Exercise with id $exerciseId not found!")
+                eventChannel.send(Event.ExerciseNotFound)
+            } else {
 
-                    muscleImageProvider.getMuscleImagePath(
-                        exercise.mainMuscles,
-                        exercise.secondaryMuscles,
-                        exercise.tertiaryMuscles,
-                        isLight = false,
+                val bitmapPath = muscleImageProvider.getMuscleImagePath(
+                    exercise.mainMuscles,
+                    exercise.secondaryMuscles,
+                    exercise.tertiaryMuscles,
+                    isDark = isSystemInLightMode,
+                )
+
+                updateScreenState {
+                    mutate(
+                        name = exercise.displayName,
+                        imagePath = bitmapPath,
                     )
-
-                    updateScreenState {
-                        mutate(
-                            name = exercise.displayName,
-                        )
-                    }
                 }
-            }.launchIn(viewModelScope)
+            }
+        }.launchIn(viewModelScope)
     }
 
     override fun handleIntent(intent: Intent) {

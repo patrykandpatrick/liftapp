@@ -12,14 +12,18 @@ sealed class ScreenState {
 
     open val selectedTabIndex: Int = 0
 
+    open val imagePath: String? = null
+
     fun mutate(
         name: String = this.name,
         showDeleteDialog: Boolean = this.showDeleteDialog,
         selectedTabIndex: Int = this.selectedTabIndex,
+        imagePath: String? = this.imagePath,
     ): Populated = Populated(
         name = name,
         showDeleteDialog = showDeleteDialog,
         selectedTabIndex = selectedTabIndex,
+        imagePath = imagePath,
     )
 
     @Parcelize
@@ -32,5 +36,6 @@ sealed class ScreenState {
         override val name: String,
         override val showDeleteDialog: Boolean = false,
         override val selectedTabIndex: Int = 0,
+        override val imagePath: String? = null,
     ) : ScreenState(), Parcelable
 }

@@ -9,7 +9,7 @@ data class NameInfo(
     val mainMuscles: List<Muscle>,
     val secondaryMuscles: List<Muscle>,
     val tertiaryMuscles: List<Muscle>,
-    val isLight: Boolean,
+    val isDark: Boolean,
     val version: Int = 1,
     val muscleImageType: MuscleImageType = MuscleImageType.FrontAndRear,
 )

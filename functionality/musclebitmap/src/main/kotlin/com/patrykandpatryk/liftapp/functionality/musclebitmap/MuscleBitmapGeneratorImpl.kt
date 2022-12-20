@@ -10,35 +10,25 @@ import com.patrykandpatryk.liftapp.functionality.musclebitmap.provider.ResourceB
 import javax.inject.Inject
 
 class MuscleBitmapGeneratorImpl @Inject constructor(
-    private val config: MuscleBitmapConfig,
     private val resourceBitmapProvider: ResourceBitmapProvider,
 ) : MuscleBitmapGenerator {
 
     private val borderPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        .apply {
-            colorFilter = PorterDuffColorFilter(config.borderColor, SRC_IN)
-        }
 
     private val primaryPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        .apply {
-            colorFilter = PorterDuffColorFilter(config.primaryColor, SRC_IN)
-        }
 
     private val secondaryPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        .apply {
-            colorFilter = PorterDuffColorFilter(config.secondaryColor, SRC_IN)
-        }
 
     private val tertiaryPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        .apply {
-            colorFilter = PorterDuffColorFilter(config.tertiaryColor, SRC_IN)
-        }
 
     override fun generateBitmap(
+        config: MuscleBitmapConfig,
         primaryMuscles: List<Muscle>,
         secondaryMuscles: List<Muscle>,
         tertiaryMuscles: List<Muscle>,
     ): Bitmap {
+
+        applyConfig(config)
 
         val frontBitmap = resourceBitmapProvider.getBodyFrontBitmap()
         val rearBitmap = resourceBitmapProvider.getBodyRearBitmap()
@@ -80,6 +70,13 @@ class MuscleBitmapGeneratorImpl @Inject constructor(
         )
 
         return wholeBitmap
+    }
+
+    private fun applyConfig(config: MuscleBitmapConfig) {
+        borderPaint.colorFilter = PorterDuffColorFilter(config.borderColor, SRC_IN)
+        primaryPaint.colorFilter = PorterDuffColorFilter(config.primaryColor, SRC_IN)
+        secondaryPaint.colorFilter = PorterDuffColorFilter(config.secondaryColor, SRC_IN)
+        tertiaryPaint.colorFilter = PorterDuffColorFilter(config.tertiaryColor, SRC_IN)
     }
 
     private fun Canvas.drawBitmapOnBothSides(

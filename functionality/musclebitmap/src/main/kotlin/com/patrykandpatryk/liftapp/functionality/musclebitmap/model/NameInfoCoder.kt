@@ -16,13 +16,13 @@ class NameInfoCoder @Inject constructor(
         primaryMuscles: List<Muscle>,
         secondaryMuscles: List<Muscle>,
         tertiaryMuscles: List<Muscle>,
-        isLight: Boolean,
+        isDark: Boolean,
     ): String {
         val info = NameInfo(
             mainMuscles = primaryMuscles,
             secondaryMuscles = secondaryMuscles,
             tertiaryMuscles = tertiaryMuscles,
-            isLight = isLight,
+            isDark = isDark,
         )
 
         return base64.encode(json.encodeToString(info))
