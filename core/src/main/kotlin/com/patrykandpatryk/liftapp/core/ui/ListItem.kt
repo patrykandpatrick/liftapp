@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,6 +49,7 @@ fun ListItem(
     iconPainter: Painter? = null,
     enabled: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
+    paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     onClick: (() -> Unit)? = null,
 ) {
     ListItem(
@@ -73,6 +75,7 @@ fun ListItem(
         onClick = onClick,
         actions = actions,
         enabled = enabled,
+        paddingValues = paddingValues,
     )
 }
 
@@ -84,6 +87,7 @@ fun CheckableListItem(
     iconPainter: Painter? = null,
     checked: Boolean,
     enabled: Boolean = true,
+    paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     onCheckedChange: (Boolean) -> Unit,
 ) {
 
@@ -128,6 +132,7 @@ fun CheckableListItem(
         },
         onClick = { onCheckedChange(checked.not()) },
         enabled = enabled,
+        paddingValues = paddingValues,
     )
 }
 
@@ -139,6 +144,7 @@ fun ListItem(
     icon: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
     enabled: Boolean = true,
+    paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     onClick: (() -> Unit)? = null,
 ) {
     Row(
@@ -148,10 +154,7 @@ fun ListItem(
             .alpha(if (enabled) 1f else ContentAlpha.disabled)
             .fillMaxWidth()
             .thenIfNotNull(value = onClick) { clickable(onClick = it, enabled = enabled) }
-            .padding(
-                vertical = LocalDimens.current.padding.itemVertical,
-                horizontal = LocalDimens.current.padding.contentHorizontal,
-            ),
+            .padding(paddingValues),
     ) {
 
         icon()
@@ -175,6 +178,15 @@ fun ListItem(
 
         actions()
     }
+}
+
+object ListItemDefaults {
+
+    val paddingValues: PaddingValues
+        @Composable get() = PaddingValues(
+            vertical = LocalDimens.current.padding.itemVertical,
+            horizontal = LocalDimens.current.padding.contentHorizontal,
+        )
 }
 
 @Preview
