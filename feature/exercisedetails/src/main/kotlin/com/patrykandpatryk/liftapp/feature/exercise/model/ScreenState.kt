@@ -3,7 +3,7 @@ package com.patrykandpatryk.liftapp.feature.exercise.model
 import android.os.Parcelable
 import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import kotlinx.parcelize.Parcelize
-import javax.annotation.concurrent.Immutable
+import androidx.compose.runtime.Immutable
 
 sealed class ScreenState {
 
