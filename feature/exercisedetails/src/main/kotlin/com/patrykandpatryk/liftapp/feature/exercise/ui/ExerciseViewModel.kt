@@ -82,9 +82,6 @@ class ExerciseViewModel @Inject constructor(
             Intent.Edit -> sendEditExerciseEvent()
             Intent.HideDeleteDialog -> updateScreenState { mutate(showDeleteDialog = false) }
             Intent.ShowDeleteDialog -> updateScreenState { mutate(showDeleteDialog = true) }
-            is Intent.SelectTab -> updateScreenState {
-                mutate(selectedTabIndex = intent.index)
-            }
         }
     }
 

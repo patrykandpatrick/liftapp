@@ -11,8 +11,6 @@ sealed class ScreenState {
 
     open val showDeleteDialog: Boolean = false
 
-    open val selectedTabIndex: Int = 0
-
     open val imagePath: String? = null
 
     open val muscles: List<MuscleModel> = emptyList()
@@ -20,13 +18,11 @@ sealed class ScreenState {
     fun mutate(
         name: String = this.name,
         showDeleteDialog: Boolean = this.showDeleteDialog,
-        selectedTabIndex: Int = this.selectedTabIndex,
         imagePath: String? = this.imagePath,
         muscles: List<MuscleModel> = this.muscles,
     ): Populated = Populated(
         name = name,
         showDeleteDialog = showDeleteDialog,
-        selectedTabIndex = selectedTabIndex,
         imagePath = imagePath,
         muscles = muscles,
     )
@@ -40,7 +36,6 @@ sealed class ScreenState {
     data class Populated(
         override val name: String,
         override val showDeleteDialog: Boolean = false,
-        override val selectedTabIndex: Int = 0,
         override val imagePath: String? = null,
         override val muscles: List<MuscleModel> = emptyList(),
     ) : ScreenState(), Parcelable

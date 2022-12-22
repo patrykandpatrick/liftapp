@@ -14,10 +14,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,6 +37,7 @@ import com.patrykandpatryk.liftapp.feature.exercise.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercise.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.exercise.model.tabItems
 import com.patrykandpatryk.liftapp.feature.exercise.model.tabs
+import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.addExerciseDetails() {
     composable(route = Routes.Exercise) {
@@ -89,13 +90,11 @@ private fun ExerciseDetails(
 
     val navigator = navigator
 
-    val pagerState = rememberPagerState(initialPage = state.selectedTabIndex)
+    val pagerState = rememberPagerState()
 
     val tabs = remember { tabs }
 
-    LaunchedEffect(key1 = state.selectedTabIndex) {
-        pagerState.animateScrollToPage(state.selectedTabIndex)
-    }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier.imePadding(),
@@ -104,7 +103,9 @@ private fun ExerciseDetails(
                 title = state.name,
                 onBackClick = navigator::popBackStack,
                 selectedTabIndex = pagerState.currentPage,
-                onTabSelected = { index -> onIntent(Intent.SelectTab(index)) },
+                onTabSelected = { index ->
+                    scope.launch { pagerState.animateScrollToPage(index) }
+                },
                 tabs = tabs.tabItems,
             )
         },

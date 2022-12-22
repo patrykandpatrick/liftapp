@@ -9,6 +9,4 @@ sealed interface Intent {
     object Delete : Intent
 
     object Edit : Intent
-
-    class SelectTab(val index: Int) : Intent
 }
