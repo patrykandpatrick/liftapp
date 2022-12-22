@@ -37,6 +37,10 @@
     <string name="muscle_traps">Traps</string>
     <string name="muscle_triceps">Triceps</string>
 
+    <string name="primary_muscle">Primary muscle</string>
+    <string name="secondary_muscle">Secondary muscle</string>
+    <string name="tertiary_muscle">Tertiary muscle</string>
+
     <string name="exercise_type_weight">Weight</string>
     <string name="exercise_type_calisthenics">Calisthenics</string>
     <string name="exercise_type_reps">Reps</string>

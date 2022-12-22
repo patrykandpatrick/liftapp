@@ -5,7 +5,7 @@ import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapConfig
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapGenerator
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapGeneratorImpl
-import com.patrykandpatryk.liftapp.functionality.musclebitmap.R
+import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.model.NameInfoCoder
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.model.NameInfoDecoder
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.model.NameInfoEncoder
@@ -42,10 +42,10 @@ interface MuscleBitmapModule {
         @Provides
         fun provideBitmapConfig(context: Context): MuscleBitmapConfig =
             MuscleBitmapConfig(
-                borderColor = context.getColor(R.color.border),
-                primaryColor = context.getColor(R.color.primary),
-                secondaryColor = context.getColor(R.color.secondary),
-                tertiaryColor = context.getColor(R.color.tertiary),
+                borderColor = context.getColor(R.color.muscle_border),
+                primaryColor = context.getColor(R.color.muscle_primary),
+                secondaryColor = context.getColor(R.color.muscle_secondary),
+                tertiaryColor = context.getColor(R.color.muscle_tertiary),
                 bitmapMargin = context.resources.getDimensionPixelSize(R.dimen.bitmap_margin),
             )
     }

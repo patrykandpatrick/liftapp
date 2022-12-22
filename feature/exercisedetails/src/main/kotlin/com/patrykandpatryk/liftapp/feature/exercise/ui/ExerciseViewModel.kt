@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
+import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
@@ -64,6 +65,11 @@ class ExerciseViewModel @Inject constructor(
                     mutate(
                         name = exercise.displayName,
                         imagePath = bitmapPath,
+                        muscles = MuscleModel.create(
+                            primaryMuscles = exercise.mainMuscles,
+                            secondaryMuscles = exercise.secondaryMuscles,
+                            tertiaryMuscles = exercise.tertiaryMuscles,
+                        ),
                     )
                 }
             }

@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="muscle_border">#212121</color>
+    <color name="muscle_primary">#FF3333</color>
+    <color name="muscle_secondary">#70FF3838</color>
+    <color name="muscle_tertiary">#2DFF3838</color>
 </resources>

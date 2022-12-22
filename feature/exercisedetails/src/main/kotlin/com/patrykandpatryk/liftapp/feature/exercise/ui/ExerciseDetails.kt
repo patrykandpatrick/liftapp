@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.feature.exercise.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
@@ -14,14 +13,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,7 +87,6 @@ private fun ExerciseDetails(
     onIntent: (Intent) -> Unit,
 ) {
 
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navigator = navigator
 
     val pagerState = rememberPagerState(initialPage = state.selectedTabIndex)
@@ -102,9 +98,7 @@ private fun ExerciseDetails(
     }
 
     Scaffold(
-        modifier = modifier
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-            .imePadding(),
+        modifier = modifier.imePadding(),
         topBar = {
             TopAppBarWithTabs(
                 title = state.name,
@@ -138,11 +132,10 @@ private fun ExerciseDetails(
 
         HorizontalPager(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+                .fillMaxSize(),
             pageCount = tabs.size,
             state = pagerState,
-
+            contentPadding = paddingValues,
         ) { index ->
             tabs[index].content()
         }

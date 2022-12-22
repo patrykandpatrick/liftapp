@@ -18,6 +18,7 @@ data class Dimens(
     val iconButton: IconButton = IconButton(),
     val input: Input = Input(),
     val list: List = List(),
+    val muscle: Muscle = Muscle(),
     val padding: Padding = Padding(),
     val routine: Routine = Routine(),
     val searchBar: SearchBar = SearchBar(),
@@ -86,6 +87,14 @@ data class Dimens(
     data class List(
         val checkedItemHorizontalPadding: Dp = 4.dp,
         val checkedItemTonalElevation: Dp = 2.dp,
+    )
+
+    @Immutable
+    data class Muscle(
+        val tileSize: Dp = 20.dp,
+        val tileCornerSize: Dp = 6.dp,
+        val gridCellMinSize: Dp = 164.dp,
+        val listItemHorizontalMargin: Dp = 16.dp,
     )
 
     @Immutable

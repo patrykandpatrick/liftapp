@@ -5,3 +5,11 @@ android {
 
     namespace "com.patrykandpatryk.liftapp.functionality.musclebitmap"
 }
+
+dependencies {
+
+    muscleBitmapModuleDependencies.each {
+
+        add(it.configuration, it.dependency, it.options)
+    }
+}

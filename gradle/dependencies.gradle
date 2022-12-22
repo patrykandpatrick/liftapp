@@ -408,4 +408,8 @@ ext {
             [configuration: "implementation", dependency: networking.retrofit],
             [configuration: "implementation", dependency: networking.kotlinxSerializationConverter],
     ]
+
+    muscleBitmapModuleDependencies = [
+            [configuration: "implementation", dependency: project(":core")],
+    ]
 }
