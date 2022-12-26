@@ -10,6 +10,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,12 +31,12 @@ import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.provider.navigator
+import com.patrykandpatryk.liftapp.core.tabItems
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.exercise.model.Event
 import com.patrykandpatryk.liftapp.feature.exercise.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercise.model.ScreenState
-import com.patrykandpatryk.liftapp.feature.exercise.model.tabItems
 import com.patrykandpatryk.liftapp.feature.exercise.model.tabs
 import kotlinx.coroutines.launch
 
@@ -64,6 +65,7 @@ fun ExerciseDetails(
         modifier = modifier,
         state = state,
         onIntent = viewModel::handleIntent,
+        snackbarHostState = snackbarHostState,
     )
 
     viewModel.events.collectInComposable { event ->
@@ -86,6 +88,7 @@ private fun ExerciseDetails(
     modifier: Modifier = Modifier,
     state: ScreenState,
     onIntent: (Intent) -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
 
     val navigator = navigator
@@ -128,6 +131,9 @@ private fun ExerciseDetails(
                     )
                 }
             }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
         },
     ) { paddingValues ->
 
@@ -180,6 +186,7 @@ fun PreviewExerciseDetails() {
                 showDeleteDialog = false,
             ),
             onIntent = {},
+            snackbarHostState = SnackbarHostState(),
         )
     }
 }
