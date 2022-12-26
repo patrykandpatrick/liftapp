@@ -1,10 +1,10 @@
 package com.patrykandpatryk.liftapp.functionality.musclebitmap.model
 
-import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import kotlinx.serialization.json.Json
 import com.patrykandpatryk.liftapp.domain.base64.Base64
+import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class NameInfoCoder @Inject constructor(
@@ -19,9 +19,9 @@ class NameInfoCoder @Inject constructor(
         isDark: Boolean,
     ): String {
         val info = NameInfo(
-            mainMuscles = primaryMuscles,
-            secondaryMuscles = secondaryMuscles,
-            tertiaryMuscles = tertiaryMuscles,
+            mainMuscles = primaryMuscles.sorted(),
+            secondaryMuscles = secondaryMuscles.sorted(),
+            tertiaryMuscles = tertiaryMuscles.sorted(),
             isDark = isDark,
         )
 
