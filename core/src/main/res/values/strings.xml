@@ -47,9 +47,11 @@
     <string name="exercise_type_cardio">Cardio</string>
     <string name="exercise_type_time">Time</string>
 
+    <string name="routine_delete_message">This won’t delete any exercises.</string>
     <string name="exercise_delete_message">This will delete all assigned sets.</string>
-    <string name="exercise_tab_stats">Statistics</string>
-    <string name="exercise_tab_details">Details</string>
+    <string name="tab_stats">Statistics</string>
+    <string name="tab_exercises">Exercises</string>
+    <string name="tab_details">Details</string>
 
     <string name="generic_name">Name</string>
     <string name="generic_type">Type</string>

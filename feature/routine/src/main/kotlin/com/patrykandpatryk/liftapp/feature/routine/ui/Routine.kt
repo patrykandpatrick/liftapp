@@ -1,17 +1,40 @@
 package com.patrykandpatryk.liftapp.feature.routine.ui
 
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.collectInComposable
+import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.provider.navigator
-import com.patrykandpatryk.liftapp.core.ui.TopAppBar
+import com.patrykandpatryk.liftapp.core.tabItems
+import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
+import com.patrykandpatryk.liftapp.feature.routine.model.Event
+import com.patrykandpatryk.liftapp.feature.routine.model.Intent
+import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
+import com.patrykandpatryk.liftapp.feature.routine.model.tabs
+import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.addRoutine() {
     composable(
@@ -21,28 +44,131 @@ fun NavGraphBuilder.addRoutine() {
     }
 }
 
-@Suppress("UnusedPrivateMember")
 @Composable
 fun Routine(
     modifier: Modifier = Modifier,
 ) {
 
-    val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val navController = navigator
+    val viewModel: RoutineViewModel = hiltViewModel()
+
+    val state by viewModel.state.collectAsState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
+
+    val navigator = navigator
+
+    Routine(
+        modifier = modifier,
+        state = state,
+        onIntent = viewModel::handleIntent,
+        snackbarHostState = snackbarHostState,
+    )
+
+    viewModel.events.collectInComposable { event ->
+        when (event) {
+            Event.RoutineNotFound -> navigator.popBackStack()
+            is Event.EditRoutine -> navigator.navigate(Routes.NewRoutine.createDestination(/* TODO */))
+        }
+    }
+
+    DeleteRoutineDialog(
+        isVisible = state.showDeleteDialog,
+        routineName = state.name,
+        onDismissRequest = { viewModel.handleIntent(Intent.HideDeleteDialog) },
+        onConfirm = { viewModel.handleIntent(Intent.Delete) },
+    )
+}
+
+@Composable
+private fun Routine(
+    modifier: Modifier = Modifier,
+    state: ScreenState,
+    onIntent: (Intent) -> Unit,
+    snackbarHostState: SnackbarHostState,
+) {
+
+    val navigator = navigator
+
+    val pagerState = rememberPagerState()
+
+    val tabs = remember { tabs }
+
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = stringResource(id = R.string.route_routine),
-                onBackClick = { navController.popBackStack() },
-                scrollBehavior = topAppBarScrollBehavior,
+            TopAppBarWithTabs(
+                title = state.name,
+                onBackClick = navigator::popBackStack,
+                selectedTabIndex = pagerState.currentPage,
+                onTabSelected = { index ->
+                    scope.launch { pagerState.animateScrollToPage(index) }
+                },
+                tabs = tabs.tabItems,
             )
+        },
+        bottomBar = {
+            BottomAppBar {
+
+                IconButton(onClick = { onIntent(Intent.ShowDeleteDialog) }) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_delete),
+                        contentDescription = stringResource(id = R.string.action_delete),
+                    )
+                }
+
+                IconButton(onClick = { onIntent(Intent.Edit) }) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_edit),
+                        contentDescription = stringResource(id = R.string.action_edit),
+                    )
+                }
+            }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
         },
     ) { paddingValues ->
 
-        LazyColumn(
+        HorizontalPager(
+            modifier = Modifier
+                .fillMaxSize(),
+            pageCount = tabs.size,
+            state = pagerState,
             contentPadding = paddingValues,
-        ) {}
+        ) { index ->
+            tabs[index].content()
+        }
+    }
+}
+
+@Composable
+private fun DeleteRoutineDialog(
+    isVisible: Boolean,
+    routineName: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (isVisible) {
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            title = { Text(text = stringResource(id = R.string.generic_delete_something, routineName)) },
+            text = { Text(text = stringResource(id = R.string.routine_delete_message)) },
+            dismissButton = {
+                TextButton(onClick = onDismissRequest) {
+                    Text(text = stringResource(id = android.R.string.cancel))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(text = stringResource(id = R.string.action_delete))
+                }
+            },
+        )
     }
 }

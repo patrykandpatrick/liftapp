@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
@@ -64,6 +65,7 @@ fun TopAppBarWithTabs(
     actions: @Composable RowScope.() -> Unit = {},
     tabs: @Composable () -> Unit,
 ) {
+
     Column(modifier = modifier) {
 
         androidx.compose.material3.TopAppBar(
@@ -189,6 +191,8 @@ fun DialogTopBar(
 
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(device = Devices.TABLET)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.TABLET)
 @Composable
 fun PreviewTopAppBarWithTextTabs() {
     LiftAppTheme {
