@@ -134,6 +134,7 @@ class RoutineViewModel @Inject constructor(
     }
 
     private fun deleteRoutine() {
+        handleDeleteDialogVisibility(visible = false)
         viewModelScope.launch {
             deleteRoutine(routineId)
         }
