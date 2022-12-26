@@ -7,6 +7,7 @@ import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
+import com.patrykandpatryk.liftapp.domain.exercise.DeleteExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
@@ -29,10 +30,11 @@ private const val SCREEN_STATE_KEY = "screenState"
 
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
-    @ExerciseId private val exerciseId: Long,
-    getExercise: GetExerciseUseCase,
-    private val savedStateHandle: SavedStateHandle,
     private val logger: UiLogger,
+    getExercise: GetExerciseUseCase,
+    @ExerciseId private val exerciseId: Long,
+    private val savedStateHandle: SavedStateHandle,
+    private val deleteExercise: DeleteExerciseUseCase,
     private val muscleImageProvider: MuscleImageProvider,
     isDarkModeReceiver: IsDarkModeReceiver,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
@@ -50,7 +52,7 @@ class ExerciseViewModel @Inject constructor(
             isDarkModeReceiver(),
         ) { exercise, isSystemInLightMode ->
             if (exercise == null) {
-                Timber.e("Exercise with id $exerciseId not found!")
+                Timber.e("Exercise with id $exerciseId not found, or deleted.")
                 eventChannel.send(Event.ExerciseNotFound)
             } else {
 
@@ -78,7 +80,7 @@ class ExerciseViewModel @Inject constructor(
 
     override fun handleIntent(intent: Intent) {
         when (intent) {
-            Intent.Delete -> updateScreenState { mutate(showDeleteDialog = false) }
+            Intent.Delete -> deleteExercise()
             Intent.Edit -> sendEditExerciseEvent()
             Intent.HideDeleteDialog -> updateScreenState { mutate(showDeleteDialog = false) }
             Intent.ShowDeleteDialog -> updateScreenState { mutate(showDeleteDialog = true) }
@@ -88,6 +90,13 @@ class ExerciseViewModel @Inject constructor(
     private fun sendEditExerciseEvent() {
         viewModelScope.launch {
             eventChannel.send(Event.EditExercise(id = exerciseId))
+        }
+    }
+
+    private fun deleteExercise() {
+        updateScreenState { mutate(showDeleteDialog = false) }
+        viewModelScope.launch {
+            deleteExercise(exerciseId)
         }
     }
 
