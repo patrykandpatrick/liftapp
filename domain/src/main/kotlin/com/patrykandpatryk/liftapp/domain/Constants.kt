@@ -31,4 +31,9 @@ object Constants {
 
         const val PICKED_EXERCISE_IDS = "pickedExerciseIds"
     }
+
+    object Algorithms {
+
+        const val SHA1_NAME = "SHA-1"
+    }
 }

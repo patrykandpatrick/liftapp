@@ -1,16 +1,17 @@
 package com.patrykandpatryk.liftapp.functionality.musclebitmap.model
 
-import com.patrykandpatryk.liftapp.domain.base64.Base64
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.security.MessageDigest
 import javax.inject.Inject
+
+private const val BYTES_FORMAT = "%02x"
 
 class NameInfoCoder @Inject constructor(
     private val json: Json,
-    private val base64: Base64,
-) : NameInfoEncoder, NameInfoDecoder {
+    private val digest: MessageDigest,
+) : NameInfoEncoder {
 
     override fun encodeToName(
         primaryMuscles: List<Muscle>,
@@ -18,16 +19,18 @@ class NameInfoCoder @Inject constructor(
         tertiaryMuscles: List<Muscle>,
         isDark: Boolean,
     ): String {
-        val info = NameInfo(
-            mainMuscles = primaryMuscles.sorted(),
-            secondaryMuscles = secondaryMuscles.sorted(),
-            tertiaryMuscles = tertiaryMuscles.sorted(),
+        val info = NameInfo.create(
+            mainMuscles = primaryMuscles,
+            secondaryMuscles = secondaryMuscles,
+            tertiaryMuscles = tertiaryMuscles,
             isDark = isDark,
         )
 
-        return base64.encode(json.encodeToString(info))
-    }
+        val jsonBytes = json
+            .encodeToString(info)
+            .toByteArray(Charsets.ISO_8859_1)
 
-    override fun decodeFromName(input: String): NameInfo =
-        json.decodeFromString(base64.decode(input))
+        return digest.digest(jsonBytes)
+            .joinToString("") { String.format(BYTES_FORMAT, it) }
+    }
 }
