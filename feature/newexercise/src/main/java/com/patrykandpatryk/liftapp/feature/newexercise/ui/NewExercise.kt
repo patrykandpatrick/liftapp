@@ -2,9 +2,8 @@ package com.patrykandpatryk.liftapp.feature.newexercise.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumedWindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -87,7 +86,6 @@ fun NewExercise(
 }
 
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
 private fun NewExercise(
     modifier: Modifier = Modifier,
     state: NewExerciseState,
@@ -116,7 +114,7 @@ private fun NewExercise(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 modifier = Modifier
-                    .consumedWindowInsets(insets = WindowInsets.navigationBars)
+                    .consumeWindowInsets(insets = WindowInsets.navigationBars)
                     .imePadding(),
                 text = stringResource(id = R.string.action_save),
                 icon = painterResource(id = R.drawable.ic_save),

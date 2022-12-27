@@ -6,11 +6,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumedWindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
@@ -54,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
@@ -77,7 +77,6 @@ import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
 import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
-import com.patrykandpatrick.vico.core.extension.orZero
 
 fun NavGraphBuilder.addNewRoutine() {
 
@@ -125,7 +124,6 @@ fun NewRoutine(
 }
 
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
 private fun NewRoutine(
     modifier: Modifier = Modifier,
     state: ScreenState,
@@ -153,7 +151,7 @@ private fun NewRoutine(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 modifier = Modifier
-                    .consumedWindowInsets(insets = WindowInsets.navigationBars)
+                    .consumeWindowInsets(insets = WindowInsets.navigationBars)
                     .onGloballyPositioned { coordinates ->
                         val parentBottom = coordinates.parentLayoutCoordinates?.size?.height.orZero
                         val fabTop = coordinates.positionInParent().y
