@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.core.logging
 
+import android.util.Log
 import com.patrykandpatryk.liftapp.core.di.IsDebug
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
@@ -28,7 +29,7 @@ class UiLogger @Inject constructor(
     override val messages = events.asSharedFlow()
 
     override fun isLoggable(tag: String?, priority: Int): Boolean =
-        isDebug || tag == Constants.Logging.DISPLAYABLE_ERROR
+        (isDebug && priority >= Log.INFO) || tag == Constants.Logging.DISPLAYABLE_ERROR
 
     override fun log(
         priority: Int,
