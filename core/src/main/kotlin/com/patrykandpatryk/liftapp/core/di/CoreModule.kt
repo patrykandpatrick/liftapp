@@ -18,7 +18,7 @@ import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.NameResolver
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.validation.Validator
-import com.patrykandpatryk.vico.core.entry.ChartEntry
+import com.patrykandpatrick.vico.core.entry.ChartEntry
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

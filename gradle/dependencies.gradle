@@ -214,7 +214,7 @@ ext {
                     version: versions.accompanist,
             ],
             vico                          : [
-                    group  : "com.patrykandpatryk.vico",
+                    group  : "com.patrykandpatrick.vico",
                     name   : "compose-m3",
                     version: versions.vico,
             ],

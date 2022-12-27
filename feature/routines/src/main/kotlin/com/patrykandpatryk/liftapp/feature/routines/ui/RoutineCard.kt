@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.vico.core.extension.forEachIndexedExtended
+import com.patrykandpatrick.vico.core.extension.forEachIndexedExtended
 
 @Composable
 fun RoutineCard(

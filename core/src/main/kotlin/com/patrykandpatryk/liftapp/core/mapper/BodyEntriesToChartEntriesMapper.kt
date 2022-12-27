@@ -4,8 +4,8 @@ import com.patrykandpatryk.liftapp.domain.body.BodyEntry
 import com.patrykandpatryk.liftapp.domain.body.BodyValues
 import com.patrykandpatryk.liftapp.domain.extension.getOrPut
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import com.patrykandpatryk.vico.core.entry.ChartEntry
-import com.patrykandpatryk.vico.core.entry.entryOf
+import com.patrykandpatrick.vico.core.entry.ChartEntry
+import com.patrykandpatrick.vico.core.entry.entryOf
 import javax.inject.Inject
 
 class BodyEntriesToChartEntriesMapper @Inject constructor() :

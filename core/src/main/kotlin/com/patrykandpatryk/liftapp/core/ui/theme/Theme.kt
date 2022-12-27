@@ -11,9 +11,9 @@ import com.patrykandpatryk.liftapp.core.extension.isLandscape
 import com.patrykandpatryk.liftapp.core.ui.dimens.LandscapeDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.PortraitDimens
-import com.patrykandpatryk.vico.compose.m3.style.m3ChartStyle
-import com.patrykandpatryk.vico.compose.style.ChartStyle
-import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.compose.m3.style.m3ChartStyle
+import com.patrykandpatrick.vico.compose.style.ChartStyle
+import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 
 private val LightColorScheme = lightColorScheme(
     primary = Colors.Light.primary,

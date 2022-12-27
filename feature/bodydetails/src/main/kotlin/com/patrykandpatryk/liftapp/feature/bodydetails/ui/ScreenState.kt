@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.bodydetails.ui
 
 import androidx.compose.runtime.Stable
-import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 
 sealed class ScreenState(
     open val bodyId: Long,

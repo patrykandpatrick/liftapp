@@ -10,7 +10,7 @@ import com.patrykandpatryk.liftapp.core.extension.smartToIntOrNull
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.feature.onerepmax.model.HistoryEntryModel
 import com.patrykandpatryk.liftapp.feature.onerepmax.model.OneRepMaxUiState
-import com.patrykandpatryk.vico.core.extension.orZero
+import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykmichalik.opto.core.onEach
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

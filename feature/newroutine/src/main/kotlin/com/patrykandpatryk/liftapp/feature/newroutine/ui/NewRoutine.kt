@@ -77,7 +77,7 @@ import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
 import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
-import com.patrykandpatryk.vico.core.extension.orZero
+import com.patrykandpatrick.vico.core.extension.orZero
 
 fun NavGraphBuilder.addNewRoutine() {
 
