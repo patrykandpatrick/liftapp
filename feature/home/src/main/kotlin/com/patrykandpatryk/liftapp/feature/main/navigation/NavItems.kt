@@ -40,7 +40,7 @@ val navBarRoutes: List<NavItemRoute> by lazy {
             titleRes = R.string.route_exercises,
             deselectedIconRes = R.drawable.ic_weightlifter_down,
             selectedIconRes = R.drawable.ic_weightlifter_up,
-            content = { _, modifier, padding, navigate ->
+            content = { _, modifier, padding, _ ->
                 Exercises(
                     modifier = modifier,
                     padding = padding,
