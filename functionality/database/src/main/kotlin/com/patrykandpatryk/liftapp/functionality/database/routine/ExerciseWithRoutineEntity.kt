@@ -26,6 +26,6 @@ import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntit
 class ExerciseWithRoutineEntity(
     @ColumnInfo(name = "routine_id")
     val routineId: Long,
-    @ColumnInfo(name = "exercise_id")
+    @ColumnInfo(name = "exercise_id", index = true)
     val exerciseId: Long,
 )
