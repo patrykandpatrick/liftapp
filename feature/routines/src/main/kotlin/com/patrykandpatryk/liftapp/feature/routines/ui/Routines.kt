@@ -1,7 +1,6 @@
 package com.patrykandpatryk.liftapp.feature.routines.ui
 
 import android.content.res.Configuration
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -108,10 +107,9 @@ private fun Routines(
             ) { routine ->
 
                 RoutineCard(
-                    modifier = Modifier
-                        .clickable { navigate(Routes.Routine.create(routine.id)) },
                     title = routine.name,
                     exercises = routine.exercises,
+                    onClick = { navigate(Routes.Routine.create(routine.id)) },
                 )
             }
 
