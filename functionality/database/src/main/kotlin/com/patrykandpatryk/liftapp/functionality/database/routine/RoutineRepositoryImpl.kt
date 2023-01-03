@@ -39,16 +39,13 @@ class RoutineRepositoryImpl @Inject constructor(
             .getRoutine(id)
             .map(routineToDomainMapper::mapNullable)
 
-    override suspend fun upsert(routine: Routine): Long = withContext(NonCancellable) {
-        routineDao.upsert(routine = routineToEntityMapper(routine))
-    }
+    override suspend fun upsert(
+        routine: Routine,
+        exerciseIds: List<Long>,
+    ): Long = withContext(dispatcher + NonCancellable) {
+        var routineId = routineDao.upsert(routine = routineToEntityMapper(routine))
 
-    override suspend fun insert(name: String, exerciseIds: List<Long>): Long {
-        val routineId = routineDao.insert(
-            routine = RoutineEntity(
-                name = name,
-            ),
-        )
+        routineId = routineId.takeIf { it > 0 } ?: routine.id
 
         exerciseIds.map { exerciseId ->
             ExerciseWithRoutineEntity(
@@ -57,7 +54,9 @@ class RoutineRepositoryImpl @Inject constructor(
             )
         }.also { exerciseWithRoutineEntities -> routineDao.insert(exerciseWithRoutineEntities) }
 
-        return routineId
+        routineDao.deleteExerciseWithRoutinesNotIn(routineId, exerciseIds)
+
+        routineId
     }
 
     override suspend fun delete(routineId: Long) {

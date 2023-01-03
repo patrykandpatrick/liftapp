@@ -78,6 +78,7 @@
 
     <string name="title_new_exercise">New Exercise</string>
     <string name="title_new_routine">New Routine</string>
+    <string name="title_edit_routine">Edit Routine</string>
     <string name="title_exercises">Exercises</string>
     <string name="title_x_selected">%s Selected</string>
 

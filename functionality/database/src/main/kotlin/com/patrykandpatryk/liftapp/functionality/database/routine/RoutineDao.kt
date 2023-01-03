@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.functionality.database.routine
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -29,8 +30,11 @@ interface RoutineDao {
     @Insert
     suspend fun insert(exerciseWithRoutine: ExerciseWithRoutineEntity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(exerciseWithRoutine: List<ExerciseWithRoutineEntity>)
+
+    @Query("DELETE FROM exercise_with_routine WHERE  routine_id = :routineId AND exercise_id NOT IN (:notIn)")
+    suspend fun deleteExerciseWithRoutinesNotIn(routineId: Long, notIn: List<Long>)
 
     @Query("DELETE FROM routine WHERE id = :routineId")
     suspend fun delete(routineId: Long)

@@ -34,6 +34,7 @@ object Constants {
 
     object Algorithms {
 
+        const val SCREEN_STATE_KEY = "screenState"
         const val SHA1_NAME = "SHA-1"
     }
 }

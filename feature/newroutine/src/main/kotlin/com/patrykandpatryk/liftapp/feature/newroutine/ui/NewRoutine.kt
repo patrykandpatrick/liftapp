@@ -142,8 +142,13 @@ private fun NewRoutine(
             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
             .imePadding(),
         topBar = {
+
+            val titleRes = remember(state.isEdit) {
+                if (state.isEdit) R.string.title_edit_routine else R.string.title_new_routine
+            }
+
             TopAppBar(
-                title = stringResource(id = R.string.title_new_routine),
+                title = stringResource(id = titleRes),
                 scrollBehavior = topAppBarScrollBehavior,
                 onBackClick = navigator::popBackStack,
             )
@@ -166,9 +171,7 @@ private fun NewRoutine(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .padding(horizontal = LocalDimens.current.padding.contentHorizontal)
-                .padding(paddingValues),
+            modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(
                 bottom = fabTopToParentBottom + LocalDimens.current.verticalItemSpacing,
             ),
@@ -199,13 +202,15 @@ private fun LazyListScope.content(
                 value = state.name.value,
                 onValueChange = { onIntent(Intent.UpdateName(it)) },
                 label = { Text(text = stringResource(id = R.string.generic_name)) },
-                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onIntent(Intent.Save) }),
                 maxLines = LocalDimens.current.input.nameMaxLines,
                 supportingText = nameErrorText,
                 isError = state.showErrors,
                 showSupportingText = state.showErrors,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
             )
 
             ListSectionTitle(
@@ -254,7 +259,11 @@ private fun LazyListScope.content(
             modifier = Modifier
                 .animateItemPlacement()
                 .fillMaxWidth()
-                .padding(top = LocalDimens.current.verticalItemSpacing),
+                .padding(
+                    top = LocalDimens.current.verticalItemSpacing,
+                    start = LocalDimens.current.padding.contentHorizontal,
+                    end = LocalDimens.current.padding.contentHorizontal,
+                ),
             onClick = {
                 navigator.navigate(
                     Routes.Exercises.create(
@@ -318,7 +327,10 @@ private fun ColumnScope.EmptyState(state: ScreenState) {
 fun NewRoutinePreview() {
     LiftAppTheme {
         NewRoutine(
-            state = ScreenState.Insert(name = "Name".toValid()),
+            state = ScreenState(
+                name = "Name".toValid(),
+                id = 0,
+            ),
             snackbarHostState = SnackbarHostState(),
             onIntent = {},
             nameErrorText = "",

@@ -47,7 +47,6 @@ object Routes {
     val About = Route(value = "about")
     val Settings = Route(value = "settings")
     val OneRepMax = Route(value = "one_rep_max")
-    val NewRoutine = Route(value = "new_routine")
 
     object Routine : Route(value = "routine/{$ARG_ID}") {
 
@@ -56,6 +55,16 @@ object Routes {
         )
 
         fun create(routineId: Long) =
+            value.replace("{$ARG_ID}", routineId.toString())
+    }
+
+    object NewRoutine : Route(value = "new_routine/{$ARG_ID}") {
+
+        override val navArguments = listOf(
+            navArgument(ARG_ID) { type = NavType.LongType },
+        )
+
+        fun create(routineId: Long = 0) =
             value.replace("{$ARG_ID}", routineId.toString())
     }
 

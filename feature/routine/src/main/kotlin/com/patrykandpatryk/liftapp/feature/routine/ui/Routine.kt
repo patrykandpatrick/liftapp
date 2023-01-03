@@ -69,7 +69,7 @@ fun Routine(
     viewModel.events.collectInComposable { event ->
         when (event) {
             Event.RoutineNotFound -> navigator.popBackStack()
-            is Event.EditRoutine -> navigator.navigate(Routes.NewRoutine.createDestination(/* TODO */))
+            is Event.EditRoutine -> navigator.navigate(Routes.NewRoutine.create(event.id))
         }
     }
 

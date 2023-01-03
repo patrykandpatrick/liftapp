@@ -72,7 +72,7 @@ private fun Routines(
             ExtendedFloatingActionButton(
                 text = stringResource(id = R.string.action_new_routine),
                 icon = painterResource(id = R.drawable.ic_add),
-                onClick = { navigate(Routes.NewRoutine.createDestination()) },
+                onClick = { navigate(Routes.NewRoutine.create()) },
             )
         },
         topBar = {

@@ -10,8 +10,7 @@ interface RoutineRepository {
 
     fun getRoutine(id: Long): Flow<Routine?>
 
-    suspend fun upsert(routine: Routine): Long
-    suspend fun insert(name: String, exerciseIds: List<Long>): Long
+    suspend fun upsert(routine: Routine, exerciseIds: List<Long>): Long
 
     suspend fun delete(routineId: Long)
 }
