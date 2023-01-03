@@ -55,6 +55,7 @@
 
     <string name="generic_name">Name</string>
     <string name="generic_type">Type</string>
+    <string name="generic_list">List</string>
     <string name="generic_main_muscles">Main Muscles</string>
     <string name="generic_secondary_muscles">Secondary Muscles</string>
     <string name="generic_tertiary_muscles">Tertiary Muscles</string>

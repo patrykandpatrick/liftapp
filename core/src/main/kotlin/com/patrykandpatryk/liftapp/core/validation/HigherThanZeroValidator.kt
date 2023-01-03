@@ -4,7 +4,6 @@ import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.Validator
 import javax.inject.Inject
-import javax.inject.Qualifier
 
 class HigherThanZeroValidator @Inject constructor(
     private val stringProvider: StringProvider,
@@ -17,6 +16,3 @@ class HigherThanZeroValidator @Inject constructor(
             message = stringProvider.errorMustBeHigherThanZero,
         )
 }
-
-@Qualifier
-annotation class HigherThanZero

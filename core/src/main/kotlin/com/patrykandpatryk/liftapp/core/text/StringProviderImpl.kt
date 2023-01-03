@@ -20,6 +20,9 @@ class StringProviderImpl @Inject constructor(
     override val name: String
         get() = string(string.generic_name)
 
+    override val list: String
+        get() = string(string.generic_list)
+
     override val dateFormatShort: String
         get() = string(string.date_format_short)
 

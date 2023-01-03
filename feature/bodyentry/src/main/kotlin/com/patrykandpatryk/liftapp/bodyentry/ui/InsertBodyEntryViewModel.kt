@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.bodyentry.di.BodyEntryId
 import com.patrykandpatryk.liftapp.bodyentry.di.BodyId
-import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
+import com.patrykandpatryk.liftapp.core.di.ValidatorType
 import com.patrykandpatryk.liftapp.domain.body.BodyRepository
 import com.patrykandpatryk.liftapp.domain.body.BodyValues
 import com.patrykandpatryk.liftapp.domain.date.day
@@ -45,7 +45,7 @@ internal class InsertBodyEntryViewModel @Inject constructor(
     private val stringProvider: StringProvider,
     private val getUnitForBodyType: GetUnitForBodyTypeUseCase,
     private val savedStateHandle: SavedStateHandle,
-    @HigherThanZero private val validator: Validator<Float>,
+    @ValidatorType.HigherThanZero private val validator: Validator<Float>,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
 
     override val state: StateFlow<ScreenState> = savedStateHandle

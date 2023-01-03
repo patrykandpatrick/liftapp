@@ -15,6 +15,8 @@ object TestStringProvider : StringProvider {
     override val andInAList: String = "&"
     override val name: String = "Name"
 
+    override val list: String = "List"
+
     override val dateFormatShort: String = "d MMMM"
     override val dateFormatLong: String = "EEEE, d MMMM"
     override val timeFormatShort24h: String = "HH:mm"

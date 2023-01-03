@@ -206,7 +206,7 @@ private fun LazyListScope.content(
                 keyboardActions = KeyboardActions(onDone = { onIntent(Intent.Save) }),
                 maxLines = LocalDimens.current.input.nameMaxLines,
                 supportingText = nameErrorText,
-                isError = state.showErrors,
+                isError = state.showErrors && state.name.isInvalid,
                 showSupportingText = state.showErrors,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -220,7 +220,7 @@ private fun LazyListScope.content(
         }
     }
 
-    if (state.exercises.isEmpty()) {
+    if (state.exercises.isInvalid) {
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 EmptyState(state)
@@ -228,7 +228,7 @@ private fun LazyListScope.content(
         }
     } else {
         items(
-            items = state.exercises,
+            items = state.exercises.value,
             key = { it.id },
             contentType = { it::class },
         ) { item ->
@@ -330,6 +330,7 @@ fun NewRoutinePreview() {
             state = ScreenState(
                 name = "Name".toValid(),
                 id = 0,
+                exercises = emptyList<ExerciseItem>().toValid(),
             ),
             snackbarHostState = SnackbarHostState(),
             onIntent = {},

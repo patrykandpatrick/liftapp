@@ -11,11 +11,11 @@ import kotlinx.parcelize.Parcelize
 data class ScreenState(
     val id: Long,
     val name: Validatable<String>,
+    val exercises: Validatable<List<ExerciseItem>>,
     val isEdit: Boolean = false,
     val showErrors: Boolean = false,
-    val exercises: List<ExerciseItem> = emptyList(),
 ) : Parcelable {
 
     val exerciseIds: List<Long>
-        get() = exercises.map { it.id }
+        get() = exercises.value.map { it.id }
 }

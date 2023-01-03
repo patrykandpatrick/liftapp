@@ -9,6 +9,8 @@ interface StringProvider {
     val andInAList: String
     val name: String
 
+    val list: String
+
     val dateFormatShort: String
     val dateFormatLong: String
     val timeFormatShort24h: String
@@ -31,3 +33,6 @@ interface StringProvider {
 
     fun getMuscleName(muscle: Muscle): String
 }
+
+inline fun StringProvider.getErrorCannotBeEmpty(getName: StringProvider.() -> String): String =
+    getErrorCannotBeEmpty(getName())

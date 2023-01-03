@@ -3,10 +3,10 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatryk.liftapp.core.di.ValidatorType
 import com.patrykandpatryk.liftapp.core.extension.update
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
-import com.patrykandpatryk.liftapp.core.validation.Name
 import com.patrykandpatryk.liftapp.domain.Constants.Algorithms.SCREEN_STATE_KEY
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
@@ -44,7 +44,8 @@ class NewRoutineViewModel @Inject constructor(
     private val getExerciseItems: GetExerciseItemsUseCase,
     exceptionHandler: CoroutineExceptionHandler,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
-    @Name private val validateName: Validator<String>,
+    @ValidatorType.Name private val validateName: Validator<String>,
+    private val validateExercises: Validator<List<ExerciseItem>>,
     private val logger: UiLogger,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
@@ -68,7 +69,7 @@ class NewRoutineViewModel @Inject constructor(
             .getStateFlow(PICKED_EXERCISES_KEY, emptyList<Long>())
             .flatMapLatest(getExerciseItems::invoke)
             .onEach { exercises ->
-                updateState { state -> state.copy(exercises = exercises) }
+                updateState { state -> state.copy(exercises = validateExercises(exercises)) }
             }
             .flowOn(coroutineContext)
             .launchIn(viewModelScope)
@@ -78,6 +79,7 @@ class NewRoutineViewModel @Inject constructor(
         ScreenState(
             id = routineId,
             name = validateName(""),
+            exercises = validateExercises(emptyList()),
         )
 
     private fun loadUpdateState(routineId: Long) {
@@ -144,9 +146,7 @@ class NewRoutineViewModel @Inject constructor(
     }
 
     private fun validateState(state: ScreenState): Boolean {
-        val name = state.name
-
-        return if (name.isInvalid) {
+        return if (state.name.isInvalid || state.exercises.isInvalid) {
             updateState { it.copy(showErrors = true) }
             false
         } else true

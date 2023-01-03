@@ -3,13 +3,12 @@ package com.patrykandpatryk.liftapp.core.di
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
+import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatryk.liftapp.core.android.IsDarkModeHandler
 import com.patrykandpatryk.liftapp.core.mapper.BodyEntriesToChartEntriesMapper
 import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
 import com.patrykandpatryk.liftapp.core.ui.name.NameResolverImpl
-import com.patrykandpatryk.liftapp.core.validation.HigherThanZero
 import com.patrykandpatryk.liftapp.core.validation.HigherThanZeroValidator
-import com.patrykandpatryk.liftapp.core.validation.Name
 import com.patrykandpatryk.liftapp.core.validation.NameValidator
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModePublisher
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
@@ -18,7 +17,6 @@ import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.NameResolver
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.validation.Validator
-import com.patrykandpatrick.vico.core.entry.ChartEntry
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -46,11 +44,11 @@ internal interface CoreModule {
     fun bindStringProvider(provider: StringProviderImpl): StringProvider
 
     @Binds
-    @Name
+    @ValidatorType.Name
     fun bindNameValidator(validator: NameValidator): Validator<String>
 
     @Binds
-    @HigherThanZero
+    @ValidatorType.HigherThanZero
     fun bindHigherThanZeroValidatorValidator(validator: HigherThanZeroValidator): Validator<Float>
 
     @Binds
