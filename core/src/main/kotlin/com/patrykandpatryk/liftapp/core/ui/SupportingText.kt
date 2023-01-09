@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,7 +52,7 @@ fun OutlinedTextField(
         androidx.compose.material3.OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = modifier,
+            modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             readOnly = readOnly,
             textStyle = textStyle,
@@ -78,6 +79,7 @@ fun OutlinedTextField(
         )
     }
 }
+
 @Composable
 fun ColumnScope.SupportingText(
     text: String,
