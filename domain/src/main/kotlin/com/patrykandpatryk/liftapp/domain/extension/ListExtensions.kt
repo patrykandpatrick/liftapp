@@ -19,3 +19,11 @@ fun <T> MutableList<T>.getOrPut(index: Int, put: () -> T): T =
         add(newValue)
         newValue
     }
+
+fun <T> MutableList<T>.addOrSet(index: Int, element: T) {
+    if (index >= size) {
+        add(element)
+    } else {
+        set(index, element)
+    }
+}

@@ -14,6 +14,7 @@ data class Dimens(
     val card: Card = Card(),
     val chip: Chip = Chip(),
     val dialog: Dialog = Dialog(),
+    val elevation: Elevation = Elevation(),
     val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
     val input: Input = Input(),
@@ -121,6 +122,11 @@ data class Dimens(
     @Immutable
     data class Button(
         val iconPadding: Dp = 8.dp,
+    )
+
+    @Immutable
+    data class Elevation(
+        val dragElevation: Dp = 2.dp,
     )
 }
 

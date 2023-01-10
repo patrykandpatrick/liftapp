@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -124,6 +125,16 @@ class RoutineViewModel @Inject constructor(
             Intent.ShowDeleteDialog -> handleDeleteDialogVisibility(visible = true)
             Intent.HideDeleteDialog -> handleDeleteDialogVisibility(visible = false)
             Intent.Delete -> deleteRoutine()
+            is Intent.Reorder -> reorder(intent)
+        }
+    }
+
+    private fun reorder(reorder: Intent.Reorder) {
+        updateScreenState {
+            val exercises = ArrayList(exercises)
+            val exercise = exercises.removeAt(reorder.from)
+            exercises.add(reorder.to, exercise)
+            mutate(exercises = exercises.toImmutableList())
         }
     }
 

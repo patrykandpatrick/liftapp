@@ -9,4 +9,6 @@ sealed interface Intent {
     object HideDeleteDialog : Intent
 
     object Delete : Intent
+
+    data class Reorder(val from: Int, val to: Int) : Intent
 }
