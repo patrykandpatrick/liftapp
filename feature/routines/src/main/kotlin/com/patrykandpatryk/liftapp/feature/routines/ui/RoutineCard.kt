@@ -47,7 +47,7 @@ fun RoutineCard(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.headlineSmall,
             )
 
             Text(
