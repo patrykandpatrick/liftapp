@@ -8,9 +8,9 @@ interface RoutineRepository {
 
     fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?>
 
-    fun getRoutine(id: Long): Flow<Routine?>
-
     suspend fun upsert(routine: Routine, exerciseIds: List<Long>): Long
+
+    suspend fun reorderExercises(routineId: Long, exerciseIds: List<Long>)
 
     suspend fun delete(routineId: Long)
 }

@@ -11,13 +11,13 @@ import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntit
     foreignKeys = [
         ForeignKey(
             entity = RoutineEntity::class,
-            parentColumns = ["id"],
+            parentColumns = ["routine_id"],
             childColumns = ["routine_id"],
             onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = ExerciseEntity::class,
-            parentColumns = ["id"],
+            parentColumns = ["exercise_id"],
             childColumns = ["exercise_id"],
             onDelete = ForeignKey.CASCADE,
         ),
@@ -28,4 +28,6 @@ class ExerciseWithRoutineEntity(
     val routineId: Long,
     @ColumnInfo(name = "exercise_id", index = true)
     val exerciseId: Long,
+    @ColumnInfo(name = "order_index")
+    val orderIndex: Int,
 )

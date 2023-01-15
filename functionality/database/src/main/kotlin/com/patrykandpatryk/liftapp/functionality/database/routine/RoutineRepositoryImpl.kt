@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -17,8 +18,7 @@ import javax.inject.Inject
 class RoutineRepositoryImpl @Inject constructor(
     private val routineDao: RoutineDao,
     private val routineWithExerciseNamesToDomainMapper: Mapper<RoutineWithExerciseNamesView, RoutineWithExerciseNames>,
-    private val routineWithExercisesToDomainMapper: Mapper<RoutineWithExercisesRelation, RoutineWithExercises>,
-    private val routineToDomainMapper: Mapper<RoutineEntity, Routine>,
+    private val routineWithExerciseToDomainMapper: Mapper<RoutineWithExerciseEntities, RoutineWithExercises>,
     private val routineToEntityMapper: Mapper<Routine, RoutineEntity>,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) : RoutineRepository {
@@ -30,14 +30,19 @@ class RoutineRepositoryImpl @Inject constructor(
             .flowOn(dispatcher)
 
     override fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?> =
-        routineDao
-            .getRoutineWithExercises(routineId = routineId)
-            .map(routineWithExercisesToDomainMapper::mapNullable)
-
-    override fun getRoutine(id: Long): Flow<Routine?> =
-        routineDao
-            .getRoutine(id)
-            .map(routineToDomainMapper::mapNullable)
+        combine(
+            routineDao.getRoutine(routineId = routineId),
+            routineDao.getRoutineExercises(routineId = routineId),
+        ) { routine, exercises ->
+            if (routine != null) {
+                RoutineWithExerciseEntities(
+                    routine = routine,
+                    exercises = exercises,
+                ).let { routineWithExerciseToDomainMapper(it) }
+            } else {
+                null
+            }
+        }
 
     override suspend fun upsert(
         routine: Routine,
@@ -47,16 +52,25 @@ class RoutineRepositoryImpl @Inject constructor(
 
         routineId = routineId.takeIf { it > 0 } ?: routine.id
 
-        exerciseIds.map { exerciseId ->
-            ExerciseWithRoutineEntity(
-                routineId = routineId,
-                exerciseId = exerciseId,
-            )
-        }.also { exerciseWithRoutineEntities -> routineDao.insert(exerciseWithRoutineEntities) }
+        upsertOrderedExercises(routineId, exerciseIds)
 
         routineDao.deleteExerciseWithRoutinesNotIn(routineId, exerciseIds)
 
         routineId
+    }
+
+    override suspend fun reorderExercises(routineId: Long, exerciseIds: List<Long>) {
+        upsertOrderedExercises(routineId, exerciseIds)
+    }
+
+    private suspend fun upsertOrderedExercises(routineId: Long, exerciseIds: List<Long>) {
+        exerciseIds.mapIndexed { index, id ->
+            ExerciseWithRoutineEntity(
+                routineId = routineId,
+                exerciseId = id,
+                orderIndex = index,
+            )
+        }.also { exerciseWithRoutineEntities -> routineDao.upsert(exerciseWithRoutineEntities) }
     }
 
     override suspend fun delete(routineId: Long) {

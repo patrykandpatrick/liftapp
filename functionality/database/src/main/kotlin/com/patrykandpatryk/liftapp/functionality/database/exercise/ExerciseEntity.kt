@@ -11,27 +11,30 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 @Entity(tableName = "exercise")
 class ExerciseEntity(
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "exercise_id")
     val id: Long = ID_NOT_SET,
-    @ColumnInfo(index = true)
+    @ColumnInfo(name = "exercise_name", index = true)
     val name: Name,
     @ColumnInfo(name = "exercise_type", index = true)
     val exerciseType: ExerciseType,
-    @ColumnInfo(name = "main_muscles", index = true)
+    @ColumnInfo(name = "exercise_main_muscles", index = true)
     val mainMuscles: List<Muscle>,
-    @ColumnInfo(name = "secondary_muscles")
+    @ColumnInfo(name = "exercise_secondary_muscles")
     val secondaryMuscles: List<Muscle>,
-    @ColumnInfo(name = "tertiary_muscles")
+    @ColumnInfo(name = "exercise_tertiary_muscles")
     val tertiaryMuscles: List<Muscle>,
 ) {
 
     class Update(
+        @ColumnInfo(name = "exercise_id")
         val id: Long,
+        @ColumnInfo(name = "exercise_name")
         val name: Name,
-        @ColumnInfo(name = "main_muscles")
+        @ColumnInfo(name = "exercise_main_muscles")
         val mainMuscles: List<Muscle>,
-        @ColumnInfo(name = "secondary_muscles")
+        @ColumnInfo(name = "exercise_secondary_muscles")
         val secondaryMuscles: List<Muscle>,
-        @ColumnInfo(name = "tertiary_muscles")
+        @ColumnInfo(name = "exercise_tertiary_muscles")
         val tertiaryMuscles: List<Muscle>,
     )
 }

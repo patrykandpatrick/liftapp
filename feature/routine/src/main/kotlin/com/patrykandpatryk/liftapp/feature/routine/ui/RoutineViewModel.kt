@@ -20,6 +20,7 @@ import com.patrykandpatryk.liftapp.feature.routine.model.Event
 import com.patrykandpatryk.liftapp.feature.routine.model.ExerciseItem
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
+import com.patrykandpatryk.liftapp.feature.routine.usecase.ReorderExercisesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +29,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -43,6 +43,7 @@ class RoutineViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val deleteRoutine: DeleteRoutineUseCase,
     private val muscleImageProvider: MuscleImageProvider,
+    private val reorderExercisesUseCase: ReorderExercisesUseCase,
     private val exerciseItemMapper: Mapper<Exercise, ExerciseItem>,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
@@ -130,11 +131,14 @@ class RoutineViewModel @Inject constructor(
     }
 
     private fun reorder(reorder: Intent.Reorder) {
-        updateScreenState {
-            val exercises = ArrayList(exercises)
+        viewModelScope.launch {
+            val exercises = ArrayList(state.value.exercises)
             val exercise = exercises.removeAt(reorder.from)
             exercises.add(reorder.to, exercise)
-            mutate(exercises = exercises.toImmutableList())
+            reorderExercisesUseCase(
+                routineId = routineId,
+                exercises = exercises,
+            )
         }
     }
 

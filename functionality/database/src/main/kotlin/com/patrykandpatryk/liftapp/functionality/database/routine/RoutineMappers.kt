@@ -28,15 +28,18 @@ class RoutineWithExerciseNamesToDomainMapper @Inject constructor(
     }
 }
 
-class RoutineWithExercisesToDomainMapper @Inject constructor(
+internal class RoutineWithExercisesToDomainMapper @Inject constructor(
     private val exerciseMapper: Mapper<ExerciseEntity, Exercise>,
-) : Mapper<RoutineWithExercisesRelation, RoutineWithExercises> {
+) : Mapper<RoutineWithExerciseEntities, RoutineWithExercises> {
 
-    override suspend fun map(input: RoutineWithExercisesRelation): RoutineWithExercises {
+    override suspend fun map(input: RoutineWithExerciseEntities): RoutineWithExercises {
+
+        val (routine, exercises) = input
+
         return RoutineWithExercises(
-            id = input.routine.id,
-            name = input.routine.name,
-            exercises = input.exercises.map { exerciseMapper(it) },
+            id = routine.id,
+            name = routine.name,
+            exercises = exerciseMapper(exercises),
         )
     }
 }

@@ -12,10 +12,10 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercise")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
 
-    @Query("SELECT * FROM exercise WHERE id in (:ids)")
+    @Query("SELECT * FROM exercise WHERE exercise_id in (:ids)")
     fun getExercises(ids: List<Long>): Flow<List<ExerciseEntity>>
 
-    @Query("SELECT * FROM exercise WHERE id = :id")
+    @Query("SELECT * FROM exercise WHERE exercise_id = :id")
     fun getExercise(id: Long): Flow<ExerciseEntity?>
 
     @Insert
@@ -27,6 +27,6 @@ interface ExerciseDao {
     @Update(entity = ExerciseEntity::class)
     suspend fun update(exercise: ExerciseEntity.Update)
 
-    @Query("DELETE FROM exercise WHERE id = :exerciseId")
+    @Query("DELETE FROM exercise WHERE exercise_id = :exerciseId")
     suspend fun delete(exerciseId: Long)
 }

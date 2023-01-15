@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3e4214781b132cf99dedef9c14594f41",
+    "identityHash": "28d42d78a9c92430b37e0bed95220982",
     "entities": [
       {
         "tableName": "body",
@@ -116,17 +116,17 @@
       },
       {
         "tableName": "exercise",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `exercise_type` TEXT NOT NULL, `main_muscles` TEXT NOT NULL, `secondary_muscles` TEXT NOT NULL, `tertiary_muscles` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exercise_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exercise_name` TEXT NOT NULL, `exercise_type` TEXT NOT NULL, `exercise_main_muscles` TEXT NOT NULL, `exercise_secondary_muscles` TEXT NOT NULL, `exercise_tertiary_muscles` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "exercise_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "name",
-            "columnName": "name",
+            "columnName": "exercise_name",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -138,19 +138,19 @@
           },
           {
             "fieldPath": "mainMuscles",
-            "columnName": "main_muscles",
+            "columnName": "exercise_main_muscles",
             "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "secondaryMuscles",
-            "columnName": "secondary_muscles",
+            "columnName": "exercise_secondary_muscles",
             "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "tertiaryMuscles",
-            "columnName": "tertiary_muscles",
+            "columnName": "exercise_tertiary_muscles",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -158,18 +158,18 @@
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "id"
+            "exercise_id"
           ]
         },
         "indices": [
           {
-            "name": "index_exercise_name",
+            "name": "index_exercise_exercise_name",
             "unique": false,
             "columnNames": [
-              "name"
+              "exercise_name"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_name` ON `${TABLE_NAME}` (`name`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_exercise_name` ON `${TABLE_NAME}` (`exercise_name`)"
           },
           {
             "name": "index_exercise_exercise_type",
@@ -181,30 +181,30 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_exercise_type` ON `${TABLE_NAME}` (`exercise_type`)"
           },
           {
-            "name": "index_exercise_main_muscles",
+            "name": "index_exercise_exercise_main_muscles",
             "unique": false,
             "columnNames": [
-              "main_muscles"
+              "exercise_main_muscles"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_main_muscles` ON `${TABLE_NAME}` (`main_muscles`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_exercise_main_muscles` ON `${TABLE_NAME}` (`exercise_main_muscles`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "routine",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `routine_name` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "routine_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "name",
-            "columnName": "name",
+            "columnName": "routine_name",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -212,7 +212,7 @@
         "primaryKey": {
           "autoGenerate": true,
           "columnNames": [
-            "id"
+            "routine_id"
           ]
         },
         "indices": [],
@@ -220,7 +220,7 @@
       },
       {
         "tableName": "exercise_with_routine",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, PRIMARY KEY(`routine_id`, `exercise_id`), FOREIGN KEY(`routine_id`) REFERENCES `routine`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_id`) REFERENCES `exercise`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, `order_index` INTEGER NOT NULL, PRIMARY KEY(`routine_id`, `exercise_id`), FOREIGN KEY(`routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "routineId",
@@ -231,6 +231,12 @@
           {
             "fieldPath": "exerciseId",
             "columnName": "exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orderIndex",
+            "columnName": "order_index",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -262,7 +268,7 @@
               "routine_id"
             ],
             "referencedColumns": [
-              "id"
+              "routine_id"
             ]
           },
           {
@@ -273,7 +279,7 @@
               "exercise_id"
             ],
             "referencedColumns": [
-              "id"
+              "exercise_id"
             ]
           }
         ]
@@ -286,12 +292,12 @@
       },
       {
         "viewName": "routine_with_exercise_names",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT routine.*, GROUP_CONCAT(exercise.name, ', ') AS exercise_names FROM exercise_with_routine ewr LEFT JOIN routine ON routine.id = ewr.routine_id LEFT JOIN exercise ON exercise.id = ewr.exercise_id GROUP BY routine.id"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT routine_id, routine_name, GROUP_CONCAT(exercise_name, ', ') as exercise_names from (SELECT routine.*, exercise.exercise_name , ewr.order_index FROM exercise_with_routine ewr LEFT JOIN routine ON routine.routine_id = ewr.routine_id LEFT JOIN exercise ON exercise.exercise_id = ewr.exercise_id ORDER BY ewr.routine_id, ewr.order_index) GROUP BY routine_id"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3e4214781b132cf99dedef9c14594f41')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '28d42d78a9c92430b37e0bed95220982')"
     ]
   }
 }

@@ -9,9 +9,9 @@ class RoutineWithExercisesRelation(
     @Embedded
     val routine: RoutineEntity,
     @Relation(
-        parentColumn = "id",
+        parentColumn = "routine_id",
         entity = ExerciseEntity::class,
-        entityColumn = "id",
+        entityColumn = "exercise_id",
         associateBy = Junction(
             value = ExerciseWithRoutineEntity::class,
             parentColumn = "routine_id",

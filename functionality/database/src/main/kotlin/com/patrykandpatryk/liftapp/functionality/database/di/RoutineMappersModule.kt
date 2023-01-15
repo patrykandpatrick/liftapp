@@ -7,9 +7,9 @@ import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineEntity
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineToDomainMapper
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineToEntityMapper
+import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExerciseEntities
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExerciseNamesToDomainMapper
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExerciseNamesView
-import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExercisesRelation
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExercisesToDomainMapper
 import dagger.Binds
 import dagger.Module
@@ -18,7 +18,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface RoutineMappersModule {
+internal interface RoutineMappersModule {
 
     @Binds
     fun bindRoutineWithExerciseNamesMapper(
@@ -28,7 +28,7 @@ interface RoutineMappersModule {
     @Binds
     fun bindRoutineWithExercisesToDomainMapper(
         mapper: RoutineWithExercisesToDomainMapper,
-    ): Mapper<RoutineWithExercisesRelation, RoutineWithExercises>
+    ): Mapper<RoutineWithExerciseEntities, RoutineWithExercises>
 
     @Binds
     fun bindRoutineToDomainMapper(

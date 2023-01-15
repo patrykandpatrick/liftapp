@@ -30,11 +30,12 @@ class InsertDefaultRoutines @Inject constructor(
         ).map { routine ->
             val routineId = routineDao.upsert(routine)
             val freeExerciseIDs = exerciseIDs.toMutableList()
-            repeat(random.nextInt(6, 9)) {
+            repeat(random.nextInt(6, 9)) { index ->
                 routineDao.insert(
                     ExerciseWithRoutineEntity(
                         routineId = routineId,
                         exerciseId = freeExerciseIDs.removeAt(random.nextInt(freeExerciseIDs.size)),
+                        orderIndex = index,
                     ),
                 )
             }
