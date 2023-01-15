@@ -5,7 +5,10 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -32,7 +35,7 @@ fun Modifier.reorderable(
     onItemReordered: (from: Int, to: Int) -> Unit,
 ): Modifier = composed {
 
-    var hasBeenReordered = remember(itemIndex) { false }
+    var hasBeenReordered by remember(itemIndex) { mutableStateOf(false) }
 
     draggable(
         state = rememberDraggableState { delta ->
@@ -53,8 +56,8 @@ fun Modifier.reorderable(
             }
 
             if (hasBeenReordered.not() && newIndex != -1 && newIndex != itemIndex) {
-                onItemReordered(itemIndex, newIndex)
                 hasBeenReordered = true
+                onItemReordered(itemIndex, newIndex)
             }
         },
         orientation = Orientation.Vertical,
