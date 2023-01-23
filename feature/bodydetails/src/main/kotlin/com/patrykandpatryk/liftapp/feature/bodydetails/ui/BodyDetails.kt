@@ -36,8 +36,11 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
+import com.patrykandpatrick.vico.core.scroll.InitialScroll
 
 fun NavGraphBuilder.addBodyDetails() {
 
@@ -115,6 +118,10 @@ private fun BodyDetails(
                         maxLabelCount = 3,
                     ),
                     bottomAxis = bottomAxis(),
+                    chartScrollSpec = rememberChartScrollSpec(
+                        initialScroll = InitialScroll.End,
+                        autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,
+                    ),
                 )
             }
 
