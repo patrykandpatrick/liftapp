@@ -5,7 +5,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.functionality.database.R
+import com.patrykandpatryk.liftapp.functionality.database.string.ExerciseStringResource
 import javax.inject.Inject
 
 @Suppress("LargeClass")
@@ -16,14 +16,14 @@ class InsertDefaultExercises @Inject constructor(
     private val exercises: List<Exercise.Insert> = buildList {
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_warm_up.name),
+            name = Name.Resource(ExerciseStringResource.WarmUp),
             exerciseType = ExerciseType.Cardio,
             mainMuscles = listOf(Muscle.Hamstrings, Muscle.Calves),
             secondaryMuscles = listOf(Muscle.Quadriceps, Muscle.Glutes),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_pull_ups.name),
+            name = Name.Resource(ExerciseStringResource.PullUps),
             exerciseType = ExerciseType.Calisthenics,
             mainMuscles = listOf(Muscle.Lats, Muscle.Biceps),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Forearms),
@@ -31,7 +31,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_dips.name),
+            name = Name.Resource(ExerciseStringResource.Dips),
             exerciseType = ExerciseType.Calisthenics,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -39,7 +39,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_db_bicep_curl.name),
+            name = Name.Resource(ExerciseStringResource.DbBicepCurl),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Biceps),
             secondaryMuscles = listOf(Muscle.Forearms),
@@ -47,7 +47,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_barbell_bicep_curl.name),
+            name = Name.Resource(ExerciseStringResource.BarbellBicepCurl),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Biceps),
             secondaryMuscles = listOf(Muscle.Forearms),
@@ -55,7 +55,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_flat_bench_press.name),
+            name = Name.Resource(ExerciseStringResource.FlatBenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -63,7 +63,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_chest_extension.name),
+            name = Name.Resource(ExerciseStringResource.ChestExtension),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Biceps),
@@ -71,7 +71,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_deadlift.name),
+            name = Name.Resource(ExerciseStringResource.Deadlift),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.LowerBack, Muscle.Glutes, Muscle.Hamstrings),
             secondaryMuscles = listOf(Muscle.Forearms, Muscle.Lats, Muscle.Quadriceps, Muscle.Traps),
@@ -79,7 +79,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_l_sit.name),
+            name = Name.Resource(ExerciseStringResource.LSit),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Forearms, Muscle.Lats, Muscle.Quadriceps),
@@ -87,7 +87,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_wipers.name),
+            name = Name.Resource(ExerciseStringResource.Wipers),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Forearms, Muscle.Lats, Muscle.Quadriceps),
@@ -95,7 +95,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_leg_rises.name),
+            name = Name.Resource(ExerciseStringResource.LegRises),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Forearms, Muscle.Lats, Muscle.Quadriceps),
@@ -103,14 +103,14 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_long_run.name),
+            name = Name.Resource(ExerciseStringResource.LongRun),
             exerciseType = ExerciseType.Cardio,
             mainMuscles = listOf(Muscle.Hamstrings, Muscle.Calves),
             secondaryMuscles = listOf(Muscle.Quadriceps, Muscle.Glutes),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_squats.name),
+            name = Name.Resource(ExerciseStringResource.Squats),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps, Muscle.Glutes),
             secondaryMuscles = listOf(Muscle.LowerBack, Muscle.Adductors),
@@ -118,19 +118,19 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_leg_extensions.name),
+            name = Name.Resource(ExerciseStringResource.LegExtension),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_leg_curl.name),
+            name = Name.Resource(ExerciseStringResource.LegCurl),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Hamstrings),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_incline_bench_press.name),
+            name = Name.Resource(ExerciseStringResource.InclineBenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -138,7 +138,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_decline_bench_press.name),
+            name = Name.Resource(ExerciseStringResource.DeclineBenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -146,7 +146,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_flat_db_bench_press.name),
+            name = Name.Resource(ExerciseStringResource.FlatDbBenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -154,7 +154,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_incline_db_bench_press.name),
+            name = Name.Resource(ExerciseStringResource.InclineDbBenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -162,7 +162,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_decline_db_bench_press.name),
+            name = Name.Resource(ExerciseStringResource.DeclineDbBenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -170,40 +170,40 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_dumbbell_french_press.name),
+            name = Name.Resource(ExerciseStringResource.DumbbellFrenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Triceps),
             tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Shoulders),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_barbell_french_press.name),
+            name = Name.Resource(ExerciseStringResource.BarbellFrenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Triceps),
             tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Shoulders),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_cable_ab_curl.name),
+            name = Name.Resource(ExerciseStringResource.CableAbCurl),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Abs),
             tertiaryMuscles = listOf(Muscle.Forearms),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_cable_hip_adduction.name),
+            name = Name.Resource(ExerciseStringResource.CableHipAbduction),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Adductors),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_cable_hip_abduction.name),
+            name = Name.Resource(ExerciseStringResource.CableHipAdduction),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Abductors),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_hip_thrust.name),
+            name = Name.Resource(ExerciseStringResource.HipThrust),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Glutes),
             secondaryMuscles = listOf(Muscle.Quadriceps, Muscle.Hamstrings),
@@ -211,20 +211,20 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_calf_rises.name),
+            name = Name.Resource(ExerciseStringResource.CalfRises),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Calves),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_plank.name),
+            name = Name.Resource(ExerciseStringResource.Plank),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Quadriceps),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_australian_pull_ups.name),
+            name = Name.Resource(ExerciseStringResource.AustralianPullUps),
             exerciseType = ExerciseType.Calisthenics,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Biceps, Muscle.Forearms),
@@ -232,7 +232,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_chin_ups.name),
+            name = Name.Resource(ExerciseStringResource.ChinUps),
             exerciseType = ExerciseType.Calisthenics,
             mainMuscles = listOf(Muscle.Lats, Muscle.Biceps),
             secondaryMuscles = listOf(Muscle.Forearms),
@@ -240,14 +240,14 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_back_extension.name),
+            name = Name.Resource(ExerciseStringResource.BackExtension),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.LowerBack),
             secondaryMuscles = listOf(Muscle.Lats, Muscle.Glutes),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_decline_push_ups.name),
+            name = Name.Resource(ExerciseStringResource.DeclinePushUps),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Chest, Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Triceps),
@@ -255,7 +255,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_diamond_push_ups.name),
+            name = Name.Resource(ExerciseStringResource.DiamondPushUps),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -263,7 +263,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_barbell_rows.name),
+            name = Name.Resource(ExerciseStringResource.BarbellRows),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Shoulders),
@@ -271,7 +271,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_dumbbell_rows.name),
+            name = Name.Resource(ExerciseStringResource.DumbbellRows),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Shoulders),
@@ -279,7 +279,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_standing_dumbbell_overhead_press.name),
+            name = Name.Resource(ExerciseStringResource.StandingDumbbellOverheadPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Triceps),
@@ -287,7 +287,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_seated_dumbbell_overhead_press.name),
+            name = Name.Resource(ExerciseStringResource.SeatedDumbbellOverheadPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Triceps),
@@ -295,7 +295,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_ohp.name),
+            name = Name.Resource(ExerciseStringResource.OHP),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Triceps),
@@ -303,7 +303,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_explosive_knee_rises.name),
+            name = Name.Resource(ExerciseStringResource.ExplosiveKneeRises),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Shoulders, Muscle.Lats),
@@ -311,7 +311,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_face_pull.name),
+            name = Name.Resource(ExerciseStringResource.FacePull),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps),
@@ -319,7 +319,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_hammer_curls.name),
+            name = Name.Resource(ExerciseStringResource.HammerCurls),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Biceps),
             secondaryMuscles = listOf(Muscle.Forearms),
@@ -327,7 +327,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_horizontal_bar_dips.name),
+            name = Name.Resource(ExerciseStringResource.HorizontalBarDips),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Triceps),
@@ -335,7 +335,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_pull_up_hold.name),
+            name = Name.Resource(ExerciseStringResource.PullUpHold),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Biceps, Muscle.Traps),
@@ -343,7 +343,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_seated_rows.name),
+            name = Name.Resource(ExerciseStringResource.SeatedRows),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Biceps),
@@ -351,7 +351,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_side_arm_rises.name),
+            name = Name.Resource(ExerciseStringResource.SideArmRaise),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps),
@@ -359,7 +359,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_tricep_barbell_pushdown.name),
+            name = Name.Resource(ExerciseStringResource.TricepBarbellPushdown),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Triceps),
             secondaryMuscles = listOf(),
@@ -367,7 +367,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_tricep_cable_pushdown.name),
+            name = Name.Resource(ExerciseStringResource.TricepCablePushdown),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Triceps),
             secondaryMuscles = listOf(),
@@ -375,7 +375,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_axe_hold.name),
+            name = Name.Resource(ExerciseStringResource.AxeHold),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps),
@@ -383,7 +383,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_bench_press_narrow_grip.name),
+            name = Name.Resource(ExerciseStringResource.BenchPressNarrowGrip),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Chest, Muscle.Shoulders),
@@ -391,14 +391,14 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_hollow_body.name),
+            name = Name.Resource(ExerciseStringResource.HollowBody),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Quadriceps, Muscle.Shoulders),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_dumbbell_concentration_curl.name),
+            name = Name.Resource(ExerciseStringResource.DumbbellConcentrationCurl),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Biceps),
             secondaryMuscles = listOf(),
@@ -406,7 +406,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_preacher_curls.name),
+            name = Name.Resource(ExerciseStringResource.PreacherCurls),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Biceps),
             secondaryMuscles = listOf(),
@@ -414,7 +414,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_seated_tricep_press.name),
+            name = Name.Resource(ExerciseStringResource.SeatedTricepPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Triceps),
             secondaryMuscles = listOf(),
@@ -422,7 +422,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_z_curls.name),
+            name = Name.Resource(ExerciseStringResource.ZCurls),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Biceps),
             secondaryMuscles = listOf(),
@@ -430,7 +430,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_barbell_lunges.name),
+            name = Name.Resource(ExerciseStringResource.BarbellLunges),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes),
@@ -438,7 +438,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_bulgarian_split_squat.name),
+            name = Name.Resource(ExerciseStringResource.BulgarianSplitSquat),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes),
@@ -446,7 +446,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_front_squat.name),
+            name = Name.Resource(ExerciseStringResource.FrontSquat),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes),
@@ -454,7 +454,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_glute_bridge.name),
+            name = Name.Resource(ExerciseStringResource.GluteBridge),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Glutes),
             secondaryMuscles = listOf(Muscle.Hamstrings),
@@ -462,7 +462,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_good_mornings.name),
+            name = Name.Resource(ExerciseStringResource.GoodMornings),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Hamstrings),
             secondaryMuscles = listOf(),
@@ -470,7 +470,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_high_knee_jumps.name),
+            name = Name.Resource(ExerciseStringResource.HighKneeJumps),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Hamstrings, Muscle.Quadriceps, Muscle.Calves),
             secondaryMuscles = listOf(Muscle.Abs, Muscle.LowerBack),
@@ -478,7 +478,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_kettlebell_swing.name),
+            name = Name.Resource(ExerciseStringResource.KettlebellSwing),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Glutes),
             secondaryMuscles = listOf(Muscle.Hamstrings),
@@ -486,7 +486,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_leg_press.name),
+            name = Name.Resource(ExerciseStringResource.LegPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes),
@@ -494,7 +494,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_overhead_squat.name),
+            name = Name.Resource(ExerciseStringResource.OverheadSquat),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes),
@@ -502,7 +502,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_pistol_squat.name),
+            name = Name.Resource(ExerciseStringResource.PistolSquat),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes),
@@ -510,7 +510,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_romanian_deadlift.name),
+            name = Name.Resource(ExerciseStringResource.RomanianDeadlift),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.LowerBack, Muscle.Glutes, Muscle.Hamstrings),
             secondaryMuscles = listOf(Muscle.Forearms, Muscle.Lats, Muscle.Quadriceps, Muscle.Traps),
@@ -518,7 +518,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_stationary_bike.name),
+            name = Name.Resource(ExerciseStringResource.StationaryBike),
             exerciseType = ExerciseType.Cardio,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes, Muscle.Hamstrings),
@@ -526,7 +526,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_cable_woodchoppers.name),
+            name = Name.Resource(ExerciseStringResource.CableWoodChoppers),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(),
@@ -534,7 +534,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_crunches_with_legs_up.name),
+            name = Name.Resource(ExerciseStringResource.CrunchesWithLegsUp),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(),
@@ -542,7 +542,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_flutter_kicks.name),
+            name = Name.Resource(ExerciseStringResource.FlutterKicks),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(),
@@ -550,7 +550,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_negative_crunches.name),
+            name = Name.Resource(ExerciseStringResource.NegativeCrunches),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(),
@@ -558,7 +558,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_side_crunch.name),
+            name = Name.Resource(ExerciseStringResource.SideCrunch),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(),
@@ -566,7 +566,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_side_plank.name),
+            name = Name.Resource(ExerciseStringResource.SidePlank),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(),
@@ -574,7 +574,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_turkish_get_up.name),
+            name = Name.Resource(ExerciseStringResource.TurkishGetUp),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Glutes),
@@ -582,7 +582,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_burpees.name),
+            name = Name.Resource(ExerciseStringResource.Burpees),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Glutes, Muscle.Triceps),
@@ -590,7 +590,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_butterfly.name),
+            name = Name.Resource(ExerciseStringResource.Butterfly),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -598,7 +598,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_cable_cross_over.name),
+            name = Name.Resource(ExerciseStringResource.CableCrossOver),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -606,7 +606,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_fly_with_dumbbells.name),
+            name = Name.Resource(ExerciseStringResource.FlyWithDumbbells),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -614,7 +614,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_fly_with_cable.name),
+            name = Name.Resource(ExerciseStringResource.FlyWithCable),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -622,7 +622,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_side_to_side_push_ups.name),
+            name = Name.Resource(ExerciseStringResource.SideToSidePushUps),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Triceps),
@@ -630,7 +630,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_hyperextension.name),
+            name = Name.Resource(ExerciseStringResource.HyperExtension),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.LowerBack),
             secondaryMuscles = listOf(),
@@ -638,7 +638,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_lat_pulldown.name),
+            name = Name.Resource(ExerciseStringResource.LatPulldown),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Biceps),
@@ -646,7 +646,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_low_row.name),
+            name = Name.Resource(ExerciseStringResource.LowRow),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Biceps),
@@ -654,7 +654,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_pendelay_row.name),
+            name = Name.Resource(ExerciseStringResource.PendelayRow),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats, Muscle.Traps),
             secondaryMuscles = listOf(Muscle.Biceps),
@@ -662,7 +662,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_rack_deadlift.name),
+            name = Name.Resource(ExerciseStringResource.RackDeadlift),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.LowerBack, Muscle.Glutes, Muscle.Hamstrings),
             secondaryMuscles = listOf(Muscle.Forearms, Muscle.Lats, Muscle.Quadriceps, Muscle.Traps),
@@ -670,7 +670,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_t_bar_row.name),
+            name = Name.Resource(ExerciseStringResource.TBarRow),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats, Muscle.Traps),
             secondaryMuscles = listOf(Muscle.Biceps),
@@ -678,7 +678,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_shotgun_row.name),
+            name = Name.Resource(ExerciseStringResource.ShotgunRow),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Biceps),
@@ -686,7 +686,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_straight_arm_pulldown.name),
+            name = Name.Resource(ExerciseStringResource.StraightArmPulldown),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats),
             secondaryMuscles = listOf(Muscle.Triceps),
@@ -694,7 +694,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_arnold_shoulder_press.name),
+            name = Name.Resource(ExerciseStringResource.ArnoldShoulderPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Triceps),
@@ -702,7 +702,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_reverse_butterfly.name),
+            name = Name.Resource(ExerciseStringResource.ReverseButterfly),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps),
@@ -710,7 +710,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_shrugs.name),
+            name = Name.Resource(ExerciseStringResource.Shrugs),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(),
@@ -718,7 +718,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_snatch.name),
+            name = Name.Resource(ExerciseStringResource.Snatch),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.LowerBack),
@@ -726,7 +726,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_wall_handstand.name),
+            name = Name.Resource(ExerciseStringResource.WallHandstand),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.LowerBack),
@@ -734,13 +734,13 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_calf_press.name),
+            name = Name.Resource(ExerciseStringResource.CalfPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Calves),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_muscle_ups.name),
+            name = Name.Resource(ExerciseStringResource.MuscleUps),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Lats, Muscle.Chest),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Biceps, Muscle.Traps, Muscle.Triceps),
@@ -748,28 +748,28 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_superman.name),
+            name = Name.Resource(ExerciseStringResource.SuperMan),
             exerciseType = ExerciseType.Time,
             mainMuscles = listOf(Muscle.LowerBack),
             secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Hamstrings),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_high_pull.name),
+            name = Name.Resource(ExerciseStringResource.HighPull),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Glutes),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_rear_delt_raise.name),
+            name = Name.Resource(ExerciseStringResource.RearDeltRaise),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Traps),
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_power_clean.name),
+            name = Name.Resource(ExerciseStringResource.PowerClean),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Chest, Muscle.Triceps, Muscle.Quadriceps, Muscle.Glutes),
@@ -777,7 +777,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_isometric_wipers.name),
+            name = Name.Resource(ExerciseStringResource.IsometricWipers),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Chest, Muscle.Shoulders),
             secondaryMuscles = listOf(Muscle.Triceps),
@@ -785,7 +785,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_reverse_grip_bench_press.name),
+            name = Name.Resource(ExerciseStringResource.ReverseGripBenchPress),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
             secondaryMuscles = listOf(Muscle.Shoulders),
@@ -793,7 +793,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(R.string::ex_dumbbell_lunges.name),
+            name = Name.Resource(ExerciseStringResource.DumbbellLunges),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Quadriceps),
             secondaryMuscles = listOf(Muscle.Glutes),
