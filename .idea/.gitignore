@@ -6,3 +6,5 @@
 /compiler.xml
 /deploymentTargetDropDown.xml
 /inspectionProfiles/Project_Default.xml
+/kotlinc.xml
+/render.experimental.xml
