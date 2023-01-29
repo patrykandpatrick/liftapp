@@ -302,7 +302,6 @@ ext {
                 [configuration: "implementation", dependency: project(":functionality:musclebitmap")],
                 [configuration: "implementation", dependency: project(":functionality:preference")],
                 [configuration: "implementation", dependency: project(":functionality:storage")],
-                [configuration: "implementation", dependency: project(":functionality:json")],
         ]
         dependencies.addAll(featureModuleDependencies())
         dependencies
@@ -412,9 +411,5 @@ ext {
 
     muscleBitmapModuleDependencies = [
             [configuration: "implementation", dependency: project(":core")],
-    ]
-
-    jsonModuleDependencies = [
-            [configuration: "implementation", dependency: project(":functionality:database")],
     ]
 }

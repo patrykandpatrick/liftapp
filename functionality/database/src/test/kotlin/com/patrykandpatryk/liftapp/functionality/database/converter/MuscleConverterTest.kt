@@ -7,7 +7,7 @@ import kotlin.test.assertContentEquals
 
 class MuscleConverterTest {
 
-    private val converter = JsonConverters(DomainModule.provideJson())
+    private val converter = JsonConverters(DomainModule.provideJson(emptySet()))
 
     @Test
     fun `Conversion of List of Muscles to String and back yields the same result`() {
