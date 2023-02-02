@@ -11,6 +11,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.DeleteExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.feature.exercise.di.ExerciseId
 import com.patrykandpatryk.liftapp.feature.exercise.model.Event
 import com.patrykandpatryk.liftapp.feature.exercise.model.Intent
@@ -36,6 +37,7 @@ class ExerciseViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val deleteExercise: DeleteExerciseUseCase,
     private val muscleImageProvider: MuscleImageProvider,
+    private val stringProvider: StringProvider,
     isDarkModeReceiver: IsDarkModeReceiver,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
@@ -65,7 +67,7 @@ class ExerciseViewModel @Inject constructor(
 
                 updateScreenState {
                     mutate(
-                        name = exercise.displayName,
+                        name = stringProvider.getResolvedName(exercise.name),
                         imagePath = bitmapPath,
                         muscles = MuscleModel.create(
                             primaryMuscles = exercise.mainMuscles,

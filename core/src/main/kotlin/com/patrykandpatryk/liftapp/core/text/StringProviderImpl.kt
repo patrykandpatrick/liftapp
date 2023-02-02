@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.patrykandpatryk.liftapp.core.R.string
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.resource.stringRes
+import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
@@ -58,6 +59,11 @@ class StringProviderImpl @Inject constructor(
 
     override fun getMuscleName(muscle: Muscle): String =
         string(muscle.stringRes)
+
+    override fun getResolvedName(name: Name): String = when (name) {
+        is Name.Raw -> name.value
+        is Name.Resource -> application.getString(name.resource.resourceId)
+    }
 
     private fun string(
         @StringRes id: Int,

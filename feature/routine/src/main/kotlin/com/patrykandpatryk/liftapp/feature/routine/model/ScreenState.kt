@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.feature.routine.model
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import com.patrykandpatryk.liftapp.core.model.MuscleModel
+import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import kotlinx.parcelize.Parcelize
 
 sealed class ScreenState {
@@ -13,7 +14,7 @@ sealed class ScreenState {
 
     open val imagePath: String? = null
 
-    open val exercises: List<ExerciseItem> = emptyList()
+    open val exercises: List<RoutineExerciseItem> = emptyList()
 
     open val muscles: List<MuscleModel> = emptyList()
 
@@ -21,7 +22,7 @@ sealed class ScreenState {
         name: String = this.name,
         showDeleteDialog: Boolean = this.showDeleteDialog,
         imagePath: String? = this.imagePath,
-        exercises: List<ExerciseItem> = this.exercises,
+        exercises: List<RoutineExerciseItem> = this.exercises,
         muscles: List<MuscleModel> = this.muscles,
     ): Populated = Populated(
         name = name,
@@ -41,7 +42,7 @@ sealed class ScreenState {
         override val name: String,
         override val showDeleteDialog: Boolean = false,
         override val imagePath: String? = null,
-        override val exercises: List<ExerciseItem> = emptyList(),
+        override val exercises: List<RoutineExerciseItem> = emptyList(),
         override val muscles: List<MuscleModel> = emptyList(),
     ) : ScreenState(), Parcelable
 }

@@ -10,13 +10,14 @@ import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.domain.Constants.Algorithms.SCREEN_STATE_KEY
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineExerciseItemsUseCase
+import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.feature.newroutine.di.RoutineId
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
 import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
-import com.patrykandpatryk.liftapp.feature.newroutine.usecase.GetExerciseItemsUseCase
 import com.patrykandpatryk.liftapp.feature.newroutine.usecase.GetRoutineWithExerciseIdsUseCase
 import com.patrykandpatryk.liftapp.feature.newroutine.usecase.UpsertRoutineUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,11 +42,11 @@ class NewRoutineViewModel @Inject constructor(
     private val savedState: SavedStateHandle,
     private val getRoutine: GetRoutineWithExerciseIdsUseCase,
     private val upsertRoutine: UpsertRoutineUseCase,
-    private val getExerciseItems: GetExerciseItemsUseCase,
+    private val getExerciseItems: GetRoutineExerciseItemsUseCase,
     exceptionHandler: CoroutineExceptionHandler,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
     @ValidatorType.Name private val validateName: Validator<String>,
-    private val validateExercises: Validator<List<ExerciseItem>>,
+    private val validateExercises: Validator<List<RoutineExerciseItem>>,
     private val logger: UiLogger,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 

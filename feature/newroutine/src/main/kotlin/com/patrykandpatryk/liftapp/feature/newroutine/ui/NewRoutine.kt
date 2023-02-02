@@ -70,9 +70,11 @@ import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
+import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.core.ui.theme.Colors.IllustrationAlpha
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants
+import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
@@ -236,7 +238,7 @@ private fun LazyListScope.content(
                 modifier = Modifier.animateItemPlacement(),
                 title = item.name,
                 description = item.muscles,
-                iconPainter = painterResource(id = item.iconRes),
+                iconPainter = painterResource(id = item.type.iconRes),
                 actions = {
                     IconButton(onClick = { onIntent(Intent.RemovePickedExercise(item.id)) }) {
                         Icon(
@@ -330,7 +332,7 @@ fun NewRoutinePreview() {
             state = ScreenState(
                 name = "Name".toValid(),
                 id = 0,
-                exercises = emptyList<ExerciseItem>().toValid(),
+                exercises = emptyList<RoutineExerciseItem>().toValid(),
             ),
             snackbarHostState = SnackbarHostState(),
             onIntent = {},

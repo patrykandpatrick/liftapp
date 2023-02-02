@@ -1,7 +1,6 @@
 package com.patrykandpatryk.liftapp.functionality.database.routine
 
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseNames
@@ -17,30 +16,23 @@ import javax.inject.Inject
 
 class RoutineRepositoryImpl @Inject constructor(
     private val routineDao: RoutineDao,
-    private val routineWithExerciseNamesToDomainMapper: Mapper<RoutineWithExerciseNamesView, RoutineWithExerciseNames>,
-    private val routineWithExerciseToDomainMapper: Mapper<RoutineWithExerciseEntities, RoutineWithExercises>,
-    private val routineToEntityMapper: Mapper<Routine, RoutineEntity>,
+    private val routineMapper: RoutineMapper,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) : RoutineRepository {
 
     override fun getRoutinesWithNames(): Flow<List<RoutineWithExerciseNames>> =
         routineDao
             .getRoutinesWithExerciseNames()
-            .map(routineWithExerciseNamesToDomainMapper::invoke)
+            .map(routineMapper::toDomain)
             .flowOn(dispatcher)
 
     override fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?> =
         combine(
             routineDao.getRoutine(routineId = routineId),
             routineDao.getRoutineExercises(routineId = routineId),
-        ) { routine, exercises ->
-            if (routine != null) {
-                RoutineWithExerciseEntities(
-                    routine = routine,
-                    exercises = exercises,
-                ).let { routineWithExerciseToDomainMapper(it) }
-            } else {
-                null
+        ) { nullableRoutine, exercises ->
+            nullableRoutine?.let { routine ->
+                routineMapper.toDomain(routine, exercises)
             }
         }
 
@@ -48,7 +40,7 @@ class RoutineRepositoryImpl @Inject constructor(
         routine: Routine,
         exerciseIds: List<Long>,
     ): Long = withContext(dispatcher + NonCancellable) {
-        var routineId = routineDao.upsert(routine = routineToEntityMapper(routine))
+        var routineId = routineDao.upsert(routine = routine.toEntity())
 
         routineId = routineId.takeIf { it > 0 } ?: routine.id
 

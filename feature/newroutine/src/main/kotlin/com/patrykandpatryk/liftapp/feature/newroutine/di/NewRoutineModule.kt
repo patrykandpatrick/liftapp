@@ -4,11 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
-import com.patrykandpatryk.liftapp.domain.exercise.Exercise
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
+import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.validation.Validator
-import com.patrykandpatryk.liftapp.feature.newroutine.mapper.ExerciseToItemMapper
-import com.patrykandpatryk.liftapp.feature.newroutine.ui.ExerciseItem
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -20,12 +17,9 @@ import dagger.hilt.android.components.ViewModelComponent
 interface NewRoutineModule {
 
     @Binds
-    fun bindMapper(mapper: ExerciseToItemMapper): Mapper<Exercise, ExerciseItem>
-
-    @Binds
     fun bindNonEmptyCollectionValidator(
-        validator: NonEmptyCollectionValidator<ExerciseItem, List<ExerciseItem>>,
-    ): Validator<List<ExerciseItem>>
+        validator: NonEmptyCollectionValidator<RoutineExerciseItem, List<RoutineExerciseItem>>,
+    ): Validator<List<RoutineExerciseItem>>
 
     companion object {
 

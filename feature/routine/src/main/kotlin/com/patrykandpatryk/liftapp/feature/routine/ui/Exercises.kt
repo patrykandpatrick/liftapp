@@ -30,6 +30,7 @@ import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
+import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.domain.extension.addOrSet
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
@@ -87,7 +88,7 @@ private fun Exercises(
                     .zIndex(if (isDragging) 1f else 0f)
                     .background(color = MaterialTheme.colorScheme.surface)
                     .onItemYRange { yRange -> itemRanges.addOrSet(index, yRange) },
-                iconPainter = painterResource(id = exercise.iconRes),
+                iconPainter = painterResource(id = exercise.type.iconRes),
                 title = exercise.name,
                 description = exercise.muscles,
                 actions = {

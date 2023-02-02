@@ -7,8 +7,6 @@ import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
-import com.patrykandpatryk.liftapp.domain.exercise.Exercise
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
@@ -17,7 +15,6 @@ import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.feature.routine.di.RoutineId
 import com.patrykandpatryk.liftapp.feature.routine.model.Event
-import com.patrykandpatryk.liftapp.feature.routine.model.ExerciseItem
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.routine.usecase.ReorderExercisesUseCase
@@ -44,7 +41,6 @@ class RoutineViewModel @Inject constructor(
     private val deleteRoutine: DeleteRoutineUseCase,
     private val muscleImageProvider: MuscleImageProvider,
     private val reorderExercisesUseCase: ReorderExercisesUseCase,
-    private val exerciseItemMapper: Mapper<Exercise, ExerciseItem>,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
     private val eventChannel = Channel<Event>()
@@ -68,34 +64,27 @@ class RoutineViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private suspend fun updateState(
+    private fun updateState(
         routine: RoutineWithExercises,
         isDarkMode: Boolean,
     ) {
 
-        val primaryMuscles = routine.flattenMuscles { mainMuscles }
-        val secondaryMuscles = routine.flattenMuscles { secondaryMuscles }
-        val tertiaryMuscles = routine.flattenMuscles { tertiaryMuscles }
-
-        secondaryMuscles.removeAll(primaryMuscles)
-        tertiaryMuscles.removeAll(primaryMuscles + secondaryMuscles)
-
         updateScreenState {
             mutate(
                 name = routine.name,
-                exercises = exerciseItemMapper(routine.exercises),
+                exercises = routine.exercises,
                 muscles = MuscleModel.create(
-                    primaryMuscles = primaryMuscles,
-                    secondaryMuscles = secondaryMuscles,
-                    tertiaryMuscles = tertiaryMuscles,
+                    primaryMuscles = routine.primaryMuscles,
+                    secondaryMuscles = routine.secondaryMuscles,
+                    tertiaryMuscles = routine.tertiaryMuscles,
                 ),
             )
         }
 
         loadBitmap(
-            primaryMuscles = primaryMuscles,
-            secondaryMuscles = secondaryMuscles,
-            tertiaryMuscles = tertiaryMuscles,
+            primaryMuscles = routine.primaryMuscles,
+            secondaryMuscles = routine.secondaryMuscles,
+            tertiaryMuscles = routine.tertiaryMuscles,
             isDarkMode = isDarkMode,
         )
     }
@@ -163,8 +152,3 @@ class RoutineViewModel @Inject constructor(
         savedStateHandle[SCREEN_STATE_KEY] = state.value.run(block)
     }
 }
-
-private inline fun RoutineWithExercises.flattenMuscles(getMuscles: Exercise.() -> List<Muscle>): MutableList<Muscle> =
-    exercises.fold(HashSet<Muscle>()) { set, exercise ->
-        set.apply { addAll(getMuscles(exercise)) }
-    }.toMutableList()

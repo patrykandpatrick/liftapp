@@ -3,50 +3,47 @@ package com.patrykandpatryk.liftapp.functionality.database.exercise
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import javax.inject.Inject
+import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class ExerciseRepositoryImpl @Inject constructor(
     private val exerciseDao: ExerciseDao,
-    private val entityToDomain: Mapper<ExerciseEntity, Exercise>,
-    private val insertToEntity: Mapper<Exercise.Insert, ExerciseEntity>,
-    private val updateToEntity: Mapper<Exercise.Update, ExerciseEntity.Update>,
+    private val exerciseMapper: ExerciseMapper,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) : ExerciseRepository {
 
     override fun getAllExercises(): Flow<List<Exercise>> =
         exerciseDao
             .getAllExercises()
-            .map(entityToDomain::invoke)
-            .flowOn(dispatcher)
-
-    override fun getExercises(ids: List<Long>): Flow<List<Exercise>> =
-        exerciseDao
-            .getExercises(ids)
-            .map(entityToDomain::invoke)
+            .map(exerciseMapper::toDomain)
             .flowOn(dispatcher)
 
     override fun getExercise(id: Long): Flow<Exercise?> =
         exerciseDao
             .getExercise(id)
-            .map { entity -> entity?.let { entityToDomain(it) } }
+            .map { entity -> entity?.let(exerciseMapper::toDomain) }
             .flowOn(dispatcher)
 
+    override fun getRoutineExerciseItems(exerciseIds: List<Long>): Flow<List<RoutineExerciseItem>> =
+        exerciseDao
+            .getExercises(exerciseIds)
+            .map(exerciseMapper::toRoutineExerciseItem)
+
     override suspend fun insert(exercise: Exercise.Insert): Long = withContext(dispatcher) {
-        exerciseDao.insert(insertToEntity(exercise))
+        exerciseDao.insert(exercise.toEntity())
     }
 
     override suspend fun insert(exercises: List<Exercise.Insert>): List<Long> = withContext(dispatcher) {
-        exerciseDao.insert(insertToEntity(exercises))
+        exerciseDao.insert(exercises.toEntity())
     }
 
     override suspend fun update(exercise: Exercise.Update) = withContext(dispatcher) {
-        exerciseDao.update(updateToEntity(exercise))
+        exerciseDao.update(exercise.toEntity())
     }
 
     override suspend fun delete(exerciseId: Long) = withContext(dispatcher) {

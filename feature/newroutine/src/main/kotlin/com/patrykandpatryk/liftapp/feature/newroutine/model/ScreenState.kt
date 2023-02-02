@@ -3,7 +3,7 @@ package com.patrykandpatryk.liftapp.feature.newroutine.model
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
-import com.patrykandpatryk.liftapp.feature.newroutine.ui.ExerciseItem
+import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
 data class ScreenState(
     val id: Long,
     val name: Validatable<String>,
-    val exercises: Validatable<List<ExerciseItem>>,
+    val exercises: Validatable<List<RoutineExerciseItem>>,
     val isEdit: Boolean = false,
     val showErrors: Boolean = false,
 ) : Parcelable {

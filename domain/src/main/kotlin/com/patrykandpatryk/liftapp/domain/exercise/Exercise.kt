@@ -15,7 +15,7 @@ data class Exercise(
 
     fun update(
         id: Long = this.id,
-        name: Name = Name.Raw(this.displayName),
+        name: Name = this.name,
         mainMuscles: List<Muscle> = this.mainMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,

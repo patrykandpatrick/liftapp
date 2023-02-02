@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.testing
 
 import com.patrykandpatryk.liftapp.domain.extension.getTypeErrorMessage
+import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
@@ -47,4 +48,10 @@ object TestStringProvider : StringProvider {
 
     override fun getErrorNameTooLong(actual: Int, limit: Int): String =
         "The name is too long (%1\$d/%2\$d).".format(actual, limit)
+
+    override fun getResolvedName(name: Name): String =
+        when (name) {
+            is Name.Raw -> name.value
+            is Name.Resource -> requireNotNull(name.resource.resourceId::class.simpleName)
+        }
 }

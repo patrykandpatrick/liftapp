@@ -1,15 +1,15 @@
 package com.patrykandpatryk.liftapp.feature.exercises.usecase
 
-import android.app.Application
+import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatryk.liftapp.core.search.SearchAlgorithm
-import com.patrykandpatryk.liftapp.core.ui.resource.getName
+import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
+import com.patrykandpatryk.liftapp.domain.extension.joinToPrettyString
+import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercises.ui.ExercisesItem
-import com.patrykandpatrick.vico.core.extension.orZero
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -20,10 +20,9 @@ import javax.inject.Inject
 class GetExercisesItemsUseCase @Inject constructor(
     private val collator: Collator,
     private val repository: ExerciseRepository,
-    private val mapExercises: Mapper<Pair<Exercise, String>, ExercisesItem.Exercise>,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val searchAlgorithm: SearchAlgorithm,
-    private val application: Application,
+    private val stringProvider: StringProvider,
 ) {
 
     operator fun invoke(
@@ -39,11 +38,10 @@ class GetExercisesItemsUseCase @Inject constructor(
             .sortByName()
             .search(query = latestQuery)
             .run {
-                if (latestQuery.isNotEmpty()) return@run mapExercises(
-                    input = map { exercise ->
-                        exercise to exercise.id.toString()
-                    },
-                )
+                if (latestQuery.isNotEmpty()) return@run map { exercise ->
+                    toExerciseItem(exercise, exercise.id.toString())
+                }
+
                 group(groupBy = latestGroupBy)
                     .run { if (latestGroupBy != GroupBy.Name) sortByHeader() else this }
                     .toExerciseItems()
@@ -71,7 +69,7 @@ class GetExercisesItemsUseCase @Inject constructor(
             flatMap { exercise -> exercise.mainMuscles }
                 .toSet()
                 .associate { muscle ->
-                    muscle.getName(application) to filter { exercise ->
+                    stringProvider.getMuscleName(muscle) to filter { exercise ->
                         exercise.mainMuscles.contains(element = muscle)
                     }
                 }
@@ -85,7 +83,20 @@ class GetExercisesItemsUseCase @Inject constructor(
         )
     }
 
-    private suspend fun Map<String, List<Exercise>>.toExerciseItems(): List<ExercisesItem> {
+    private fun toExerciseItem(exercise: Exercise, key: String): ExercisesItem.Exercise =
+        ExercisesItem.Exercise(
+            id = exercise.id,
+            name = stringProvider.getResolvedName(exercise.name),
+            key = key,
+            muscles = exercise
+                .mainMuscles
+                .joinToPrettyString(
+                    andText = stringProvider.andInAList,
+                ) { muscle -> stringProvider.getMuscleName(muscle) },
+            iconRes = exercise.exerciseType.iconRes,
+        )
+
+    private fun Map<String, List<Exercise>>.toExerciseItems(): List<ExercisesItem> {
 
         val idToIndexOfLast = mutableMapOf<Long, Int>()
 
@@ -99,7 +110,7 @@ class GetExercisesItemsUseCase @Inject constructor(
                             ?.let { index -> index + 1 }
                             .orZero
                             .also { index -> idToIndexOfLast[exercise.id] = index }
-                        mapExercises(exercise to "${exercise.id}-$occurrenceIndex")
+                        toExerciseItem(exercise = exercise, key = "${exercise.id}-$occurrenceIndex")
                     },
                 )
             }
