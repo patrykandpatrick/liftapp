@@ -30,9 +30,9 @@ class RoutineRepositoryImpl @Inject constructor(
         combine(
             routineDao.getRoutine(routineId = routineId),
             routineDao.getRoutineExercises(routineId = routineId),
-        ) { nullableRoutine, exercises ->
+        ) { nullableRoutine, exercisesWithGoals ->
             nullableRoutine?.let { routine ->
-                routineMapper.toDomain(routine, exercises)
+                routineMapper.toDomain(routine, exercisesWithGoals)
             }
         }
 

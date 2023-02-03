@@ -16,6 +16,7 @@ import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConv
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseRepositoryImpl
+import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.string.BodyStringResource
@@ -80,6 +81,10 @@ interface DatabaseModule {
         @Provides
         fun provideRoutineDao(database: Database): RoutineDao =
             database.routineDao
+
+        @Provides
+        fun provideGoalDao(database: Database): GoalDao =
+            database.goalDao
 
         @Provides
         @IntoSet

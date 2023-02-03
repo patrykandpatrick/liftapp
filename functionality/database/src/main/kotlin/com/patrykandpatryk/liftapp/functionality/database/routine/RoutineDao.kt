@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
+import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseWithGoalDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,11 +16,13 @@ interface RoutineDao {
 
     @Transaction
     @Query(
-        value = "SELECT exercise.* from exercise_with_routine as ewr " +
+        value = "SELECT exercise.*, goal.* from exercise_with_routine as ewr " +
             "LEFT JOIN exercise ON exercise.exercise_id = ewr.exercise_id " +
+            "LEFT JOIN goal on goal.goal_exercise_id = exercise.exercise_id " +
+            "AND goal.goal_routine_id = :routineId " +
             "WHERE ewr.routine_id = :routineId ORDER BY order_index",
     )
-    fun getRoutineExercises(routineId: Long): Flow<List<ExerciseEntity>>
+    fun getRoutineExercises(routineId: Long): Flow<List<ExerciseWithGoalDto>>
 
     @Query("SELECT * FROM routine WHERE routine_id = :routineId")
     fun getRoutine(routineId: Long): Flow<RoutineEntity?>

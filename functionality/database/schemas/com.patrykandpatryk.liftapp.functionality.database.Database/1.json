@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "28d42d78a9c92430b37e0bed95220982",
+    "identityHash": "e98f714da0a2c7b1fd4b1a5aae34f653",
     "entities": [
       {
         "tableName": "body",
@@ -116,7 +116,7 @@
       },
       {
         "tableName": "exercise",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exercise_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exercise_name` TEXT NOT NULL, `exercise_type` TEXT NOT NULL, `exercise_main_muscles` TEXT NOT NULL, `exercise_secondary_muscles` TEXT NOT NULL, `exercise_tertiary_muscles` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exercise_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exercise_name` TEXT NOT NULL, `exercise_type` TEXT NOT NULL, `exercise_main_muscles` TEXT NOT NULL, `exercise_secondary_muscles` TEXT NOT NULL, `exercise_tertiary_muscles` TEXT NOT NULL, `exercise_goal` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -151,6 +151,12 @@
           {
             "fieldPath": "tertiaryMuscles",
             "columnName": "exercise_tertiary_muscles",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "goal",
+            "columnName": "exercise_goal",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -283,6 +289,104 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "goal",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`goal_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `goal_routine_id` INTEGER NOT NULL, `goal_exercise_id` INTEGER NOT NULL, `goal_min_reps` INTEGER NOT NULL, `goal_max_reps` INTEGER NOT NULL, `sets` INTEGER NOT NULL, `goal_break_duration` INTEGER NOT NULL, FOREIGN KEY(`goal_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, FOREIGN KEY(`goal_exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "goal_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routineId",
+            "columnName": "goal_routine_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseId",
+            "columnName": "goal_exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minReps",
+            "columnName": "goal_min_reps",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxReps",
+            "columnName": "goal_max_reps",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sets",
+            "columnName": "sets",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "breakDurationMillis",
+            "columnName": "goal_break_duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "goal_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_goal_goal_routine_id",
+            "unique": false,
+            "columnNames": [
+              "goal_routine_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_goal_goal_routine_id` ON `${TABLE_NAME}` (`goal_routine_id`)"
+          },
+          {
+            "name": "index_goal_goal_exercise_id",
+            "unique": false,
+            "columnNames": [
+              "goal_exercise_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_goal_goal_exercise_id` ON `${TABLE_NAME}` (`goal_exercise_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "routine",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "goal_routine_id"
+            ],
+            "referencedColumns": [
+              "routine_id"
+            ]
+          },
+          {
+            "table": "exercise",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "goal_exercise_id"
+            ],
+            "referencedColumns": [
+              "exercise_id"
+            ]
+          }
+        ]
       }
     ],
     "views": [
@@ -297,7 +401,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '28d42d78a9c92430b37e0bed95220982')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e98f714da0a2c7b1fd4b1a5aae34f653')"
     ]
   }
 }

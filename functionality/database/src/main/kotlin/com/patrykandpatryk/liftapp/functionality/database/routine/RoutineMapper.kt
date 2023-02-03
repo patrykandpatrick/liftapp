@@ -8,6 +8,7 @@ import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseMapper
+import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseWithGoalDto
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class RoutineMapper @Inject constructor(
 
     fun toDomain(
         routine: RoutineEntity,
-        exercises: List<ExerciseEntity>,
+        exercises: List<ExerciseWithGoalDto>,
     ): RoutineWithExercises {
 
         val primaryMuscles = exercises.flattenMuscles { mainMuscles }
@@ -33,7 +34,7 @@ class RoutineMapper @Inject constructor(
         return RoutineWithExercises(
             id = routine.id,
             name = routine.name,
-            exercises = exerciseMapper.toRoutineExerciseItem(exercises),
+            exercises = exerciseMapper.exerciseWithGoalDtoToRoutineExerciseItem(exercises),
             primaryMuscles = primaryMuscles,
             secondaryMuscles = secondaryMuscles,
             tertiaryMuscles = tertiaryMuscles,
@@ -57,9 +58,9 @@ internal fun Routine.toEntity(): RoutineEntity = RoutineEntity(
     name = name,
 )
 
-private inline fun List<ExerciseEntity>.flattenMuscles(
+private inline fun List<ExerciseWithGoalDto>.flattenMuscles(
     getMuscles: ExerciseEntity.() -> List<Muscle>,
 ): MutableList<Muscle> =
-    fold(HashSet<Muscle>()) { set, exercise ->
-        set.apply { addAll(getMuscles(exercise)) }
+    fold(HashSet<Muscle>()) { set, exerciseWithGoal ->
+        set.apply { addAll(getMuscles(exerciseWithGoal.exerciseEntity)) }
     }.toMutableList()

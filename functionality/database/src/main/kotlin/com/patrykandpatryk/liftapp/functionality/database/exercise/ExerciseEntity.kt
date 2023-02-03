@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 
@@ -23,6 +24,8 @@ class ExerciseEntity(
     val secondaryMuscles: List<Muscle>,
     @ColumnInfo(name = "exercise_tertiary_muscles")
     val tertiaryMuscles: List<Muscle>,
+    @ColumnInfo(name = "exercise_goal")
+    val goal: Goal = Goal(), // TODO add custom goals for built-in exercises.
 ) {
 
     class Update(

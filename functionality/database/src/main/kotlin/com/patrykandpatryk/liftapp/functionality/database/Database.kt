@@ -11,6 +11,8 @@ import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConv
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
+import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
+import com.patrykandpatryk.liftapp.functionality.database.goal.GoalEntity
 import com.patrykandpatryk.liftapp.functionality.database.routine.ExerciseWithRoutineEntity
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineEntity
@@ -23,6 +25,7 @@ import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExe
         ExerciseEntity::class,
         RoutineEntity::class,
         ExerciseWithRoutineEntity::class,
+        GoalEntity::class,
     ],
     views = [
         BodyWithLatestEntryView::class,
@@ -47,4 +50,6 @@ abstract class Database : RoomDatabase() {
     abstract val exerciseDao: ExerciseDao
 
     abstract val routineDao: RoutineDao
+
+    abstract val goalDao: GoalDao
 }

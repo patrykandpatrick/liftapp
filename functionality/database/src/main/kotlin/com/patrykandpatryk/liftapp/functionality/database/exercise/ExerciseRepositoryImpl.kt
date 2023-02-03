@@ -32,7 +32,7 @@ class ExerciseRepositoryImpl @Inject constructor(
     override fun getRoutineExerciseItems(exerciseIds: List<Long>): Flow<List<RoutineExerciseItem>> =
         exerciseDao
             .getExercises(exerciseIds)
-            .map(exerciseMapper::toRoutineExerciseItem)
+            .map(exerciseMapper::exerciseEntityToRoutineExerciseItem)
 
     override suspend fun insert(exercise: Exercise.Insert): Long = withContext(dispatcher) {
         exerciseDao.insert(exercise.toEntity())

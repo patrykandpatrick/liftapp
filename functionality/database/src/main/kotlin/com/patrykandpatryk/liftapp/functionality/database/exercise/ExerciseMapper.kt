@@ -4,6 +4,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
+import com.patrykandpatryk.liftapp.functionality.database.goal.toDomain
 import javax.inject.Inject
 
 class ExerciseMapper @Inject constructor(
@@ -24,18 +25,35 @@ class ExerciseMapper @Inject constructor(
     fun toDomain(exercises: List<ExerciseEntity>): List<Exercise> =
         exercises.map(::toDomain)
 
-    fun toRoutineExerciseItem(exercises: List<ExerciseEntity>): List<RoutineExerciseItem> =
-        exercises.map { input ->
+    fun exerciseEntityToRoutineExerciseItem(exercises: List<ExerciseEntity>): List<RoutineExerciseItem> =
+        exercises.map { exercise ->
             RoutineExerciseItem(
-                id = input.id,
-                name = stringProvider.getResolvedName(input.name),
-                muscles = input
+                id = exercise.id,
+                name = stringProvider.getResolvedName(exercise.name),
+                muscles = exercise
                     .mainMuscles
                     .joinToPrettyString(
                         andText = stringProvider.andInAList,
                         toString = stringProvider::getMuscleName,
                     ),
-                type = input.exerciseType,
+                type = exercise.exerciseType,
+                goal = exercise.goal,
+            )
+        }
+
+    fun exerciseWithGoalDtoToRoutineExerciseItem(exercises: List<ExerciseWithGoalDto>): List<RoutineExerciseItem> =
+        exercises.map { (exercise, goal) ->
+            RoutineExerciseItem(
+                id = exercise.id,
+                name = stringProvider.getResolvedName(exercise.name),
+                muscles = exercise
+                    .mainMuscles
+                    .joinToPrettyString(
+                        andText = stringProvider.andInAList,
+                        toString = stringProvider::getMuscleName,
+                    ),
+                type = exercise.exerciseType,
+                goal = goal?.toDomain() ?: exercise.goal,
             )
         }
 }
