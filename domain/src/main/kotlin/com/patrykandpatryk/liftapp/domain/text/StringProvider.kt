@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.text
 
 import com.patrykandpatryk.liftapp.domain.Constants
+import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
@@ -33,6 +34,8 @@ interface StringProvider {
     fun getErrorCannotBeEmpty(name: String): String
 
     fun getMuscleName(muscle: Muscle): String
+
+    fun toPrettyString(goal: Goal): String
 
     fun getResolvedName(name: Name): String
 }

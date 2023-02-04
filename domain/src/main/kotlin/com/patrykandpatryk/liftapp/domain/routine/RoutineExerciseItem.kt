@@ -10,6 +10,7 @@ data class RoutineExerciseItem(
     val muscles: String,
     val type: ExerciseType,
     val goal: Goal,
+    val prettyGoal: String,
 ) : Serializable {
 
     companion object {

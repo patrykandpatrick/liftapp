@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.testing
 
 import com.patrykandpatryk.liftapp.domain.extension.getTypeErrorMessage
+import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
@@ -54,4 +55,7 @@ object TestStringProvider : StringProvider {
             is Name.Raw -> name.value
             is Name.Resource -> requireNotNull(name.resource.resourceId::class.simpleName)
         }
+
+    override fun toPrettyString(goal: Goal): String =
+        "%s–%s × %s".format(goal.minReps, goal.maxReps, goal.sets)
 }

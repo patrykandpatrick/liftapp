@@ -90,7 +90,7 @@ private fun Exercises(
                     .onItemYRange { yRange -> itemRanges.addOrSet(index, yRange) },
                 iconPainter = painterResource(id = exercise.type.iconRes),
                 title = exercise.name,
-                description = exercise.muscles,
+                description = exercise.prettyGoal + "\n" + exercise.muscles,
                 actions = {
                     Icon(
                         modifier = Modifier

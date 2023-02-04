@@ -38,11 +38,15 @@ class ExerciseMapper @Inject constructor(
                     ),
                 type = exercise.exerciseType,
                 goal = exercise.goal,
+                prettyGoal = stringProvider.toPrettyString(exercise.goal),
             )
         }
 
     fun exerciseWithGoalDtoToRoutineExerciseItem(exercises: List<ExerciseWithGoalDto>): List<RoutineExerciseItem> =
-        exercises.map { (exercise, goal) ->
+        exercises.map { (exercise, goalEntity) ->
+
+            val goal = goalEntity?.toDomain() ?: exercise.goal
+
             RoutineExerciseItem(
                 id = exercise.id,
                 name = stringProvider.getResolvedName(exercise.name),
@@ -53,7 +57,8 @@ class ExerciseMapper @Inject constructor(
                         toString = stringProvider::getMuscleName,
                     ),
                 type = exercise.exerciseType,
-                goal = goal?.toDomain() ?: exercise.goal,
+                goal = goal,
+                prettyGoal = stringProvider.toPrettyString(goal),
             )
         }
 }
