@@ -46,6 +46,7 @@ fun ListItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
+    trailing: String? = null,
     iconPainter: Painter? = null,
     enabled: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
@@ -56,6 +57,7 @@ fun ListItem(
         title = title,
         modifier = modifier,
         description = description,
+        trailing = trailing,
         icon = {
             if (iconPainter != null) {
                 Icon(
@@ -84,6 +86,7 @@ fun CheckableListItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
+    trailing: String? = null,
     iconPainter: Painter? = null,
     checked: Boolean,
     enabled: Boolean = true,
@@ -108,6 +111,7 @@ fun CheckableListItem(
             )
             .clip(shape),
         description = description,
+        trailing = trailing,
         icon = {
             if (iconPainter != null) {
                 Icon(
@@ -141,6 +145,7 @@ fun ListItem(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
+    trailing: String? = null,
     icon: @Composable RowScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
     enabled: Boolean = true,
@@ -174,6 +179,14 @@ fun ListItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+
+        if (trailing != null) {
+            Text(
+                text = trailing,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
 
         actions()
@@ -237,7 +250,7 @@ fun PreviewTitleWithLongDescAndIconItem() {
         Surface {
             ListItem(
                 title = "This is a title",
-                description = "This is a description \nwith two lines",
+                description = "This is a description with two lines",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
                 actions = {
 
@@ -249,6 +262,33 @@ fun PreviewTitleWithLongDescAndIconItem() {
                             contentDescription = null,
                         )
                     }
+
+                    IconButton(onClick = { }) {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.ic_edit,
+                            ),
+                            contentDescription = null,
+                        )
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PreviewTitleWithLongDescTrailingAndIconItem() {
+    LiftAppTheme {
+        Surface {
+            ListItem(
+                title = "This is a title",
+                description = "This is a description with two lines",
+                trailing = "100+",
+                iconPainter = painterResource(id = R.drawable.ic_distance),
+                actions = {
 
                     IconButton(onClick = { }) {
                         Icon(
