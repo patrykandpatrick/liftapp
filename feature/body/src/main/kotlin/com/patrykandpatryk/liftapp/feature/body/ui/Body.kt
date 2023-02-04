@@ -17,6 +17,7 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
+import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 
 @Composable
 fun Body(
@@ -48,7 +49,7 @@ fun Body(
 
                 ListItem(
                     title = item.title,
-                    iconPainter = painterResource(id = item.iconRes),
+                    iconPainter = painterResource(id = item.type.iconRes),
                     onClick = { navigate(Routes.BodyDetails.create(item.id)) },
                 )
             }

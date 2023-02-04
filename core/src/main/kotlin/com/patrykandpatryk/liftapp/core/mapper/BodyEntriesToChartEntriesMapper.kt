@@ -3,15 +3,13 @@ package com.patrykandpatryk.liftapp.core.mapper
 import com.patrykandpatryk.liftapp.domain.body.BodyEntry
 import com.patrykandpatryk.liftapp.domain.body.BodyValues
 import com.patrykandpatryk.liftapp.domain.extension.getOrPut
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.entryOf
 import javax.inject.Inject
 
-class BodyEntriesToChartEntriesMapper @Inject constructor() :
-    Mapper<List<@JvmSuppressWildcards BodyEntry>, List<@JvmSuppressWildcards List<@JvmSuppressWildcards ChartEntry>>> {
+class BodyEntriesToChartEntriesMapper @Inject constructor() {
 
-    override suspend fun map(input: List<BodyEntry>): List<List<ChartEntry>> =
+    operator fun invoke(input: List<BodyEntry>): List<List<ChartEntry>> =
         input.foldIndexed(ArrayList<ArrayList<ChartEntry>>()) { index, chartEntries, entry ->
 
             val reversedIndex = input.lastIndex - index

@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.feature.body.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatryk.liftapp.domain.body.GetBodyItemsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import javax.inject.Inject

@@ -2,16 +2,15 @@ package com.patrykandpatryk.liftapp.feature.bodydetails.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.liftapp.core.mapper.BodyEntriesToChartEntriesMapper
 import com.patrykandpatryk.liftapp.domain.body.Body
 import com.patrykandpatryk.liftapp.domain.body.BodyEntry
 import com.patrykandpatryk.liftapp.domain.body.BodyRepository
 import com.patrykandpatryk.liftapp.domain.body.BodyValues
-import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
 import com.patrykandpatryk.liftapp.feature.bodydetails.di.BodyId
-import com.patrykandpatrick.vico.core.entry.ChartEntry
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +29,7 @@ class BodyDetailsViewModel @Inject constructor(
     repository: BodyRepository,
     private val unitConverter: UnitConverter,
     private val exceptionHandler: CoroutineExceptionHandler,
-    private val chartEntriesMapper: Mapper<List<BodyEntry>, List<List<ChartEntry>>>,
+    private val chartEntriesMapper: BodyEntriesToChartEntriesMapper,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Unit> {
 
     val chartEntryModelProducer = ChartEntryModelProducer()

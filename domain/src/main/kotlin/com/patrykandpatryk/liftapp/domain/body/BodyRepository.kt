@@ -8,7 +8,7 @@ interface BodyRepository {
 
     fun getBodyWithLatestEntry(id: Long): Flow<BodyWithLatestEntry>
 
-    fun getAllBodies(): Flow<List<BodyWithLatestEntry>>
+    fun getBodyItems(): Flow<List<BodyItem>>
 
     fun getEntries(bodyId: Long): Flow<List<BodyEntry>>
 
