@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
-import android.content.res.Configuration
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -48,8 +47,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -60,6 +57,7 @@ import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.provider.RegisterResultListener
 import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.state.equivalentSnapshotPolicy
@@ -321,10 +319,7 @@ private fun ColumnScope.EmptyState(state: ScreenState) {
     )
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(device = Devices.TABLET)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.TABLET)
+@MultiDevicePreview
 @Composable
 fun NewRoutinePreview() {
     LiftAppTheme {

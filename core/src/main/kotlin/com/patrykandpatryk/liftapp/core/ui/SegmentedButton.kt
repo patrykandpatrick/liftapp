@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,9 +34,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
@@ -227,8 +226,7 @@ private fun SegmentedButton(
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview
+@LightAndDarkThemePreview
 @Composable
 fun PreviewSegmentedButtonWithIcons() {
     LiftAppTheme {
@@ -253,8 +251,7 @@ fun PreviewSegmentedButtonWithIcons() {
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview
+@LightAndDarkThemePreview
 @Composable
 fun PreviewSegmentedButtonWithNoIcons() {
     LiftAppTheme {
@@ -278,8 +275,7 @@ fun PreviewSegmentedButtonWithNoIcons() {
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview
+@LightAndDarkThemePreview
 @Composable
 fun PreviewVerticalSegmentedButtonWithNoIcons() {
     LiftAppTheme {

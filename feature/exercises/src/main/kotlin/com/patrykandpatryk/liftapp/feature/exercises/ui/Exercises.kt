@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.exercises.ui
 
-import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -43,8 +42,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -54,6 +51,7 @@ import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.provider.setResult
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
@@ -367,10 +365,7 @@ private fun Controls(
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(device = Devices.TABLET)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.TABLET)
+@MultiDevicePreview
 @Composable
 fun ExercisesPreview() {
     LiftAppTheme {
@@ -380,10 +375,7 @@ fun ExercisesPreview() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(device = Devices.TABLET)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.TABLET)
+@MultiDevicePreview
 @Composable
 fun ExercisesPreviewPickingMode() {
     LiftAppTheme {

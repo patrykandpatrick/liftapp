@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -24,10 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 
@@ -189,10 +187,7 @@ fun DialogTopBar(
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(device = Devices.TABLET)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.TABLET)
+@MultiDevicePreview
 @Composable
 fun PreviewTopAppBarWithTextTabs() {
     LiftAppTheme {
@@ -208,8 +203,7 @@ fun PreviewTopAppBarWithTextTabs() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@MultiDevicePreview
 @Composable
 fun PreviewTopAppBarWithIconTabs() {
     LiftAppTheme {
@@ -225,8 +219,7 @@ fun PreviewTopAppBarWithIconTabs() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@MultiDevicePreview
 @Composable
 fun PreviewTopAppBarWithTextIconTabs() {
     LiftAppTheme {
@@ -248,7 +241,7 @@ fun PreviewTopAppBarWithTextIconTabs() {
     }
 }
 
-@Preview
+@MultiDevicePreview
 @Composable
 fun PreviewDialogTopBar() {
     Surface {

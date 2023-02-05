@@ -15,8 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.resource.prettyName
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -128,9 +128,8 @@ fun <T> DropdownMenu(
 @Composable
 private fun PreviewExerciseTypeDropdownMenu(
     expanded: Boolean,
-    darkTheme: Boolean,
 ) {
-    LiftAppTheme(darkTheme = darkTheme) {
+    LiftAppTheme {
         Surface {
 
             val (isExpanded, setExpanded) = remember { mutableStateOf(expanded) }
@@ -149,26 +148,14 @@ private fun PreviewExerciseTypeDropdownMenu(
     }
 }
 
-@Preview
+@LightAndDarkThemePreview
 @Composable
-fun PreviewExerciseTypeDropdownMenuCollapsedLight() {
-    PreviewExerciseTypeDropdownMenu(expanded = false, darkTheme = false)
+fun PreviewExerciseTypeDropdownMenuCollapsed() {
+    PreviewExerciseTypeDropdownMenu(expanded = false)
 }
 
-@Preview
+@LightAndDarkThemePreview
 @Composable
-fun PreviewExerciseTypeDropdownMenuExpandedLight() {
-    PreviewExerciseTypeDropdownMenu(expanded = true, darkTheme = false)
-}
-
-@Preview
-@Composable
-fun PreviewExerciseTypeDropdownMenuCollapsedDark() {
-    PreviewExerciseTypeDropdownMenu(expanded = false, darkTheme = true)
-}
-
-@Preview
-@Composable
-fun PreviewExerciseTypeDropdownMenuExpandedDark() {
-    PreviewExerciseTypeDropdownMenu(expanded = true, darkTheme = true)
+fun PreviewExerciseTypeDropdownMenuExpanded() {
+    PreviewExerciseTypeDropdownMenu(expanded = true)
 }

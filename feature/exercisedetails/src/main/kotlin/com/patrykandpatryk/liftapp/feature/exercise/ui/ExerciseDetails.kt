@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.exercise.ui
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -22,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
@@ -30,6 +28,8 @@ import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.tabItems
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
@@ -175,8 +175,7 @@ private fun DeleteExerciseDialog(
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@MultiDevicePreview
 @Composable
 fun PreviewExerciseDetails() {
     LiftAppTheme {
@@ -191,8 +190,7 @@ fun PreviewExerciseDetails() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewDeleteExerciseDialog() {
     LiftAppTheme {

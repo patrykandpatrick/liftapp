@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui.input
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -25,11 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.nonBlankOrNull
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.time.now
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.dialog.DialogButtons
@@ -256,8 +255,7 @@ fun rememberDatePickerState(
     }
 }
 
-@Preview(backgroundColor = 0xFFFFFFFF)
-@Preview(backgroundColor = 0xFF212121, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@MultiDevicePreview
 @Composable
 fun DatePickerPreview() {
     LiftAppTheme {

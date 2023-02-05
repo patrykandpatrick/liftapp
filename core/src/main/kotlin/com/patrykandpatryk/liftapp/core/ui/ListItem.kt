@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -38,12 +37,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.MultiParagraph
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.drawRoundRect
 import com.patrykandpatryk.liftapp.core.extension.scaleCornerSize
 import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
+import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -251,8 +250,7 @@ object ListItemDefaults {
         )
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewTitleItem() {
     LiftAppTheme {
@@ -262,8 +260,7 @@ fun PreviewTitleItem() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewTitleWithDescItem() {
     LiftAppTheme {
@@ -276,8 +273,7 @@ fun PreviewTitleWithDescItem() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewTitleWithDescAndIconItem() {
     LiftAppTheme {
@@ -291,8 +287,7 @@ fun PreviewTitleWithDescAndIconItem() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewTitleWithLongDescAndIconItem() {
     LiftAppTheme {
@@ -326,8 +321,7 @@ fun PreviewTitleWithLongDescAndIconItem() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewTitleWithLongDescTrailingAndIconItem() {
     LiftAppTheme {
@@ -353,8 +347,7 @@ fun PreviewTitleWithLongDescTrailingAndIconItem() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewTitleWithIconItem() {
     LiftAppTheme {
@@ -367,8 +360,7 @@ fun PreviewTitleWithIconItem() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewCheckableListItemChecked() {
     LiftAppTheme {
@@ -385,8 +377,7 @@ fun PreviewCheckableListItemChecked() {
     }
 }
 
-@Preview
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun PreviewCheckableListItemUnchecked() {
     LiftAppTheme {

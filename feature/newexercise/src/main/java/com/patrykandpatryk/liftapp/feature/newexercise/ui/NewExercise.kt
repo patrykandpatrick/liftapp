@@ -32,17 +32,16 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.ProvideLandscapeMode
 import com.patrykandpatryk.liftapp.core.extension.isLandscape
 import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
@@ -237,37 +236,15 @@ private fun Content(
     )
 }
 
-@Preview
+@MultiDevicePreview
 @Composable
 fun PreviewNewExerciseLight() {
-    PreviewNewExercise(darkTheme = false)
-}
-
-@Preview(widthDp = 720, heightDp = 360)
-@Composable
-fun PreviewNewExerciseLightLandscape() {
-    ProvideLandscapeMode {
-        PreviewNewExercise(darkTheme = false)
-    }
-}
-
-@Preview
-@Composable
-fun PreviewNewExerciseDark() {
-    PreviewNewExercise(darkTheme = true)
-}
-
-@Preview(widthDp = 720, heightDp = 360)
-@Composable
-fun PreviewNewExerciseDarkLandscape() {
-    ProvideLandscapeMode {
-        PreviewNewExercise(darkTheme = true)
-    }
+    PreviewNewExercise()
 }
 
 @Composable
-private fun PreviewNewExercise(darkTheme: Boolean) {
-    LiftAppTheme(darkTheme = darkTheme) {
+private fun PreviewNewExercise() {
+    LiftAppTheme {
         NewExercise(
             state = NewExerciseState.Invalid(),
             updateName = {},

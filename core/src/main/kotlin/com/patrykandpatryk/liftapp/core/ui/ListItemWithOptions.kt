@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandHorizontally
@@ -35,9 +34,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 
@@ -158,8 +157,7 @@ data class OptionItem(
     val onClick: () -> Unit,
 )
 
-@Preview(backgroundColor = 0xFFFFFFFF)
-@Preview(backgroundColor = 0xFF212121, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@LightAndDarkThemePreview
 @Composable
 fun ListItemWithOptionsPreview() {
     LiftAppTheme {
