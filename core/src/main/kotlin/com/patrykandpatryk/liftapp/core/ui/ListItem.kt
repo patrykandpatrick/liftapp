@@ -30,16 +30,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.MultiParagraph
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.drawRoundRect
 import com.patrykandpatryk.liftapp.core.extension.scaleCornerSize
 import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
@@ -47,6 +46,7 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
+import com.patrykandpatryk.liftapp.domain.extension.length
 
 @Composable
 fun ListItem(
@@ -179,17 +179,28 @@ fun ListItem(
         Column(modifier = Modifier.weight(1f)) {
 
             if (!titleHighlightPosition.isEmpty()) {
-                var multiParagraph by remember { mutableStateOf<MultiParagraph?>(null) }
+                var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
                 val highlightColor = MaterialTheme.colorScheme.tertiaryContainer
                 val highlightCornerRadiusPx =
                     with(LocalDensity.current) { MaterialTheme.dimens.list.itemTitleHighlightCornerRadius.toPx() }
                 ListItemTitle(
                     text = title,
                     modifier = Modifier.drawBehind {
-                        multiParagraph
-                            ?.getPathForRange(titleHighlightPosition.first, titleHighlightPosition.last)
-                            ?.getBounds()
-                            ?.also { drawRoundRect(highlightColor, it, highlightCornerRadiusPx) }
+                        textLayoutResult?.run {
+                            titleHighlightPosition
+                                .take(titleHighlightPosition.length)
+                                .map { getBoundingBox(it) }
+                                .groupBy { it.bottom }
+                                .forEach { (_, boundingBoxes) ->
+                                    val boundingBox = boundingBoxes.first().copy(right = boundingBoxes.last().right)
+                                    drawRoundRect(
+                                        highlightColor,
+                                        boundingBox.topLeft,
+                                        boundingBox.size,
+                                        CornerRadius(highlightCornerRadiusPx),
+                                    )
+                                }
+                        }
                     },
                     spanStyles = listOf(
                         AnnotatedString.Range(
@@ -198,7 +209,7 @@ fun ListItem(
                             titleHighlightPosition.last,
                         ),
                     ),
-                    onTextLayout = { multiParagraph = it.multiParagraph },
+                    onTextLayout = { textLayoutResult = it },
                 )
             } else {
                 ListItemTitle(title)
