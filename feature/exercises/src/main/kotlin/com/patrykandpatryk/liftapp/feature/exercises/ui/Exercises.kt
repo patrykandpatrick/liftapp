@@ -236,6 +236,7 @@ private fun LazyItemScope.ExerciseItem(
                 .animateItemPlacement()
                 .clickable { navigator.navigate(Routes.Exercise.create(item.id)) },
             enabled = item.enabled,
+            titleHighlightPosition = item.nameHighlightPosition,
         )
     }
 }

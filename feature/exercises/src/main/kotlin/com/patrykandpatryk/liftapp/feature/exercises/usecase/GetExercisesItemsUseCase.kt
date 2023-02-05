@@ -37,19 +37,19 @@ class GetExercisesItemsUseCase @Inject constructor(
         latestExercises
             .sortByName()
             .search(query = latestQuery)
-            .run {
-                if (latestQuery.isNotEmpty()) return@run map { exercise ->
-                    toExerciseItem(exercise, exercise.id.toString())
+            .let { (matches, queryMatchPositions) ->
+                if (latestQuery.isNotEmpty()) return@let matches.mapIndexed { index, match ->
+                    toExerciseItem(match, match.id.toString(), queryMatchPositions[index])
                 }
 
-                group(groupBy = latestGroupBy)
+                matches.group(groupBy = latestGroupBy)
                     .run { if (latestGroupBy != GroupBy.Name) sortByHeader() else this }
-                    .toExerciseItems()
+                    .toExerciseItems { queryMatchPositions[it] }
             }
     }.flowOn(dispatcher)
 
     private fun List<Exercise>.search(query: String) = searchAlgorithm(
-        entities = this,
+        items = this,
         selector = { exercise -> exercise.displayName },
         query = query,
     )
@@ -83,7 +83,7 @@ class GetExercisesItemsUseCase @Inject constructor(
         )
     }
 
-    private fun toExerciseItem(exercise: Exercise, key: String): ExercisesItem.Exercise =
+    private fun toExerciseItem(exercise: Exercise, key: String, nameHighlightPosition: IntRange) =
         ExercisesItem.Exercise(
             id = exercise.id,
             name = stringProvider.getResolvedName(exercise.name),
@@ -94,9 +94,12 @@ class GetExercisesItemsUseCase @Inject constructor(
                     andText = stringProvider.andInAList,
                 ) { muscle -> stringProvider.getMuscleName(muscle) },
             iconRes = exercise.exerciseType.iconRes,
+            nameHighlightPosition = nameHighlightPosition,
         )
 
-    private fun Map<String, List<Exercise>>.toExerciseItems(): List<ExercisesItem> {
+    private fun Map<String, List<Exercise>>.toExerciseItems(
+        getNameHighlightPosition: (Int) -> IntRange,
+    ): List<ExercisesItem> {
 
         val idToIndexOfLast = mutableMapOf<Long, Int>()
 
@@ -104,13 +107,17 @@ class GetExercisesItemsUseCase @Inject constructor(
             buildList {
                 add(ExercisesItem.Header(header))
                 addAll(
-                    elements = exercises.map { exercise ->
+                    elements = exercises.mapIndexed { index, exercise ->
                         val occurrenceIndex = idToIndexOfLast
                             .get(key = exercise.id)
-                            ?.let { index -> index + 1 }
+                            ?.let { it + 1 }
                             .orZero
-                            .also { index -> idToIndexOfLast[exercise.id] = index }
-                        toExerciseItem(exercise = exercise, key = "${exercise.id}-$occurrenceIndex")
+                            .also { idToIndexOfLast[exercise.id] = it }
+                        toExerciseItem(
+                            exercise = exercise,
+                            key = "${exercise.id}-$occurrenceIndex",
+                            nameHighlightPosition = getNameHighlightPosition(index),
+                        )
                     },
                 )
             }

@@ -4,45 +4,28 @@ import org.junit.Test
 import kotlin.test.assertContentEquals
 
 class SearchAlgorithmImplTest {
-
-    private val entities = listOf("Apple", "Cherry", "Banana", "Pineapple")
+    private val items = listOf("Apple", "Cherry", "Banana", "Pineapple")
     private val searchAlgorithm = SearchAlgorithmImpl()
 
-    private fun search(query: String) = searchAlgorithm(
-        query = query,
-        entities = entities,
-        selector = { entity -> entity },
-    )
+    private fun search(query: String) = searchAlgorithm(query, items) { it }
 
     @Test
     fun `Letter case is ignored`() {
-        assertContentEquals(
-            expected = listOf("Banana"),
-            actual = search(query = "banana"),
-        )
+        assertContentEquals(listOf("Banana"), search("banana").first)
     }
 
     @Test
     fun `Mistyped letters are handled properly`() {
-        assertContentEquals(
-            expected = listOf("Pineapple"),
-            actual = search(query = "Ppneapple"),
-        )
+        assertContentEquals(listOf("Pineapple"), search("Ppneapple").first)
     }
 
     @Test
     fun `Swapped letters are handled properly`() {
-        assertContentEquals(
-            expected = listOf("Cherry"),
-            actual = search(query = "Cheryr"),
-        )
+        assertContentEquals(listOf("Cherry"), search("Cheryr").first)
     }
 
     @Test
     fun `Results are correctly ordered`() {
-        assertContentEquals(
-            expected = listOf("Apple", "Pineapple"),
-            actual = search(query = "apple"),
-        )
+        assertContentEquals(listOf("Apple", "Pineapple"), search("apple").first)
     }
 }

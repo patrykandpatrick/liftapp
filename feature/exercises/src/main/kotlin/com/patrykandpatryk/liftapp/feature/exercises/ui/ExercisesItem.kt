@@ -17,5 +17,6 @@ sealed class ExercisesItem(open val key: Any) {
         @DrawableRes val iconRes: Int,
         val checked: Boolean = false,
         val enabled: Boolean = true,
+        val nameHighlightPosition: IntRange = IntRange.EMPTY,
     ) : ExercisesItem(key)
 }

@@ -13,3 +13,5 @@ fun DecimalFormat.parseToIntOrNull(source: String): Int? = try {
 
 fun DecimalFormat.parseToIntOrZero(source: String): Int =
     parseToIntOrNull(source) ?: 0
+
+fun Int.rangeOfLength(length: Int) = this..(this + length)
