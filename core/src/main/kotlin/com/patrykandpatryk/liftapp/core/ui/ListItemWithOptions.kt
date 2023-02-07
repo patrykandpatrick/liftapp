@@ -8,13 +8,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 
 @Composable
@@ -91,25 +89,15 @@ fun ListItemWithOptions(
 
         AnimatedVisibility(visible = isExpanded) {
 
-            Row(
-                modifier = Modifier
-                    .clip(RectangleShape)
-                    .padding(
-                        horizontal = LocalDimens.current.padding.contentHorizontalSmall,
-                        vertical = LocalDimens.current.padding.contentVerticalSmall,
-                    ),
-            ) {
+            Row {
 
                 optionItems.forEach { (iconPainter, label, onClick) ->
 
                     Option(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable(
-                                onClick = onClick,
-                                indication = rememberRipple(bounded = false),
-                                interactionSource = remember { MutableInteractionSource() },
-                            ),
+                            .clickable(onClick = onClick)
+                            .padding(vertical = MaterialTheme.dimens.padding.contentVerticalSmall),
                         iconPainter = iconPainter,
                         label = label,
                     )
