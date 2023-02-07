@@ -39,10 +39,10 @@ naming:
             - "Composable"
 formatting:
     active: true
-    TrailingComma:
+    TrailingCommaOnCallSite:
         active: true
-        allowTrailingComma: true
-        allowTrailingCommaOnCallSite: true
+    TrailingCommaOnDeclarationSite:
+        active: true
     ImportOrdering:
         active: false
 performance:
