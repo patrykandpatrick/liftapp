@@ -1,6 +1,5 @@
 plugins {
     id "com.android.application"
-    id "com.google.android.gms.oss-licenses-plugin"
 }
 
 apply from: "$rootDir/gradle/ui-module-base.gradle"
