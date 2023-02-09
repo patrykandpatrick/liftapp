@@ -48,13 +48,13 @@ tasks.withType(Detekt).configureEach {
 
         html {
 
-            enabled = true
-            destination = file("build/reports/detekt/detekt.html")
+            required.set(true)
+            outputLocation.set(file("build/reports/detekt/detekt.html"))
         }
     }
 }
 
-task detektFix(type: Detekt) {
+tasks.register("detektFix", Detekt) { task ->
 
     autoCorrect = true
     buildUponDefaultConfig = true
@@ -62,7 +62,7 @@ task detektFix(type: Detekt) {
     config.setFrom(files(".idea/detekt-config.yml"))
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Detekt) {
 
     delete rootProject.buildDir
 }
