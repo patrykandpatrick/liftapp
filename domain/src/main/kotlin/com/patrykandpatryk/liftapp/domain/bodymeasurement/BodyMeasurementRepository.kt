@@ -1,33 +1,33 @@
-package com.patrykandpatryk.liftapp.domain.body
+package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
 import kotlinx.coroutines.flow.Flow
 
-interface BodyRepository {
+interface BodyMeasurementRepository {
 
-    fun getBody(id: Long): Flow<Body>
+    fun getBodyMeasurement(id: Long): Flow<BodyMeasurement>
 
-    fun getBodyWithLatestEntry(id: Long): Flow<BodyWithLatestEntry>
+    fun getBodyMeasurementWithLatestEntry(id: Long): Flow<BodyMeasurementWithLatestEntry>
 
-    fun getBodyItems(): Flow<List<BodyItem>>
+    fun getBodyMeasurementsWithLatestEntries(): Flow<List<BodyMeasurementWithLatestEntry>>
 
-    fun getEntries(bodyId: Long): Flow<List<BodyEntry>>
+    fun getBodyMeasurementEntries(bodyMeasurementID: Long): Flow<List<BodyMeasurementEntry>>
 
-    suspend fun getEntry(entryId: Long): BodyEntry?
+    suspend fun getBodyMeasurementEntry(id: Long): BodyMeasurementEntry?
 
-    suspend fun insertBody(body: Body.Insert)
+    suspend fun insertBodyMeasurement(bodyMeasurement: BodyMeasurement.Insert)
 
-    suspend fun insertBodies(bodies: List<Body.Insert>)
+    suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement.Insert>)
 
-    suspend fun insertBodyEntry(
-        parentId: Long,
-        values: BodyValues,
+    suspend fun insertBodyMeasurementEntry(
+        bodyMeasurementID: Long,
+        value: BodyMeasurementValue,
         timestamp: Long,
     )
 
-    suspend fun updateBodyEntry(
-        entryId: Long,
-        parentId: Long,
-        values: BodyValues,
+    suspend fun updateBodyMeasurementEntry(
+        id: Long,
+        bodyMeasurementID: Long,
+        value: BodyMeasurementValue,
         timestamp: Long,
     )
 }

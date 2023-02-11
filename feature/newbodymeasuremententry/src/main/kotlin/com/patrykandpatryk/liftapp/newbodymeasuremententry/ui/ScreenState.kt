@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.bodyentry.ui
+package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 
 import android.os.Parcelable
 import androidx.compose.runtime.Stable

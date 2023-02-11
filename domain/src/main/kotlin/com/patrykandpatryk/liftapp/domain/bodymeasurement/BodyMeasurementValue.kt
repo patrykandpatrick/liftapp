@@ -1,11 +1,11 @@
-package com.patrykandpatryk.liftapp.domain.body
+package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class BodyValues {
+sealed class BodyMeasurementValue {
 
     abstract val unit: ValueUnit
 
@@ -14,7 +14,7 @@ sealed class BodyValues {
     data class Single(
         val value: Float,
         override val unit: ValueUnit,
-    ) : BodyValues()
+    ) : BodyMeasurementValue()
 
     @Serializable
     @SerialName("double")
@@ -22,5 +22,5 @@ sealed class BodyValues {
         val left: Float,
         val right: Float,
         override val unit: ValueUnit,
-    ) : BodyValues()
+    ) : BodyMeasurementValue()
 }

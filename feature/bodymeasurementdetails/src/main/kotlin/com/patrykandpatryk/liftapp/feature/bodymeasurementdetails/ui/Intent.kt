@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.bodydetails.ui
+package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui
 
 sealed class Intent {
 

@@ -1,10 +1,10 @@
-package com.patrykandpatryk.liftapp.feature.bodydetails.ui
+package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui
 
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 
 sealed class ScreenState(
-    open val bodyId: Long,
+    open val bodyMeasurementID: Long,
     open val name: String,
     open val entries: List<Entry>,
     open val chartEntryModelProducer: ChartEntryModelProducer,
@@ -12,10 +12,10 @@ sealed class ScreenState(
 
     @Stable
     data class Loading(
-        override val bodyId: Long,
+        override val bodyMeasurementID: Long,
         override val chartEntryModelProducer: ChartEntryModelProducer,
     ) : ScreenState(
-        bodyId = bodyId,
+        bodyMeasurementID = bodyMeasurementID,
         name = "",
         entries = emptyList(),
         chartEntryModelProducer = chartEntryModelProducer,
@@ -23,12 +23,12 @@ sealed class ScreenState(
 
     @Stable
     data class Populated(
-        override val bodyId: Long,
+        override val bodyMeasurementID: Long,
         override val name: String,
         override val entries: List<Entry>,
         override val chartEntryModelProducer: ChartEntryModelProducer,
     ) : ScreenState(
-        bodyId = bodyId,
+        bodyMeasurementID = bodyMeasurementID,
         name = "",
         entries = entries,
         chartEntryModelProducer = chartEntryModelProducer,

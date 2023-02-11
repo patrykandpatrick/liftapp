@@ -1,8 +1,8 @@
-package com.patrykandpatryk.liftapp.domain.body
+package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
-data class BodyWithLatestEntry(
+data class BodyMeasurementWithLatestEntry(
     val id: Long,
     val name: String,
-    val type: BodyType,
-    val latestEntry: BodyEntry?,
+    val type: BodyMeasurementType,
+    val latestEntry: BodyMeasurementEntry?,
 )

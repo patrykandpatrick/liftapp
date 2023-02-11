@@ -1,60 +1,60 @@
-package com.patrykandpatryk.liftapp.functionality.database.body
+package com.patrykandpatryk.liftapp.functionality.database.bodymeasurement
 
-import com.patrykandpatryk.liftapp.domain.body.Body
-import com.patrykandpatryk.liftapp.domain.body.BodyRepository
-import com.patrykandpatryk.liftapp.domain.body.BodyType
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurement
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.model.Name
-import com.patrykandpatryk.liftapp.functionality.database.string.BodyStringResource
+import com.patrykandpatryk.liftapp.functionality.database.string.BodyMeasurementStringResource
 import javax.inject.Inject
 
-class InsertDefaultBodies @Inject constructor(
-    private val repository: BodyRepository,
+class InsertDefaultBodyMeasurementsUseCase @Inject constructor(
+    private val repository: BodyMeasurementRepository,
 ) {
 
-    private val bodies: List<Body.Insert> = listOf(
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.BodyWeight),
-            type = BodyType.Weight,
+    private val bodyMeasurements: List<BodyMeasurement.Insert> = listOf(
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.BodyWeight),
+            type = BodyMeasurementType.Weight,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.FatPercentage),
-            type = BodyType.Percentage,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.FatPercentage),
+            type = BodyMeasurementType.Percentage,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.MusclePercentage),
-            type = BodyType.Percentage,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.MusclePercentage),
+            type = BodyMeasurementType.Percentage,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.ForearmCircumference),
-            type = BodyType.LengthTwoSides,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.ForearmCircumference),
+            type = BodyMeasurementType.LengthTwoSides,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.BicepCircumference),
-            type = BodyType.LengthTwoSides,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.BicepCircumference),
+            type = BodyMeasurementType.LengthTwoSides,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.ChestCircumference),
-            type = BodyType.Length,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.ChestCircumference),
+            type = BodyMeasurementType.Length,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.AbCircumference),
-            type = BodyType.Length,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.AbCircumference),
+            type = BodyMeasurementType.Length,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.GluteCircumference),
-            type = BodyType.Length,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.GluteCircumference),
+            type = BodyMeasurementType.Length,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.ThighCircumference),
-            type = BodyType.LengthTwoSides,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.ThighCircumference),
+            type = BodyMeasurementType.LengthTwoSides,
         ),
-        Body.Insert(
-            name = Name.Resource(BodyStringResource.CalfCircumference),
-            type = BodyType.LengthTwoSides,
+        BodyMeasurement.Insert(
+            name = Name.Resource(BodyMeasurementStringResource.CalfCircumference),
+            type = BodyMeasurementType.LengthTwoSides,
         ),
     )
 
     suspend operator fun invoke() {
-        repository.insertBodies(bodies)
+        repository.insertBodyMeasurements(bodyMeasurements)
     }
 }

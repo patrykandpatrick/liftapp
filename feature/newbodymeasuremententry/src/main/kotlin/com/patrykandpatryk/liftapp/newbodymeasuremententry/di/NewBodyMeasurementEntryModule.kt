@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.bodyentry.di
+package com.patrykandpatryk.liftapp.newbodymeasuremententry.di
 
 import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.navigation.Routes.ARG_ENTRY_ID
@@ -11,18 +11,18 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
-internal interface BodyEntryModule {
+internal interface NewBodyMeasurementEntryModule {
 
     companion object {
 
-        @BodyId
+        @BodyMeasurementID
         @Provides
-        fun provideBodyId(savedStateHandle: SavedStateHandle): Long =
+        fun provideBodyMeasurementID(savedStateHandle: SavedStateHandle): Long =
             requireNotNull(savedStateHandle[ARG_ID])
 
-        @BodyEntryId
+        @BodyMeasurementEntryID
         @Provides
-        fun provideBodyEntryId(savedStateHandle: SavedStateHandle): Long =
+        fun provideBodyMeasurementEntryID(savedStateHandle: SavedStateHandle): Long =
             savedStateHandle[ARG_ENTRY_ID] ?: ID_NOT_SET
     }
 }

@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.bodyentry.ui
+package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -52,24 +52,24 @@ import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.addInsertBodyEntry(bottomSheetState: ModalBottomSheetState) {
+fun NavGraphBuilder.addNewBodyMeasurementEntryDestination(bottomSheetState: ModalBottomSheetState) {
 
-    bottomSheet(route = Routes.InsertBodyEntry) {
+    bottomSheet(route = Routes.NewBodyMeasurementEntry) {
         val scope = rememberCoroutineScope()
 
-        InsertBodyEntry(
+        NewBodyMeasurementEntryBottomSheetContent(
             onCloseClick = { scope.launch { bottomSheetState.hide() } },
         )
     }
 }
 
 @Composable
-fun InsertBodyEntry(
+fun NewBodyMeasurementEntryBottomSheetContent(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
-    val viewModel: InsertBodyEntryViewModel = hiltViewModel()
+    val viewModel: NewBodyMeasurementEntryViewModel = hiltViewModel()
     val bodyModel by viewModel.state.collectAsState()
 
     BackHandler(enabled = true, onBack = onCloseClick)
@@ -80,7 +80,7 @@ fun InsertBodyEntry(
         }
     }
 
-    InsertBodyEntry(
+    NewBodyMeasurementEntryBottomSheetContent(
         state = bodyModel,
         onIntent = viewModel::handleIntent,
         onCloseClick = onCloseClick,
@@ -89,7 +89,7 @@ fun InsertBodyEntry(
 }
 
 @Composable
-private fun InsertBodyEntry(
+private fun NewBodyMeasurementEntryBottomSheetContent(
     state: ScreenState,
     onIntent: (Intent) -> Unit,
     onCloseClick: () -> Unit,
@@ -238,7 +238,7 @@ private fun getIncrement(long: Boolean) =
 
 @MultiDevicePreview
 @Composable
-fun PreviewInsertBodyEntry() {
+fun NewBodyMeasurementEntryBottomSheetContentPreview() {
     LiftAppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Surface(
@@ -248,7 +248,7 @@ fun PreviewInsertBodyEntry() {
                 shape = BottomSheetShape,
                 shadowElevation = 8.dp,
             ) {
-                InsertBodyEntry(
+                NewBodyMeasurementEntryBottomSheetContent(
                     state = ScreenState.Insert(
                         name = "Weight",
                         values = List(size = 1) { Validatable.Valid("65") },

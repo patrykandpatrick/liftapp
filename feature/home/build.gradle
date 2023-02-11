@@ -2,7 +2,7 @@ apply from: "$rootDir/gradle/feature-module-base.gradle"
 
 dependencies {
 
-    implementation project(":feature:body")
+    implementation project(":feature:bodymeasurementlist")
     implementation project(":feature:dashboard")
     implementation project(":feature:exercises")
     implementation project(":feature:more")

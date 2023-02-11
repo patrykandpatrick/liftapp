@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.functionality.database.body
+package com.patrykandpatryk.liftapp.functionality.database.bodymeasurement
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -7,32 +7,31 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BodyDao {
+interface BodyMeasurementDao {
 
-    @Query("SELECT * FROM body WHERE id = :id")
-    fun getBody(id: Long): Flow<BodyEntity>
+    @Query("SELECT * FROM body_measurements WHERE id = :id")
+    fun getBodyMeasurement(id: Long): Flow<BodyMeasurementEntity>
 
-    @Query("SELECT * FROM body_with_latest_entry WHERE id = :id")
-    fun getBodyWithLatestEntry(id: Long): Flow<BodyWithLatestEntryView>
+    @Query("SELECT * FROM body_measurements_with_latest_entries WHERE id = :id")
+    fun getBodyMeasurementWithLatestEntry(id: Long): Flow<BodyMeasurementWithLatestEntryViewResult>
 
-    @Query("SELECT * FROM body")
-    fun getBodies(): Flow<List<BodyEntity>>
+    @Query("SELECT * FROM body_measurements_with_latest_entries")
+    fun getBodyMeasurementsWithLatestEntries(): Flow<List<BodyMeasurementWithLatestEntryViewResult>>
 
-    @Query("SELECT * FROM body_with_latest_entry")
-    fun getBodiesWithLatestEntries(): Flow<List<BodyWithLatestEntryView>>
+    @Query(
+        "SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID ORDER BY timestamp DESC",
+    )
+    fun getBodyMeasurementEntries(bodyMeasurementID: Long): Flow<List<BodyMeasurementEntryEntity>>
 
-    @Query("SELECT * FROM body_entry WHERE parent_id = :bodyId ORDER BY timestamp DESC")
-    fun getBodyEntries(bodyId: Long): Flow<List<BodyEntryEntity>>
-
-    @Query("SELECT * FROM body_entry WHERE entry_id = :entryId LIMIT 1")
-    suspend fun getBodyEntry(entryId: Long): BodyEntryEntity?
-
-    @Insert
-    suspend fun insert(body: BodyEntity)
+    @Query("SELECT * FROM body_measurement_entries WHERE id = :id LIMIT 1")
+    suspend fun getBodyMeasurementEntry(id: Long): BodyMeasurementEntryEntity?
 
     @Insert
-    suspend fun insert(bodyEntry: BodyEntryEntity)
+    suspend fun insertBodyMeasurement(bodyMeasurement: BodyMeasurementEntity)
+
+    @Insert
+    suspend fun insertBodyMeasurementEntry(bodyMeasurementEntry: BodyMeasurementEntryEntity)
 
     @Update
-    suspend fun update(bodyEntry: BodyEntryEntity)
+    suspend fun updateBodyMeasurementEntry(bodyMeasurementEntry: BodyMeasurementEntryEntity)
 }

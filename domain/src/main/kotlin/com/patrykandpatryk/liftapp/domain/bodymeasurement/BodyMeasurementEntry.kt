@@ -1,9 +1,9 @@
-package com.patrykandpatryk.liftapp.domain.body
+package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 
-class BodyEntry(
+class BodyMeasurementEntry(
     val id: Long,
-    val values: BodyValues,
+    val value: BodyMeasurementValue,
     val formattedDate: FormattedDate,
 )

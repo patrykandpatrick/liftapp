@@ -2,5 +2,5 @@ apply from: "$rootDir/gradle/feature-module-base.gradle"
 
 android {
 
-    namespace "com.patrykandpatryk.liftapp.feature.body"
+    namespace "com.patrykandpatryk.liftapp.feature.bodymeasurementlist"
 }

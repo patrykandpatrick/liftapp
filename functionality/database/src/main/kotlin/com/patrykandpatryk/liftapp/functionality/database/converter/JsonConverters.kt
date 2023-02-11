@@ -2,7 +2,7 @@ package com.patrykandpatryk.liftapp.functionality.database.converter
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.patrykandpatryk.liftapp.domain.body.BodyValues
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
@@ -23,10 +23,10 @@ class JsonConverters @Inject constructor(
     fun toName(string: String): Name = json.decodeFromString(string)
 
     @TypeConverter
-    fun toString(bodyValues: BodyValues): String = json.encodeToString(bodyValues)
+    fun toString(bodyMeasurementValue: BodyMeasurementValue): String = json.encodeToString(bodyMeasurementValue)
 
     @TypeConverter
-    fun toBodyValues(string: String): BodyValues = json.decodeFromString(string)
+    fun toBodyValues(string: String): BodyMeasurementValue = json.decodeFromString(string)
 
     @TypeConverter
     fun toString(muscles: List<Muscle>): String = json.encodeToString(muscles)

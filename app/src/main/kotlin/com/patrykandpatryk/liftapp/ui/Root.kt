@@ -23,7 +23,6 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.patrykandpatryk.liftapp.bodyentry.ui.addInsertBodyEntry
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.provider.ProvideNavHost
 import com.patrykandpatryk.liftapp.core.ui.dimens.DialogDimens
@@ -31,7 +30,7 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.about.ui.addAbout
-import com.patrykandpatryk.liftapp.feature.bodydetails.ui.addBodyDetails
+import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui.addBodyMeasurementDetailDestination
 import com.patrykandpatryk.liftapp.feature.exercise.ui.addExerciseDetails
 import com.patrykandpatryk.liftapp.feature.exercises.ui.addExercises
 import com.patrykandpatryk.liftapp.feature.main.ui.addHome
@@ -40,6 +39,7 @@ import com.patrykandpatryk.liftapp.feature.newroutine.ui.addNewRoutine
 import com.patrykandpatryk.liftapp.feature.onerepmax.ui.addOneRepMax
 import com.patrykandpatryk.liftapp.feature.routine.ui.addRoutine
 import com.patrykandpatryk.liftapp.feature.settings.ui.addSettings
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.addNewBodyMeasurementEntryDestination
 
 @Composable
 fun Root(
@@ -91,9 +91,9 @@ fun Root(
 
                     addNewRoutine()
 
-                    addBodyDetails()
+                    addBodyMeasurementDetailDestination()
 
-                    addInsertBodyEntry(bottomSheetState = bottomSheetState)
+                    addNewBodyMeasurementEntryDestination(bottomSheetState = bottomSheetState)
 
                     addNewExercise()
 

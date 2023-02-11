@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.body.ui
+package com.patrykandpatryk.liftapp.feature.bodymeasurementlist.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,15 +20,15 @@ import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 
 @Composable
-fun Body(
+fun BodyMeasurementListScreen(
     modifier: Modifier = Modifier,
     navigate: (String) -> Unit,
 ) {
 
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val viewModel: BodyViewModel = hiltViewModel()
-    val items by viewModel.bodyItems.collectAsState()
+    val viewModel: BodyMeasurementListViewModel = hiltViewModel()
+    val items by viewModel.bodyMeasurementsWithLatestEntries.collectAsState()
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -48,9 +48,9 @@ fun Body(
             ) { item ->
 
                 ListItem(
-                    title = item.title,
+                    title = item.name,
                     iconPainter = painterResource(id = item.type.iconRes),
-                    onClick = { navigate(Routes.BodyDetails.create(item.id)) },
+                    onClick = { navigate(Routes.BodyMeasurementDetails.create(item.id)) },
                 )
             }
         }

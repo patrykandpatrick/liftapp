@@ -2,12 +2,12 @@ package com.patrykandpatryk.liftapp.core.ui.resource
 
 import androidx.annotation.DrawableRes
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.domain.body.BodyType
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 
-val BodyType.iconRes: Int
+val BodyMeasurementType.iconRes: Int
     @DrawableRes get() = when (this) {
-        BodyType.Weight -> R.drawable.ic_weightscale_outline
-        BodyType.Length -> R.drawable.ic_distance
-        BodyType.LengthTwoSides -> R.drawable.ic_distance
-        BodyType.Percentage -> R.drawable.ic_donut
+        BodyMeasurementType.Weight -> R.drawable.ic_weightscale_outline
+        BodyMeasurementType.Length -> R.drawable.ic_distance
+        BodyMeasurementType.LengthTwoSides -> R.drawable.ic_distance
+        BodyMeasurementType.Percentage -> R.drawable.ic_donut
     }

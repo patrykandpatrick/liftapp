@@ -1,24 +1,23 @@
 package com.patrykandpatryk.liftapp.domain.unit
 
-import com.patrykandpatryk.liftapp.domain.body.BodyType
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class GetUnitForBodyTypeUseCase @Inject constructor(
+class GetUnitForBodyMeasurementTypeUseCase @Inject constructor(
     private val preferences: PreferenceRepository,
 ) {
 
-    suspend operator fun invoke(bodyType: BodyType): ValueUnit =
-        when (bodyType) {
-            BodyType.Weight,
+    suspend operator fun invoke(bodyMeasurementType: BodyMeasurementType) =
+        when (bodyMeasurementType) {
+            BodyMeasurementType.Weight,
             -> preferences.massUnit.get().first()
 
-            BodyType.Length,
-            BodyType.LengthTwoSides,
+            BodyMeasurementType.Length, BodyMeasurementType.LengthTwoSides,
             -> preferences.shortDistanceUnit.first()
 
-            BodyType.Percentage,
+            BodyMeasurementType.Percentage,
             -> PercentageUnit
         }
 }

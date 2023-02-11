@@ -1,11 +1,10 @@
-package com.patrykandpatryk.liftapp.functionality.database.body
+package com.patrykandpatryk.liftapp.functionality.database.bodymeasurement
 
-import com.patrykandpatryk.liftapp.domain.body.Body
-import com.patrykandpatryk.liftapp.domain.body.BodyEntry
-import com.patrykandpatryk.liftapp.domain.body.BodyItem
-import com.patrykandpatryk.liftapp.domain.body.BodyRepository
-import com.patrykandpatryk.liftapp.domain.body.BodyValues
-import com.patrykandpatryk.liftapp.domain.body.BodyWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurement
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
 import com.patrykandpatryk.liftapp.domain.date.millisToCalendar
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -15,82 +14,82 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class BodyRepositoryImpl @Inject constructor(
-    private val dao: BodyDao,
+class BodyMeasurementRepositoryImpl @Inject constructor(
+    private val dao: BodyMeasurementDao,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
-    private val bodyMapper: BodyMapper,
-) : BodyRepository {
+    private val bodyMeasurementMapper: BodyMeasurementMapper,
+) : BodyMeasurementRepository {
 
-    override fun getBody(id: Long): Flow<Body> =
+    override fun getBodyMeasurement(id: Long): Flow<BodyMeasurement> =
         dao
-            .getBody(id)
-            .map(bodyMapper::toDomain)
+            .getBodyMeasurement(id)
+            .map(bodyMeasurementMapper::toDomain)
             .flowOn(dispatcher)
 
-    override fun getBodyWithLatestEntry(id: Long): Flow<BodyWithLatestEntry> =
+    override fun getBodyMeasurementWithLatestEntry(id: Long): Flow<BodyMeasurementWithLatestEntry> =
         dao
-            .getBodyWithLatestEntry(id)
-            .map(bodyMapper::toDomain)
+            .getBodyMeasurementWithLatestEntry(id)
+            .map(bodyMeasurementMapper::toDomain)
             .flowOn(dispatcher)
 
-    override fun getBodyItems(): Flow<List<BodyItem>> =
+    override fun getBodyMeasurementsWithLatestEntries(): Flow<List<BodyMeasurementWithLatestEntry>> =
         dao
-            .getBodiesWithLatestEntries()
-            .map { entries -> entries.map { entry -> bodyMapper.toBodyItem(entry) } }
+            .getBodyMeasurementsWithLatestEntries()
+            .map { entries -> entries.map { entry -> bodyMeasurementMapper.toDomain(entry) } }
             .flowOn(dispatcher)
 
-    override fun getEntries(bodyId: Long): Flow<List<BodyEntry>> =
+    override fun getBodyMeasurementEntries(bodyMeasurementID: Long): Flow<List<BodyMeasurementEntry>> =
         dao
-            .getBodyEntries(bodyId)
-            .map { entries -> entries.map { entry -> bodyMapper.toDomain(entry) } }
+            .getBodyMeasurementEntries(bodyMeasurementID)
+            .map { entries -> entries.map { entry -> bodyMeasurementMapper.toDomain(entry) } }
             .flowOn(dispatcher)
 
-    override suspend fun getEntry(entryId: Long): BodyEntry? = withContext(dispatcher) {
+    override suspend fun getBodyMeasurementEntry(id: Long): BodyMeasurementEntry? = withContext(dispatcher) {
         dao
-            .getBodyEntry(entryId)
-            ?.let { entry -> bodyMapper.toDomain(entry) }
+            .getBodyMeasurementEntry(id)
+            ?.let { entry -> bodyMeasurementMapper.toDomain(entry) }
     }
 
-    override suspend fun insertBody(
-        body: Body.Insert,
+    override suspend fun insertBodyMeasurement(
+        bodyMeasurement: BodyMeasurement.Insert,
     ) = withContext(dispatcher) {
-        dao.insert(
-            BodyEntity(
-                name = body.name,
-                type = body.type,
+        dao.insertBodyMeasurement(
+            BodyMeasurementEntity(
+                name = bodyMeasurement.name,
+                type = bodyMeasurement.type,
             ),
         )
     }
 
-    override suspend fun insertBodies(bodies: List<Body.Insert>) {
-        bodies.forEach { body -> insertBody(body) }
+    override suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement.Insert>) {
+        bodyMeasurements.forEach { bodyMeasurement -> insertBodyMeasurement(bodyMeasurement) }
     }
 
-    override suspend fun insertBodyEntry(
-        parentId: Long,
-        values: BodyValues,
+    override suspend fun insertBodyMeasurementEntry(
+        bodyMeasurementID: Long,
+        value: BodyMeasurementValue,
         timestamp: Long,
     ) = withContext(dispatcher) {
-        dao.insert(
-            BodyEntryEntity(
-                parentId = parentId,
-                values = values,
+        dao.insertBodyMeasurementEntry(
+            BodyMeasurementEntryEntity(
+                bodyMeasurementID = bodyMeasurementID,
+                value = value,
                 timestamp = timestamp.millisToCalendar(),
             ),
         )
     }
 
-    override suspend fun updateBodyEntry(
-        entryId: Long,
-        parentId: Long,
-        values: BodyValues,
+    override suspend fun updateBodyMeasurementEntry(
+        id: Long,
+        bodyMeasurementID: Long,
+        value: BodyMeasurementValue,
         timestamp: Long,
     ) = withContext(dispatcher) {
-        dao.update(
-            BodyEntryEntity(
-                id = entryId,
-                parentId = parentId,
-                values = values,
+        dao.updateBodyMeasurementEntry(
+            BodyMeasurementEntryEntity(
+                id = id,
+                bodyMeasurementID = bodyMeasurementID,
+                value = value,
                 timestamp = timestamp.millisToCalendar(),
             ),
         )

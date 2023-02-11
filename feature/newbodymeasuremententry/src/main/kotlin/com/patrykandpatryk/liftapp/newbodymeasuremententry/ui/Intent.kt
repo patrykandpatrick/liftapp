@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.bodyentry.ui
+package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 
 sealed class Intent {
 

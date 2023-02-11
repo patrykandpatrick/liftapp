@@ -1,8 +1,8 @@
-package com.patrykandpatryk.liftapp.feature.body.ui
+package com.patrykandpatryk.liftapp.feature.bodymeasurementlist.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatryk.liftapp.domain.body.GetBodyItemsUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementsWithLatestEntriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import javax.inject.Inject
@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
 
 @HiltViewModel
-class BodyViewModel @Inject constructor(
-    getBodyItems: GetBodyItemsUseCase,
+class BodyMeasurementListViewModel @Inject constructor(
+    getBodyMeasurementsWithLatestEntries: GetBodyMeasurementsWithLatestEntriesUseCase,
     exceptionHandler: CoroutineExceptionHandler,
 ) : ViewModel() {
 
-    val bodyItems = getBodyItems()
+    val bodyMeasurementsWithLatestEntries = getBodyMeasurementsWithLatestEntries()
         .stateIn(
             scope = viewModelScope + exceptionHandler,
             started = SharingStarted.Eagerly,

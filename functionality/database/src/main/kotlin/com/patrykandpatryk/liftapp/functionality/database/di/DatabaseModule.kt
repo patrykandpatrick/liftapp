@@ -3,15 +3,15 @@ package com.patrykandpatryk.liftapp.functionality.database.di
 import android.app.Application
 import androidx.room.Room
 import com.patrykandpatryk.liftapp.domain.Constants
-import com.patrykandpatryk.liftapp.domain.body.BodyRepository
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import com.patrykandpatryk.liftapp.domain.model.StringResource
 import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
 import com.patrykandpatryk.liftapp.domain.serialization.PolymorphicEnumSerializer
 import com.patrykandpatryk.liftapp.functionality.database.Database
 import com.patrykandpatryk.liftapp.functionality.database.DatabaseCallback
-import com.patrykandpatryk.liftapp.functionality.database.body.BodyDao
-import com.patrykandpatryk.liftapp.functionality.database.body.BodyRepositoryImpl
+import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementDao
+import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConverters
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
@@ -19,7 +19,7 @@ import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseRepos
 import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineRepositoryImpl
-import com.patrykandpatryk.liftapp.functionality.database.string.BodyStringResource
+import com.patrykandpatryk.liftapp.functionality.database.string.BodyMeasurementStringResource
 import com.patrykandpatryk.liftapp.functionality.database.string.ExerciseStringResource
 import dagger.Binds
 import dagger.Module
@@ -39,7 +39,7 @@ import kotlin.reflect.KClass
 interface DatabaseModule {
 
     @Binds
-    fun bindBodyRepository(repository: BodyRepositoryImpl): BodyRepository
+    fun bindBodyMeasurementRepository(repository: BodyMeasurementRepositoryImpl): BodyMeasurementRepository
 
     @Binds
     fun bindExerciseRepository(repository: ExerciseRepositoryImpl): ExerciseRepository
@@ -71,8 +71,8 @@ interface DatabaseModule {
                 .build()
 
         @Provides
-        fun provideBodyDao(database: Database): BodyDao =
-            database.bodyDao
+        fun provideBodyMeasurementDao(database: Database): BodyMeasurementDao =
+            database.bodyMeasurementDao
 
         @Provides
         fun provideExerciseDao(database: Database): ExerciseDao =
@@ -94,8 +94,10 @@ interface DatabaseModule {
 
         @Provides
         @IntoSet
-        fun provideBodyStringResourceSerializer(): Pair<KClass<StringResource>, KSerializer<StringResource>> =
-            (BodyStringResource::class to PolymorphicEnumSerializer(BodyStringResource.serializer()))
-                as Pair<KClass<StringResource>, KSerializer<StringResource>>
+        fun provideBodyMeasurementStringResourceSerializer():
+            Pair<KClass<StringResource>, KSerializer<StringResource>> = (
+            BodyMeasurementStringResource::class to
+                PolymorphicEnumSerializer(BodyMeasurementStringResource.serializer())
+            ) as Pair<KClass<StringResource>, KSerializer<StringResource>>
     }
 }

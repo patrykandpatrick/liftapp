@@ -40,7 +40,7 @@ object Routes {
         val Dashboard = append(childRoute = "dashboard")
         val Routines = append(childRoute = "routines")
         val Exercises = append(childRoute = "exercises")
-        val Body = append(childRoute = "body")
+        val BodyMeasurementList = append(childRoute = "body_measurement_list")
         val More = append(childRoute = "more")
     }
 
@@ -68,7 +68,7 @@ object Routes {
             value.replace("{$ARG_ID}", routineId.toString())
     }
 
-    object InsertBodyEntry : Route(value = "insert_body_entry/{$ARG_ID}?$ARG_ENTRY_ID={$ARG_ENTRY_ID}") {
+    object NewBodyMeasurementEntry : Route("new_body_measurement_entry/{$ARG_ID}?$ARG_ENTRY_ID={$ARG_ENTRY_ID}") {
 
         override val navArguments = listOf(
             navArgument(ARG_ID) { type = NavType.LongType },
@@ -79,20 +79,20 @@ object Routes {
         )
 
         fun create(
-            bodyId: Long,
+            bodyMeasurementID: Long,
             entryId: Long = ID_NOT_SET,
         ) = value
-            .replace("{$ARG_ID}", bodyId.toString())
+            .replace("{$ARG_ID}", bodyMeasurementID.toString())
             .replace("{$ARG_ENTRY_ID}", entryId.toString())
     }
 
-    object BodyDetails : Route(value = "body/{$ARG_ID}") {
+    object BodyMeasurementDetails : Route(value = "body_measurement_details/{$ARG_ID}") {
 
         override val navArguments = listOf(
             navArgument(ARG_ID) { type = NavType.LongType },
         )
 
-        fun create(bodyId: Long) = value.replace("{$ARG_ID}", bodyId.toString())
+        fun create(bodyMeasurementID: Long) = value.replace("{$ARG_ID}", bodyMeasurementID.toString())
     }
 
     // TODO convert to two destinations (new & edit)

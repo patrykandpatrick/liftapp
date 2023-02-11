@@ -1,12 +1,12 @@
-package com.patrykandpatryk.liftapp.domain.body
+package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
 import javax.inject.Inject
 
-class InsertBodyUseCase @Inject constructor(
-    private val repository: BodyRepository,
+class InsertBodyMeasurementUseCase @Inject constructor(
+    private val repository: BodyMeasurementRepository,
 ) {
 
-    suspend operator fun invoke(body: Body.Insert) {
-        repository.insertBody(body)
+    suspend operator fun invoke(bodyMeasurement: BodyMeasurement.Insert) {
+        repository.insertBodyMeasurement(bodyMeasurement)
     }
 }

@@ -1,48 +1,34 @@
-package com.patrykandpatryk.liftapp.functionality.database.body
+package com.patrykandpatryk.liftapp.functionality.database.bodymeasurement
 
-import com.patrykandpatryk.liftapp.domain.body.Body
-import com.patrykandpatryk.liftapp.domain.body.BodyEntry
-import com.patrykandpatryk.liftapp.domain.body.BodyItem
-import com.patrykandpatryk.liftapp.domain.body.BodyWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurement
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import javax.inject.Inject
 
-class BodyMapper @Inject constructor(
+class BodyMeasurementMapper @Inject constructor(
     private val formatter: Formatter,
     private val stringProvider: StringProvider,
 ) {
 
-    fun toDomain(body: BodyEntity): Body = Body(
-        id = body.id,
-        name = stringProvider.getResolvedName(body.name),
-        type = body.type,
+    fun toDomain(bodyMeasurement: BodyMeasurementEntity): BodyMeasurement = BodyMeasurement(
+        id = bodyMeasurement.id,
+        name = stringProvider.getResolvedName(bodyMeasurement.name),
+        type = bodyMeasurement.type,
     )
 
-    suspend fun toDomain(entry: BodyEntryEntity): BodyEntry = BodyEntry(
+    suspend fun toDomain(entry: BodyMeasurementEntryEntity) = BodyMeasurementEntry(
         id = entry.id,
-        values = entry.values,
+        value = entry.value,
         formattedDate = formatter.getFormattedDate(entry.timestamp),
     )
 
-    suspend fun toDomain(input: BodyWithLatestEntryView): BodyWithLatestEntry = BodyWithLatestEntry(
-        id = input.body.id,
-        name = stringProvider.getResolvedName(input.body.name),
-        type = input.body.type,
-        latestEntry = input.entry?.let { entry -> toDomain(entry) },
-    )
-
-    suspend fun toBodyItem(input: BodyWithLatestEntryView): BodyItem = BodyItem(
-        id = input.body.id,
-        type = input.body.type,
-        title = stringProvider.getResolvedName(input.body.name),
-        latestRecord = input
-            .entry
-            ?.let { entry ->
-                BodyItem.LatestRecord(
-                    formattedDate = formatter.getFormattedDate(entry.timestamp),
-                    value = entry.values.toString(), // FIXME
-                )
-            },
-    )
+    suspend fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
+        BodyMeasurementWithLatestEntry(
+            id = input.bodyMeasurement.id,
+            name = stringProvider.getResolvedName(input.bodyMeasurement.name),
+            type = input.bodyMeasurement.type,
+            latestEntry = input.entry?.let { entry -> toDomain(entry) },
+        )
 }

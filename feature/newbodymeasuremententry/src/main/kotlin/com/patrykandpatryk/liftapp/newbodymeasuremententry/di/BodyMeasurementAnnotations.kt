@@ -1,9 +1,9 @@
-package com.patrykandpatryk.liftapp.bodyentry.di
+package com.patrykandpatryk.liftapp.newbodymeasuremententry.di
 
 import javax.inject.Qualifier
 
 @Qualifier
-annotation class BodyId
+annotation class BodyMeasurementID
 
 @Qualifier
-annotation class BodyEntryId
+annotation class BodyMeasurementEntryID

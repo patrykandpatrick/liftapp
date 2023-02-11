@@ -5,7 +5,7 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.feature.about.ui.More
-import com.patrykandpatryk.liftapp.feature.body.ui.Body
+import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.ui.BodyMeasurementListScreen
 import com.patrykandpatryk.liftapp.feature.dashboard.ui.Dashboard
 import com.patrykandpatryk.liftapp.feature.exercises.ui.Exercises
 import com.patrykandpatryk.liftapp.feature.routines.ui.Routines
@@ -48,12 +48,12 @@ val navBarRoutes: List<NavItemRoute> by lazy {
             },
         ),
         NavItemRoute(
-            route = Routes.Home.Body.value,
+            route = Routes.Home.BodyMeasurementList.value,
             titleRes = R.string.route_body,
             deselectedIconRes = R.drawable.ic_weightscale_outline,
             selectedIconRes = R.drawable.ic_weightscale_filled,
             content = { _, modifier, _, navigate ->
-                Body(
+                BodyMeasurementListScreen(
                     modifier = modifier,
                     navigate = navigate,
                 )

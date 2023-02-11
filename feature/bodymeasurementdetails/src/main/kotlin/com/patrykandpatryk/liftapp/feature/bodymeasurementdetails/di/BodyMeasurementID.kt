@@ -1,6 +1,6 @@
-package com.patrykandpatryk.liftapp.feature.bodydetails.di
+package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.di
 
 import javax.inject.Qualifier
 
 @Qualifier
-annotation class BodyId
+annotation class BodyMeasurementID

@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.functionality.database.converter
 
-import com.patrykandpatryk.liftapp.domain.body.BodyValues
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.di.DomainModule
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
@@ -40,16 +40,16 @@ class JsonConvertersTest {
     }
 
     @Test
-    fun `Conversion of BodyValues#Single to String and back yields the same result`() {
-        val input = BodyValues.Single(Random.nextFloat(), MassUnit.Kilograms)
+    fun `Conversion of BodyMeasurementValue#Single to String and back yields the same result`() {
+        val input = BodyMeasurementValue.Single(Random.nextFloat(), MassUnit.Kilograms)
         val serializedInput = converter.toString(input)
         val deserializedInput = converter.toBodyValues(serializedInput)
         assertEquals(input, deserializedInput)
     }
 
     @Test
-    fun `Conversion of BodyValues#Double to String and back yields the same result`() {
-        val input = BodyValues.Double(Random.nextFloat(), Random.nextFloat(), MassUnit.Kilograms)
+    fun `Conversion of BodyMeasurementValue#Double to String and back yields the same result`() {
+        val input = BodyMeasurementValue.Double(Random.nextFloat(), Random.nextFloat(), MassUnit.Kilograms)
         val serializedInput = converter.toString(input)
         val deserializedInput = converter.toBodyValues(serializedInput)
         assertEquals(input, deserializedInput)

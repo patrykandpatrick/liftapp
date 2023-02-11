@@ -3,10 +3,10 @@ package com.patrykandpatryk.liftapp.functionality.database
 import androidx.room.BuiltInTypeConverters
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.patrykandpatryk.liftapp.functionality.database.body.BodyDao
-import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntity
-import com.patrykandpatryk.liftapp.functionality.database.body.BodyEntryEntity
-import com.patrykandpatryk.liftapp.functionality.database.body.BodyWithLatestEntryView
+import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementDao
+import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementEntity
+import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementEntryEntity
+import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementWithLatestEntryViewResult
 import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConverters
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
@@ -20,15 +20,15 @@ import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExe
 
 @androidx.room.Database(
     entities = [
-        BodyEntity::class,
-        BodyEntryEntity::class,
+        BodyMeasurementEntity::class,
+        BodyMeasurementEntryEntity::class,
         ExerciseEntity::class,
         RoutineEntity::class,
         ExerciseWithRoutineEntity::class,
         GoalEntity::class,
     ],
     views = [
-        BodyWithLatestEntryView::class,
+        BodyMeasurementWithLatestEntryViewResult::class,
         RoutineWithExerciseNamesView::class,
     ],
     version = 1,
@@ -45,7 +45,7 @@ import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExe
 )
 abstract class Database : RoomDatabase() {
 
-    abstract val bodyDao: BodyDao
+    abstract val bodyMeasurementDao: BodyMeasurementDao
 
     abstract val exerciseDao: ExerciseDao
 

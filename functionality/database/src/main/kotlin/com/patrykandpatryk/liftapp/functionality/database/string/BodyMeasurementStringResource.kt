@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("body")
-enum class BodyStringResource(override val resourceId: Int) : StringResource {
+enum class BodyMeasurementStringResource(override val resourceId: Int) : StringResource {
     BodyWeight(R.string.body_body_weight),
     FatPercentage(R.string.body_fat_percentage),
     MusclePercentage(R.string.body_muscle_percentage),

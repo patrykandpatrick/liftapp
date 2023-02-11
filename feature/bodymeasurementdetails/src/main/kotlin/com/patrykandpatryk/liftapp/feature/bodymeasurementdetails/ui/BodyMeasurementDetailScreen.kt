@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.bodydetails.ui
+package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui
 
 import androidx.compose.foundation.layout.WindowInsets.Companion
 import androidx.compose.foundation.layout.navigationBars
@@ -24,7 +24,7 @@ import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.Routes.InsertBodyEntry
+import com.patrykandpatryk.liftapp.core.navigation.Routes.NewBodyMeasurementEntry
 import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListItem
@@ -42,22 +42,22 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 
-fun NavGraphBuilder.addBodyDetails() {
+fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
 
-    composable(route = Routes.BodyDetails) {
-        BodyDetails()
+    composable(route = Routes.BodyMeasurementDetails) {
+        BodyMeasurementDetailScreen()
     }
 }
 @Composable
-fun BodyDetails(
+fun BodyMeasurementDetailScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    val viewModel: BodyDetailsViewModel = hiltViewModel()
+    val viewModel: BodyMeasurementDetailViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsState()
 
-    BodyDetails(
+    BodyMeasurementDetailScreen(
         onIntent = viewModel::handleIntent,
         state = state,
         modelProducer = viewModel.chartEntryModelProducer,
@@ -66,7 +66,7 @@ fun BodyDetails(
 }
 
 @Composable
-private fun BodyDetails(
+private fun BodyMeasurementDetailScreen(
     onIntent: (Intent) -> Unit,
     state: ScreenState,
     modelProducer: ChartEntryModelProducer,
@@ -91,7 +91,7 @@ private fun BodyDetails(
                 modifier = Modifier.navigationBarsPadding(),
                 text = { Text(text = stringResource(id = R.string.action_new_entry)) },
                 icon = { Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null) },
-                onClick = { navigator.navigate(InsertBodyEntry.create(state.bodyId)) },
+                onClick = { navigator.navigate(NewBodyMeasurementEntry.create(state.bodyMeasurementID)) },
             )
         },
     ) { paddingValues ->
@@ -151,7 +151,7 @@ private fun BodyDetails(
                             iconPainter = painterResource(id = R.drawable.ic_edit),
                             label = stringResource(id = R.string.action_edit),
                             onClick = {
-                                navigator.navigate(InsertBodyEntry.create(state.bodyId, entry.id))
+                                navigator.navigate(NewBodyMeasurementEntry.create(state.bodyMeasurementID, entry.id))
                             },
                         ),
                         OptionItem(

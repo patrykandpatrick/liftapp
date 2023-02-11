@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.domain.body
+package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
 import com.patrykandpatryk.liftapp.domain.Constants.Input.BODY_MAX_LENGTH_IMPERIAL
 import com.patrykandpatryk.liftapp.domain.Constants.Input.BODY_MAX_LENGTH_METRIC
@@ -9,7 +9,7 @@ import com.patrykandpatryk.liftapp.domain.Constants.Input.BODY_MIN_VALUE
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class BodyType(
+enum class BodyMeasurementType(
     val fields: Int,
     val metricValueRange: ClosedFloatingPointRange<Float>,
     val imperialValueRange: ClosedFloatingPointRange<Float>,

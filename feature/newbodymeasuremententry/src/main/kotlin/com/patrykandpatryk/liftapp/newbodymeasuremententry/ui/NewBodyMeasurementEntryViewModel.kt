@@ -1,13 +1,13 @@
-package com.patrykandpatryk.liftapp.bodyentry.ui
+package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatryk.liftapp.bodyentry.di.BodyEntryId
-import com.patrykandpatryk.liftapp.bodyentry.di.BodyId
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementEntryID
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementID
 import com.patrykandpatryk.liftapp.core.di.ValidatorType
-import com.patrykandpatryk.liftapp.domain.body.BodyRepository
-import com.patrykandpatryk.liftapp.domain.body.BodyValues
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.date.day
 import com.patrykandpatryk.liftapp.domain.date.hour
 import com.patrykandpatryk.liftapp.domain.date.minute
@@ -17,7 +17,7 @@ import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
-import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyTypeUseCase
+import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseCase
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.Validator
@@ -36,14 +36,14 @@ import javax.inject.Inject
 private const val SCREEN_STATE_KEY = "screen_state"
 
 @HiltViewModel
-internal class InsertBodyEntryViewModel @Inject constructor(
-    @BodyId val id: Long,
-    @BodyEntryId val entryId: Long,
+internal class NewBodyMeasurementEntryViewModel @Inject constructor(
+    @BodyMeasurementID val id: Long,
+    @BodyMeasurementEntryID val entryId: Long,
     private val formatter: Formatter,
     private val exceptionHandler: CoroutineExceptionHandler,
-    private val repository: BodyRepository,
+    private val repository: BodyMeasurementRepository,
     private val stringProvider: StringProvider,
-    private val getUnitForBodyType: GetUnitForBodyTypeUseCase,
+    private val getUnitForBodyMeasurementType: GetUnitForBodyMeasurementTypeUseCase,
     private val savedStateHandle: SavedStateHandle,
     @ValidatorType.HigherThanZero private val validator: Validator<Float>,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
@@ -64,23 +64,23 @@ internal class InsertBodyEntryViewModel @Inject constructor(
     }
 
     private suspend fun getInitialState(id: Long): ScreenState {
-        val body = repository.getBodyWithLatestEntry(id).first()
-        val entry = repository.getEntry(entryId)
-        val unit = getUnitForBodyType(body.type)
+        val bodyMeasurement = repository.getBodyMeasurementWithLatestEntry(id).first()
+        val entry = repository.getBodyMeasurementEntry(entryId)
+        val unit = getUnitForBodyMeasurementType(bodyMeasurement.type)
 
         return when (entry) {
             null -> ScreenState.Insert(
-                name = body.name,
-                values = body.latestEntry?.values.toValidatableStrings(body.type.fields),
+                name = bodyMeasurement.name,
+                values = bodyMeasurement.latestEntry?.value.toValidatableStrings(bodyMeasurement.type.fields),
                 unit = unit,
                 is24H = formatter.is24H(),
                 formattedDate = formatter.getFormattedDate(calendar),
             )
             else -> ScreenState.Update(
                 entryId = entryId,
-                name = body.name,
-                values = entry.values.toValidatableStrings(body.type.fields),
-                unit = entry.values.unit,
+                name = bodyMeasurement.name,
+                values = entry.value.toValidatableStrings(bodyMeasurement.type.fields),
+                unit = entry.value.unit,
                 is24H = formatter.is24H(),
                 formattedDate = entry.formattedDate,
             )
@@ -136,19 +136,19 @@ internal class InsertBodyEntryViewModel @Inject constructor(
         return when {
             model.values.any { it.isInvalid } -> model.mutate(showErrors = true)
             model is ScreenState.Update -> {
-                repository.updateBodyEntry(
-                    entryId = model.entryId,
-                    parentId = id,
-                    values = model.values.toBodyValues(unit = model.unit),
+                repository.updateBodyMeasurementEntry(
+                    id = model.entryId,
+                    bodyMeasurementID = id,
+                    value = model.values.toBodyValues(unit = model.unit),
                     timestamp = model.formattedDate.millis,
                 )
                 events.emit(Event.EntrySaved)
                 model
             }
             else -> {
-                repository.insertBodyEntry(
-                    parentId = id,
-                    values = model.values.toBodyValues(unit = model.unit),
+                repository.insertBodyMeasurementEntry(
+                    bodyMeasurementID = id,
+                    value = model.values.toBodyValues(unit = model.unit),
                     timestamp = model.formattedDate.millis,
                 )
                 events.emit(Event.EntrySaved)
@@ -160,11 +160,11 @@ internal class InsertBodyEntryViewModel @Inject constructor(
     private fun List<Validatable<String>>.toBodyValues(
         unit: ValueUnit,
     ) = when (size) {
-        1 -> BodyValues.Single(
+        1 -> BodyMeasurementValue.Single(
             value = get(0).value.parse(),
             unit = unit,
         )
-        2 -> BodyValues.Double(
+        2 -> BodyMeasurementValue.Double(
             left = get(0).value.parse(),
             right = get(1).value.parse(),
             unit = unit,
@@ -172,13 +172,13 @@ internal class InsertBodyEntryViewModel @Inject constructor(
         else -> error("Tried to convert $size items into `BodyValues`.")
     }
 
-    private fun BodyValues?.toValidatableStrings(fieldCount: Int): List<Validatable<String>> = buildList {
+    private fun BodyMeasurementValue?.toValidatableStrings(fieldCount: Int): List<Validatable<String>> = buildList {
         when (this@toValidatableStrings) {
-            is BodyValues.Double -> {
+            is BodyMeasurementValue.Double -> {
                 add(left.toString().toValid())
                 add(right.toString().toValid())
             }
-            is BodyValues.Single -> {
+            is BodyMeasurementValue.Single -> {
                 add(value.toString().toValid())
             }
             null -> repeat(fieldCount) {

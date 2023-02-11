@@ -1,16 +1,16 @@
-package com.patrykandpatryk.liftapp.feature.bodydetails.ui
+package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatryk.liftapp.core.mapper.BodyEntriesToChartEntriesMapper
-import com.patrykandpatryk.liftapp.domain.body.Body
-import com.patrykandpatryk.liftapp.domain.body.BodyEntry
-import com.patrykandpatryk.liftapp.domain.body.BodyRepository
-import com.patrykandpatryk.liftapp.domain.body.BodyValues
+import com.patrykandpatryk.liftapp.core.mapper.BodyMeasurementEntryToChartEntryMapper
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurement
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
-import com.patrykandpatryk.liftapp.feature.bodydetails.di.BodyId
+import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.di.BodyMeasurementID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,12 +24,12 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class BodyDetailsViewModel @Inject constructor(
-    @BodyId bodyId: Long,
-    repository: BodyRepository,
+class BodyMeasurementDetailViewModel @Inject constructor(
+    @BodyMeasurementID bodyMeasurementID: Long,
+    repository: BodyMeasurementRepository,
     private val unitConverter: UnitConverter,
     private val exceptionHandler: CoroutineExceptionHandler,
-    private val chartEntriesMapper: BodyEntriesToChartEntriesMapper,
+    private val chartEntryMapper: BodyMeasurementEntryToChartEntryMapper,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Unit> {
 
     val chartEntryModelProducer = ChartEntryModelProducer()
@@ -37,15 +37,15 @@ class BodyDetailsViewModel @Inject constructor(
     private val expandedItemId = MutableStateFlow<Long?>(null)
 
     override val state: StateFlow<ScreenState> = combine(
-        repository.getBody(bodyId),
-        repository.getEntries(bodyId),
+        repository.getBodyMeasurement(bodyMeasurementID),
+        repository.getBodyMeasurementEntries(bodyMeasurementID),
         expandedItemId,
         transform = ::mapPopulatedState,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = ScreenState.Loading(
-            bodyId = bodyId,
+            bodyMeasurementID = bodyMeasurementID,
             chartEntryModelProducer = chartEntryModelProducer,
         ),
     )
@@ -53,20 +53,20 @@ class BodyDetailsViewModel @Inject constructor(
     override val events: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 1)
 
     private suspend fun mapPopulatedState(
-        body: Body,
-        entries: List<BodyEntry>,
+        bodyMeasurement: BodyMeasurement,
+        entries: List<BodyMeasurementEntry>,
         expandedItemId: Long?,
     ): ScreenState.Populated = withContext(exceptionHandler) {
 
-        chartEntryModelProducer.setEntries(chartEntriesMapper(entries))
+        chartEntryModelProducer.setEntries(chartEntryMapper(entries))
 
         ScreenState.Populated(
-            bodyId = body.id,
-            name = body.name,
+            bodyMeasurementID = bodyMeasurement.id,
+            name = bodyMeasurement.name,
             entries = entries.map { entry ->
                 ScreenState.Entry(
                     id = entry.id,
-                    value = entry.values.toPrettyValue(),
+                    value = entry.value.toPrettyValue(),
                     date = entry.formattedDate.dateShort,
                     isExpanded = entry.id == expandedItemId,
                 )
@@ -75,14 +75,14 @@ class BodyDetailsViewModel @Inject constructor(
         )
     }
 
-    private suspend fun BodyValues.toPrettyValue(): String = when (this) {
-        is BodyValues.Double -> unitConverter.convertToPreferredUnitAndFormat(
+    private suspend fun BodyMeasurementValue.toPrettyValue(): String = when (this) {
+        is BodyMeasurementValue.Double -> unitConverter.convertToPreferredUnitAndFormat(
             from = unit,
             left,
             right,
         )
 
-        is BodyValues.Single -> unitConverter.convertToPreferredUnitAndFormat(
+        is BodyMeasurementValue.Single -> unitConverter.convertToPreferredUnitAndFormat(
             from = unit,
             value,
         )
