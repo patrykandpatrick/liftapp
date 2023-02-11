@@ -8,8 +8,5 @@ android {
 
 dependencies {
 
-    muscleBitmapModuleDependencies.each {
-
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation project(":core")
 }

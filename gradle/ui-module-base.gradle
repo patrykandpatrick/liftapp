@@ -7,7 +7,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion versions.composeCompiler
+        kotlinCompilerExtensionVersion libs.versions.composeCompiler.get()
     }
 
     packagingOptions {
@@ -31,7 +31,21 @@ kotlin {
 
 dependencies {
 
-    coreModuleDependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation project(":domain")
+
+    debugImplementation libs.compose.ui.test.manifest
+
+    implementation libs.bundles.accompanist
+    implementation libs.bundles.hilt
+    implementation libs.bundles.ui
+    implementation libs.activity
+    implementation libs.appcompat
+    implementation libs.lifecycle.runtime
+    implementation libs.timber
+    implementation libs.viewmodel
+
+    kapt libs.hilt.compiler
+
+    testImplementation project(":domain-testing")
+    testImplementation libs.bundles.testing
 }

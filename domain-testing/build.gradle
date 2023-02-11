@@ -9,7 +9,8 @@ java {
 }
 
 dependencies {
-    domainTestModuleDependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+
+    implementation project(":domain")
+
+    implementation libs.opto.domain
 }

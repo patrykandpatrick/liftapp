@@ -8,10 +8,9 @@ ksp {
 
 dependencies {
 
-    databaseModuleDependencies.each {
+    implementation libs.room.ktx
 
-        add(it.configuration, it.dependency, it.options)
-    }
+    kapt libs.room.compiler
 }
 
 android {

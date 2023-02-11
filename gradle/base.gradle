@@ -4,7 +4,6 @@ apply plugin: "kotlin-parcelize"
 apply plugin: "dagger.hilt.android.plugin"
 apply plugin: "com.google.devtools.ksp"
 
-apply from: "$rootDir/gradle/dependencies.gradle"
 apply from: "$rootDir/gradle/versioning.gradle"
 apply from: "$rootDir/gradle/versions.gradle"
 

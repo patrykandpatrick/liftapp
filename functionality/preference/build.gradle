@@ -2,10 +2,13 @@ apply from: "$rootDir/gradle/functionality-module-base.gradle"
 
 dependencies {
 
-    preferenceModuleDependencies.each {
+    implementation libs.datastore
 
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation libs.bundles.opto
+
+    kapt libs.hilt.compiler
+
+    testImplementation project(":domain-testing")
 }
 
 android {

@@ -2,10 +2,7 @@ apply from: "$rootDir/gradle/functionality-module-base.gradle"
 
 dependencies {
 
-    storageModuleDependencies.each {
-
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation libs.documentfile
 }
 
 android {

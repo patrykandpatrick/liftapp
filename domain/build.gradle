@@ -11,7 +11,14 @@ java {
 }
 
 dependencies {
-    domainModuleDependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+
+    api libs.kotlinx.serialization.json
+    api libs.bundles.kotlin
+
+    implementation libs.hilt.core
+    implementation libs.opto.domain
+
+    kapt libs.hilt.compiler
+
+    testImplementation libs.bundles.testing
 }

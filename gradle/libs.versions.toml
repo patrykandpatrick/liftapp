@@ -1,0 +1,111 @@
+[versions]
+accompanist = "0.29.1-alpha"
+activity = "1.7.0-beta01"
+androidxCore = "1.10.0-alpha02"
+appcompat = "1.7.0-alpha02"
+coil = "2.2.2"
+compose = "1.4.0-beta01"
+composeCompiler = "1.4.2"
+coroutines = "1.6.4"
+datastore = "1.1.0-alpha01"
+documentfile = "1.1.0-alpha01"
+hilt = "2.44.2"
+hiltNavigation = "1.1.0-alpha01"
+junit = "4.13.2"
+junitExt = "1.1.2"
+jupiter = "5.9.1"
+kotlin = "1.8.10"
+kotlinxSerialization = "1.4.1"
+kotlinxSerializationConverter = "0.8.0"
+lifecycle = "2.5.1"
+material3 = "1.1.0-alpha06"
+mockk = "1.13.2"
+ossLicensesPlugin = "0.10.4"
+ossLicenses = "17.0.0"
+opto = "1.0.18"
+retrofit = "2.9.0"
+room = "2.5.0"
+viewmodel = "2.6.0-beta01"
+testCore = "1.3.0"
+timber = "5.0.1"
+vico = "1.6.3"
+
+androidPlugin = "7.4.1"
+detektPlugin = "1.22.0"
+kspPlugin = "1.8.10-1.0.9"
+
+[libraries]
+
+accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
+accompanist-system-ui-controler = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+
+activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version = "1.21.0" }
+
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+
+datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
+
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hilt" }
+hilt-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
+hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+jupiter = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
+
+kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "kotlinxSerializationConverter" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+
+opto-core = { module = "com.patrykmichalik.opto:core", version.ref = "opto" }
+opto-domain = { module = "com.patrykmichalik.opto:domain", version.ref = "opto" }
+
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+vico = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "vico" }
+viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel" }
+
+[bundles]
+accompanist = ["accompanist-insets", "accompanist-navigation-animation", "accompanist-navigation-material", "accompanist-system-ui-controler"]
+compose = ["compose-ui", "compose-ui-tooling", "compose-material", "compose-material3"]
+kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
+hilt = ["hilt-android", "hilt-navigation"]
+opto = ["opto-core", "opto-domain"]
+ui = ["coil", "compose-ui", "compose-ui-tooling", "compose-material", "compose-material3", "vico"]
+
+testing = ["junit", "jupiter", "kotlin-test"]
+
+[plugins]
+
+application = { id = "com.android.application", version.ref = "androidPlugin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektPlugin" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
+library = { id = "com.android.library", version.ref = "androidPlugin" }

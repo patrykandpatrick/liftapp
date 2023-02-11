@@ -2,10 +2,11 @@ apply from: "$rootDir/gradle/feature-module-base.gradle"
 
 dependencies {
 
-    featureHomeModuleDependencies().forEach {
-
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation project(":feature:body")
+    implementation project(":feature:dashboard")
+    implementation project(":feature:exercises")
+    implementation project(":feature:more")
+    implementation project(":feature:routines")
 }
 
 android {

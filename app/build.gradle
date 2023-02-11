@@ -26,7 +26,22 @@ android {
 
 dependencies {
 
-    appModuleDependencies().each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation project(":core")
+    implementation project(":data")
+    implementation project(":feature:home")
+    implementation project(":feature:settings")
+    implementation project(":feature:about")
+    implementation project(":feature:onerepmax")
+    implementation project(":feature:newexercise")
+    implementation project(":feature:exercisedetails")
+    implementation project(":feature:exercises")
+    implementation project(":feature:bodyentry")
+    implementation project(":feature:bodydetails")
+    implementation project(":feature:routines")
+    implementation project(":feature:routine")
+    implementation project(":feature:newroutine")
+    implementation project(":functionality:database")
+    implementation project(":functionality:musclebitmap")
+    implementation project(":functionality:preference")
+    implementation project(":functionality:storage")
 }

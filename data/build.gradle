@@ -3,10 +3,16 @@ apply from: "$rootDir/gradle/base.gradle"
 
 dependencies {
 
-    dataModuleDependencies.each {
+    implementation project(":domain")
 
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation libs.bundles.hilt
+    implementation libs.bundles.opto
+    implementation libs.timber
+
+    kapt libs.hilt.compiler
+
+    testImplementation project(":domain-testing")
+    testImplementation libs.bundles.testing
 }
 
 android {
