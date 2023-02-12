@@ -72,5 +72,5 @@ class StringProviderImpl @Inject constructor(
     private fun string(
         @StringRes id: Int,
         vararg formatArgs: Any,
-    ): String = application.getString(id, *formatArgs)
+    ): String = if (formatArgs.isNotEmpty()) application.getString(id, *formatArgs) else application.getString(id)
 }
