@@ -8,6 +8,7 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurement
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.DeleteBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.di.BodyMeasurementID
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -30,6 +32,7 @@ class BodyMeasurementDetailViewModel @Inject constructor(
     private val unitConverter: UnitConverter,
     private val exceptionHandler: CoroutineExceptionHandler,
     private val chartEntryMapper: BodyMeasurementEntryToChartEntryMapper,
+    private val deleteBodyMeasurementEntry: DeleteBodyMeasurementEntryUseCase,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Unit> {
 
     val chartEntryModelProducer = ChartEntryModelProducer()
@@ -88,9 +91,12 @@ class BodyMeasurementDetailViewModel @Inject constructor(
         )
     }
 
-    override fun handleIntent(intent: Intent) = when (intent) {
-        is Intent.ExpandItem -> expandedItemId.update { currentId ->
-            if (currentId == intent.id) null else intent.id
+    override fun handleIntent(intent: Intent) {
+        when (intent) {
+            is Intent.ExpandItem -> expandedItemId.update { currentId ->
+                if (currentId == intent.id) null else intent.id
+            }
+            is Intent.DeleteBodyMeasurementEntry -> viewModelScope.launch { deleteBodyMeasurementEntry(intent.id) }
         }
     }
 }

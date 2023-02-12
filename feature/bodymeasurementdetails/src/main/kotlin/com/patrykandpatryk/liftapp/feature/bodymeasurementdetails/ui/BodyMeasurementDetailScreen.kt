@@ -157,7 +157,7 @@ private fun BodyMeasurementDetailScreen(
                         OptionItem(
                             iconPainter = painterResource(id = R.drawable.ic_delete),
                             label = stringResource(id = R.string.action_delete),
-                            onClick = {},
+                            onClick = { onIntent(Intent.DeleteBodyMeasurementEntry(entry.id)) },
                         ),
                     ),
                     isExpanded = entry.isExpanded,

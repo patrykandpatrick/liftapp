@@ -30,4 +30,6 @@ interface BodyMeasurementRepository {
         value: BodyMeasurementValue,
         timestamp: Long,
     )
+
+    suspend fun deleteBodyMeasurementEntry(id: Long)
 }

@@ -94,4 +94,8 @@ class BodyMeasurementRepositoryImpl @Inject constructor(
             ),
         )
     }
+
+    override suspend fun deleteBodyMeasurementEntry(id: Long) {
+        withContext(dispatcher) { dao.deleteBodyMeasurementEntry(id) }
+    }
 }

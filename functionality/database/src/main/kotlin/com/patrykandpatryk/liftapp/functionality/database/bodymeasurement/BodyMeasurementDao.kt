@@ -34,4 +34,7 @@ interface BodyMeasurementDao {
 
     @Update
     suspend fun updateBodyMeasurementEntry(bodyMeasurementEntry: BodyMeasurementEntryEntity)
+
+    @Query("DELETE FROM body_measurement_entries WHERE id = :id")
+    suspend fun deleteBodyMeasurementEntry(id: Long)
 }
