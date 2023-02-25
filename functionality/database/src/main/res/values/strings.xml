@@ -18,7 +18,7 @@
     <string name="ex_cable_hip_adduction">Cable Hip Adduction</string>
     <string name="ex_cable_woodchoppers">Cable Woodchopper</string>
     <string name="ex_calf_press">Calf Press</string>
-    <string name="ex_calf_rises">Calf Rise</string>
+    <string name="ex_calf_raise">Calf Raise</string>
     <string name="ex_chest_extension">Chest Extension</string>
     <string name="ex_chin_ups">Chin-Up</string>
     <string name="ex_crunches_with_legs_up">Vertical Leg Crunch</string>
@@ -33,7 +33,7 @@
     <string name="ex_dumbbell_french_press">Dumbbell French Press</string>
     <string name="ex_dumbbell_lunges">Dumbbell Lunge</string>
     <string name="ex_dumbbell_rows">Dumbbell Rows</string>
-    <string name="ex_explosive_knee_rises">Explosive Knee Rise</string>
+    <string name="ex_explosive_knee_raise">Explosive Knee Raise</string>
     <string name="ex_face_pull">Face Pull</string>
     <string name="ex_flat_bench_press">Flat Bench Press</string>
     <string name="ex_flat_db_bench_press">Flat Dumbbell Bench Press</string>
@@ -59,7 +59,7 @@
     <string name="ex_leg_curl">Leg Curl</string>
     <string name="ex_leg_extensions">Leg Extension</string>
     <string name="ex_leg_press">Leg Press</string>
-    <string name="ex_leg_rises">Leg Rises</string>
+    <string name="ex_leg_raise">Leg Raise</string>
     <string name="ex_long_run">Long Run</string>
     <string name="ex_low_row">Low Row</string>
     <string name="ex_muscle_ups">Muscle-Up</string>

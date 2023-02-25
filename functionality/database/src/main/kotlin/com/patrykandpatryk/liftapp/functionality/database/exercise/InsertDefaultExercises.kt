@@ -95,7 +95,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(ExerciseStringResource.LegRises),
+            name = Name.Resource(ExerciseStringResource.LegRaise),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Forearms, Muscle.Lats, Muscle.Quadriceps),
@@ -211,7 +211,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(ExerciseStringResource.CalfRises),
+            name = Name.Resource(ExerciseStringResource.CalfRaise),
             exerciseType = ExerciseType.Weight,
             mainMuscles = listOf(Muscle.Calves),
         ).also(::add)
@@ -303,7 +303,7 @@ class InsertDefaultExercises @Inject constructor(
         ).also(::add)
 
         Exercise.Insert(
-            name = Name.Resource(ExerciseStringResource.ExplosiveKneeRises),
+            name = Name.Resource(ExerciseStringResource.ExplosiveKneeRaise),
             exerciseType = ExerciseType.Reps,
             mainMuscles = listOf(Muscle.Abs),
             secondaryMuscles = listOf(Muscle.Traps, Muscle.Shoulders, Muscle.Lats),
