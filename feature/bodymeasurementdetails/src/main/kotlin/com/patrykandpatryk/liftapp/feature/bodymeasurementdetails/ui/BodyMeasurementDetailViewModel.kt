@@ -7,10 +7,9 @@ import com.patrykandpatryk.liftapp.core.mapper.BodyMeasurementEntryToChartEntryM
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurement
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
-import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.DeleteBodyMeasurementEntryUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.FormatBodyMeasurementValueToStringUseCase
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
-import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.di.BodyMeasurementID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -29,10 +28,10 @@ import javax.inject.Inject
 class BodyMeasurementDetailViewModel @Inject constructor(
     @BodyMeasurementID bodyMeasurementID: Long,
     repository: BodyMeasurementRepository,
-    private val unitConverter: UnitConverter,
     private val exceptionHandler: CoroutineExceptionHandler,
     private val chartEntryMapper: BodyMeasurementEntryToChartEntryMapper,
     private val deleteBodyMeasurementEntry: DeleteBodyMeasurementEntryUseCase,
+    private val formatBodyMeasurementValueToString: FormatBodyMeasurementValueToStringUseCase,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Unit> {
 
     val chartEntryModelProducer = ChartEntryModelProducer()
@@ -69,25 +68,12 @@ class BodyMeasurementDetailViewModel @Inject constructor(
             entries = entries.map { entry ->
                 ScreenState.Entry(
                     id = entry.id,
-                    value = entry.value.toPrettyValue(),
+                    value = formatBodyMeasurementValueToString(entry.value),
                     date = entry.formattedDate.dateShort,
                     isExpanded = entry.id == expandedItemId,
                 )
             },
             chartEntryModelProducer = chartEntryModelProducer,
-        )
-    }
-
-    private suspend fun BodyMeasurementValue.toPrettyValue(): String = when (this) {
-        is BodyMeasurementValue.Double -> unitConverter.convertToPreferredUnitAndFormat(
-            from = unit,
-            left,
-            right,
-        )
-
-        is BodyMeasurementValue.Single -> unitConverter.convertToPreferredUnitAndFormat(
-            from = unit,
-            value,
         )
     }
 
