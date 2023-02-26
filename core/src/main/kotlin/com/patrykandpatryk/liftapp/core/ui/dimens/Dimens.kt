@@ -89,6 +89,7 @@ data class Dimens(
         val checkedItemHorizontalPadding: Dp = 4.dp,
         val checkedItemTonalElevation: Dp = 2.dp,
         val itemTitleHighlightCornerRadius: Dp = 4.dp,
+        val itemIconBackgroundSize: Dp = 40.dp,
     )
 
     @Immutable

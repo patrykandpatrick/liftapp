@@ -126,7 +126,7 @@ fun CheckableListItem(
             if (iconPainter != null) {
                 Icon(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(MaterialTheme.dimens.list.itemIconBackgroundSize)
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             shape = PillShape,

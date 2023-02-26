@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.calculateStartPadding
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.thenIf
@@ -57,6 +58,7 @@ import com.patrykandpatryk.liftapp.core.provider.setResult
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
+import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.SearchBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -194,7 +196,10 @@ private fun Exercises(
                             title = item.title,
                             modifier = Modifier
                                 .animateItemPlacement()
-                                .padding(start = 48.dp),
+                                .padding(
+                                    start = MaterialTheme.dimens.list.itemIconBackgroundSize +
+                                        ListItemDefaults.paddingValues.calculateStartPadding(),
+                                ),
                         )
                     }
                 }
