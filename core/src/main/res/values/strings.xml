@@ -39,9 +39,9 @@
     <string name="muscle_traps">Traps</string>
     <string name="muscle_triceps">Triceps</string>
 
-    <string name="primary_muscle">Primary muscle</string>
-    <string name="secondary_muscle">Secondary muscle</string>
-    <string name="tertiary_muscle">Tertiary muscle</string>
+    <string name="primary_muscle">Primary Muscle</string>
+    <string name="secondary_muscle">Secondary Muscle</string>
+    <string name="tertiary_muscle">Tertiary Muscle</string>
 
     <string name="exercise_type_weight">Weight</string>
     <string name="exercise_type_calisthenics">Calisthenics</string>
@@ -76,7 +76,7 @@
     <string name="action_new_routine">New Routine</string>
     <string name="action_increase">Increase</string>
     <string name="action_decrease">Decrease</string>
-    <string name="action_new_entry">New entry</string>
+    <string name="action_new_entry">New Entry</string>
     <string name="action_done">Done</string>
 
     <string name="title_new_exercise">New Exercise</string>
@@ -99,8 +99,8 @@
     <string name="picker_time_am" translatable="false">AM</string>
     <string name="picker_time_pm" translatable="false">PM</string>
 
-    <string name="picker_date_title">Select date</string>
-    <string name="picker_date_action_title">Chosen date</string>
+    <string name="picker_date_title">Select Date</string>
+    <string name="picker_date_action_title">Chosen Date</string>
     <string name="picker_date_input_title">Date</string>
     <string name="picker_date_input_error">Incorrect format. Use the %1$s format—e.g., %2$s.</string>
     <string name="picker_date_input_date_format">d.M.yy</string>
@@ -109,9 +109,9 @@
     <string name="picker_date_example">dd.mm.yyyy</string>
 
     <string name="settings_time_and_date">Time &amp; Date</string>
-    <string name="settings_hour_format">Hour format</string>
-    <string name="settings_hour_format_option_12">12H</string>
-    <string name="settings_hour_format_option_24">24H</string>
+    <string name="settings_hour_format">Time Format</string>
+    <string name="settings_hour_format_option_12">12-Hour</string>
+    <string name="settings_hour_format_option_24">24-Hour</string>
     <string name="settings_hour_format_option_auto">Auto</string>
 
     <string name="error_x_empty">%s cannot be empty.</string>
