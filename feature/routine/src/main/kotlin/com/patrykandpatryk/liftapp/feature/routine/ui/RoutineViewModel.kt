@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
+import com.patrykandpatryk.liftapp.domain.routine.DeleteExerciseFromRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
@@ -39,6 +40,7 @@ class RoutineViewModel @Inject constructor(
     getRoutine: GetRoutineWithExercisesUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val deleteRoutine: DeleteRoutineUseCase,
+    private val deleteExerciseFromRoutine: DeleteExerciseFromRoutineUseCase,
     private val muscleImageProvider: MuscleImageProvider,
     private val reorderExercisesUseCase: ReorderExercisesUseCase,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
@@ -115,6 +117,7 @@ class RoutineViewModel @Inject constructor(
             Intent.ShowDeleteDialog -> handleDeleteDialogVisibility(visible = true)
             Intent.HideDeleteDialog -> handleDeleteDialogVisibility(visible = false)
             Intent.Delete -> deleteRoutine()
+            is Intent.DeleteExercise -> deleteExercise(intent.exerciseId)
             is Intent.Reorder -> reorder(intent)
         }
     }
@@ -141,6 +144,12 @@ class RoutineViewModel @Inject constructor(
         handleDeleteDialogVisibility(visible = false)
         viewModelScope.launch {
             deleteRoutine(routineId)
+        }
+    }
+
+    private fun deleteExercise(exerciseId: Long) {
+        viewModelScope.launch {
+            deleteExerciseFromRoutine(routineId = routineId, exerciseId = exerciseId)
         }
     }
 

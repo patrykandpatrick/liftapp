@@ -68,4 +68,8 @@ class RoutineRepositoryImpl @Inject constructor(
     override suspend fun delete(routineId: Long) {
         routineDao.delete(routineId)
     }
+
+    override suspend fun deleteExerciseWithRoutine(routineId: Long, exerciseId: Long) {
+        routineDao.deleteExerciseWithRoutine(routineId, exerciseId)
+    }
 }

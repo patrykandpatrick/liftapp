@@ -62,8 +62,8 @@ fun SwipeContainer(
 
     val animatedHeight by animateFloatAsState(targetValue = if (isDismissed) 0f else 1f)
 
-    LaunchedEffect(key1 = isDismissed) {
-        if (isDismissed) onDismiss()
+    LaunchedEffect(key1 = isDismissed, key2 = animatedHeight) {
+        if (isDismissed && animatedHeight == 0f) onDismiss()
     }
 
     Layout(

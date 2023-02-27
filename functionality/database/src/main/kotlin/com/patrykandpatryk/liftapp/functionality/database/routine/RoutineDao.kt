@@ -39,6 +39,9 @@ interface RoutineDao {
     @Upsert
     suspend fun upsert(exerciseWithRoutine: List<ExerciseWithRoutineEntity>)
 
+    @Query("DELETE FROM exercise_with_routine WHERE routine_id = :routineId AND exercise_id = :exerciseId")
+    suspend fun deleteExerciseWithRoutine(routineId: Long, exerciseId: Long)
+
     @Query("DELETE FROM exercise_with_routine WHERE  routine_id = :routineId AND exercise_id NOT IN (:notIn)")
     suspend fun deleteExerciseWithRoutinesNotIn(routineId: Long, notIn: List<Long>)
 

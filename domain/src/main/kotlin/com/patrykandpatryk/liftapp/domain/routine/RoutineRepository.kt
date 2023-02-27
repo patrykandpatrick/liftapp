@@ -13,4 +13,6 @@ interface RoutineRepository {
     suspend fun reorderExercises(routineId: Long, exerciseIds: List<Long>)
 
     suspend fun delete(routineId: Long)
+
+    suspend fun deleteExerciseWithRoutine(routineId: Long, exerciseId: Long)
 }
