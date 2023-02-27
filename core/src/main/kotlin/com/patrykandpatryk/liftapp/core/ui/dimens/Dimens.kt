@@ -24,6 +24,7 @@ data class Dimens(
     val routine: Routine = Routine(),
     val searchBar: SearchBar = SearchBar(),
     val strokeWidth: Dp = 1.dp,
+    val swipe: Swipe = Swipe(),
     val tab: Tab = Tab(),
     val toolbar: Toolbar = Toolbar(),
     val verticalItemSpacing: Dp = 16.dp,
@@ -129,6 +130,12 @@ data class Dimens(
     @Immutable
     data class Elevation(
         val dragElevation: Dp = 2.dp,
+    )
+
+    @Immutable
+    data class Swipe(
+        val swipeThreshold: Dp = 56.dp,
+        val swipeElevation: Dp = 2.dp,
     )
 }
 
