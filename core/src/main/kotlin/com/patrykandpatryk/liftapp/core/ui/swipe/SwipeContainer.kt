@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FixedThreshold
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.rememberSwipeableState
@@ -25,8 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
@@ -45,7 +45,7 @@ fun SwipeContainer(
     onDismiss: () -> Unit,
 ) {
 
-    val swipeThreshold = LocalDimens.current.swipe.swipeThreshold
+    val actionThreshold = LocalDimens.current.swipe.actionThreshold
     val swipeableState = rememberSwipeableState(initialValue = SwipeContainerState.Idle)
 
     val swipeOffset by swipeableState.offset
@@ -80,7 +80,7 @@ fun SwipeContainer(
                     containerWidth to SwipeContainerState.SwipedRight,
                 ),
                 orientation = Orientation.Horizontal,
-                thresholds = { _, _ -> FixedThreshold(swipeThreshold) },
+                thresholds = { _, _ -> FractionalThreshold(actionThreshold) },
             )
             .alpha(animatedHeight)
             .zIndex(if (swipeProgress > 0f) 1f else 0f),
@@ -88,14 +88,8 @@ fun SwipeContainer(
 
         val foregroundPlaceable = measurables[0].measure(constraints)
 
-        val backgroundPlaceable = measurables[1].measure(
-            Constraints(
-                minWidth = foregroundPlaceable.width,
-                maxWidth = foregroundPlaceable.width,
-                minHeight = foregroundPlaceable.height,
-                maxHeight = foregroundPlaceable.height,
-            )
-        )
+        val backgroundPlaceable =
+            measurables[1].measure(Constraints.fixed(foregroundPlaceable.width, foregroundPlaceable.height))
 
         containerWidth = foregroundPlaceable.width.toFloat()
 
@@ -163,9 +157,9 @@ fun BoxScope.SwipeableBackgroundContent(
         if (swipeProgress > 0f) Alignment.CenterStart else Alignment.CenterEnd
     }
 
-    val swipeOffsetThreshold = LocalDimens.current.swipe.swipeThreshold.pixels
+    val backgroundVisibilityThreshold = LocalDimens.current.swipe.backgroundVisibilityThreshold.pixels
 
-    val scaleAndAlpha = +(abs(swipeOffset) / swipeOffsetThreshold).coerceAtMost(1f)
+    val scaleAndAlpha = (abs(swipeOffset) / backgroundVisibilityThreshold).coerceAtMost(1f)
 
     Spacer(
         modifier = Modifier
@@ -177,8 +171,11 @@ fun BoxScope.SwipeableBackgroundContent(
         painter = icon,
         contentDescription = contentDescription,
         modifier = modifier
-            .scale(scaleAndAlpha)
-            .alpha(scaleAndAlpha)
+            .graphicsLayer {
+                scaleX = scaleAndAlpha
+                scaleY = scaleAndAlpha
+                alpha = scaleAndAlpha
+            }
             .align(alignment)
             .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
     )

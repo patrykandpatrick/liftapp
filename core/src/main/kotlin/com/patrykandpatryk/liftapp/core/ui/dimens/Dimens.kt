@@ -134,7 +134,8 @@ data class Dimens(
 
     @Immutable
     data class Swipe(
-        val swipeThreshold: Dp = 56.dp,
+        val actionThreshold: Float = .4f,
+        val backgroundVisibilityThreshold: Dp = 56.dp,
         val swipeElevation: Dp = 2.dp,
     )
 }
