@@ -28,7 +28,7 @@ fun BodyMeasurementListScreen(
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val viewModel: BodyMeasurementListViewModel = hiltViewModel()
-    val items by viewModel.bodyMeasurementsWithLatestEntries.collectAsState()
+    val items by viewModel.items.collectAsState()
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -44,13 +44,14 @@ fun BodyMeasurementListScreen(
 
             items(
                 items = items,
-                key = { item -> item.id },
+                key = { item -> item.bodyMeasurementID },
             ) { item ->
 
                 ListItem(
-                    title = item.name,
-                    iconPainter = painterResource(id = item.type.iconRes),
-                    onClick = { navigate(Routes.BodyMeasurementDetails.create(item.id)) },
+                    title = item.headline,
+                    description = item.supportingText,
+                    iconPainter = painterResource(id = item.bodyMeasurementType.iconRes),
+                    onClick = { navigate(Routes.BodyMeasurementDetails.create(item.bodyMeasurementID)) },
                 )
             }
         }
