@@ -95,7 +95,7 @@ private fun Routines(
                 horizontal = dimensPadding.contentHorizontalSmall,
                 vertical = dimensPadding.contentVertical,
             ),
-            verticalArrangement = Arrangement.spacedBy(dimensPadding.contentVerticalSmall),
+            verticalItemSpacing = dimensPadding.contentVerticalSmall,
             horizontalArrangement = Arrangement.spacedBy(dimensPadding.contentHorizontalSmall),
         ) {
 
