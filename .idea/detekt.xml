@@ -6,6 +6,11 @@
         <option value="$PROJECT_DIR$/.idea/detekt-config.yml" />
       </set>
     </option>
+    <option name="configurationFiles">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/detekt-config.yml" />
+      </list>
+    </option>
   </component>
   <component name="DetektProjectConfiguration">
     <enableDetekt>true</enableDetekt>

@@ -15,7 +15,7 @@ import com.patrykandpatryk.liftapp.domain.date.month
 import com.patrykandpatryk.liftapp.domain.date.year
 import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.state.StateHandler
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseCase
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
@@ -46,7 +46,7 @@ internal class NewBodyMeasurementEntryViewModel @Inject constructor(
     private val getUnitForBodyMeasurementType: GetUnitForBodyMeasurementTypeUseCase,
     private val savedStateHandle: SavedStateHandle,
     @ValidatorType.HigherThanZero private val validator: Validator<Float>,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
+) : ViewModel(), StateHandler<ScreenState, Intent, Event> {
 
     override val state: StateFlow<ScreenState> = savedStateHandle
         .getStateFlow<ScreenState>(SCREEN_STATE_KEY, ScreenState.Loading)

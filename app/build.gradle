@@ -40,6 +40,7 @@ dependencies {
     implementation project(":feature:routines")
     implementation project(":feature:routine")
     implementation project(":feature:newroutine")
+    implementation project(":feature:workout")
     implementation project(":functionality:database")
     implementation project(":functionality:musclebitmap")
     implementation project(":functionality:preference")

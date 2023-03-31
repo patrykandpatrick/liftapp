@@ -13,7 +13,7 @@ import com.patrykandpatryk.liftapp.domain.routine.DeleteExerciseFromRoutineUseCa
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.state.StateHandler
 import com.patrykandpatryk.liftapp.feature.routine.di.RoutineId
 import com.patrykandpatryk.liftapp.feature.routine.model.Event
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
@@ -43,7 +43,7 @@ class RoutineViewModel @Inject constructor(
     private val deleteExerciseFromRoutine: DeleteExerciseFromRoutineUseCase,
     private val muscleImageProvider: MuscleImageProvider,
     private val reorderExercisesUseCase: ReorderExercisesUseCase,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
+) : ViewModel(), StateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
     private val eventChannel = Channel<Event>()
 

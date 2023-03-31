@@ -1,0 +1,7 @@
+apply from: "$rootDir/gradle/feature-module-base.gradle"
+apply plugin: "kotlinx-serialization"
+
+android {
+
+    namespace "com.patrykandpatryk.liftapp.feature.workout"
+}

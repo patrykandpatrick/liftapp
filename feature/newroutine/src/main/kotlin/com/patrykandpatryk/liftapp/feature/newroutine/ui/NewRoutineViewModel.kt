@@ -12,7 +12,7 @@ import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineExerciseItemsUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.state.StateHandler
 import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.feature.newroutine.di.RoutineId
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
@@ -48,7 +48,7 @@ class NewRoutineViewModel @Inject constructor(
     @ValidatorType.Name private val validateName: Validator<String>,
     private val validateExercises: Validator<List<RoutineExerciseItem>>,
     private val logger: UiLogger,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
+) : ViewModel(), StateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
     private val coroutineContext = dispatcher + exceptionHandler
 

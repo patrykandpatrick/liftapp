@@ -3,7 +3,7 @@ package com.patrykandpatryk.liftapp.feature.exercises.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.state.StateHandler
 import com.patrykandpatryk.liftapp.feature.exercises.di.DisabledExercises
 import com.patrykandpatryk.liftapp.feature.exercises.di.PickingMode
 import com.patrykandpatryk.liftapp.feature.exercises.model.Event
@@ -30,7 +30,7 @@ class ExerciseViewModel @Inject constructor(
     @DisabledExercises val disabledExercises: List<Long>,
     getExercisesItems: GetExercisesItemsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
+) : ViewModel(), StateHandler<ScreenState, Intent, Event> {
 
     private val query = MutableStateFlow(value = "")
 

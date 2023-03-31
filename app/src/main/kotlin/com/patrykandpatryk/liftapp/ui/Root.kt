@@ -39,6 +39,7 @@ import com.patrykandpatryk.liftapp.feature.newroutine.ui.addNewRoutine
 import com.patrykandpatryk.liftapp.feature.onerepmax.ui.addOneRepMax
 import com.patrykandpatryk.liftapp.feature.routine.ui.addRoutine
 import com.patrykandpatryk.liftapp.feature.settings.ui.addSettings
+import com.patrykandpatryk.liftapp.feature.workout.ui.addWorkout
 import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.addNewBodyMeasurementEntryDestination
 
 @Composable
@@ -102,6 +103,8 @@ fun Root(
                     addExercises()
 
                     addRoutine()
+
+                    addWorkout()
                 }
             }
         }

@@ -9,7 +9,7 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.DeleteBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.FormatBodyMeasurementValueToStringUseCase
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.state.StateHandler
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.di.BodyMeasurementID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -32,7 +32,7 @@ class BodyMeasurementDetailViewModel @Inject constructor(
     private val chartEntryMapper: BodyMeasurementEntryToChartEntryMapper,
     private val deleteBodyMeasurementEntry: DeleteBodyMeasurementEntryUseCase,
     private val formatBodyMeasurementValueToString: FormatBodyMeasurementValueToStringUseCase,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Unit> {
+) : ViewModel(), StateHandler<ScreenState, Intent, Unit> {
 
     val chartEntryModelProducer = ChartEntryModelProducer()
 

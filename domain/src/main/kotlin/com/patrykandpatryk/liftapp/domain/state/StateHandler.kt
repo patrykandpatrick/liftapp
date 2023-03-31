@@ -4,7 +4,7 @@ import java.io.Closeable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface ScreenStateHandler<ScreenState, Intent, Event> : Closeable {
+interface StateHandler<ScreenState, Intent, Event> : Closeable {
 
     val state: StateFlow<ScreenState>
 

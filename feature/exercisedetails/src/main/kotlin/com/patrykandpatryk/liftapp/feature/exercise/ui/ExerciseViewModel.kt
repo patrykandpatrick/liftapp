@@ -10,7 +10,7 @@ import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
 import com.patrykandpatryk.liftapp.domain.exercise.DeleteExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.state.StateHandler
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.feature.exercise.di.ExerciseId
 import com.patrykandpatryk.liftapp.feature.exercise.model.Event
@@ -39,7 +39,7 @@ class ExerciseViewModel @Inject constructor(
     private val muscleImageProvider: MuscleImageProvider,
     private val stringProvider: StringProvider,
     isDarkModeReceiver: IsDarkModeReceiver,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
+) : ViewModel(), StateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
 
     private val eventChannel = Channel<Event>()
 

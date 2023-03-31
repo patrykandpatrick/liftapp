@@ -139,6 +139,15 @@ object Routes {
                 .replace("{$ARG_PICKING_MODE}", pickExercises.toString())
                 .replace("{$DISABLED_EXERCISE_IDS}", Json.encodeToString(disabledExerciseIds))
     }
+
+    object Workout : Route(value = "workout/{$ARG_ID}") {
+
+        override val navArguments = listOf(
+            navArgument(ARG_ID) { type = NavType.LongType },
+        )
+
+        fun create(routineId: Long) = value.replace("{$ARG_ID}", routineId.toString())
+    }
 }
 
 fun NavGraphBuilder.composable(
