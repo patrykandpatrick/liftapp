@@ -5,7 +5,7 @@ androidxCore = "1.10.0-alpha02"
 appcompat = "1.7.0-alpha02"
 coil = "2.2.2"
 compose = "1.4.0"
-composeCompiler = "1.4.2"
+composeCompiler = "1.4.8"
 coroutines = "1.6.4"
 datastore = "1.1.0-alpha01"
 documentfile = "1.1.0-alpha01"
@@ -14,7 +14,7 @@ hiltNavigation = "1.1.0-alpha01"
 junit = "4.13.2"
 junitExt = "1.1.2"
 jupiter = "5.9.1"
-kotlin = "1.8.10"
+kotlin = "1.8.22"
 kotlinxSerialization = "1.4.1"
 kotlinxSerializationConverter = "0.8.0"
 lifecycle = "2.6.0"
@@ -22,7 +22,7 @@ material3 = "1.1.0-alpha08"
 mockk = "1.13.2"
 ossLicensesPlugin = "0.10.4"
 ossLicenses = "17.0.0"
-opto = "1.0.18"
+opto = "1.1.0"
 retrofit = "2.9.0"
 room = "2.5.1"
 viewmodel = "2.6.0"
@@ -30,9 +30,9 @@ testCore = "1.3.0"
 timber = "5.0.1"
 vico = "1.6.3"
 
-androidPlugin = "7.4.2"
+androidPlugin = "8.2.0-alpha11"
 detektPlugin = "1.22.0"
-kspPlugin = "1.8.10-1.0.9"
+kspPlugin = "1.8.22-1.0.11"
 
 [libraries]
 
@@ -78,8 +78,8 @@ lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", versi
 
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
-opto-core = { module = "com.patrykmichalik.opto:core", version.ref = "opto" }
-opto-domain = { module = "com.patrykmichalik.opto:domain", version.ref = "opto" }
+opto-core = { module = "com.github.patrykandpatrick.opto:core", version.ref = "opto" }
+opto-domain = { module = "com.github.patrykandpatrick.opto:domain", version.ref = "opto" }
 
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

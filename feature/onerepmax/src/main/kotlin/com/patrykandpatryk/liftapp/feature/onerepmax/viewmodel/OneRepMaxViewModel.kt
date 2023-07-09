@@ -11,10 +11,11 @@ import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
 import com.patrykandpatryk.liftapp.feature.onerepmax.model.HistoryEntryModel
 import com.patrykandpatryk.liftapp.feature.onerepmax.model.OneRepMaxUiState
 import com.patrykandpatrick.vico.core.extension.orZero
-import com.patrykmichalik.opto.core.onEach
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,9 +38,11 @@ class OneRepMaxViewModel @Inject constructor(
     var historyUpdateJob: Job? = null
 
     init {
-        preferenceRepository.massUnit.onEach(launchIn = viewModelScope) {
-            oneRepMaxUiState = oneRepMaxUiState.copy(massUnit = it)
-        }
+        preferenceRepository
+            .massUnit
+            .get()
+            .onEach { oneRepMaxUiState = oneRepMaxUiState.copy(massUnit = it) }
+            .launchIn(viewModelScope)
     }
 
     fun updateRepsInput(repsInput: String) {

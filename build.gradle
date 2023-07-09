@@ -40,7 +40,7 @@ detekt {
 
 tasks.withType(Detekt).configureEach {
 
-    jvmTarget = "11"
+    jvmTarget = "17"
 
     reports {
 

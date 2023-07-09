@@ -12,9 +12,8 @@ import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
-import com.patrykmichalik.opto.core.PreferenceImpl
-import com.patrykmichalik.opto.core.PreferenceManager
-import com.patrykmichalik.opto.core.getFromPreferences
+import com.patrykandpatrick.opto.core.PreferenceImpl
+import com.patrykandpatrick.opto.core.PreferenceManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -67,9 +66,9 @@ class PreferenceRepositoryImpl @Inject constructor(
 private inline fun <reified E : Enum<E>> PreferenceManager.enumPreference(
     key: String,
     defaultValue: E,
-): PreferenceImpl<E, String> = preference(
+): PreferenceImpl<String, E> = preference(
     stringPreferencesKey(key),
     defaultValue = defaultValue,
-    parse = { E::class.java.getMethod("valueOf", String::class.java).invoke(null, it) as E },
-    save = { it.toString() },
+    serialize = { it.toString() },
+    deserialize = { E::class.java.getMethod("valueOf", String::class.java).invoke(null, it) as E },
 )
