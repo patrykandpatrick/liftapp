@@ -32,7 +32,10 @@ interface LoggingModule {
             @IsDebug isDebug: Boolean,
             uiLogger: UiLogger,
         ): Array<Timber.Tree> =
-            if (isDebug) arrayOf(Timber.DebugTree(), uiLogger)
-            else arrayOf(uiLogger)
+            if (isDebug) {
+                arrayOf(Timber.DebugTree(), uiLogger)
+            } else {
+                arrayOf(uiLogger)
+            }
     }
 }

@@ -27,7 +27,6 @@ class MuscleBitmapGeneratorImpl @Inject constructor(
         secondaryMuscles: List<Muscle>,
         tertiaryMuscles: List<Muscle>,
     ): Bitmap {
-
         applyConfig(config)
 
         val frontBitmap = resourceBitmapProvider.getBodyFrontBitmap()

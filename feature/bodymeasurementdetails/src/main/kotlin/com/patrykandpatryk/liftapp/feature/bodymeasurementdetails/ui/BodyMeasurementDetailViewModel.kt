@@ -59,7 +59,6 @@ class BodyMeasurementDetailViewModel @Inject constructor(
         entries: List<BodyMeasurementEntry>,
         expandedItemId: Long?,
     ): ScreenState.Populated = withContext(exceptionHandler) {
-
         chartEntryModelProducer.setEntries(chartEntryMapper(entries))
 
         ScreenState.Populated(

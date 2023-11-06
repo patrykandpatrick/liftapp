@@ -46,7 +46,6 @@ class UnitConverterImpl @Inject constructor(
         }
 
     override suspend fun convertToPreferredUnitAndFormat(from: ValueUnit, vararg values: Float): String {
-
         val convertedValues = when (from) {
             is MassUnit -> values.map { convertToPreferredUnit(from = from, value = it) }.toTypedArray()
             is LongDistanceUnit -> values.map { convertToPreferredUnit(from = from, value = it) }.toTypedArray()

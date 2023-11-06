@@ -14,6 +14,6 @@ data class RoutineExerciseItem(
 ) : Serializable {
 
     companion object {
-        const val serialVersionUID = 1L
+        private const val serialVersionUID = 1L
     }
 }

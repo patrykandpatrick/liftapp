@@ -61,16 +61,12 @@ fun TimePicker(
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     onTimePicked: (hour: Int, minute: Int) -> Unit,
 ) {
-
     CompositionLocalProvider(LocalDimens provides DialogDimens) {
-
         if (state.isShowing) {
-
             Dialog(
                 onDismissRequest = { state.isShowing = false },
                 properties = properties,
             ) {
-
                 Surface(
                     modifier = modifier
                         .widthIn(
@@ -83,7 +79,6 @@ fun TimePicker(
                     tonalElevation = LocalDimens.current.dialog.tonalElevation,
                     shape = MaterialTheme.shapes.extraLarge,
                 ) {
-
                     TimePickerContent(
                         modifier = Modifier
                             .padding(
@@ -110,7 +105,6 @@ private fun TimePickerContent(
     onPositiveButtonClick: () -> Unit,
     onNegativeButtonClick: () -> Unit,
 ) {
-
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -129,7 +123,6 @@ private fun TimePickerContent(
                 .height(IntrinsicSize.Max),
             horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.contentHorizontalSmall),
         ) {
-
             val inputTextStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center)
 
             Column(
@@ -137,7 +130,6 @@ private fun TimePickerContent(
                     .fillMaxHeight()
                     .weight(weight = 1f, fill = false),
             ) {
-
                 TextField(
                     focusedValue = state.hour,
                     unfocusedValue = state.formattedHour,
@@ -167,7 +159,6 @@ private fun TimePickerContent(
                     .fillMaxHeight()
                     .weight(weight = 1f, fill = false),
             ) {
-
                 TextField(
                     focusedValue = state.minute,
                     unfocusedValue = state.formattedMinute,
@@ -184,7 +175,6 @@ private fun TimePickerContent(
             }
 
             if (state.is24h.not()) {
-
                 TimeOfDayIndicator(state = state)
             }
         }
@@ -207,7 +197,6 @@ private fun ColumnScope.TextField(
     modifier: Modifier = Modifier,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
-
     val interactionSource = remember { MutableInteractionSource() }
 
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -229,9 +218,7 @@ private fun TimeOfDayIndicator(
     state: TimePickerState,
     modifier: Modifier = Modifier,
 ) {
-
     Column(modifier = modifier.fillMaxHeight()) {
-
         VerticalSegmentedButtonContainer(
             modifier = Modifier.weight(weight = 1f),
             items = TimeOfDay.values().toList(),
@@ -297,7 +284,6 @@ class TimePickerState(
 
     fun updateHour(hour: String, onInputFilled: () -> Unit) {
         if (hour.isEmpty()) {
-
             this.hour = ""
         } else {
             val parsedHour = decimalFormat.parseToIntOrNull(hour) ?: return

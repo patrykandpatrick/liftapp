@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -73,16 +73,14 @@ fun SearchBar(
                 Crossfade(targetState = focused) { targetState ->
 
                     Icon(
-                        imageVector = if (targetState) Icons.Default.ArrowBack else Icons.Default.Search,
+                        imageVector = if (targetState) Icons.AutoMirrored.Filled.ArrowBack else Icons.Default.Search,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
             Box(contentAlignment = Alignment.CenterStart) {
-
                 if (value.isEmpty()) {
-
                     Text(
                         text = stringResource(id = R.string.generic_search),
                         style = MaterialTheme.typography.bodyLarge,

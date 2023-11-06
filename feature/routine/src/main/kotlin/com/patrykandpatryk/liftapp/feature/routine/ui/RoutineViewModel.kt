@@ -70,7 +70,6 @@ class RoutineViewModel @Inject constructor(
         routine: RoutineWithExercises,
         isDarkMode: Boolean,
     ) {
-
         updateScreenState {
             mutate(
                 name = routine.name,

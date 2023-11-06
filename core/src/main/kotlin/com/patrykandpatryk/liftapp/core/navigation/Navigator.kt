@@ -8,8 +8,6 @@ interface Navigator {
 
     val previousBackStackEntry: NavBackStackEntry?
 
-    val backQueue: ArrayDeque<NavBackStackEntry>
-
     fun navigate(route: String)
 
     fun popBackStack()
@@ -19,4 +17,6 @@ interface Navigator {
         inclusive: Boolean,
         saveState: Boolean = false,
     )
+
+    fun getBackStackEntry(route: String): NavBackStackEntry
 }

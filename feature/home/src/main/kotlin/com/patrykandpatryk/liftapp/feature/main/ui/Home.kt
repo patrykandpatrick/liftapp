@@ -22,10 +22,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.navigation.Routes
@@ -39,7 +39,6 @@ import com.patrykandpatryk.liftapp.feature.main.HomeViewModel
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 
 fun NavGraphBuilder.addHome() {
-
     composable(route = Routes.Home) {
         Home()
     }
@@ -64,8 +63,7 @@ private fun HomeScaffold(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
-
-    val navController = rememberAnimatedNavController()
+    val navController = rememberNavController()
 
     Scaffold(
         modifier = modifier,
@@ -82,7 +80,7 @@ private fun HomeScaffold(
 
         val navigator = navigator
 
-        AnimatedNavHost(
+        NavHost(
             route = Routes.Home.value,
             navController = navController,
             startDestination = navBarRoutes.first().route,
@@ -95,12 +93,7 @@ private fun HomeScaffold(
                 composable(
                     route = routeItem.route,
                 ) { backStackEntry ->
-                    routeItem.content(
-                        entry = backStackEntry,
-                        modifier = Modifier,
-                        padding = paddingValues,
-                        navigate = navigator::navigate,
-                    )
+                    routeItem.content(backStackEntry, Modifier, paddingValues, navigator::navigate)
                 }
             }
         }

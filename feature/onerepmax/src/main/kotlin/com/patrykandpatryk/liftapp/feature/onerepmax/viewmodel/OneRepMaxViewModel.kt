@@ -46,12 +46,14 @@ class OneRepMaxViewModel @Inject constructor(
     }
 
     fun updateRepsInput(repsInput: String) {
-
         val reps = if (repsInput.isEmpty()) 0 else repsInput.smartToIntOrNull()
 
         val oneRepMax =
-            if (reps != null) calculateOneRepMax(reps = reps, mass = oneRepMaxUiState.mass)
-            else oneRepMaxUiState.oneRepMax
+            if (reps != null) {
+                calculateOneRepMax(reps = reps, mass = oneRepMaxUiState.mass)
+            } else {
+                oneRepMaxUiState.oneRepMax
+            }
 
         oneRepMaxUiState = oneRepMaxUiState.copy(
             repsInput = repsInput,
@@ -66,12 +68,14 @@ class OneRepMaxViewModel @Inject constructor(
     }
 
     fun updateMassInput(massInput: String) {
-
         val mass = if (massInput.isEmpty()) 0f else massInput.smartToFloatOrNull()
 
         val oneRepMax =
-            if (mass != null) calculateOneRepMax(reps = oneRepMaxUiState.reps, mass = mass)
-            else oneRepMaxUiState.oneRepMax
+            if (mass != null) {
+                calculateOneRepMax(reps = oneRepMaxUiState.reps, mass = mass)
+            } else {
+                oneRepMaxUiState.oneRepMax
+            }
 
         oneRepMaxUiState = oneRepMaxUiState.copy(
             massInput = massInput,

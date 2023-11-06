@@ -74,7 +74,6 @@ fun <T> DropdownMenu(
         expanded = expanded,
         onExpandedChange = onExpandedChange,
     ) {
-
         Column {
             OutlinedTextField(
                 modifier = Modifier
@@ -102,7 +101,6 @@ fun <T> DropdownMenu(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) },
         ) {
-
             items.forEach { item ->
                 DropdownMenuItem(
                     text = { Text(text = getItemText(item)) },
@@ -131,7 +129,6 @@ private fun PreviewExerciseTypeDropdownMenu(
 ) {
     LiftAppTheme {
         Surface {
-
             val (isExpanded, setExpanded) = remember { mutableStateOf(expanded) }
             val (type, setType) = remember { mutableStateOf(ExerciseType.Cardio) }
 

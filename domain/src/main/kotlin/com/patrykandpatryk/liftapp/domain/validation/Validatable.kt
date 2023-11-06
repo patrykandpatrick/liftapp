@@ -15,7 +15,7 @@ sealed class Validatable<T>(val value: T, val isValid: Boolean) : Serializable {
     ) : Validatable<T>(value, false)
 
     companion object {
-        const val serialVersionUID = 1L
+        private const val serialVersionUID = 1L
     }
 }
 

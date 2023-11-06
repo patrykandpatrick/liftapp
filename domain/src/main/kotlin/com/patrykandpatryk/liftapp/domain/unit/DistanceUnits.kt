@@ -20,7 +20,8 @@ enum class LongDistanceUnit(
     Mile(
         kilometerConversion = 1.60935,
         mileConversion = 1.0,
-    );
+    ),
+    ;
 
     override val hasLeadingSpace: Boolean = true
 
@@ -51,11 +52,13 @@ enum class MediumDistanceUnit(
         meterConversion = 1.0,
         footConversion = 3.280839895,
     ),
+
     @SerialName("foot")
     Foot(
         meterConversion = 0.3048,
         footConversion = 1.0,
-    );
+    ),
+    ;
 
     override val hasLeadingSpace: Boolean = true
 
@@ -76,11 +79,13 @@ enum class ShortDistanceUnit(
         centimeterConversion = 1.0,
         inchConversion = 0.3937007874,
     ),
+
     @SerialName("inch")
     Inch(
         centimeterConversion = 2.54,
         inchConversion = 1.0,
-    );
+    ),
+    ;
 
     override val hasLeadingSpace: Boolean = true
 

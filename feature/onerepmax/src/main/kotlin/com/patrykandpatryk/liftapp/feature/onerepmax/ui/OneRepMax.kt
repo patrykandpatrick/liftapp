@@ -34,11 +34,11 @@ import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.feature.onerepmax.viewmodel.OneRepMaxViewModel
 
 fun NavGraphBuilder.addOneRepMax() {
-
     composable(route = Routes.OneRepMax) {
         OneRepMax()
     }
 }
+
 @Composable
 fun OneRepMax(
     modifier: Modifier = Modifier,
@@ -64,7 +64,6 @@ fun OneRepMax(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(paddingValues = paddingValues),
         ) {
-
             Text(
                 text = uiState.massUnit?.formatValue(
                     context = context,
@@ -90,7 +89,6 @@ fun OneRepMax(
                     end = 16.dp,
                 ),
             ) {
-
                 TextField(
                     value = uiState.massInput,
                     onValueChange = viewModel::updateMassInput,

@@ -19,12 +19,10 @@ fun InteractionSource.onRepeatedLongPress(
     repeatLongClicks: Boolean,
     action: () -> Unit,
 ) {
-
     val actionState = rememberUpdatedState(newValue = action)
     val longPressDelay = LocalViewConfiguration.current.longPressTimeoutMillis
 
     LaunchedEffect(key1 = this) {
-
         interactions.map { interaction ->
             interaction is PressInteraction.Press
         }.collectLatest { isPressed ->

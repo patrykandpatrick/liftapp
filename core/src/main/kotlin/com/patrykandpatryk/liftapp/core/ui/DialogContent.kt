@@ -25,7 +25,6 @@ fun DialogContent(
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Column {
-
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall,

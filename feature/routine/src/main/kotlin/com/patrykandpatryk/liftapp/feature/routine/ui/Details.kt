@@ -31,7 +31,6 @@ import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 internal fun Details(
     modifier: Modifier = Modifier,
 ) {
-
     val viewModel: RoutineViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsState()
@@ -47,7 +46,6 @@ private fun Details(
     state: ScreenState,
     modifier: Modifier = Modifier,
 ) {
-
     val dimens = LocalDimens.current
     val muscleDimens = dimens.muscle
 
@@ -61,7 +59,6 @@ private fun Details(
         ),
         horizontalArrangement = Arrangement.spacedBy(muscleDimens.listItemHorizontalMargin),
     ) {
-
         item(
             key = state.imagePath,
             span = { GridItemSpan(maxLineSpan) },

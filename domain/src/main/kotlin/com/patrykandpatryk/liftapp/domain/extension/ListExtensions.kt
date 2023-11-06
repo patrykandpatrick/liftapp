@@ -13,8 +13,9 @@ operator fun <T> List<T>.set(index: Int, value: T): List<T> =
     }
 
 fun <T> MutableList<T>.getOrPut(index: Int, put: () -> T): T =
-    if (index < size) get(index)
-    else {
+    if (index < size) {
+        get(index)
+    } else {
         val newValue = put()
         add(newValue)
         newValue

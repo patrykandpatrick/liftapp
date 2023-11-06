@@ -36,7 +36,6 @@ fun RoutineCard(
             .clickable(onClick = onClick),
         shape = shape,
     ) {
-
         Column(
             Modifier.padding(
                 horizontal = cardPadding.contentPaddingHorizontal,

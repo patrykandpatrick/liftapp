@@ -41,7 +41,6 @@ interface DomainModule {
             stringResourceSerializers: StringResourceSerializers,
         ): Json = Json {
             serializersModule = SerializersModule {
-
                 polymorphic(ValueUnit::class) {
                     subclass(MassUnit::class, PolymorphicEnumSerializer(MassUnit.serializer()))
                     subclass(LongDistanceUnit::class, PolymorphicEnumSerializer(LongDistanceUnit.serializer()))

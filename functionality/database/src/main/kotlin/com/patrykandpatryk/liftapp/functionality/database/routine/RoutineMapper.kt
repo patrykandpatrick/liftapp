@@ -23,7 +23,6 @@ class RoutineMapper @Inject constructor(
         routine: RoutineEntity,
         exercises: List<ExerciseWithGoalDto>,
     ): RoutineWithExercises {
-
         val primaryMuscles = exercises.flattenMuscles { mainMuscles }
         val secondaryMuscles = exercises.flattenMuscles { secondaryMuscles }
         val tertiaryMuscles = exercises.flattenMuscles { tertiaryMuscles }

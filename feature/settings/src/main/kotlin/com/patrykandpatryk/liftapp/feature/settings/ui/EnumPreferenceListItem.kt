@@ -41,7 +41,6 @@ fun <T : Enum<T>> EnumPreferenceListItem(
 
     if (dialogVisible) {
         Dialog(onDismissRequest = { dialogVisible = false }) {
-
             DialogContent(
                 title = title,
                 actions = {
@@ -78,7 +77,6 @@ private fun ValueRow(
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp),
     ) {
-
         RadioButton(
             selected = selected,
             onClick = onClick,

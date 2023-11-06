@@ -20,7 +20,8 @@ enum class MassUnit(
     Pounds(
         kilogramsConversion = 0.453592,
         poundsConversion = 1.0,
-    );
+    ),
+    ;
 
     override val hasLeadingSpace: Boolean = true
 

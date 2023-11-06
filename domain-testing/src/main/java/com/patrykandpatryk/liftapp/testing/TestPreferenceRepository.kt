@@ -32,14 +32,15 @@ class TestPreferenceRepository : PreferenceRepository {
             when (hourFormat) {
                 HourFormat.H12 -> false
                 HourFormat.Auto,
-                HourFormat.H24 -> true
+                HourFormat.H24,
+                -> true
             }
         }
 
     override val allPreferences: Flow<AllPreferences> = combine(
         massUnit.get(),
         longDistanceUnit.get(),
-        hourFormat.get()
+        hourFormat.get(),
     ) { massUnit, longDistanceUnit, hourFormat ->
         AllPreferences(
             massUnit = massUnit,

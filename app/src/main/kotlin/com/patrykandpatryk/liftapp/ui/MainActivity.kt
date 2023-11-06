@@ -4,9 +4,9 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.core.view.WindowCompat
 import com.patrykandpatryk.liftapp.core.extension.isDarkMode
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModePublisher
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
@@ -23,10 +23,9 @@ class MainActivity : ComponentActivity() {
     lateinit var darkModeReceiver: IsDarkModeReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-
         updateDarkMode(resources.configuration.isDarkMode)
+        enableEdgeToEdge()
 
         setContent {
             val darkMode by darkModeReceiver().collectAsState()
@@ -37,6 +36,7 @@ class MainActivity : ComponentActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         updateDarkMode(newConfig.isDarkMode)
+        enableEdgeToEdge()
     }
 
     private fun updateDarkMode(darkMode: Boolean) {

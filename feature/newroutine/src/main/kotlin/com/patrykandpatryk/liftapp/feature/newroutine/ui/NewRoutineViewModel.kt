@@ -150,7 +150,9 @@ class NewRoutineViewModel @Inject constructor(
         return if (state.name.isInvalid || state.exercises.isInvalid) {
             updateState { it.copy(showErrors = true) }
             false
-        } else true
+        } else {
+            true
+        }
     }
 
     private fun save(state: ScreenState) {

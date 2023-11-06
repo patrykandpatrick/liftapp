@@ -13,7 +13,6 @@ import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 
 fun NavGraphBuilder.addAbout() {
-
     composable(route = Routes.About) {
         About()
     }
@@ -21,7 +20,6 @@ fun NavGraphBuilder.addAbout() {
 
 @Composable
 fun About(modifier: Modifier = Modifier) {
-
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(

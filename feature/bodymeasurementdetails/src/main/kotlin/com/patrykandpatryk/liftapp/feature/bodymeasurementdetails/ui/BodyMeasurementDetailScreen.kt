@@ -15,12 +15,23 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
+import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.navigation.Routes
@@ -32,27 +43,17 @@ import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
 import com.patrykandpatryk.liftapp.core.ui.OptionItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
-import com.patrykandpatrick.vico.core.scroll.InitialScroll
 
 fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
-
     composable(route = Routes.BodyMeasurementDetails) {
         BodyMeasurementDetailScreen()
     }
 }
+
 @Composable
 fun BodyMeasurementDetailScreen(
     modifier: Modifier = Modifier,
 ) {
-
     val viewModel: BodyMeasurementDetailViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsState()
@@ -72,7 +73,6 @@ private fun BodyMeasurementDetailScreen(
     modelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navigator = navigator
 
@@ -86,7 +86,6 @@ private fun BodyMeasurementDetailScreen(
             )
         },
         floatingActionButton = {
-
             ExtendedFloatingActionButton(
                 modifier = Modifier.navigationBarsPadding(),
                 text = { Text(text = stringResource(id = R.string.action_new_entry)) },
@@ -101,9 +100,7 @@ private fun BodyMeasurementDetailScreen(
                 .padding(paddingValues),
             contentPadding = Companion.navigationBars.toPaddingValues(),
         ) {
-
             item {
-
                 Chart(
                     modifier = Modifier.padding(
                         top = LocalDimens.current.padding.itemVertical,
@@ -114,10 +111,10 @@ private fun BodyMeasurementDetailScreen(
                         axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f),
                     ),
                     chartModelProducer = modelProducer,
-                    startAxis = startAxis(
-                        maxLabelCount = 3,
+                    startAxis = rememberStartAxis(
+                        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) },
                     ),
-                    bottomAxis = bottomAxis(),
+                    bottomAxis = rememberBottomAxis(),
                     chartScrollSpec = rememberChartScrollSpec(
                         initialScroll = InitialScroll.End,
                         autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,

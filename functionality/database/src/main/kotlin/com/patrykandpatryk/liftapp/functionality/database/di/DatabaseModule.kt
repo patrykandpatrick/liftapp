@@ -94,8 +94,10 @@ interface DatabaseModule {
 
         @Provides
         @IntoSet
-        fun provideBodyMeasurementStringResourceSerializer():
-            Pair<KClass<StringResource>, KSerializer<StringResource>> = (
+        fun provideBodyMeasurementStringResourceSerializer(): Pair<
+            KClass<StringResource>,
+            KSerializer<StringResource>,
+            > = (
             BodyMeasurementStringResource::class to
                 PolymorphicEnumSerializer(BodyMeasurementStringResource.serializer())
             ) as Pair<KClass<StringResource>, KSerializer<StringResource>>

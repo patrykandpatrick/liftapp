@@ -13,7 +13,6 @@ fun <T : InteractionSource> T.onClick(onClick: suspend () -> Unit): T {
     val action = rememberUpdatedState(newValue = onClick)
 
     LaunchedEffect(key1 = Unit) {
-
         interactions
             .collectLatest { interaction ->
                 if (interaction is PressInteraction.Press) action.value()

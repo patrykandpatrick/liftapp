@@ -48,7 +48,6 @@ fun NavGraphBuilder.addRoutine() {
 fun Routine(
     modifier: Modifier = Modifier,
 ) {
-
     val viewModel: RoutineViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsState()
@@ -88,10 +87,9 @@ private fun Routine(
     onIntent: (Intent) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
-
     val navigator = navigator
 
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState { tabs.size }
 
     val tabs = remember { tabs }
 
@@ -112,9 +110,7 @@ private fun Routine(
         },
         bottomBar = {
             BottomAppBar {
-
                 IconButton(onClick = { onIntent(Intent.ShowDeleteDialog) }) {
-
                     Icon(
                         painter = painterResource(id = R.drawable.ic_delete),
                         contentDescription = stringResource(id = R.string.action_delete),
@@ -122,7 +118,6 @@ private fun Routine(
                 }
 
                 IconButton(onClick = { onIntent(Intent.Edit) }) {
-
                     Icon(
                         painter = painterResource(id = R.drawable.ic_edit),
                         contentDescription = stringResource(id = R.string.action_edit),
@@ -138,7 +133,6 @@ private fun Routine(
         HorizontalPager(
             modifier = Modifier
                 .fillMaxSize(),
-            pageCount = tabs.size,
             state = pagerState,
             contentPadding = paddingValues,
         ) { index ->

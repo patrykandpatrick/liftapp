@@ -79,7 +79,6 @@ import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
 import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
 
 fun NavGraphBuilder.addNewRoutine() {
-
     composable(route = Routes.NewRoutine) {
         NewRoutine()
     }
@@ -89,7 +88,6 @@ fun NavGraphBuilder.addNewRoutine() {
 fun NewRoutine(
     modifier: Modifier = Modifier,
 ) {
-
     val viewModel: NewRoutineViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val errorMessage by remember {
@@ -131,7 +129,6 @@ private fun NewRoutine(
     snackbarHostState: SnackbarHostState,
     nameErrorText: String,
 ) {
-
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val density = LocalDensity.current.density
     val navigator = navigator
@@ -142,7 +139,6 @@ private fun NewRoutine(
             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
             .imePadding(),
         topBar = {
-
             val titleRes = remember(state.isEdit) {
                 if (state.isEdit) R.string.title_edit_routine else R.string.title_new_routine
             }
@@ -191,13 +187,11 @@ private fun LazyListScope.content(
     nameErrorText: String,
 ) {
     stickyHeader {
-
         Column(
             modifier = Modifier.background(
                 color = MaterialTheme.colorScheme.surface,
             ),
         ) {
-
             OutlinedTextField(
                 value = state.name.value,
                 onValueChange = { onIntent(Intent.UpdateName(it)) },
@@ -252,7 +246,6 @@ private fun LazyListScope.content(
     }
 
     item(key = R.string.action_add_exercise) {
-
         val navigator = navigator
 
         Button(
@@ -273,7 +266,6 @@ private fun LazyListScope.content(
                 )
             },
         ) {
-
             Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
 
             Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
@@ -285,7 +277,6 @@ private fun LazyListScope.content(
 
 @Composable
 private fun ColumnScope.EmptyState(state: ScreenState) {
-
     val normalColor = MaterialTheme.colorScheme.onSurfaceVariant
     val errorColor = MaterialTheme.colorScheme.error
 

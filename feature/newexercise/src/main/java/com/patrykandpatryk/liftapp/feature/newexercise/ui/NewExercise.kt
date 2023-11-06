@@ -55,7 +55,6 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
 
 fun NavGraphBuilder.addNewExercise() {
-
     composable(route = Routes.NewExercise) {
         NewExercise()
     }
@@ -134,7 +133,6 @@ private fun NewExercise(
                 ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.verticalItemSpacing),
         ) {
-
             Content(
                 state = state,
                 updateName = updateName,
@@ -156,7 +154,6 @@ private fun Content(
     updateSecondaryMuscles: (Muscle) -> Unit,
     updateTertiaryMuscles: (Muscle) -> Unit,
 ) {
-
     val (typeExpanded, setTypeExpanded) = remember { mutableStateOf(false) }
     val (mainMusclesExpanded, setMainMusclesExpanded) = remember { mutableStateOf(false) }
     val (secondaryMusclesExpanded, setSecondaryMusclesExpanded) = remember { mutableStateOf(false) }

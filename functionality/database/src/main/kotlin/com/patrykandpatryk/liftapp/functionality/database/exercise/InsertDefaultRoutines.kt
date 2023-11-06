@@ -14,7 +14,6 @@ class InsertDefaultRoutines @Inject constructor(
 ) {
 
     suspend operator fun invoke() {
-
         val random = Random.Default
         val exerciseIDs = exerciseDao
             .getAllExercises()

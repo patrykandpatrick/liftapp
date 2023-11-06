@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-    <style name="Theme.LiftApp" parent="Theme.AppCompat.DayNight">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">@bool/isDay</item>
-        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">@bool/isDay</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-    </style>
+    <style name="Theme.LiftApp" parent="Theme.AppCompat.DayNight" />
 
 </resources>

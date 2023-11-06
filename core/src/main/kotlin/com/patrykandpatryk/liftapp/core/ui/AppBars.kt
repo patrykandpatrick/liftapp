@@ -5,15 +5,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -43,9 +43,8 @@ fun TopAppBar(
         navigationIcon = {
             if (onBackClick != null) {
                 IconButton(onClick = onBackClick) {
-
                     Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = stringResource(id = R.string.action_close),
                     )
                 }
@@ -63,18 +62,15 @@ fun TopAppBarWithTabs(
     actions: @Composable RowScope.() -> Unit = {},
     tabs: @Composable () -> Unit,
 ) {
-
     Column(modifier = modifier) {
-
         androidx.compose.material3.TopAppBar(
             title = { Text(text = title) },
             actions = actions,
             navigationIcon = {
                 if (onBackClick != null) {
                     IconButton(onClick = onBackClick) {
-
                         Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
                         )
                     }
@@ -82,7 +78,7 @@ fun TopAppBarWithTabs(
             },
         )
 
-        TabRow(
+        SecondaryTabRow(
             modifier = Modifier,
             selectedTabIndex = selectedTabIndex,
             tabs = tabs,
@@ -107,7 +103,6 @@ fun TopAppBarWithTabs(
         onBackClick = onBackClick,
         actions = actions,
         tabs = {
-
             val tabDimens = LocalDimens.current.tab
 
             tabs.forEachIndexed { index, tabItem ->
@@ -118,7 +113,6 @@ fun TopAppBarWithTabs(
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ) {
-
                     Column(modifier = Modifier.padding(vertical = tabDimens.verticalPadding)) {
                         if (tabItem.icon != null) {
                             Icon(
@@ -157,9 +151,7 @@ fun DialogTopBar(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     Row(modifier = modifier) {
-
         Text(
             modifier = Modifier
                 .weight(1f)
@@ -176,7 +168,6 @@ fun DialogTopBar(
                 .padding(end = LocalDimens.current.padding.contentHorizontalSmall),
             onClick = onCloseClick,
         ) {
-
             Icon(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 imageVector = Icons.Outlined.Close,

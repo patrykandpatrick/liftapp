@@ -24,7 +24,6 @@ fun BodyMeasurementListScreen(
     modifier: Modifier = Modifier,
     navigate: (String) -> Unit,
 ) {
-
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val viewModel: BodyMeasurementListViewModel = hiltViewModel()
@@ -41,7 +40,6 @@ fun BodyMeasurementListScreen(
     ) { paddingValues ->
 
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
-
             items(
                 items = items,
                 key = { item -> item.bodyMeasurementID },

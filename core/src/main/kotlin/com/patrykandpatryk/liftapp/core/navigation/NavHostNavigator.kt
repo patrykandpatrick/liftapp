@@ -11,9 +11,6 @@ class NavHostNavigator(private val navHostController: NavHostController) : Navig
     override val previousBackStackEntry: NavBackStackEntry?
         get() = navHostController.previousBackStackEntry
 
-    override val backQueue: ArrayDeque<NavBackStackEntry>
-        get() = navHostController.backQueue
-
     override fun navigate(route: String) {
         navHostController.navigate(route = route)
     }
@@ -25,4 +22,6 @@ class NavHostNavigator(private val navHostController: NavHostController) : Navig
     override fun popBackStack(route: String, inclusive: Boolean, saveState: Boolean) {
         navHostController.popBackStack(route, inclusive, saveState)
     }
+
+    override fun getBackStackEntry(route: String): NavBackStackEntry = navHostController.getBackStackEntry(route)
 }

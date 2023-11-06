@@ -52,13 +52,13 @@ fun NumberInput(
             {
                 Text(text = hint)
             }
-        } else null,
+        } else {
+            null
+        },
         leadingIcon = {
-
             Row(
                 modifier = Modifier.padding(end = LocalDimens.current.padding.contentHorizontalSmall),
             ) {
-
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     onLongClick = { onMinusClick(true) },
@@ -88,11 +88,9 @@ fun NumberInput(
             }
         },
         trailingIcon = {
-
             Row(
                 modifier = Modifier.padding(start = LocalDimens.current.padding.contentHorizontalSmall),
             ) {
-
                 if (suffix != null) {
                     Text(
                         modifier = Modifier
@@ -145,7 +143,6 @@ fun NumberInput(
     supportingText: String? = null,
 ) {
     Column(modifier = modifier) {
-
         NumberInput(
             value = value,
             onValueChange = onValueChange,
@@ -160,7 +157,6 @@ fun NumberInput(
         )
 
         AnimatedVisibility(visible = isError && (errorMessage != null || supportingText != null)) {
-
             Text(
                 text = errorMessage ?: supportingText.orEmpty(),
                 style = MaterialTheme.typography.bodySmall,

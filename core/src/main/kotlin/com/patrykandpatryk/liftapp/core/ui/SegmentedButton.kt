@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -109,7 +109,7 @@ fun <T> VerticalSegmentedButtonContainer(
         items.forEachIndexed { index, item ->
             getItem(index, item)
             if (index < items.lastIndex) {
-                Divider()
+                HorizontalDivider()
             }
         }
     }
@@ -199,7 +199,6 @@ private fun SegmentedButton(
             alignment = Alignment.CenterHorizontally,
         ),
     ) {
-
         val iconPainter = when {
             showIcon.not() -> null
             selected -> painterResource(id = R.drawable.ic_check)
@@ -231,7 +230,6 @@ private fun SegmentedButton(
 fun PreviewSegmentedButtonWithIcons() {
     LiftAppTheme {
         Surface {
-
             var selectedIndex by remember { mutableStateOf(1) }
 
             SegmentedButtonContainer(
@@ -256,7 +254,6 @@ fun PreviewSegmentedButtonWithIcons() {
 fun PreviewSegmentedButtonWithNoIcons() {
     LiftAppTheme {
         Surface {
-
             var selectedIndex by remember { mutableStateOf(1) }
 
             SegmentedButtonContainer(
@@ -280,7 +277,6 @@ fun PreviewSegmentedButtonWithNoIcons() {
 fun PreviewVerticalSegmentedButtonWithNoIcons() {
     LiftAppTheme {
         Surface {
-
             var selectedIndex by remember { mutableStateOf(1) }
 
             VerticalSegmentedButtonContainer(

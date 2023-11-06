@@ -17,7 +17,6 @@ class NameInfoCoderTest {
     @ParameterizedTest
     @MethodSource("nameInfoArguments")
     fun `Given NameInfo is encoded, produced hash is always the same`(nameInfo: NameInfo) {
-
         val encodedOne = sut.encodeToName(
             primaryMuscles = nameInfo.mainMuscles,
             secondaryMuscles = nameInfo.secondaryMuscles,

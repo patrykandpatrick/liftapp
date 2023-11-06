@@ -33,7 +33,6 @@ fun More(
     ) { paddingValues ->
 
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
-
             items(destinations) { destination ->
 
                 ListItem(

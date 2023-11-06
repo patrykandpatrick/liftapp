@@ -10,9 +10,12 @@ class HigherThanZeroValidator @Inject constructor(
 ) : Validator<Float> {
 
     override fun validate(value: Float): Validatable<Float> =
-        if (value > 0f) Validatable.Valid(value)
-        else Validatable.Invalid(
-            value = value,
-            message = stringProvider.errorMustBeHigherThanZero,
-        )
+        if (value > 0f) {
+            Validatable.Valid(value)
+        } else {
+            Validatable.Invalid(
+                value = value,
+                message = stringProvider.errorMustBeHigherThanZero,
+            )
+        }
 }

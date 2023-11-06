@@ -38,8 +38,10 @@ class GetExercisesItemsUseCase @Inject constructor(
             .sortByName()
             .search(query = latestQuery)
             .let { (matches, queryMatchPositions) ->
-                if (latestQuery.isNotEmpty()) return@let matches.mapIndexed { index, match ->
-                    toExerciseItem(match, match.id.toString(), queryMatchPositions[index])
+                if (latestQuery.isNotEmpty()) {
+                    return@let matches.mapIndexed { index, match ->
+                        toExerciseItem(match, match.id.toString(), queryMatchPositions[index])
+                    }
                 }
 
                 matches.group(groupBy = latestGroupBy)
@@ -65,7 +67,6 @@ class GetExercisesItemsUseCase @Inject constructor(
         GroupBy.Name -> groupBy { exercise -> exercise.displayName[0].toString() }
         GroupBy.ExerciseType -> groupBy { exercise -> exercise.exerciseType.name }
         GroupBy.MainMuscles -> {
-
             flatMap { exercise -> exercise.mainMuscles }
                 .toSet()
                 .associate { muscle ->
@@ -100,7 +101,6 @@ class GetExercisesItemsUseCase @Inject constructor(
     private fun Map<String, List<Exercise>>.toExerciseItems(
         getNameHighlightPosition: (Int) -> IntRange,
     ): List<ExercisesItem> {
-
         val idToIndexOfLast = mutableMapOf<Long, Int>()
 
         return flatMap { (header, exercises) ->

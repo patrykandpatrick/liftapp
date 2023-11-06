@@ -34,7 +34,6 @@ fun Modifier.reorderable(
     onDelta: (delta: Float) -> Unit,
     onItemReordered: (from: Int, to: Int) -> Unit,
 ): Modifier = composed {
-
     var hasBeenReordered by remember(itemIndex) { mutableStateOf(false) }
 
     draggable(

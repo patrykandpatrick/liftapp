@@ -42,7 +42,6 @@ data class MuscleModel(
             secondaryMuscles: Collection<Muscle>,
             tertiaryMuscles: Collection<Muscle>,
         ): List<MuscleModel> = buildList {
-
             primaryMuscles.map { muscle ->
                 MuscleModel(
                     muscle = muscle,

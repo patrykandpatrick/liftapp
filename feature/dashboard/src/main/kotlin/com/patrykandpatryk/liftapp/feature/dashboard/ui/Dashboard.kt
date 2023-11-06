@@ -11,7 +11,6 @@ import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 
 @Composable
 fun Dashboard(modifier: Modifier = Modifier) {
-
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(

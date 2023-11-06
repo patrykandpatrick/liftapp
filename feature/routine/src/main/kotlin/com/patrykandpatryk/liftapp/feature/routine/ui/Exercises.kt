@@ -43,7 +43,6 @@ import kotlin.math.roundToInt
 internal fun Exercises(
     modifier: Modifier = Modifier,
 ) {
-
     val viewModel: RoutineViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsState()
@@ -61,13 +60,11 @@ private fun Exercises(
     onIntent: (Intent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     val itemRanges = rememberItemRanges()
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
     ) {
-
         itemsIndexed(
             items = state.exercises,
             key = { _, exercise -> exercise.id },
@@ -77,7 +74,7 @@ private fun Exercises(
                 index = index,
                 itemRanges = itemRanges,
                 exercise = exercise,
-                onIntent = onIntent
+                onIntent = onIntent,
             )
         }
     }

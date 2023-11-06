@@ -31,36 +31,16 @@ dependencies {
     detektPlugins libs.detekt.formatting
 }
 
-detekt {
-
-    buildUponDefaultConfig = true
-    source = files("app", "core", "domain", "feature", "functionality")
-    config = files(".idea/detekt-config.yml")
-}
-
 tasks.withType(Detekt).configureEach {
-
-    jvmTarget = "17"
-
-    reports {
-
-        html {
-
-            required.set(true)
-            outputLocation.set(file("build/reports/detekt/detekt.html"))
-        }
-    }
-}
-
-tasks.register("detektFix", Detekt) { task ->
-
-    autoCorrect = true
+    source = fileTree projectDir
+    config = files ".idea/detekt-config.yml"
     buildUponDefaultConfig = true
-    source = files("app", "core", "domain", "feature", "functionality")
-    config.setFrom(files(".idea/detekt-config.yml"))
 }
 
-tasks.register("clean", Detekt) {
+tasks.register("detektFix", Detekt) {
+    autoCorrect = true
+}
 
-    delete rootProject.buildDir
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
 }

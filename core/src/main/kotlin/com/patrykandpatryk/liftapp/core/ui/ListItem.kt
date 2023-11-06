@@ -103,7 +103,6 @@ fun CheckableListItem(
     titleHighlightPosition: IntRange = IntRange.EMPTY,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-
     val animationFraction by animateFloatAsState(
         targetValue = if (checked) 1f else 0f,
         animationSpec = tween(),
@@ -173,11 +172,9 @@ fun ListItem(
             .thenIfNotNull(value = onClick) { clickable(onClick = it, enabled = enabled) }
             .padding(paddingValues),
     ) {
-
         icon()
 
         Column(modifier = Modifier.weight(1f)) {
-
             if (!titleHighlightPosition.isEmpty()) {
                 var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
                 val highlightColor = MaterialTheme.colorScheme.tertiaryContainer
@@ -308,7 +305,6 @@ fun PreviewTitleWithLongDescAndIconItem() {
                 description = "This is a description with two lines",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
                 actions = {
-
                     IconButton(onClick = { }) {
                         Icon(
                             painter = painterResource(
@@ -343,7 +339,6 @@ fun PreviewTitleWithLongDescTrailingAndIconItem() {
                 trailing = "100+",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
                 actions = {
-
                     IconButton(onClick = { }) {
                         Icon(
                             painter = painterResource(

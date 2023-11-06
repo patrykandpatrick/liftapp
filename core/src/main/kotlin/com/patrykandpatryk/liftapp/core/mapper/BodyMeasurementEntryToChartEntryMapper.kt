@@ -16,7 +16,6 @@ class BodyMeasurementEntryToChartEntryMapper @Inject constructor() {
 
             when (val value = entry.value) {
                 is BodyMeasurementValue.Double -> {
-
                     chartEntries
                         .getOrPut(0) { ArrayList() }
                         .add(entryOf(reversedIndex, value.left))
@@ -26,7 +25,6 @@ class BodyMeasurementEntryToChartEntryMapper @Inject constructor() {
                         .add(entryOf(reversedIndex, value.right))
                 }
                 is BodyMeasurementValue.Single -> {
-
                     chartEntries
                         .getOrPut(0) { ArrayList() }
                         .add(entryOf(reversedIndex, value.value))

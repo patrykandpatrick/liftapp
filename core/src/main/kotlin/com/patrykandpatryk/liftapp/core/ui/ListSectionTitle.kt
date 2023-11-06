@@ -17,7 +17,6 @@ fun ListSectionTitle(
     title: String,
     modifier: Modifier = Modifier,
 ) {
-
     Box(
         modifier = modifier
             .padding(
@@ -25,7 +24,6 @@ fun ListSectionTitle(
                 horizontal = LocalDimens.current.padding.contentHorizontal,
             ),
     ) {
-
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,

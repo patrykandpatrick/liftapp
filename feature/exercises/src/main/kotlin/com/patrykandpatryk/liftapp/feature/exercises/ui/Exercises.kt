@@ -114,7 +114,6 @@ private fun Exercises(
     state: ScreenState,
     onIntent: (Intent) -> Unit,
 ) {
-
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val navigator = navigator
 
@@ -164,11 +163,8 @@ private fun Exercises(
                 },
             ),
         ) {
-
             if (state.query.isEmpty()) {
-
                 item {
-
                     Controls(
                         groupBy = state.groupBy,
                         onGroupBySelection = { onIntent(Intent.SetGroupBy(it)) },
@@ -253,7 +249,6 @@ private fun TopBar(
 ) {
     if (state.pickingMode) {
         Column {
-
             TopAppBar(
                 title = {
                     Text(
@@ -305,7 +300,6 @@ private fun BottomBar(
             end = 16.dp,
         ),
     ) {
-
         IconButton(onClick = { navigator.navigate(Routes.NewExercise.create()) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_add),
@@ -330,9 +324,7 @@ private fun Controls(
     groupBy: GroupBy,
     onGroupBySelection: (GroupBy) -> Unit,
 ) {
-
     Column(modifier = Modifier.padding(vertical = MaterialTheme.dimens.padding.exercisesControlsVertical)) {
-
         Text(
             text = stringResource(id = R.string.generic_group_by),
             style = MaterialTheme.typography.bodyMedium,
@@ -346,7 +338,6 @@ private fun Controls(
                 .horizontalScroll(state = rememberScrollState())
                 .padding(horizontal = MaterialTheme.dimens.padding.contentHorizontal),
         ) {
-
             GroupBy.values().forEach {
                 val selected = groupBy == it
                 FilterChip(

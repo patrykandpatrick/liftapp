@@ -58,7 +58,6 @@ private fun Routines(
     routines: List<RoutineWithExerciseNames>,
     navigate: (String) -> Unit,
 ) {
-
     val dimensPadding = LocalDimens.current.padding
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -98,7 +97,6 @@ private fun Routines(
             verticalItemSpacing = dimensPadding.contentVerticalSmall,
             horizontalArrangement = Arrangement.spacedBy(dimensPadding.contentHorizontalSmall),
         ) {
-
             items(
                 items = routines,
                 key = { it.id },

@@ -1,23 +1,23 @@
 package com.patrykandpatryk.liftapp.core.ui.swipe
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.zIndex
+import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.pixels
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -44,23 +46,33 @@ fun SwipeContainer(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
 ) {
+    val dimens = LocalDimens.current
+    val velocityThreshold = with(LocalDensity.current) { dimens.swipe.velocityThreshold.toPx() }
 
-    val actionThreshold = LocalDimens.current.swipe.actionThreshold
-    val swipeableState = rememberSwipeableState(initialValue = SwipeContainerState.Idle)
+    val anchoredDraggableState = remember {
+        AnchoredDraggableState(
+            initialValue = SwipeContainerState.Idle,
+            positionalThreshold = { dimens.swipe.fractionalThreshold * it },
+            velocityThreshold = { velocityThreshold },
+            animationSpec = spring(),
+        )
+    }
 
-    val swipeOffset by swipeableState.offset
-
+    val swipeOffset = anchoredDraggableState.offset.takeIf { it.isFinite() }.orZero
     var containerWidth by remember { mutableStateOf(1f) }
-
-    val swipeProgress by remember {
-        derivedStateOf { swipeOffset / containerWidth }
-    }
-
-    val isDismissed by remember {
-        derivedStateOf { abs(swipeProgress) == 1f }
-    }
-
+    val swipeProgress = swipeOffset / containerWidth
+    val isDismissed = abs(swipeProgress) == 1f
     val animatedHeight by animateFloatAsState(targetValue = if (isDismissed) 0f else 1f)
+
+    LaunchedEffect(containerWidth) {
+        anchoredDraggableState.updateAnchors(
+            DraggableAnchors {
+                SwipeContainerState.SwipedLeft at -containerWidth
+                SwipeContainerState.Idle at 0f
+                SwipeContainerState.SwipedRight at containerWidth
+            },
+        )
+    }
 
     LaunchedEffect(key1 = isDismissed, key2 = animatedHeight) {
         if (isDismissed && animatedHeight == 0f) onDismiss()
@@ -72,16 +84,7 @@ fun SwipeContainer(
             background(swipeProgress, swipeOffset)
         },
         modifier = modifier
-            .swipeable(
-                state = swipeableState,
-                anchors = mapOf(
-                    0f to SwipeContainerState.Idle,
-                    -containerWidth to SwipeContainerState.SwipedLeft,
-                    containerWidth to SwipeContainerState.SwipedRight,
-                ),
-                orientation = Orientation.Horizontal,
-                thresholds = { _, _ -> FractionalThreshold(actionThreshold) },
-            )
+            .anchoredDraggable(anchoredDraggableState, Orientation.Horizontal)
             .alpha(animatedHeight)
             .zIndex(if (swipeProgress > 0f) 1f else 0f),
     ) { measurables, constraints ->
@@ -118,7 +121,7 @@ fun SwipeableDeleteBackground(
         SwipeableBackgroundContent(
             swipeProgress = swipeProgress,
             swipeOffset = swipeOffset,
-            icon = painterResource(id = R.drawable.ic_delete)
+            icon = painterResource(id = R.drawable.ic_delete),
         )
     }
 }
@@ -131,16 +134,12 @@ fun SwipeableBackground(
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     content: @Composable BoxScope.(swipeProgress: Float, swipeOffset: Float) -> Unit,
 ) {
-
     Box(
         modifier = Modifier
             .background(backgroundColor),
     ) {
         CompositionLocalProvider(LocalContentColor provides contentColor) {
-            content(
-                swipeProgress = swipeProgress,
-                swipeOffset = swipeOffset,
-            )
+            content(swipeProgress, swipeOffset)
         }
     }
 }
@@ -164,7 +163,7 @@ fun BoxScope.SwipeableBackgroundContent(
     Spacer(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.scrim.copy(alpha = 1f - scaleAndAlpha))
-            .fillMaxSize()
+            .fillMaxSize(),
     )
 
     Icon(

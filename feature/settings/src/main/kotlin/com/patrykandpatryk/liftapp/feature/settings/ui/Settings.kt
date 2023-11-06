@@ -26,7 +26,6 @@ import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
 
 fun NavGraphBuilder.addSettings() {
-
     composable(route = Routes.Settings) {
         Settings()
     }
@@ -56,7 +55,6 @@ fun Settings(
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxHeight(),
         ) {
-
             item {
                 ListSectionTitle(title = stringResource(id = R.string.units))
             }

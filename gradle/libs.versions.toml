@@ -1,42 +1,36 @@
 [versions]
-accompanist = "0.29.1-alpha"
-activity = "1.7.0"
-androidxCore = "1.10.0-alpha02"
-appcompat = "1.7.0-alpha02"
-coil = "2.2.2"
-compose = "1.4.0"
-composeCompiler = "1.4.8"
-coroutines = "1.6.4"
-datastore = "1.1.0-alpha01"
+accompanist = "0.33.2-alpha"
+activity = "1.8.0"
+appcompat = "1.7.0-alpha03"
+coil = "2.5.0"
+compose = "1.6.0-alpha08"
+composeCompiler = "1.5.3"
+coroutines = "1.7.3"
+datastore = "1.1.0-alpha06"
 documentfile = "1.1.0-alpha01"
-hilt = "2.44.2"
-hiltNavigation = "1.1.0-alpha01"
+hilt = "2.48.1"
+hiltNavigation = "1.1.0"
 junit = "4.13.2"
-junitExt = "1.1.2"
-jupiter = "5.9.1"
-kotlin = "1.8.22"
-kotlinxSerialization = "1.4.1"
-kotlinxSerializationConverter = "0.8.0"
-lifecycle = "2.6.0"
-material3 = "1.1.0-alpha08"
-mockk = "1.13.2"
-ossLicensesPlugin = "0.10.4"
-ossLicenses = "17.0.0"
+jupiter = "5.10.0"
+kotlin = "1.9.10"
+kotlinxSerialization = "1.6.0"
+kotlinxSerializationConverter = "1.0.0"
+lifecycle = "2.7.0-beta01"
+material3 = "1.2.0-alpha10"
+mockk = "1.13.8"
 opto = "1.1.0"
 retrofit = "2.9.0"
-room = "2.5.1"
-viewmodel = "2.6.0"
-testCore = "1.3.0"
+room = "2.6.0"
+viewmodel = "2.7.0-beta01"
 timber = "5.0.1"
-vico = "1.6.3"
+vico = "1.13.0-alpha.9"
 
-androidPlugin = "8.2.0-alpha11"
-detektPlugin = "1.22.0"
-kspPlugin = "1.8.22-1.0.11"
+androidPlugin = "8.3.0-alpha12"
+detektPlugin = "1.23.3"
+kspPlugin = "1.9.10-1.0.13"
 
 [libraries]
 
-accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-system-ui-controler = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
@@ -44,7 +38,7 @@ accompanist-system-ui-controler = { module = "com.google.accompanist:accompanist
 activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 
-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version = "1.21.0" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version = "1.23.3" }
 
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
@@ -92,7 +86,7 @@ vico = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "vico" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel" }
 
 [bundles]
-accompanist = ["accompanist-insets", "accompanist-navigation-animation", "accompanist-navigation-material", "accompanist-system-ui-controler"]
+accompanist = ["accompanist-navigation-animation", "accompanist-navigation-material", "accompanist-system-ui-controler"]
 compose = ["compose-ui", "compose-ui-tooling", "compose-material", "compose-material3"]
 kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
 hilt = ["hilt-android", "hilt-navigation"]

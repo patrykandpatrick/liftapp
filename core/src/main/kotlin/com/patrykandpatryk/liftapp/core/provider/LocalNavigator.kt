@@ -35,8 +35,7 @@ fun <T> Navigator.setResult(
     result: T,
     route: String = requireNotNull(previousBackStackEntry?.destination?.route),
 ) {
-    val entry = backQueue.first { it.destination.route == route }
-    entry.savedStateHandle[key] = result
+    getBackStackEntry(route).savedStateHandle[key] = result
 }
 
 @Composable
@@ -73,7 +72,6 @@ fun Modifier.onClickNavigate(
     role: Role? = null,
     onGetRoute: () -> String,
 ) = composed {
-
     val navHostController = LocalNavigator.current
 
     Modifier.clickable(

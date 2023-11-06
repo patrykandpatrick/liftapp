@@ -20,7 +20,6 @@ fun DialogButtons(
     negativeButtonText: String = stringResource(id = android.R.string.cancel),
     isPositiveButtonEnabled: Boolean = true,
 ) {
-
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(
@@ -28,7 +27,6 @@ fun DialogButtons(
             alignment = Alignment.End,
         ),
     ) {
-
         TextButton(onClick = onNegativeButtonClick) {
             Text(text = negativeButtonText)
         }

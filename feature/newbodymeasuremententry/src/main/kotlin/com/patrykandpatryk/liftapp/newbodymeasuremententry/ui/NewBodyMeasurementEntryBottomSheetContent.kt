@@ -53,7 +53,6 @@ import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.addNewBodyMeasurementEntryDestination(bottomSheetState: ModalBottomSheetState) {
-
     bottomSheet(route = Routes.NewBodyMeasurementEntry) {
         val scope = rememberCoroutineScope()
 
@@ -68,7 +67,6 @@ fun NewBodyMeasurementEntryBottomSheetContent(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     val viewModel: NewBodyMeasurementEntryViewModel = hiltViewModel()
     val bodyModel by viewModel.state.collectAsState()
 
@@ -132,7 +130,6 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
                 .padding(top = dimens.padding.itemVertical),
             verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
         ) {
-
             state.values.forEachIndexed { index, validatable ->
 
                 NumberInput(
@@ -146,7 +143,6 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(space = dimens.padding.itemHorizontal),
             ) {
-
                 val dateInteractionSource = remember { MutableInteractionSource() }
                     .onClick(datePickerState::show)
 
@@ -176,7 +172,6 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onIntent(Intent.Save) },
             ) {
-
                 Text(
                     text = stringResource(id = R.string.action_save),
                     color = MaterialTheme.colorScheme.onSecondaryContainer,

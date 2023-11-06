@@ -56,16 +56,12 @@ fun DatePicker(
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     onTimePicked: (year: Int, month: Int, day: Int) -> Unit,
 ) {
-
     CompositionLocalProvider(LocalDimens provides DialogDimens) {
-
         if (state.isShowing) {
-
             Dialog(
                 onDismissRequest = { state.isShowing = false },
                 properties = properties,
             ) {
-
                 Surface(
                     modifier = modifier
                         .widthIn(
@@ -78,7 +74,6 @@ fun DatePicker(
                     tonalElevation = LocalDimens.current.dialog.tonalElevation,
                     shape = MaterialTheme.shapes.extraLarge,
                 ) {
-
                     DatePickerContent(
                         modifier = Modifier.padding(
                             horizontal = LocalDimens.current.padding.contentHorizontal,
@@ -103,12 +98,10 @@ private fun DatePickerContent(
     state: DatePickerState,
     onPositiveButtonClick: () -> Unit,
 ) {
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(LocalDimens.current.verticalItemSpacing),
     ) {
-
         Text(
             modifier = Modifier.padding(bottom = LocalDimens.current.padding.itemVertical),
             text = stringResource(id = R.string.picker_date_title),
@@ -231,7 +224,6 @@ fun rememberDatePickerState(
     millis: Long? = null,
     isShowing: Boolean = false,
 ): DatePickerState {
-
     val inputDatePattern = stringResource(id = R.string.picker_date_input_date_format)
     val outputDatePattern = stringResource(id = R.string.picker_date_output_date_format)
     val exampleDatePattern = stringResource(id = R.string.picker_date_example_date_format)

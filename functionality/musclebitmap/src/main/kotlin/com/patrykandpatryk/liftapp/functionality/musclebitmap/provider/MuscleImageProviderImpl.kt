@@ -38,7 +38,6 @@ class MuscleImageProviderImpl @Inject constructor(
         tertiaryMuscles: List<Muscle>,
         isDark: Boolean,
     ): String {
-
         val targetDir = File(filesDir, TARGET_SUBDIRECTORY)
 
         if (targetDir.exists().not()) {

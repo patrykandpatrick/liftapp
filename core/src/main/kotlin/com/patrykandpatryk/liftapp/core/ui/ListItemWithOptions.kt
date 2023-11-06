@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -46,7 +46,6 @@ fun ListItemWithOptions(
     modifier: Modifier = Modifier,
     optionItems: List<OptionItem> = emptyList(),
 ) {
-
     val dimens = LocalDimens.current
 
     val elevation by animateDpAsState(
@@ -75,7 +74,6 @@ fun ListItemWithOptions(
             .clip(shape)
             .clickable { setExpanded(!isExpanded) },
     ) {
-
         mainContent()
 
         AnimatedVisibility(
@@ -84,13 +82,11 @@ fun ListItemWithOptions(
             exit = fadeOut() + shrinkHorizontally(),
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
-            Divider()
+            HorizontalDivider()
         }
 
         AnimatedVisibility(visible = isExpanded) {
-
             Row {
-
                 optionItems.forEach { (iconPainter, label, onClick) ->
 
                     Option(
@@ -117,7 +113,6 @@ fun Option(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.supportingTextVertical),
     ) {
-
         if (iconPainter != null) {
             Icon(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -127,7 +122,6 @@ fun Option(
         }
 
         if (label != null) {
-
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = label,
@@ -149,7 +143,6 @@ data class OptionItem(
 @Composable
 fun ListItemWithOptionsPreview() {
     LiftAppTheme {
-
         val (isExpanded, setExpanded) = remember { mutableStateOf(true) }
 
         Surface {

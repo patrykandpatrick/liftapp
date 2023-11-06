@@ -12,9 +12,6 @@ object StubNavigator : Navigator {
     override val previousBackStackEntry: NavBackStackEntry
         get() = error(ERR_MESSAGE)
 
-    override val backQueue: ArrayDeque<NavBackStackEntry>
-        get() = error(ERR_MESSAGE)
-
     override fun navigate(route: String) {
         error(ERR_MESSAGE)
     }
@@ -24,6 +21,10 @@ object StubNavigator : Navigator {
     }
 
     override fun popBackStack(route: String, inclusive: Boolean, saveState: Boolean) {
+        error(ERR_MESSAGE)
+    }
+
+    override fun getBackStackEntry(route: String): NavBackStackEntry {
         error(ERR_MESSAGE)
     }
 }
