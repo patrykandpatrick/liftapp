@@ -12,7 +12,6 @@ android {
     compileSdk android.compileSdk
 
     defaultConfig {
-        
         minSdk android.minSdk
         targetSdk android.targetSdk
         versionCode getProjectVersionCode()
@@ -26,25 +25,20 @@ android {
     }
 
     buildTypes {
-
         debug {
-
             buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
             buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
 
         release {
-
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-
             buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
             buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
     }
 
     compileOptions {
-
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }

@@ -9,9 +9,10 @@ import androidx.compose.ui.res.stringResource
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.Tab
 import com.patrykandpatryk.liftapp.feature.exercise.ui.Details
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-internal val tabs: List<Tab>
-    get() = listOf(
+internal val tabs: ImmutableList<Tab> = persistentListOf(
         Tab(
             nameRes = R.string.tab_stats,
             content = {

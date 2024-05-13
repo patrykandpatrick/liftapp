@@ -5,8 +5,8 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -42,7 +42,7 @@ fun IconButton(
                 enabled = enabled,
                 role = Role.Button,
                 interactionSource = interactionSource,
-                indication = rememberRipple(
+                indication = ripple(
                     bounded = false,
                     radius = LocalDimens.current.iconButton.rippleRadius,
                 ),

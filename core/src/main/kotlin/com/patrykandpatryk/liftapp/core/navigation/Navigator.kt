@@ -8,6 +8,12 @@ interface Navigator {
 
     val previousBackStackEntry: NavBackStackEntry?
 
+    val currentRoute: String?
+        get() = currentBackStackEntry?.destination?.route
+
+    val canNavigateBack: Boolean
+        get() = previousBackStackEntry != null
+
     fun navigate(route: String)
 
     fun popBackStack()

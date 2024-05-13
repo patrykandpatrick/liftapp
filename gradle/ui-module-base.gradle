@@ -1,7 +1,6 @@
 apply from: "$rootDir/gradle/base.gradle"
 
 android {
-
     buildFeatures {
         compose true
     }
@@ -18,7 +17,6 @@ android {
 }
 
 kotlin {
-
     sourceSets {
         debug {
             kotlin.srcDir("build/generated/ksp/debug/kotlin")
@@ -30,7 +28,6 @@ kotlin {
 }
 
 dependencies {
-
     implementation project(":domain")
 
     debugImplementation libs.compose.ui.test.manifest

@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -176,13 +176,14 @@ private fun SegmentedButton(
     modifier: Modifier = Modifier,
     icon: Painter? = null,
 ) {
+
     Row(
         modifier = modifier
             .background(color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
             .clickable(
                 onClick = onClick,
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(
+                indication = ripple(
                     color = if (selected) {
                         MaterialTheme.colorScheme.onSecondaryContainer
                     } else {

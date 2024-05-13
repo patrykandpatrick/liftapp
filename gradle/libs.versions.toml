@@ -1,33 +1,35 @@
 [versions]
-accompanist = "0.33.2-alpha"
-activity = "1.8.0"
-appcompat = "1.7.0-alpha03"
-coil = "2.5.0"
-compose = "1.6.0-alpha08"
-composeCompiler = "1.5.3"
-coroutines = "1.7.3"
-datastore = "1.1.0-alpha06"
+accompanist = "0.34.0"
+activity = "1.9.0"
+appcompat = "1.7.0-beta01"
+coil = "2.2.2"
+compose = "1.7.0-alpha08"
+composeCompiler = "1.5.13"
+coroutines = "1.8.0"
+datastore = "1.1.1"
 documentfile = "1.1.0-alpha01"
-hilt = "2.48.1"
-hiltNavigation = "1.1.0"
+hilt = "2.49"
+hiltNavigation = "1.2.0"
+immutableCollections = "0.3.7"
 junit = "4.13.2"
-jupiter = "5.10.0"
-kotlin = "1.9.10"
-kotlinxSerialization = "1.6.0"
-kotlinxSerializationConverter = "1.0.0"
-lifecycle = "2.7.0-beta01"
-material3 = "1.2.0-alpha10"
-mockk = "1.13.8"
+jupiter = "5.10.2"
+kotlin = "1.9.23"
+kotlinxSerialization = "1.4.1"
+kotlinxSerializationConverter = "0.8.0"
+lifecycle = "2.7.0"
+material3 = "1.3.0-alpha06"
+mockk = "1.13.2"
 opto = "1.1.0"
 retrofit = "2.9.0"
-room = "2.6.0"
-viewmodel = "2.7.0-beta01"
+room = "2.6.1"
+viewmodel = "2.7.0"
+testCore = "1.3.0"
 timber = "5.0.1"
 vico = "1.13.0-alpha.9"
 
-androidPlugin = "8.3.0-alpha12"
+androidPlugin = "8.4.0"
 detektPlugin = "1.23.3"
-kspPlugin = "1.9.10-1.0.13"
+kspPlugin = "1.9.23-1.0.20"
 
 [libraries]
 
@@ -57,6 +59,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hilt" }
 hilt-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
+immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 jupiter = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
@@ -91,7 +94,7 @@ compose = ["compose-ui", "compose-ui-tooling", "compose-material", "compose-mate
 kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
 hilt = ["hilt-android", "hilt-navigation"]
 opto = ["opto-core", "opto-domain"]
-ui = ["coil", "compose-ui", "compose-ui-tooling", "compose-material", "compose-material3", "vico"]
+ui = ["coil", "compose-ui", "compose-ui-tooling", "compose-material", "compose-material3", "vico", "immutable-collections"]
 
 testing = ["junit", "jupiter", "kotlin-test"]
 

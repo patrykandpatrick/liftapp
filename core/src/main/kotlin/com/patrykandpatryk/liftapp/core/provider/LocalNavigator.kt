@@ -13,9 +13,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.navigation.NavHostController
 import com.patrykandpatryk.liftapp.core.navigation.NavHostNavigator
 import com.patrykandpatryk.liftapp.core.navigation.Navigator
-import com.patrykandpatryk.liftapp.core.navigation.StubNavigator
 
-val LocalNavigator: ProvidableCompositionLocal<Navigator> = compositionLocalOf { StubNavigator }
+val LocalNavigator: ProvidableCompositionLocal<Navigator> = compositionLocalOf { error("Stub") }
 
 val navigator: Navigator
     @Composable get() = LocalNavigator.current

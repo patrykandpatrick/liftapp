@@ -5,19 +5,16 @@ plugins {
 apply from: "$rootDir/gradle/ui-module-base.gradle"
 
 android {
-
     namespace "pl.patrykgoworowski.mintlift"
 
     buildTypes {
 
         release {
-            
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
 
         debug {
-
             applicationIdSuffix ".dev"
             debuggable true
         }
@@ -25,7 +22,6 @@ android {
 }
 
 dependencies {
-
     implementation project(":core")
     implementation project(":data")
     implementation project(":feature:home")

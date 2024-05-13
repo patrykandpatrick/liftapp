@@ -90,11 +90,8 @@ private fun ExerciseDetails(
     snackbarHostState: SnackbarHostState,
 ) {
     val navigator = navigator
-
+    val tabs = tabs
     val pagerState = rememberPagerState { tabs.size }
-
-    val tabs = remember { tabs }
-
     val scope = rememberCoroutineScope()
 
     Scaffold(
