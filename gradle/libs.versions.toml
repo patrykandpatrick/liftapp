@@ -28,7 +28,6 @@ timber = "5.0.1"
 vico = "1.13.0-alpha.9"
 
 androidPlugin = "8.4.0"
-detektPlugin = "1.23.3"
 kspPlugin = "1.9.23-1.0.20"
 
 [libraries]
@@ -39,8 +38,6 @@ accompanist-system-ui-controler = { module = "com.google.accompanist:accompanist
 
 activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-
-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version = "1.23.3" }
 
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
@@ -101,7 +98,6 @@ testing = ["junit", "jupiter", "kotlin-test"]
 [plugins]
 
 application = { id = "com.android.application", version.ref = "androidPlugin" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektPlugin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
