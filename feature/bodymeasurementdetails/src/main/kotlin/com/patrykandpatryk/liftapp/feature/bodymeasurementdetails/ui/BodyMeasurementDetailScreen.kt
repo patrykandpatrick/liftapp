@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.Routes.NewBodyMeasurementEntry
 import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListItem
@@ -43,6 +42,7 @@ import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
 import com.patrykandpatryk.liftapp.core.ui.OptionItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
 
 fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
     composable(route = Routes.BodyMeasurementDetails) {
@@ -90,11 +90,10 @@ private fun BodyMeasurementDetailScreen(
                 modifier = Modifier.navigationBarsPadding(),
                 text = { Text(text = stringResource(id = R.string.action_new_entry)) },
                 icon = { Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null) },
-                onClick = { navigator.navigate(NewBodyMeasurementEntry.create(state.bodyMeasurementID)) },
+                onClick = { onIntent(Intent.NewEntry(state.bodyMeasurementID)) },
             )
         },
     ) { paddingValues ->
-
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues),
@@ -148,7 +147,7 @@ private fun BodyMeasurementDetailScreen(
                             iconPainter = painterResource(id = R.drawable.ic_edit),
                             label = stringResource(id = R.string.action_edit),
                             onClick = {
-                                navigator.navigate(NewBodyMeasurementEntry.create(state.bodyMeasurementID, entry.id))
+                                onIntent(Intent.NewEntry(state.bodyMeasurementID, entry.id))
                             },
                         ),
                         OptionItem(
@@ -162,5 +161,13 @@ private fun BodyMeasurementDetailScreen(
                 )
             }
         }
+    }
+
+    state.newEntry?.also { newEntry ->
+        NewBodyMeasurementEntryBottomSheet(
+            bodyMeasurementId = newEntry.bodyMeasurementID,
+            bodyMeasurementEntryId = newEntry.bodyMeasurementEntryID,
+            onDismissRequest = { onIntent(Intent.DismissNewEntry) },
+        )
     }
 }

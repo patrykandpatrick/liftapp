@@ -7,13 +7,14 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Stable
+import com.patrykandpatrick.vico.compose.m3.style.m3ChartStyle
+import com.patrykandpatrick.vico.compose.style.ChartStyle
+import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatryk.liftapp.core.extension.isLandscape
 import com.patrykandpatryk.liftapp.core.ui.dimens.LandscapeDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.PortraitDimens
-import com.patrykandpatrick.vico.compose.m3.style.m3ChartStyle
-import com.patrykandpatrick.vico.compose.style.ChartStyle
-import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 
 private val LightColorScheme = lightColorScheme(
     primary = Colors.Light.primary,
@@ -75,6 +76,14 @@ private val DarkColorScheme = darkColorScheme(
 
 val chartStyle: ChartStyle
     @Composable get() = m3ChartStyle()
+
+data object Alpha{
+    const val disabled: Float = 0.38f
+    const val standard: Float = 1f
+
+    @Stable
+    fun get(enabled: Boolean): Float = if (enabled) standard else disabled
+}
 
 @Composable
 fun LiftAppTheme(

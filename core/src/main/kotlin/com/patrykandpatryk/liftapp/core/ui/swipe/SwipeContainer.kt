@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.core.ui.swipe
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -12,13 +13,14 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,19 +49,21 @@ fun SwipeContainer(
     onDismiss: () -> Unit,
 ) {
     val dimens = LocalDimens.current
-    val velocityThreshold = with(LocalDensity.current) { dimens.swipe.velocityThreshold.toPx() }
+    val density = LocalDensity.current
+    val velocityThreshold = with(density) { dimens.swipe.velocityThreshold.toPx() }
 
     val anchoredDraggableState = remember {
         AnchoredDraggableState(
             initialValue = SwipeContainerState.Idle,
             positionalThreshold = { dimens.swipe.fractionalThreshold * it },
             velocityThreshold = { velocityThreshold },
-            animationSpec = spring(),
+            snapAnimationSpec = spring(),
+            decayAnimationSpec = splineBasedDecay(density)
         )
     }
 
     val swipeOffset = anchoredDraggableState.offset.takeIf { it.isFinite() }.orZero
-    var containerWidth by remember { mutableStateOf(1f) }
+    var containerWidth by remember { mutableFloatStateOf(1f) }
     val swipeProgress = swipeOffset / containerWidth
     val isDismissed = abs(swipeProgress) == 1f
     val animatedHeight by animateFloatAsState(targetValue = if (isDismissed) 0f else 1f)
@@ -86,9 +90,8 @@ fun SwipeContainer(
         modifier = modifier
             .anchoredDraggable(anchoredDraggableState, Orientation.Horizontal)
             .alpha(animatedHeight)
-            .zIndex(if (swipeProgress > 0f) 1f else 0f),
+            .zIndex(if (swipeProgress != 0f) 1f else 0f),
     ) { measurables, constraints ->
-
         val foregroundPlaceable = measurables[0].measure(constraints)
 
         val backgroundPlaceable =

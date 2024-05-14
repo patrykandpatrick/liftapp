@@ -8,7 +8,6 @@ apply from: "$rootDir/gradle/versioning.gradle"
 apply from: "$rootDir/gradle/versions.gradle"
 
 android {
-
     compileSdk android.compileSdk
 
     defaultConfig {
@@ -27,14 +26,12 @@ android {
     buildTypes {
         debug {
             buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
-            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
 
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
-            buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
         }
     }
 

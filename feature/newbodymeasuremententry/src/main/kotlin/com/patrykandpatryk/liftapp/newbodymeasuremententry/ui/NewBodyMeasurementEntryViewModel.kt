@@ -3,8 +3,6 @@ package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementEntryID
-import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementID
 import com.patrykandpatryk.liftapp.core.di.ValidatorType
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
@@ -24,6 +22,11 @@ import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.domain.validation.map
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementEntryID
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementID
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,14 +34,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 
 private const val SCREEN_STATE_KEY = "screen_state"
 
-@HiltViewModel
-internal class NewBodyMeasurementEntryViewModel @Inject constructor(
-    @BodyMeasurementID val id: Long,
-    @BodyMeasurementEntryID val entryId: Long,
+@HiltViewModel(assistedFactory = NewBodyMeasurementEntryViewModel.Factory::class)
+internal class NewBodyMeasurementEntryViewModel @AssistedInject constructor(
+    @Assisted val id: Long,
+    @Assisted val entryId: Long?,
     private val formatter: Formatter,
     private val exceptionHandler: CoroutineExceptionHandler,
     private val repository: BodyMeasurementRepository,
@@ -65,7 +67,7 @@ internal class NewBodyMeasurementEntryViewModel @Inject constructor(
 
     private suspend fun getInitialState(id: Long): ScreenState {
         val bodyMeasurement = repository.getBodyMeasurementWithLatestEntry(id).first()
-        val entry = repository.getBodyMeasurementEntry(entryId)
+        val entry = entryId?.let { entryId -> repository.getBodyMeasurementEntry(entryId) }
         val unit = getUnitForBodyMeasurementType(bodyMeasurement.type)
 
         return when (entry) {
@@ -76,8 +78,9 @@ internal class NewBodyMeasurementEntryViewModel @Inject constructor(
                 is24H = formatter.is24H(),
                 formattedDate = formatter.getFormattedDate(calendar),
             )
+
             else -> ScreenState.Update(
-                entryId = entryId,
+                entryId = entry.id,
                 name = bodyMeasurement.name,
                 values = entry.value.toValidatableStrings(bodyMeasurement.type.fields),
                 unit = entry.value.unit,
@@ -145,6 +148,7 @@ internal class NewBodyMeasurementEntryViewModel @Inject constructor(
                 events.emit(Event.EntrySaved)
                 model
             }
+
             else -> {
                 repository.insertBodyMeasurementEntry(
                     bodyMeasurementID = id,
@@ -164,11 +168,13 @@ internal class NewBodyMeasurementEntryViewModel @Inject constructor(
             value = get(0).value.parse(),
             unit = unit,
         )
+
         2 -> BodyMeasurementValue.Double(
             left = get(0).value.parse(),
             right = get(1).value.parse(),
             unit = unit,
         )
+
         else -> error("Tried to convert $size items into `BodyValues`.")
     }
 
@@ -178,9 +184,11 @@ internal class NewBodyMeasurementEntryViewModel @Inject constructor(
                 add(left.toString().toValid())
                 add(right.toString().toValid())
             }
+
             is BodyMeasurementValue.Single -> {
                 add(value.toString().toValid())
             }
+
             null -> repeat(fieldCount) {
                 add("".toInvalid(stringProvider.errorMustBeHigherThanZero))
             }
@@ -189,4 +197,12 @@ internal class NewBodyMeasurementEntryViewModel @Inject constructor(
 
     private fun String.parse(): Float =
         toFloatOrNull() ?: formatter.parseFloatOrZero(this)
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @BodyMeasurementID id: Long,
+            @BodyMeasurementEntryID entryId: Long?,
+        ): NewBodyMeasurementEntryViewModel
+    }
 }

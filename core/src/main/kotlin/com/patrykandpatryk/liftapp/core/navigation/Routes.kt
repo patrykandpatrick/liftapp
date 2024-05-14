@@ -68,24 +68,6 @@ object Routes {
             value.replace("{$ARG_ID}", routineId.toString())
     }
 
-    object NewBodyMeasurementEntry : Route("new_body_measurement_entry/{$ARG_ID}?$ARG_ENTRY_ID={$ARG_ENTRY_ID}") {
-
-        override val navArguments = listOf(
-            navArgument(ARG_ID) { type = NavType.LongType },
-            navArgument(ARG_ENTRY_ID) {
-                type = NavType.LongType
-                defaultValue = ID_NOT_SET
-            },
-        )
-
-        fun create(
-            bodyMeasurementID: Long,
-            entryId: Long = ID_NOT_SET,
-        ) = value
-            .replace("{$ARG_ID}", bodyMeasurementID.toString())
-            .replace("{$ARG_ENTRY_ID}", entryId.toString())
-    }
-
     object BodyMeasurementDetails : Route(value = "body_measurement_details/{$ARG_ID}") {
 
         override val navArguments = listOf(

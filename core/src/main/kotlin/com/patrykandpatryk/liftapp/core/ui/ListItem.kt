@@ -13,10 +13,9 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.IconButton
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,6 +43,7 @@ import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
+import com.patrykandpatryk.liftapp.core.ui.theme.Alpha
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
 import com.patrykandpatryk.liftapp.domain.extension.length
@@ -167,7 +167,7 @@ fun ListItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
         modifier = modifier
-            .alpha(if (enabled) 1f else ContentAlpha.disabled)
+            .alpha(Alpha.get(enabled))
             .fillMaxWidth()
             .thenIfNotNull(value = onClick) { clickable(onClick = it, enabled = enabled) }
             .padding(paddingValues),
