@@ -1,6 +1,0 @@
-apply from: "$rootDir/gradle/feature-module-base.gradle"
-
-android {
-
-    namespace "com.patrykandpatryk.liftapp.feature.exercises"
-}

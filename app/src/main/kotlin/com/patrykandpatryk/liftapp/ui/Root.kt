@@ -44,7 +44,7 @@ fun Root(
                 startDestination = Routes.Home.value,
                 modifier = modifier,
             ) {
-                addHome()
+                addHome(navController)
                 addAbout()
                 addSettings()
                 addOneRepMax()

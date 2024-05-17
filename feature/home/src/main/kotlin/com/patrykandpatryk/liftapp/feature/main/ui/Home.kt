@@ -15,6 +15,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -31,21 +32,29 @@ import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.anim.EXIT_ANIM_DURATION
 import com.patrykandpatryk.liftapp.core.ui.anim.slideAndFadeIn
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.ui.BodyMeasurementListScreen
+import com.patrykandpatryk.liftapp.feature.dashboard.ui.DashboardScreen
+import com.patrykandpatryk.liftapp.feature.exercises.ui.ExerciseListScreen
 import com.patrykandpatryk.liftapp.feature.main.HomeViewModel
+import com.patrykandpatryk.liftapp.feature.main.navigation.Home
+import com.patrykandpatryk.liftapp.feature.main.navigation.HomeRoute
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
+import com.patrykandpatryk.liftapp.feature.main.navigation.rememberHomeNavigator
+import com.patrykandpatryk.liftapp.feature.more.ui.MoreScreen
+import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
 
-fun NavGraphBuilder.addHome() {
+fun NavGraphBuilder.addHome(mainNavController: NavController) {
     composable(route = Routes.Home) {
-        Home()
+        Home(mainNavController)
     }
 }
 
 @Composable
 fun Home(
+    mainNavController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
@@ -53,6 +62,7 @@ fun Home(
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
     HomeScaffold(
+        mainNavController = mainNavController,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
     )
@@ -60,10 +70,12 @@ fun Home(
 
 @Composable
 private fun HomeScaffold(
+    mainNavController: NavController,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
+    val homeNavigator = rememberHomeNavigator(navController = mainNavController)
 
     Scaffold(
         modifier = modifier,
@@ -77,11 +89,8 @@ private fun HomeScaffold(
             )
         },
     ) { paddingValues ->
-
-        val navigator = navigator
-
         NavHost(
-            route = Routes.Home.value,
+            route = Home::class,
             navController = navController,
             startDestination = navBarRoutes.first().route,
             enterTransition = { slideAndFadeIn() },
@@ -90,10 +99,27 @@ private fun HomeScaffold(
             },
         ) {
             navBarRoutes.forEach { routeItem ->
-                composable(
-                    route = routeItem.route,
-                ) { backStackEntry ->
-                    routeItem.content(backStackEntry, Modifier, paddingValues, navigator::navigate)
+                when (routeItem.route) {
+                    HomeRoute.BodyMeasurements ->
+                        composable<HomeRoute.BodyMeasurements> {
+                            BodyMeasurementListScreen(navigator = homeNavigator, padding = paddingValues)
+                        }
+                    HomeRoute.Dashboard ->
+                        composable<HomeRoute.Dashboard> {
+                            DashboardScreen(navigator = homeNavigator, padding = paddingValues)
+                        }
+                    HomeRoute.Exercises ->
+                        composable<HomeRoute.Exercises> {
+                            ExerciseListScreen(navigator = homeNavigator, padding = paddingValues)
+                        }
+                    HomeRoute.More ->
+                        composable<HomeRoute.More> {
+                            MoreScreen(navigator = homeNavigator, padding = paddingValues)
+                        }
+                    HomeRoute.Routines ->
+                        composable<HomeRoute.Routines> {
+                            RoutineListScreen(navigator = homeNavigator, padding = paddingValues)
+                        }
                 }
             }
         }
@@ -103,18 +129,16 @@ private fun HomeScaffold(
 @Composable
 private fun NavigationBarWithPadding(
     navController: NavController,
-    navItemRoutes: Collection<NavItemRoute>,
+    navItemRoutes: Collection<NavItemRoute<HomeRoute>>,
     modifier: Modifier = Modifier,
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination by remember {
-        derivedStateOf { currentBackStackEntry?.destination }
-    }
+    val currentDestination by remember { derivedStateOf { currentBackStackEntry?.destination } }
 
     NavigationBar(modifier = modifier) {
         navItemRoutes.forEach { menuRoute ->
             val selected by derivedStateOf {
-                currentDestination?.hierarchy?.any { it.route == menuRoute.route } ?: false
+                currentDestination?.hierarchy?.any { it.route == menuRoute.route::class.qualifiedName } ?: false
             }
             NavigationBarItem(
                 selected = selected,
@@ -146,6 +170,7 @@ fun HomePreview() {
     LiftAppTheme {
         HomeScaffold(
             snackbarHostState = remember { SnackbarHostState() },
+            mainNavController = NavController(LocalContext.current),
         )
     }
 }

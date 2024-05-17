@@ -7,10 +7,9 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.google.accompanist.navigation.material.bottomSheet
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -35,14 +34,7 @@ object Routes {
     const val ARG_PICKING_MODE = "picking_mode"
     const val DISABLED_EXERCISE_IDS = "disabled_exercise_ids"
 
-    object Home : Route(value = "home") {
-
-        val Dashboard = append(childRoute = "dashboard")
-        val Routines = append(childRoute = "routines")
-        val Exercises = append(childRoute = "exercises")
-        val BodyMeasurementList = append(childRoute = "body_measurement_list")
-        val More = append(childRoute = "more")
-    }
+    object Home : Route(value = "home")
 
     val About = Route(value = "about")
     val Settings = Route(value = "settings")

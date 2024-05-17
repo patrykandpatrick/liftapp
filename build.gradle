@@ -4,6 +4,7 @@ buildscript {
     dependencies {
         classpath libs.hilt.gradle.plugin
         classpath libs.kotlin.serialization.plugin
+        classpath libs.safeArgs
     }
 
     repositories {
