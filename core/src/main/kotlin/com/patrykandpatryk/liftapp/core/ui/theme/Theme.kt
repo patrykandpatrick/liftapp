@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -97,7 +98,7 @@ fun LiftAppTheme(
     CompositionLocalProvider(LocalDimens provides dimens) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography(),
+            typography = LiftAppTypography,
             shapes = Shapes,
         ) {
             ProvideChartStyle(chartStyle = chartStyle, content = content)
