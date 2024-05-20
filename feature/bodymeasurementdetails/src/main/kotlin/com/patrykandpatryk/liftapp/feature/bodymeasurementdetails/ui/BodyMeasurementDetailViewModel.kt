@@ -10,7 +10,9 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementReposit
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.DeleteBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.FormatBodyMeasurementValueToStringUseCase
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
-import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.di.BodyMeasurementID
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,11 +24,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-@HiltViewModel
-class BodyMeasurementDetailViewModel @Inject constructor(
-    @BodyMeasurementID bodyMeasurementID: Long,
+@HiltViewModel(assistedFactory = BodyMeasurementDetailViewModel.Factory::class)
+class BodyMeasurementDetailViewModel @AssistedInject constructor(
+    @Assisted bodyMeasurementID: Long,
     repository: BodyMeasurementRepository,
     private val exceptionHandler: CoroutineExceptionHandler,
     private val chartEntryMapper: BodyMeasurementEntryToChartEntryMapper,
@@ -90,5 +91,10 @@ class BodyMeasurementDetailViewModel @Inject constructor(
             is Intent.NewEntry -> newEntry.value = ScreenState.NewEntry(intent.bodyMeasurementID, intent.bodyMeasurementEntryID)
             is Intent.DismissNewEntry -> newEntry.value = null
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(bodyMeasurementID: Long): BodyMeasurementDetailViewModel
     }
 }

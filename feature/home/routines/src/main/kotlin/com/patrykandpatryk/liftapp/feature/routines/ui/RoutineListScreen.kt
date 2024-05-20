@@ -106,7 +106,7 @@ private fun RoutineListScreen(
                 RoutineCard(
                     title = routine.name,
                     exercises = routine.exercises,
-                    onClick = { navigator.editRoutine(routine.id) },
+                    onClick = { navigator.routine(routine.id) },
                 )
             }
 

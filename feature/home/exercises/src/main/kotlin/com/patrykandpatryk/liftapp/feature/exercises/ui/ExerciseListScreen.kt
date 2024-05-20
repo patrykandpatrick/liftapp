@@ -44,15 +44,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.calculateStartPadding
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.thenIf
-import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
@@ -69,21 +66,17 @@ import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.exercises.navigation.ExerciseListNavigator
 
-fun NavGraphBuilder.addExercises() {
-    composable(
-        route = Routes.Exercises,
-    ) {
-//        ExerciseListScreen()
-    }
-}
-
 @Composable
 fun ExerciseListScreen(
+    pickingMode: Boolean,
+    disabledExerciseIDs: List<Long>?,
     navigator: ExerciseListNavigator,
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(),
 ) {
-    val viewModel: ExerciseViewModel = hiltViewModel()
+    val viewModel: ExerciseViewModel = hiltViewModel(
+        creationCallback = { factory: ExerciseViewModel.Factory -> factory.create(pickingMode, disabledExerciseIDs) }
+    )
     val state by viewModel.state.collectAsState()
 
     viewModel.events.collectInComposable { event ->

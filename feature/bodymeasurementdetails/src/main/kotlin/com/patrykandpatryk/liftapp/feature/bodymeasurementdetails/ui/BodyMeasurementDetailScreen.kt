@@ -21,7 +21,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -34,33 +33,30 @@ import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
-import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.composable
-import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
 import com.patrykandpatryk.liftapp.core.ui.OptionItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
-
-fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
-    composable(route = Routes.BodyMeasurementDetails) {
-        BodyMeasurementDetailScreen()
-    }
-}
 
 @Composable
 fun BodyMeasurementDetailScreen(
+    bodyMeasurementID: Long,
+    navigator: BodyMeasurementDetailsNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: BodyMeasurementDetailViewModel = hiltViewModel()
+    val viewModel: BodyMeasurementDetailViewModel = hiltViewModel(
+        creationCallback = { factory: BodyMeasurementDetailViewModel.Factory -> factory.create(bodyMeasurementID) },
+    )
 
     val state by viewModel.state.collectAsState()
 
     BodyMeasurementDetailScreen(
         onIntent = viewModel::handleIntent,
         state = state,
+        navigator = navigator,
         modelProducer = viewModel.chartEntryModelProducer,
         modifier = modifier,
     )
@@ -70,11 +66,11 @@ fun BodyMeasurementDetailScreen(
 private fun BodyMeasurementDetailScreen(
     onIntent: (Intent) -> Unit,
     state: ScreenState,
+    navigator: BodyMeasurementDetailsNavigator,
     modelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val navigator = navigator
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -82,7 +78,7 @@ private fun BodyMeasurementDetailScreen(
             TopAppBar(
                 title = state.name,
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = navigator::popBackStack,
+                onBackClick = navigator::back,
             )
         },
         floatingActionButton = {
@@ -137,7 +133,7 @@ private fun BodyMeasurementDetailScreen(
                 ListItemWithOptions(
                     mainContent = {
                         ListItem(
-                            modifier = Modifier.animateItemPlacement(),
+                            modifier = Modifier.animateItem(),
                             title = entry.value,
                             description = entry.date,
                         )

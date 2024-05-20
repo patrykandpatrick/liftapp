@@ -49,17 +49,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
+import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
-import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.provider.RegisterResultListener
-import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.state.equivalentSnapshotPolicy
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
@@ -77,18 +73,17 @@ import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
 import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
-
-fun NavGraphBuilder.addNewRoutine() {
-    composable(route = Routes.NewRoutine) {
-        NewRoutine()
-    }
-}
+import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
 
 @Composable
 fun NewRoutine(
+    routineID: Long,
+    navigator: NewRoutineNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: NewRoutineViewModel = hiltViewModel()
+    val viewModel: NewRoutineViewModel = hiltViewModel(
+        creationCallback = { factory: NewRoutineViewModel.Factory -> factory.create(routineID) },
+    )
     val state by viewModel.state.collectAsState()
     val errorMessage by remember {
         derivedStateOf(
@@ -96,42 +91,41 @@ fun NewRoutine(
         ) { state.name.getMessageTextOrNull() ?: "" }
     }
     val snackbarHostState = remember { SnackbarHostState() }
-    val navigator = navigator
 
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
-    RegisterResultListener(key = Constants.Keys.PICKED_EXERCISE_IDS) { pickedExerciseIds: List<Long> ->
+    navigator.RegisterResultListener(key = Constants.Keys.PICKED_EXERCISE_IDS) { pickedExerciseIds: List<Long> ->
         viewModel.handleIntent(Intent.AddPickedExercises(pickedExerciseIds))
-        clearResult()
     }
 
     NewRoutine(
-        modifier = modifier,
         state = state,
+        navigator = navigator,
         onIntent = viewModel::handleIntent,
         snackbarHostState = snackbarHostState,
         nameErrorText = errorMessage,
+        modifier = modifier,
     )
 
     viewModel.events.collectInComposable { event ->
         when (event) {
-            Event.EntrySaved -> navigator.popBackStack()
-            Event.RoutineNotFound -> navigator.popBackStack()
+            Event.EntrySaved,
+            Event.RoutineNotFound -> navigator.back()
         }
     }
 }
 
 @Composable
 private fun NewRoutine(
-    modifier: Modifier = Modifier,
     state: ScreenState,
+    navigator: NewRoutineNavigator,
     onIntent: (Intent) -> Unit,
     snackbarHostState: SnackbarHostState,
     nameErrorText: String,
+    modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val density = LocalDensity.current.density
-    val navigator = navigator
     var fabTopToParentBottom by remember { mutableStateOf(0.dp) }
 
     Scaffold(
@@ -146,7 +140,7 @@ private fun NewRoutine(
             TopAppBar(
                 title = stringResource(id = titleRes),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = navigator::popBackStack,
+                onBackClick = navigator::back,
             )
         },
         floatingActionButton = {
@@ -175,6 +169,7 @@ private fun NewRoutine(
             content(
                 state = state,
                 onIntent = onIntent,
+                navigator = navigator,
                 nameErrorText = nameErrorText,
             )
         }
@@ -184,6 +179,7 @@ private fun NewRoutine(
 private fun LazyListScope.content(
     state: ScreenState,
     onIntent: (Intent) -> Unit,
+    navigator: NewRoutineNavigator,
     nameErrorText: String,
 ) {
     stickyHeader {
@@ -227,7 +223,7 @@ private fun LazyListScope.content(
             contentType = { it::class },
         ) { item ->
             ListItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 title = item.name,
                 description = item.muscles,
                 iconPainter = painterResource(id = item.type.iconRes),
@@ -246,25 +242,16 @@ private fun LazyListScope.content(
     }
 
     item(key = R.string.action_add_exercise) {
-        val navigator = navigator
-
         Button(
             modifier = Modifier
-                .animateItemPlacement()
+                .animateItem()
                 .fillMaxWidth()
                 .padding(
                     top = LocalDimens.current.verticalItemSpacing,
                     start = LocalDimens.current.padding.contentHorizontal,
                     end = LocalDimens.current.padding.contentHorizontal,
                 ),
-            onClick = {
-                navigator.navigate(
-                    Routes.Exercises.create(
-                        pickExercises = true,
-                        disabledExerciseIds = state.exerciseIds,
-                    ),
-                )
-            },
+            onClick = { navigator.pickExercises(state.exerciseIds) },
         ) {
             Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
 
@@ -320,6 +307,7 @@ fun NewRoutinePreview() {
                 id = 0,
                 exercises = emptyList<RoutineExerciseItem>().toValid(),
             ),
+            navigator = interfaceStub(),
             snackbarHostState = SnackbarHostState(),
             onIntent = {},
             nameErrorText = "",

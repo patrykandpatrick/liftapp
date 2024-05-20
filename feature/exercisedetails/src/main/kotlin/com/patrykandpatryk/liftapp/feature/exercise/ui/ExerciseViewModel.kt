@@ -12,10 +12,12 @@ import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
-import com.patrykandpatryk.liftapp.feature.exercise.di.ExerciseId
 import com.patrykandpatryk.liftapp.feature.exercise.model.Event
 import com.patrykandpatryk.liftapp.feature.exercise.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercise.model.ScreenState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -25,15 +27,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val SCREEN_STATE_KEY = "screenState"
 
-@HiltViewModel
-class ExerciseViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = ExerciseViewModel.Factory::class)
+class ExerciseViewModel @AssistedInject constructor(
+    @Assisted private val exerciseID: Long,
     private val logger: UiLogger,
     getExercise: GetExerciseUseCase,
-    @ExerciseId private val exerciseId: Long,
     private val savedStateHandle: SavedStateHandle,
     private val deleteExercise: DeleteExerciseUseCase,
     private val muscleImageProvider: MuscleImageProvider,
@@ -50,11 +51,11 @@ class ExerciseViewModel @Inject constructor(
 
     init {
         combine(
-            getExercise(exerciseId),
+            getExercise(exerciseID),
             isDarkModeReceiver(),
         ) { exercise, isSystemInLightMode ->
             if (exercise == null) {
-                Timber.e("Exercise with id $exerciseId not found, or deleted.")
+                Timber.e("Exercise with id $exerciseID not found, or deleted.")
                 eventChannel.send(Event.ExerciseNotFound)
             } else {
 
@@ -91,18 +92,23 @@ class ExerciseViewModel @Inject constructor(
 
     private fun sendEditExerciseEvent() {
         viewModelScope.launch {
-            eventChannel.send(Event.EditExercise(id = exerciseId))
+            eventChannel.send(Event.EditExercise(id = exerciseID))
         }
     }
 
     private fun deleteExercise() {
         updateScreenState { mutate(showDeleteDialog = false) }
         viewModelScope.launch {
-            deleteExercise(exerciseId)
+            deleteExercise(exerciseID)
         }
     }
 
     private inline fun updateScreenState(block: ScreenState.() -> ScreenState) {
         savedStateHandle[SCREEN_STATE_KEY] = state.value.run(block)
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(exerciseID: Long): ExerciseViewModel
     }
 }

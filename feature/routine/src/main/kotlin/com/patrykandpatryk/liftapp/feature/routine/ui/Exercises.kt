@@ -27,20 +27,20 @@ import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.gestures.onItemYRange
 import com.patrykandpatryk.liftapp.core.gestures.rememberItemRanges
 import com.patrykandpatryk.liftapp.core.gestures.reorderable
-import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeContainer
 import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeableDeleteBackground
 import com.patrykandpatryk.liftapp.domain.extension.addOrSet
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
+import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import kotlin.math.roundToInt
 
 @Composable
 internal fun Exercises(
+    navigator: RoutineNavigator,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: RoutineViewModel = hiltViewModel()
@@ -49,6 +49,7 @@ internal fun Exercises(
 
     Exercises(
         state = state,
+        navigator = navigator,
         onIntent = viewModel::handleIntent,
         modifier = modifier,
     )
@@ -57,6 +58,7 @@ internal fun Exercises(
 @Composable
 private fun Exercises(
     state: ScreenState,
+    navigator: RoutineNavigator,
     onIntent: (Intent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -69,12 +71,12 @@ private fun Exercises(
             items = state.exercises,
             key = { _, exercise -> exercise.id },
         ) { index, exercise ->
-
             ListItem(
                 index = index,
                 itemRanges = itemRanges,
                 exercise = exercise,
                 onIntent = onIntent,
+                onItemClick = navigator::exercise,
             )
         }
     }
@@ -86,6 +88,7 @@ fun LazyItemScope.ListItem(
     itemRanges: ArrayList<IntRange>,
     exercise: RoutineExerciseItem,
     onIntent: (Intent) -> Unit,
+    onItemClick: (exerciseID: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lastDragDelta = remember { mutableStateOf(0f) }
@@ -96,8 +99,6 @@ fun LazyItemScope.ListItem(
     val swipeElevation = MaterialTheme.dimens.swipe.swipeElevation
 
     val dragShadow by animateDpAsState(targetValue = if (isDragging) dragElevation else 0.dp)
-
-    val navigator = navigator
 
     SwipeContainer(
         background = { swipeProgress, swipeOffset ->
@@ -134,13 +135,11 @@ fun LazyItemScope.ListItem(
                         contentDescription = null,
                     )
                 },
-            ) {
-                navigator.navigate(Routes.Exercise.create(exerciseId = exercise.id))
-            }
+            ) { onItemClick(exercise.id) }
         },
         onDismiss = { onIntent(Intent.DeleteExercise(exercise.id)) },
         modifier = Modifier
-            .thenIf(isDragging.not()) { animateItemPlacement() }
+            .thenIf(isDragging.not()) { animateItem() }
             .offset { IntOffset(x = 0, y = yOffset.roundToInt()) }
             .shadow(dragShadow)
             .zIndex(if (isDragging) 1f else 0f)

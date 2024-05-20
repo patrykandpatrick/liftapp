@@ -1,7 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.newexercise.di
 
-import androidx.lifecycle.SavedStateHandle
-import com.patrykandpatryk.liftapp.core.navigation.Routes.ARG_ID
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.feature.newexercise.mapper.ExerciseToStateMapper
@@ -10,7 +8,6 @@ import com.patrykandpatryk.liftapp.feature.newexercise.mapper.StateToExerciseUpd
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 
@@ -26,12 +23,4 @@ interface NewExerciseModule {
 
     @Binds
     fun bindExerciseMapper(mapper: ExerciseToStateMapper): Mapper<Exercise, NewExerciseState>
-
-    companion object {
-
-        @Provides
-        @ExerciseId
-        fun provideExerciseId(savedStateHandle: SavedStateHandle): Long? =
-            savedStateHandle.get<Long>(ARG_ID)?.takeIf { it > 0 }
-    }
 }

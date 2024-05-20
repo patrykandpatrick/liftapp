@@ -12,33 +12,24 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
-import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.composable
-import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
-
-fun NavGraphBuilder.addSettings() {
-    composable(route = Routes.Settings) {
-        Settings()
-    }
-}
 
 @Composable
 fun Settings(
+    navigator: SettingsNavigator,
     modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val viewModel = hiltViewModel<SettingsViewModel>()
     val allPreferences by viewModel.allPreferences.collectAsState(initial = null)
-    val navigator = navigator
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -46,11 +37,10 @@ fun Settings(
             TopAppBar(
                 title = stringResource(id = R.string.route_settings),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = navigator::popBackStack,
+                onBackClick = navigator::back,
             )
         },
     ) { paddingValues ->
-
         LazyColumn(
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxHeight(),
@@ -63,7 +53,7 @@ fun Settings(
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.distance),
                     selectedValue = allPreferences?.longDistanceUnit,
-                    values = LongDistanceUnit.values(),
+                    values = LongDistanceUnit.entries.toTypedArray(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setDistanceUnit,
                     iconPainter = painterResource(id = R.drawable.ic_distance),
@@ -74,7 +64,7 @@ fun Settings(
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.mass),
                     selectedValue = allPreferences?.massUnit,
-                    values = MassUnit.values(),
+                    values = MassUnit.entries.toTypedArray(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setMassUnit,
                     iconPainter = painterResource(id = R.drawable.ic_weight),
@@ -89,7 +79,7 @@ fun Settings(
                 EnumPreferenceListItem(
                     title = stringResource(id = R.string.settings_hour_format),
                     selectedValue = allPreferences?.hourFormat,
-                    values = HourFormat.values(),
+                    values = HourFormat.entries.toTypedArray(),
                     iconPainter = painterResource(id = R.drawable.ic_time),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = viewModel::setHourFormat,

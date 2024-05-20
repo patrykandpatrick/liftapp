@@ -21,34 +21,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
-import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.composable
-import com.patrykandpatryk.liftapp.core.provider.navigator
 import com.patrykandpatryk.liftapp.core.tabItems
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
+import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.routine.model.Event
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.routine.model.tabs
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.addRoutine() {
-    composable(
-        route = Routes.Routine,
-    ) {
-        Routine()
-    }
-}
-
 @Composable
-fun Routine(
+fun RoutineScreen(
+    routineId: Long,
+    navigator: RoutineNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: RoutineViewModel = hiltViewModel()
+    val viewModel: RoutineViewModel = hiltViewModel(
+        creationCallback = { factory: RoutineViewModel.Factory -> factory.create(routineId) },
+    )
 
     val state by viewModel.state.collectAsState()
 
@@ -56,19 +49,18 @@ fun Routine(
 
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
-    val navigator = navigator
-
-    Routine(
+    RoutineScreen(
         modifier = modifier,
         state = state,
+        navigator = navigator,
         onIntent = viewModel::handleIntent,
         snackbarHostState = snackbarHostState,
     )
 
     viewModel.events.collectInComposable { event ->
         when (event) {
-            Event.RoutineNotFound -> navigator.popBackStack()
-            is Event.EditRoutine -> navigator.navigate(Routes.NewRoutine.create(event.id))
+            Event.RoutineNotFound -> navigator.back()
+            is Event.EditRoutine -> navigator.editRoutine(event.id)
         }
     }
 
@@ -81,14 +73,14 @@ fun Routine(
 }
 
 @Composable
-private fun Routine(
+private fun RoutineScreen(
     modifier: Modifier = Modifier,
     state: ScreenState,
+    navigator: RoutineNavigator,
     onIntent: (Intent) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
-    val navigator = navigator
-    val tabs = tabs
+    val tabs = remember(navigator) { tabs(navigator) }
     val pagerState = rememberPagerState { tabs.size }
     val scope = rememberCoroutineScope()
 
@@ -97,7 +89,7 @@ private fun Routine(
         topBar = {
             TopAppBarWithTabs(
                 title = state.name,
-                onBackClick = navigator::popBackStack,
+                onBackClick = navigator::back,
                 selectedTabIndex = pagerState.currentPage,
                 onTabSelected = { index ->
                     scope.launch { pagerState.animateScrollToPage(index) }

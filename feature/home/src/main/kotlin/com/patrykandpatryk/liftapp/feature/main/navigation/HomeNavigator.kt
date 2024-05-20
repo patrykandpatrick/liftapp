@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
-import com.patrykandpatryk.liftapp.core.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.navigation.BodyMeasurementListNavigator
 import com.patrykandpatryk.liftapp.feature.dashboard.navigation.DashboardNavigator
@@ -15,18 +15,18 @@ import com.patrykandpatryk.liftapp.feature.routines.navigation.RoutineListNaviga
 @Immutable
 class HomeNavigator(private val navController: NavController) : DashboardNavigator, RoutineListNavigator, ExerciseListNavigator,
     BodyMeasurementListNavigator, MoreNavigator {
-    override fun onExercisesPicked(exerciseIds: List<Long>) {
+    override fun onExercisesPicked(exerciseIDs: List<Long>) {
         val previousRoute: String = requireNotNull(navController.previousBackStackEntry?.destination?.route)
-        navController.getBackStackEntry(previousRoute).savedStateHandle[Constants.Keys.PICKED_EXERCISE_IDS] = exerciseIds
+        navController.getBackStackEntry(previousRoute).savedStateHandle[Constants.Keys.PICKED_EXERCISE_IDS] = exerciseIDs
         navController.popBackStack()
     }
 
     override fun newExercise() {
-        navController.navigate(Routes.NewExercise.create())
+        navController.navigate(Routes.Exercise.new())
     }
 
-    override fun editExercise(exerciseId: Long) {
-        navController.navigate(Routes.NewExercise.create(exerciseId))
+    override fun editExercise(exerciseID: Long) {
+        navController.navigate(Routes.Exercise.edit(exerciseID))
     }
 
     override fun back() {
@@ -34,27 +34,27 @@ class HomeNavigator(private val navController: NavController) : DashboardNavigat
     }
 
     override fun bodyMeasurementDetails(bodyMeasurementID: Long) {
-        navController.navigate(Routes.BodyMeasurementDetails.create(bodyMeasurementID))
+        navController.navigate(Routes.BodyMeasurement.details(bodyMeasurementID))
     }
 
     override fun oneRepMaxCalculator() {
-        navController.navigate(Routes.OneRepMax.value)
+        navController.navigate(Routes.OneRepMax)
     }
 
     override fun settings() {
-        navController.navigate(Routes.Settings.value)
+        navController.navigate(Routes.Settings)
     }
 
     override fun about() {
-        navController.navigate(Routes.About.value)
+        navController.navigate(Routes.About)
     }
 
     override fun newRoutine() {
-        navController.navigate(Routes.NewRoutine.create())
+        navController.navigate(Routes.Routine.new())
     }
 
-    override fun editRoutine(routineId: Long) {
-        navController.navigate(Routes.NewRoutine.create(routineId))
+    override fun routine(routineID: Long) {
+        navController.navigate(Routes.Routine.details(routineID))
     }
 }
 

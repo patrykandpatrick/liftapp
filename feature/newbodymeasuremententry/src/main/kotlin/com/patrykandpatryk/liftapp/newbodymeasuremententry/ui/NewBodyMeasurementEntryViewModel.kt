@@ -22,8 +22,6 @@ import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.domain.validation.map
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
-import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementEntryID
-import com.patrykandpatryk.liftapp.newbodymeasuremententry.di.BodyMeasurementID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -200,9 +198,6 @@ internal class NewBodyMeasurementEntryViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            @BodyMeasurementID id: Long,
-            @BodyMeasurementEntryID entryId: Long?,
-        ): NewBodyMeasurementEntryViewModel
+        fun create(id: Long, entryId: Long?): NewBodyMeasurementEntryViewModel
     }
 }

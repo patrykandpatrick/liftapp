@@ -10,6 +10,7 @@ plugins {
 }
 
 dependencies {
+    add("implementation", project(":navigation"))
     project.subprojects.forEach { project -> add("implementation", project) }
 }
 

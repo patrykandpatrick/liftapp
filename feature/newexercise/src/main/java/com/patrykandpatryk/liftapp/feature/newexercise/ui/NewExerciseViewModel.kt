@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.core.viewmodel.SavedStateHandleViewModel
+import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
@@ -21,19 +22,20 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
-import com.patrykandpatryk.liftapp.feature.newexercise.di.ExerciseId
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 private const val STATE_KEY = "screen_state"
 
-@HiltViewModel
-class NewExerciseViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = NewExerciseViewModel.Factory::class)
+class NewExerciseViewModel @AssistedInject constructor(
+    @Assisted private val exerciseId: Long,
     private val logger: UiLogger,
-    @ExerciseId private val exerciseId: Long?,
     private val getExercise: GetExerciseUseCase,
     override val savedStateHandle: SavedStateHandle,
     private val insertExercise: InsertExercisesUseCase,
@@ -42,9 +44,8 @@ class NewExerciseViewModel @Inject constructor(
     private val stateToInsertExercise: Mapper<NewExerciseState.Valid, Exercise.Insert>,
     private val stateToUpdateExercise: Mapper<NewExerciseState.Valid, Exercise.Update>,
 ) : ViewModel(), SavedStateHandleViewModel, LogPublisher by logger {
-
     init {
-        exerciseId?.also(::loadExerciseState)
+        if (exerciseId != ID_NOT_SET) loadExerciseState(exerciseId)
     }
 
     internal var state: NewExerciseState by saveable(STATE_KEY) {
@@ -91,6 +92,7 @@ class NewExerciseViewModel @Inject constructor(
                 insertOrUpdateExercise(state)
                 true
             }
+
             is NewExerciseState.Invalid -> {
                 this.state = state.copy(showErrors = true)
                 false
@@ -100,7 +102,7 @@ class NewExerciseViewModel @Inject constructor(
 
     private fun insertOrUpdateExercise(state: NewExerciseState.Valid) {
         viewModelScope.launch {
-            if (exerciseId != null) {
+            if (exerciseId != ID_NOT_SET) {
                 updateExercise(stateToUpdateExercise(state))
             } else {
                 insertExercise(stateToInsertExercise(state))
@@ -115,5 +117,10 @@ class NewExerciseViewModel @Inject constructor(
                 ?.let { exerciseToStateMapper(it) }
                 ?.also { existingExerciseState -> state = existingExerciseState }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(exerciseId: Long): NewExerciseViewModel
     }
 }

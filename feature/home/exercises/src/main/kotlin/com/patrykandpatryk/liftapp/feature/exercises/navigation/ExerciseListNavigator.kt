@@ -4,8 +4,8 @@ import androidx.compose.runtime.Stable
 
 @Stable
 interface ExerciseListNavigator {
-    fun onExercisesPicked(exerciseIds: List<Long>)
+    fun onExercisesPicked(exerciseIDs: List<Long>)
     fun newExercise()
-    fun editExercise(exerciseId: Long)
+    fun editExercise(exerciseID: Long)
     fun back()
 }

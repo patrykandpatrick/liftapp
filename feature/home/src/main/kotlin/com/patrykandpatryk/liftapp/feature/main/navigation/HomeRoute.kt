@@ -5,19 +5,19 @@ import kotlinx.serialization.Serializable
 @Serializable
 object Home
 
-sealed class HomeRoute {
+sealed interface HomeRoute {
     @Serializable
-    data object Dashboard : HomeRoute()
+    data object Dashboard : HomeRoute
 
     @Serializable
-    data object Routines : HomeRoute()
+    data object Routines : HomeRoute
 
     @Serializable
-    data object Exercises : HomeRoute()
+    data object Exercises : HomeRoute
 
     @Serializable
-    data object BodyMeasurements : HomeRoute()
+    data object BodyMeasurements : HomeRoute
 
     @Serializable
-    data object More : HomeRoute()
+    data object More : HomeRoute
 }

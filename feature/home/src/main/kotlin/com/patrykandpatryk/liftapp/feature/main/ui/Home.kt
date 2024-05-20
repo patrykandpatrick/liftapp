@@ -22,15 +22,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
-import com.patrykandpatryk.liftapp.core.navigation.Routes
-import com.patrykandpatryk.liftapp.core.navigation.composable
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.anim.EXIT_ANIM_DURATION
 import com.patrykandpatryk.liftapp.core.ui.anim.slideAndFadeIn
@@ -45,12 +42,6 @@ import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 import com.patrykandpatryk.liftapp.feature.main.navigation.rememberHomeNavigator
 import com.patrykandpatryk.liftapp.feature.more.ui.MoreScreen
 import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
-
-fun NavGraphBuilder.addHome(mainNavController: NavController) {
-    composable(route = Routes.Home) {
-        Home(mainNavController)
-    }
-}
 
 @Composable
 fun Home(
@@ -104,18 +95,27 @@ private fun HomeScaffold(
                         composable<HomeRoute.BodyMeasurements> {
                             BodyMeasurementListScreen(navigator = homeNavigator, padding = paddingValues)
                         }
+
                     HomeRoute.Dashboard ->
                         composable<HomeRoute.Dashboard> {
                             DashboardScreen(navigator = homeNavigator, padding = paddingValues)
                         }
+
                     HomeRoute.Exercises ->
                         composable<HomeRoute.Exercises> {
-                            ExerciseListScreen(navigator = homeNavigator, padding = paddingValues)
+                            ExerciseListScreen(
+                                navigator = homeNavigator,
+                                pickingMode = false,
+                                disabledExerciseIDs = emptyList(),
+                                padding = paddingValues,
+                            )
                         }
+
                     HomeRoute.More ->
                         composable<HomeRoute.More> {
                             MoreScreen(navigator = homeNavigator, padding = paddingValues)
                         }
+
                     HomeRoute.Routines ->
                         composable<HomeRoute.Routines> {
                             RoutineListScreen(navigator = homeNavigator, padding = paddingValues)

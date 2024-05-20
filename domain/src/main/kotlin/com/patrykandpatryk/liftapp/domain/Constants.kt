@@ -1,7 +1,6 @@
 package com.patrykandpatryk.liftapp.domain
 
 object Constants {
-
     object Logging {
         const val DISPLAYABLE_ERROR = "displayable_error"
     }
@@ -13,7 +12,6 @@ object Constants {
     }
 
     object Input {
-
         const val INCREMENT_SHORT = 0.1f
         const val INCREMENT_LONG = 0.5f
 
@@ -28,12 +26,10 @@ object Constants {
     }
 
     object Keys {
-
         const val PICKED_EXERCISE_IDS = "pickedExerciseIds"
     }
 
     object Algorithms {
-
         const val SCREEN_STATE_KEY = "screenState"
         const val SHA1_NAME = "SHA-1"
     }

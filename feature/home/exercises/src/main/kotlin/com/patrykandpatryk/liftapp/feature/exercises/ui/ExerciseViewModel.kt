@@ -4,13 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
-import com.patrykandpatryk.liftapp.feature.exercises.di.DisabledExercises
-import com.patrykandpatryk.liftapp.feature.exercises.di.PickingMode
 import com.patrykandpatryk.liftapp.feature.exercises.model.Event
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.exercises.usecase.GetExercisesItemsUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,12 +23,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class ExerciseViewModel @Inject constructor(
-    @PickingMode val pickingMode: Boolean,
-    @DisabledExercises val disabledExercises: List<Long>,
+@HiltViewModel(assistedFactory = ExerciseViewModel.Factory::class)
+class ExerciseViewModel @AssistedInject constructor(
+    @Assisted val pickingMode: Boolean,
+    @Assisted val disabledExerciseIDs: List<Long>?,
     getExercisesItems: GetExercisesItemsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
 ) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
@@ -96,7 +96,7 @@ class ExerciseViewModel @Inject constructor(
     private fun List<ExercisesItem>.updateState(): List<ExercisesItem> =
         map { exerciseItem ->
             if (exerciseItem is ExercisesItem.Exercise) {
-                val enabled = disabledExercises.contains(exerciseItem.id).not()
+                val enabled = disabledExerciseIDs?.contains(exerciseItem.id)?.not() ?: true
                 exerciseItem.copy(
                     checked = enabled && checkedExerciseIds.contains(exerciseItem.id),
                     enabled = enabled,
@@ -113,4 +113,9 @@ class ExerciseViewModel @Inject constructor(
     }
 
     override fun close() = Unit
+
+    @AssistedFactory
+    interface Factory {
+        fun create(pickingMode: Boolean, disabledExerciseIDs: List<Long>?): ExerciseViewModel
+    }
 }

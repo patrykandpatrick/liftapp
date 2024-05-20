@@ -14,11 +14,13 @@ import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
-import com.patrykandpatryk.liftapp.feature.routine.di.RoutineId
 import com.patrykandpatryk.liftapp.feature.routine.model.Event
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.routine.usecase.ReorderExercisesUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -28,14 +30,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val SCREEN_STATE_KEY = "screenState"
 
-@HiltViewModel
-class RoutineViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = RoutineViewModel.Factory::class)
+class RoutineViewModel @AssistedInject constructor(
+    @Assisted private val routineId: Long,
     private val logger: UiLogger,
-    @RoutineId private val routineId: Long,
     isDarkModeReceiver: IsDarkModeReceiver,
     getRoutine: GetRoutineWithExercisesUseCase,
     private val savedStateHandle: SavedStateHandle,
@@ -158,5 +159,10 @@ class RoutineViewModel @Inject constructor(
 
     private inline fun updateScreenState(block: ScreenState.() -> ScreenState) {
         savedStateHandle[SCREEN_STATE_KEY] = state.value.run(block)
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(routineId: Long): RoutineViewModel
     }
 }
