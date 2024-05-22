@@ -25,8 +25,8 @@ import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNav
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
 import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutine
-import com.patrykandpatryk.liftapp.feature.onerepmax.navigator.OneRepMaxNavigator
-import com.patrykandpatryk.liftapp.feature.onerepmax.ui.OneRepMax
+import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxNavigator
+import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
@@ -132,6 +132,6 @@ fun NavGraphBuilder.addSettings(navigator: SettingsNavigator) {
 
 fun NavGraphBuilder.addOneRepMax(navigator: OneRepMaxNavigator) {
     composable<Routes.OneRepMax> {
-        OneRepMax(navigator)
+        OneRepMaxScreen(navigator)
     }
 }

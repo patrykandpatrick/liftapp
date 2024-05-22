@@ -13,7 +13,7 @@ import com.patrykandpatryk.liftapp.feature.exercise.navigation.ExerciseDetailsNa
 import com.patrykandpatryk.liftapp.feature.exercises.navigation.ExerciseListNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
-import com.patrykandpatryk.liftapp.feature.onerepmax.navigator.OneRepMaxNavigator
+import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxNavigator
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 

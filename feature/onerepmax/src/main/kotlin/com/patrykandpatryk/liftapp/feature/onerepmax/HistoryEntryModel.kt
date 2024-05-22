@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.onerepmax.model
+package com.patrykandpatryk.liftapp.feature.onerepmax
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
