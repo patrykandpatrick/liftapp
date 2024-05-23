@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.unit
 
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
-import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 

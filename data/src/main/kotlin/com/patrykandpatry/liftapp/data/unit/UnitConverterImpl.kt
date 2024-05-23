@@ -2,7 +2,7 @@ package com.patrykandpatry.liftapp.data.unit
 
 import com.patrykandpatryk.liftapp.domain.extension.getTypeErrorMessage
 import com.patrykandpatryk.liftapp.domain.format.Formatter
-import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit

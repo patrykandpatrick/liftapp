@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.domain.repository
+package com.patrykandpatryk.liftapp.domain.preference
 
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences

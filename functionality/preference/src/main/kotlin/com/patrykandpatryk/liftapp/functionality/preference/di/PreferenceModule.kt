@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.functionality.preference.repository.PreferenceRepositoryImpl
 import dagger.Binds
 import dagger.Module

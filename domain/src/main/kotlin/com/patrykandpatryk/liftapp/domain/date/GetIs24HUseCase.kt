@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.domain.date
 
-import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 

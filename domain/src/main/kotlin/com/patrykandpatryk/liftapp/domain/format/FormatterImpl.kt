@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.domain.format
 
-import com.patrykandpatryk.liftapp.domain.repository.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import kotlinx.coroutines.flow.first
 import java.text.DecimalFormat
