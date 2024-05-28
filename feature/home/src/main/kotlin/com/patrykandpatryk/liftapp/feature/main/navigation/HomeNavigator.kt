@@ -10,7 +10,7 @@ import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.navigation.BodyMe
 import com.patrykandpatryk.liftapp.feature.dashboard.navigation.DashboardNavigator
 import com.patrykandpatryk.liftapp.feature.exercises.navigation.ExerciseListNavigator
 import com.patrykandpatryk.liftapp.feature.more.navigation.MoreNavigator
-import com.patrykandpatryk.liftapp.feature.routines.navigation.RoutineListNavigator
+import com.patrykandpatryk.liftapp.feature.routines.RoutineListNavigator
 
 @Immutable
 class HomeNavigator(private val navController: NavController) : DashboardNavigator, RoutineListNavigator, ExerciseListNavigator,

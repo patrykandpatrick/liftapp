@@ -41,7 +41,7 @@ import com.patrykandpatryk.liftapp.feature.main.navigation.HomeRoute
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 import com.patrykandpatryk.liftapp.feature.main.navigation.rememberHomeNavigator
 import com.patrykandpatryk.liftapp.feature.more.ui.MoreScreen
-import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
+import com.patrykandpatryk.liftapp.feature.routines.RoutineListScreen
 
 @Composable
 fun Home(
