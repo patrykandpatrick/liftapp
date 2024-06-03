@@ -6,6 +6,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -77,7 +78,7 @@ fun <T> DropdownMenu(
         Column {
             OutlinedTextField(
                 modifier = Modifier
-                    .menuAnchor()
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                     .fillMaxWidth(),
                 readOnly = true,
                 value = getItemsText(selectedItems),
@@ -136,7 +137,7 @@ private fun PreviewExerciseTypeDropdownMenu(
                 expanded = isExpanded,
                 onExpandedChange = setExpanded,
                 selectedItem = type,
-                items = remember { ExerciseType.values().toList() },
+                items = ExerciseType.entries,
                 getItemText = { it.prettyName },
                 label = stringResource(id = R.string.generic_type),
                 onClick = setType,
