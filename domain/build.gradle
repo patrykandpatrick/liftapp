@@ -1,7 +1,7 @@
 plugins {
     id "java-library"
     id "org.jetbrains.kotlin.jvm"
-    id "kotlin-kapt"
+    id "com.google.devtools.ksp"
     id "kotlinx-serialization"
 }
 
@@ -11,14 +11,13 @@ java {
 }
 
 dependencies {
-
     api libs.kotlinx.serialization.json
     api libs.bundles.kotlin
 
     implementation libs.hilt.core
     implementation libs.opto.domain
 
-    kapt libs.hilt.compiler
+    ksp libs.hilt.compiler
 
     testImplementation libs.bundles.testing
 }

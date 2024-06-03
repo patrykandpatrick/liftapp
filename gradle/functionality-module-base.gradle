@@ -13,7 +13,7 @@ dependencies {
     implementation libs.bundles.kotlin
     implementation libs.timber
 
-    kapt libs.hilt.compiler
+    ksp libs.hilt.compiler
 
     testImplementation libs.bundles.testing
 }

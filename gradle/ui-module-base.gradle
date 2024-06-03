@@ -45,7 +45,7 @@ dependencies {
     implementation libs.timber
     implementation libs.viewmodel
 
-    kapt libs.hilt.compiler
+    ksp libs.hilt.compiler
 
     testImplementation project(":domain-testing")
     testImplementation libs.bundles.testing

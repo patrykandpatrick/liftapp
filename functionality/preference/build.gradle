@@ -6,7 +6,7 @@ dependencies {
 
     implementation libs.bundles.opto
 
-    kapt libs.hilt.compiler
+    ksp libs.hilt.compiler
 
     testImplementation project(":domain-testing")
 }

@@ -9,7 +9,7 @@ dependencies {
     implementation libs.bundles.opto
     implementation libs.timber
 
-    kapt libs.hilt.compiler
+    ksp libs.hilt.compiler
 
     testImplementation project(":domain-testing")
     testImplementation libs.bundles.testing
