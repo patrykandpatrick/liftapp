@@ -1,12 +1,16 @@
 apply from: "$rootDir/gradle/base.gradle"
+apply plugin: "org.jetbrains.kotlin.plugin.compose"
 
 android {
     buildFeatures {
         compose true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.composeCompiler.get()
+    composeCompiler {
+        enableStrongSkippingMode = true
+        def destination = layout.buildDirectory.dir("compose_compiler")
+        reportsDestination = destination
+        metricsDestination = destination
     }
 
     packagingOptions {
