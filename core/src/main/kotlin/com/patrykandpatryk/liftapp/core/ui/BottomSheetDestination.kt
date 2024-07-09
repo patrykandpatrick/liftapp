@@ -30,6 +30,7 @@ fun BottomSheetDestination(
         onDismissRequest = dismiss,
         modifier = modifier,
         shape = BottomSheetShape,
+        dragHandle = null,
     ) { content(dismiss) }
 
     BackHandler(onBack = dismiss)
