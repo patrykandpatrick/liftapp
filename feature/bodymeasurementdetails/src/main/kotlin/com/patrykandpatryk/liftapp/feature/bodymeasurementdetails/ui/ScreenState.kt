@@ -9,7 +9,6 @@ sealed class ScreenState(
     open val name: String,
     open val entries: List<Entry>,
     open val chartEntryModelProducer: ChartEntryModelProducer,
-    open val newEntry: NewEntry?,
 ) {
 
     @Stable
@@ -21,7 +20,6 @@ sealed class ScreenState(
         name = "",
         entries = emptyList(),
         chartEntryModelProducer = chartEntryModelProducer,
-        newEntry = null,
     )
 
     @Stable
@@ -30,13 +28,11 @@ sealed class ScreenState(
         override val name: String,
         override val entries: List<Entry>,
         override val chartEntryModelProducer: ChartEntryModelProducer,
-        override val newEntry: NewEntry?,
     ) : ScreenState(
         bodyMeasurementID = bodyMeasurementID,
         name = "",
         entries = entries,
         chartEntryModelProducer = chartEntryModelProducer,
-        newEntry = newEntry,
     )
 
     @Immutable

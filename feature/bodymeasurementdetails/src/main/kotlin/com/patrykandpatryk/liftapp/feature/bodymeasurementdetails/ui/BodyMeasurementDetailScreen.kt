@@ -39,7 +39,6 @@ import com.patrykandpatryk.liftapp.core.ui.OptionItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
-import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
 
 @Composable
 fun BodyMeasurementDetailScreen(
@@ -86,7 +85,7 @@ private fun BodyMeasurementDetailScreen(
                 modifier = Modifier.navigationBarsPadding(),
                 text = { Text(text = stringResource(id = R.string.action_new_entry)) },
                 icon = { Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null) },
-                onClick = { onIntent(Intent.NewEntry(state.bodyMeasurementID)) },
+                onClick = { navigator.newBodyMeasurement(state.bodyMeasurementID) },
             )
         },
     ) { paddingValues ->
@@ -142,9 +141,7 @@ private fun BodyMeasurementDetailScreen(
                         OptionItem(
                             iconPainter = painterResource(id = R.drawable.ic_edit),
                             label = stringResource(id = R.string.action_edit),
-                            onClick = {
-                                onIntent(Intent.NewEntry(state.bodyMeasurementID, entry.id))
-                            },
+                            onClick = { navigator.newBodyMeasurement(state.bodyMeasurementID, entry.id) },
                         ),
                         OptionItem(
                             iconPainter = painterResource(id = R.drawable.ic_delete),
@@ -157,13 +154,5 @@ private fun BodyMeasurementDetailScreen(
                 )
             }
         }
-    }
-
-    state.newEntry?.also { newEntry ->
-        NewBodyMeasurementEntryBottomSheet(
-            bodyMeasurementId = newEntry.bodyMeasurementID,
-            bodyMeasurementEntryId = newEntry.bodyMeasurementEntryID,
-            onDismissRequest = { onIntent(Intent.DismissNewEntry) },
-        )
     }
 }

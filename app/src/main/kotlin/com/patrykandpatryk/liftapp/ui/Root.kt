@@ -1,18 +1,30 @@
 package com.patrykandpatryk.liftapp.ui
 
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material.navigation.BottomSheetNavigator
+import androidx.compose.material.navigation.ModalBottomSheetLayout
+import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.util.fastForEach
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavDeepLink
+import androidx.navigation.NavDestinationBuilder
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.get
 import androidx.navigation.toRoute
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.feature.about.ui.About
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui.BodyMeasurementDetailScreen
@@ -32,13 +44,17 @@ import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
 import com.patrykandpatryk.liftapp.navigation.rememberMainNavigator
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
 
 @Composable
 fun Root(
     modifier: Modifier = Modifier,
     darkTheme: Boolean,
 ) {
-    val navController = rememberNavController()
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
     val systemUiController = rememberSystemUiController()
     val mainNavigator = rememberMainNavigator(navController)
 
@@ -51,21 +67,27 @@ fun Root(
     }
 
     LiftAppTheme(darkTheme = darkTheme) {
-        NavHost(
-            navController = navController,
-            startDestination = Routes.Home,
-            modifier = modifier,
+        ModalBottomSheetLayout(
+            bottomSheetNavigator = bottomSheetNavigator,
+            sheetShape = BottomSheetShape,
         ) {
-            addHome(navController)
-            addAbout()
-            addSettings(mainNavigator)
-            addOneRepMax(mainNavigator)
-            addNewRoutine(mainNavigator)
-            addBodyMeasurementDetailDestination(mainNavigator)
-            addNewExercise(mainNavigator)
-            addExerciseDetails(mainNavigator)
-            addExercises(mainNavigator)
-            addRoutine(mainNavigator)
+            NavHost(
+                navController = navController,
+                startDestination = Routes.Home,
+                modifier = modifier,
+            ) {
+                addHome(navController)
+                addAbout()
+                addSettings(mainNavigator)
+                addOneRepMax(mainNavigator)
+                addNewRoutine(mainNavigator)
+                addBodyMeasurementDetailDestination(mainNavigator)
+                addNewBodyMeasurementDestination(mainNavigator::back)
+                addNewExercise(mainNavigator)
+                addExerciseDetails(mainNavigator)
+                addExercises(mainNavigator)
+                addRoutine(mainNavigator)
+            }
         }
     }
 }
@@ -118,6 +140,17 @@ fun NavGraphBuilder.addBodyMeasurementDetailDestination(navigator: BodyMeasureme
     }
 }
 
+fun NavGraphBuilder.addNewBodyMeasurementDestination(onDismissRequest: () -> Unit) {
+    bottomSheet<Routes.BodyMeasurement.Create> { backStackEntry ->
+        val args = backStackEntry.toRoute<Routes.BodyMeasurement.Create>()
+        NewBodyMeasurementEntryBottomSheet(
+            bodyMeasurementId = args.bodyMeasurementID,
+            bodyMeasurementEntryId = args.bodyMeasurementEntryID.takeIf { it != ID_NOT_SET },
+            onDismissRequest = onDismissRequest,
+        )
+    }
+}
+
 fun NavGraphBuilder.addAbout() {
     composable<Routes.About> {
         About()
@@ -134,4 +167,37 @@ fun NavGraphBuilder.addOneRepMax(navigator: OneRepMaxNavigator) {
     composable<Routes.OneRepMax> {
         OneRepMaxScreen(navigator)
     }
+}
+
+inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
+    typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    noinline content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+) {
+    addDestination(
+        BottomSheetNavDestinationBuilder(
+            provider[BottomSheetNavigator::class],
+            T::class,
+            typeMap,
+            deepLinks,
+            content,
+        ).build()
+    )
+}
+
+class BottomSheetNavDestinationBuilder(
+    private val bottomSheetNavigator: BottomSheetNavigator,
+    route: KClass<*>,
+    typeMap: Map<KType, @JvmSuppressWildcards NavType<*>>,
+    deepLinks: List<NavDeepLink>,
+    private val content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+) : NavDestinationBuilder<BottomSheetNavigator.Destination>(bottomSheetNavigator, route, typeMap) {
+    init {
+        deepLinks.fastForEach { deepLink ->
+            deepLink(deepLink)
+        }
+    }
+
+    override fun instantiateDestination(): BottomSheetNavigator.Destination =
+        BottomSheetNavigator.Destination(bottomSheetNavigator, content)
 }

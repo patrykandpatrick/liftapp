@@ -39,13 +39,10 @@ class BodyMeasurementDetailViewModel @AssistedInject constructor(
 
     private val expandedItemId = MutableStateFlow<Long?>(null)
 
-    private val newEntry = MutableStateFlow<ScreenState.NewEntry?>(null)
-
     override val state: StateFlow<ScreenState> = combine(
         repository.getBodyMeasurement(bodyMeasurementID),
         repository.getBodyMeasurementEntries(bodyMeasurementID),
         expandedItemId,
-        newEntry,
         transform = ::mapPopulatedState,
     ).stateIn(
         scope = viewModelScope,
@@ -62,7 +59,6 @@ class BodyMeasurementDetailViewModel @AssistedInject constructor(
         bodyMeasurement: BodyMeasurement,
         entries: List<BodyMeasurementEntry>,
         expandedItemId: Long?,
-        newEntry: ScreenState.NewEntry?,
     ): ScreenState.Populated = withContext(exceptionHandler) {
         chartEntryModelProducer.setEntries(chartEntryMapper(entries))
 
@@ -78,7 +74,6 @@ class BodyMeasurementDetailViewModel @AssistedInject constructor(
                 )
             },
             chartEntryModelProducer = chartEntryModelProducer,
-            newEntry = newEntry,
         )
     }
 
@@ -88,8 +83,6 @@ class BodyMeasurementDetailViewModel @AssistedInject constructor(
                 if (currentId == intent.id) null else intent.id
             }
             is Intent.DeleteBodyMeasurementEntry -> viewModelScope.launch { deleteBodyMeasurementEntry(intent.id) }
-            is Intent.NewEntry -> newEntry.value = ScreenState.NewEntry(intent.bodyMeasurementID, intent.bodyMeasurementEntryID)
-            is Intent.DismissNewEntry -> newEntry.value = null
         }
     }
 

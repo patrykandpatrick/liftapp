@@ -47,7 +47,13 @@ object Routes {
         @Serializable
         class Details internal constructor(val bodyMeasurementID: Long)
 
+        @Serializable
+        class Create internal constructor(val bodyMeasurementID: Long, val bodyMeasurementEntryID: Long)
+
         fun details(bodyMeasurementID: Long) = Details(bodyMeasurementID)
+
+        fun newMeasurement(bodyMeasurementID: Long, bodyMeasurementEntryID: Long = ID_NOT_SET) =
+            Create(bodyMeasurementID, bodyMeasurementEntryID)
     }
 
     @Serializable

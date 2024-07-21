@@ -8,6 +8,7 @@ import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.ComposeNavigationResultListener
 import com.patrykandpatryk.liftapp.core.navigation.NavigationResultListener
 import com.patrykandpatryk.liftapp.domain.Constants
+import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.exercise.navigation.ExerciseDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.exercises.navigation.ExerciseListNavigator
@@ -56,6 +57,10 @@ class MainNavigator(private val navController: NavController) :
 
     override fun pickExercises(disabledExerciseIDs: List<Long>) {
         navController.navigate(Routes.Exercise.pick(disabledExerciseIDs))
+    }
+
+    override fun newBodyMeasurement(bodyMeasurementId: Long, bodyEntryMeasurementId: Long?) {
+        navController.navigate(Routes.BodyMeasurement.newMeasurement(bodyMeasurementId, bodyEntryMeasurementId ?: ID_NOT_SET))
     }
 }
 

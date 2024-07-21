@@ -31,7 +31,6 @@ import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.state.onClick
-import com.patrykandpatryk.liftapp.core.ui.BottomSheetDestination
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.input.DatePicker
@@ -54,42 +53,23 @@ fun NewBodyMeasurementEntryBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BottomSheetDestination(onDismissRequest) { dismiss ->
-        NewBodyMeasurementEntryBottomSheetContent(
-            bodyMeasurementId = bodyMeasurementId,
-            bodyMeasurementEntryId = bodyMeasurementEntryId,
-            onCloseClick = dismiss,
-            modifier = modifier,
-        )
-    }
-}
-
-@Composable
-private fun NewBodyMeasurementEntryBottomSheetContent(
-    onCloseClick: () -> Unit,
-    bodyMeasurementId: Long,
-    bodyMeasurementEntryId: Long?,
-    modifier: Modifier = Modifier,
-) {
     val viewModel = hiltViewModel<NewBodyMeasurementEntryViewModel, NewBodyMeasurementEntryViewModel.Factory>(
-        key = "$bodyMeasurementId,$bodyMeasurementEntryId",
-        creationCallback = { factory ->
-            factory.create(bodyMeasurementId, bodyMeasurementEntryId)
-        })
+        creationCallback = { factory -> factory.create(bodyMeasurementId, bodyMeasurementEntryId) },
+    )
     val bodyModel by viewModel.state.collectAsState()
 
-    BackHandler(enabled = true, onBack = onCloseClick)
+    BackHandler(enabled = true, onBack = onDismissRequest)
 
     viewModel.events.collectInComposable { event ->
         when (event) {
-            Event.EntrySaved -> onCloseClick()
+            Event.EntrySaved -> onDismissRequest()
         }
     }
 
     NewBodyMeasurementEntryBottomSheetContent(
         state = bodyModel,
         onIntent = viewModel::handleIntent,
-        onCloseClick = onCloseClick,
+        onCloseClick = onDismissRequest,
         modifier = modifier,
     )
 }
