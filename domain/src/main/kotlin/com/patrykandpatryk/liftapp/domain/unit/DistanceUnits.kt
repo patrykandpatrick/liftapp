@@ -25,6 +25,8 @@ enum class LongDistanceUnit(
 
     override val hasLeadingSpace: Boolean = true
 
+    override val isMetric: Boolean get() = this == Kilometer
+
     fun toKilometers(value: Float): Float = (value * kilometerConversion).toFloat()
 
     fun toMiles(value: Float): Float = (value * mileConversion).toFloat()
@@ -62,6 +64,8 @@ enum class MediumDistanceUnit(
 
     override val hasLeadingSpace: Boolean = true
 
+    override val isMetric: Boolean get() = this == Meter
+
     fun toMeters(value: Float): Float = (value * meterConversion).toFloat()
 
     fun toFeet(value: Float): Float = (value * footConversion).toFloat()
@@ -88,6 +92,8 @@ enum class ShortDistanceUnit(
     ;
 
     override val hasLeadingSpace: Boolean = true
+
+    override val isMetric: Boolean get() = this == Centimeter
 
     fun toCentimeters(value: Float): Float = (value * centimeterConversion).toFloat()
 
