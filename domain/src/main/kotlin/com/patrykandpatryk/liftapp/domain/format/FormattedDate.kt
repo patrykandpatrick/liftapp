@@ -1,46 +1,31 @@
 package com.patrykandpatryk.liftapp.domain.format
 
-interface FormattedDate : Comparable<FormattedDate>, java.io.Serializable {
+import java.time.LocalDateTime
 
-    val dateShort: String
+data class FormattedDate(
+    val dateShort: String,
+    val dateLong: String,
+    val timeShort: String,
+    val timeLong: String,
+    val localDateTime: LocalDateTime,
+) : Comparable<FormattedDate>, java.io.Serializable {
+    val year: Int = localDateTime.year
 
-    val dateLong: String
+    val month: Int = localDateTime.month.value
 
-    val timeShort: String
+    val day: Int = localDateTime.dayOfYear
 
-    val timeLong: String
+    val hour: Int = localDateTime.hour
 
-    val year: Int
+    val minute: Int = localDateTime.minute
 
-    val month: Int
+    val second: Int = localDateTime.second
 
-    val day: Int
+    val millis: Long = localDateTime.toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
 
-    val hour: Int
-
-    val minute: Int
-
-    val second: Int
-
-    val millis: Long
+    override fun compareTo(other: FormattedDate): Int = localDateTime.compareTo(other.localDateTime)
 
     companion object {
-
-        val Empty = object : FormattedDate {
-
-            override val dateShort: String = ""
-            override val dateLong: String = ""
-            override val timeShort: String = ""
-            override val timeLong: String = ""
-            override val year: Int = 0
-            override val month: Int = 0
-            override val day: Int = 0
-            override val hour: Int = 0
-            override val minute: Int = 0
-            override val second: Int = 0
-            override val millis: Long = 0
-
-            override fun compareTo(other: FormattedDate): Int = millis.compareTo(other.millis)
-        }
+        val Empty = FormattedDate("", "", "", "", LocalDateTime.of(0, 1, 1, 0, 0))
     }
 }

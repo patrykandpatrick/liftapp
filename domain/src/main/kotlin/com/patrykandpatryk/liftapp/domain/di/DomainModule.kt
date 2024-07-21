@@ -1,7 +1,5 @@
 package com.patrykandpatryk.liftapp.domain.di
 
-import com.patrykandpatryk.liftapp.domain.format.Formatter
-import com.patrykandpatryk.liftapp.domain.format.FormatterImpl
 import com.patrykandpatryk.liftapp.domain.model.StringResource
 import com.patrykandpatryk.liftapp.domain.serialization.PolymorphicEnumSerializer
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
@@ -10,7 +8,6 @@ import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.PercentageUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,11 +27,7 @@ typealias StringResourceSerializers =
 @InstallIn(SingletonComponent::class)
 interface DomainModule {
 
-    @Binds
-    fun bindFormatter(formatter: FormatterImpl): Formatter
-
     companion object {
-
         @Provides
         @Singleton
         fun provideJson(

@@ -22,3 +22,7 @@ inline fun <T> Collection<T>.joinToPrettyString(
 
     return builder.toString()
 }
+
+fun String.toDoubleOrZero(): Double = toDoubleOrNull() ?: 0.0
+
+fun Any?.toStringOrEmpty(): String = this?.toString().orEmpty()

@@ -10,6 +10,7 @@ import com.patrykandpatryk.liftapp.domain.date.day
 import com.patrykandpatryk.liftapp.domain.date.hour
 import com.patrykandpatryk.liftapp.domain.date.minute
 import com.patrykandpatryk.liftapp.domain.date.month
+import com.patrykandpatryk.liftapp.domain.date.toLocalDateTime
 import com.patrykandpatryk.liftapp.domain.date.year
 import com.patrykandpatryk.liftapp.domain.extension.set
 import com.patrykandpatryk.liftapp.domain.format.Formatter
@@ -74,7 +75,7 @@ internal class NewBodyMeasurementEntryViewModel @AssistedInject constructor(
                 values = bodyMeasurement.latestEntry?.value.toValidatableStrings(bodyMeasurement.type.fields),
                 unit = unit,
                 is24H = formatter.is24H(),
-                formattedDate = formatter.getFormattedDate(calendar),
+                formattedDate = formatter.getFormattedDate(calendar.toLocalDateTime()),
             )
 
             else -> ScreenState.Update(
@@ -123,14 +124,14 @@ internal class NewBodyMeasurementEntryViewModel @AssistedInject constructor(
     private suspend fun setTime(model: ScreenState, intent: Intent.SetTime): ScreenState {
         calendar.hour = intent.hour
         calendar.minute = intent.minute
-        return model.mutate(formattedDate = formatter.getFormattedDate(calendar))
+        return model.mutate(formattedDate = formatter.getFormattedDate(calendar.toLocalDateTime()))
     }
 
     private suspend fun setDate(model: ScreenState, intent: Intent.SetDate): ScreenState {
         calendar.year = intent.year
         calendar.month = intent.month
         calendar.day = intent.day
-        return model.mutate(formattedDate = formatter.getFormattedDate(calendar))
+        return model.mutate(formattedDate = formatter.getFormattedDate(calendar.toLocalDateTime()))
     }
 
     private suspend fun save(model: ScreenState): ScreenState {
@@ -194,7 +195,7 @@ internal class NewBodyMeasurementEntryViewModel @AssistedInject constructor(
     }
 
     private fun String.parse(): Float =
-        toFloatOrNull() ?: formatter.parseFloatOrZero(this)
+        toFloatOrNull() ?: formatter.toFloatOrZero(this)
 
     @AssistedFactory
     interface Factory {

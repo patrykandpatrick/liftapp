@@ -25,6 +25,8 @@ object TestStringProvider : StringProvider {
     override val timeFormatShort12h: String = "hh:mm a"
     override val timeFormatLong24h: String = "HH:mm:ss"
     override val timeFormatLong12h: String = "hh:mm:ss a"
+    override val dateFormatEdit: String = "dd.MM.yyyy"
+    override val dateFormatFull: String = "d MMMM YYYY"
 
     override val errorMustBeHigherThanZero: String = "The value must be higher than zero."
 
@@ -58,4 +60,24 @@ object TestStringProvider : StringProvider {
 
     override fun toPrettyString(goal: Goal): String =
         "%s–%s × %s".format(goal.minReps, goal.maxReps, goal.sets)
+
+    override fun fieldCannotBeEmpty(): String = "This field cannot be empty."
+
+    override fun fieldMustBeHigherThanZero(): String = "This field must be higher than zero."
+
+    override fun fieldTooShort(actual: Int, minLength: Int): String =
+        "This field must be at least %d characters long.".format(minLength)
+
+    override fun fieldTooLong(actual: Int, maxLength: Int): String =
+        "This field must be at most %d characters long.".format(maxLength)
+
+    override fun valueTooSmall(minValue: String): String =
+        "This field must be at least %d.".format(minValue)
+
+    override fun valueTooBig(maxValue: String): String =
+        "This field must be at most %d.".format(maxValue)
+
+    override fun valueNotValidNumber(): String = "This field must be a valid number."
+
+    override fun doesNotEqual(formula: String, actual: String): String = "$formula does not equal $actual"
 }

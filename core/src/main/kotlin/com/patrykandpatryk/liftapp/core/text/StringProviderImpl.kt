@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.core.text
 
-import android.app.Application
+import android.content.Context
 import androidx.annotation.StringRes
 import com.patrykandpatryk.liftapp.core.R.string
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
@@ -13,7 +13,7 @@ import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import javax.inject.Inject
 
 class StringProviderImpl @Inject constructor(
-    private val application: Application,
+    private val context: Context,
 ) : StringProvider {
 
     override val andInAList: String
@@ -46,6 +46,12 @@ class StringProviderImpl @Inject constructor(
     override val errorMustBeHigherThanZero: String
         get() = string(string.error_must_be_higher_than_zero)
 
+    override val dateFormatFull: String
+        get() = string(string.date_format_full)
+
+    override val dateFormatEdit: String
+        get() = string(string.date_format_edit)
+
     override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
         string(unit.stringResourceId)
             .let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
@@ -66,11 +72,30 @@ class StringProviderImpl @Inject constructor(
 
     override fun getResolvedName(name: Name): String = when (name) {
         is Name.Raw -> name.value
-        is Name.Resource -> application.getString(name.resource.resourceId)
+        is Name.Resource -> context.getString(name.resource.resourceId)
     }
 
+    override fun fieldTooShort(actual: Int, minLength: Int): String =
+        string(string.error_field_too_short, minLength, actual, minLength)
+
+    override fun fieldTooLong(actual: Int, maxLength: Int): String =
+        string(string.error_field_too_long, maxLength, actual, maxLength)
+
+    override fun valueTooSmall(minValue: String): String =
+        string(string.error_value_too_small, minValue)
+
+    override fun valueTooBig(maxValue: String): String =
+        string(string.error_value_too_big, maxValue)
+
+    override fun valueNotValidNumber(): String = string(string.error_value_not_valid_number)
+
+    override fun fieldCannotBeEmpty(): String = string(string.error_field_cannot_be_empty, name)
+
+    override fun fieldMustBeHigherThanZero(): String = string(string.error_must_be_higher_than_zero)
+
+    override fun doesNotEqual(actual: String, expected: String): String = string(string.error_does_not_equal, actual, expected)
     private fun string(
         @StringRes id: Int,
         vararg formatArgs: Any,
-    ): String = if (formatArgs.isNotEmpty()) application.getString(id, *formatArgs) else application.getString(id)
+    ): String = if (formatArgs.isNotEmpty()) context.getString(id, *formatArgs) else context.getString(id)
 }

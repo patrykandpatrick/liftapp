@@ -7,7 +7,6 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 
 interface StringProvider {
-
     val andInAList: String
     val name: String
 
@@ -19,6 +18,8 @@ interface StringProvider {
     val timeFormatShort12h: String
     val timeFormatLong24h: String
     val timeFormatLong12h: String
+    val dateFormatFull: String
+    val dateFormatEdit: String
 
     val errorMustBeHigherThanZero: String
 
@@ -38,6 +39,22 @@ interface StringProvider {
     fun toPrettyString(goal: Goal): String
 
     fun getResolvedName(name: Name): String
+
+    fun fieldTooShort(actual: Int, minLength: Int): String
+
+    fun fieldTooLong(actual: Int, maxLength: Int): String
+
+    fun valueTooSmall(minValue: String): String
+
+    fun valueTooBig(maxValue: String): String
+
+    fun valueNotValidNumber(): String
+
+    fun fieldCannotBeEmpty(): String
+
+    fun fieldMustBeHigherThanZero(): String
+
+    fun doesNotEqual(formula: String, actual: String): String
 }
 
 inline fun StringProvider.getErrorCannotBeEmpty(getName: StringProvider.() -> String): String =

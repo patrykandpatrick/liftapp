@@ -23,6 +23,8 @@ object Constants {
         const val BODY_MAX_PERCENTAGE = 100f
 
         const val NAME_MAX_CHARS = 60
+        const val TYPING_DEBOUNCE_MILLIS = 500L
+        const val CLEAR_ERROR_DELAY = 4000L
     }
 
     object Keys {

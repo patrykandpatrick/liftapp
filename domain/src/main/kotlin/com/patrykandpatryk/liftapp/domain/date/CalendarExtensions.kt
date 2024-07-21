@@ -1,5 +1,8 @@
 package com.patrykandpatryk.liftapp.domain.date
 
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Calendar
 
 var Calendar.second: Int
@@ -70,3 +73,6 @@ fun Long.millisToCalendar(): Calendar =
     Calendar
         .getInstance()
         .also { it.timeInMillis = this }
+
+fun Calendar.toLocalDateTime(): LocalDateTime =
+    LocalDateTime.from(Instant.ofEpochMilli(timeInMillis).atZone(ZoneId.of("UTC")))
