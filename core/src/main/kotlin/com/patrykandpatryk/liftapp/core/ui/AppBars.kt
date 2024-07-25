@@ -158,7 +158,7 @@ fun DialogTopBar(
                 .align(Alignment.CenterVertically)
                 .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
         )
