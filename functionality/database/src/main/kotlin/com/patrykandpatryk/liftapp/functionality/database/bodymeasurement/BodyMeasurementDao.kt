@@ -19,7 +19,7 @@ interface BodyMeasurementDao {
     fun getBodyMeasurementsWithLatestEntries(): Flow<List<BodyMeasurementWithLatestEntryViewResult>>
 
     @Query(
-        "SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID ORDER BY timestamp DESC",
+        "SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID ORDER BY time DESC",
     )
     fun getBodyMeasurementEntries(bodyMeasurementID: Long): Flow<List<BodyMeasurementEntryEntity>>
 

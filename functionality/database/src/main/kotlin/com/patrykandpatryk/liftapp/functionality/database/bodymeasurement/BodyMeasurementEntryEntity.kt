@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
-import java.util.*
+import java.time.LocalDateTime
 
 @Entity(
     tableName = "body_measurement_entries",
@@ -27,5 +27,5 @@ class BodyMeasurementEntryEntity(
     val bodyMeasurementID: Long,
     val value: BodyMeasurementValue,
     @ColumnInfo(index = true)
-    val timestamp: Calendar,
+    val time: LocalDateTime,
 )

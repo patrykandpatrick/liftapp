@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 interface BodyMeasurementRepository {
 
@@ -21,14 +22,14 @@ interface BodyMeasurementRepository {
     suspend fun insertBodyMeasurementEntry(
         bodyMeasurementID: Long,
         value: BodyMeasurementValue,
-        timestamp: Long,
+        time: LocalDateTime,
     )
 
     suspend fun updateBodyMeasurementEntry(
         id: Long,
         bodyMeasurementID: Long,
         value: BodyMeasurementValue,
-        timestamp: Long,
+        time: LocalDateTime,
     )
 
     suspend fun deleteBodyMeasurementEntry(id: Long)

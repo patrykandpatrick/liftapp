@@ -8,12 +8,13 @@ import androidx.room.Embedded
                       latest_body_measurement_entry.id AS bme_id,
                       latest_body_measurement_entry.body_measurement_id as bme_body_measurement_id,
                       latest_body_measurement_entry.value as bme_value,
-                      latest_body_measurement_entry.timestamp as bme_timestamp
+                      latest_body_measurement_entry.time as bme_time
                  FROM body_measurements
                       LEFT JOIN (SELECT *
                                    FROM body_measurement_entries AS bme1
-                                  WHERE bme1.timestamp IN (SELECT MAX(bme2.timestamp)
+                                  WHERE bme1.time IN (SELECT MAX(bme2.time)
                                                              FROM body_measurement_entries AS bme2
+                                                             WHERE bme2.body_measurement_id = bme1.body_measurement_id
                                                             GROUP BY bme2.body_measurement_id)
                                   GROUP BY bme1.body_measurement_id
                                   ORDER BY bme1.id DESC) AS latest_body_measurement_entry

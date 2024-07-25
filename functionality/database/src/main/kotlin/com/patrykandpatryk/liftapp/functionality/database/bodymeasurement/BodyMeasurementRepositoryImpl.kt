@@ -5,13 +5,13 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
-import com.patrykandpatryk.liftapp.domain.date.millisToCalendar
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class BodyMeasurementRepositoryImpl @Inject constructor(
@@ -68,13 +68,13 @@ class BodyMeasurementRepositoryImpl @Inject constructor(
     override suspend fun insertBodyMeasurementEntry(
         bodyMeasurementID: Long,
         value: BodyMeasurementValue,
-        timestamp: Long,
+        time: LocalDateTime,
     ) = withContext(dispatcher) {
         dao.insertBodyMeasurementEntry(
             BodyMeasurementEntryEntity(
                 bodyMeasurementID = bodyMeasurementID,
                 value = value,
-                timestamp = timestamp.millisToCalendar(),
+                time = time,
             ),
         )
     }
@@ -83,14 +83,14 @@ class BodyMeasurementRepositoryImpl @Inject constructor(
         id: Long,
         bodyMeasurementID: Long,
         value: BodyMeasurementValue,
-        timestamp: Long,
+        time: LocalDateTime,
     ) = withContext(dispatcher) {
         dao.updateBodyMeasurementEntry(
             BodyMeasurementEntryEntity(
                 id = id,
                 bodyMeasurementID = bodyMeasurementID,
                 value = value,
-                timestamp = timestamp.millisToCalendar(),
+                time = time,
             ),
         )
     }

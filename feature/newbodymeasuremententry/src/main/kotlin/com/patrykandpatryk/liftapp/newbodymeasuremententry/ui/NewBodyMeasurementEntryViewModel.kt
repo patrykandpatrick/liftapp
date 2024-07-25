@@ -1,201 +1,169 @@
 package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatryk.liftapp.core.di.ValidatorType
+import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
-import com.patrykandpatryk.liftapp.domain.date.day
-import com.patrykandpatryk.liftapp.domain.date.hour
-import com.patrykandpatryk.liftapp.domain.date.minute
-import com.patrykandpatryk.liftapp.domain.date.month
-import com.patrykandpatryk.liftapp.domain.date.toLocalDateTime
-import com.patrykandpatryk.liftapp.domain.date.year
-import com.patrykandpatryk.liftapp.domain.extension.set
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.getValueRange
+import com.patrykandpatryk.liftapp.domain.extension.toStringOrEmpty
+import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import com.patrykandpatryk.liftapp.domain.format.Formatter
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
-import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseCase
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
-import com.patrykandpatryk.liftapp.domain.validation.Validatable
-import com.patrykandpatryk.liftapp.domain.validation.Validator
-import com.patrykandpatryk.liftapp.domain.validation.map
-import com.patrykandpatryk.liftapp.domain.validation.toInvalid
-import com.patrykandpatryk.liftapp.domain.validation.toValid
+import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
+import com.patrykandpatryk.liftapp.domain.validation.valueInRange
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.time.LocalDateTime
 
-private const val SCREEN_STATE_KEY = "screen_state"
+private const val LocalDateTimeKey = "LocalDateTime"
 
 @HiltViewModel(assistedFactory = NewBodyMeasurementEntryViewModel.Factory::class)
-internal class NewBodyMeasurementEntryViewModel @AssistedInject constructor(
-    @Assisted val id: Long,
-    @Assisted val entryId: Long?,
-    private val formatter: Formatter,
-    private val exceptionHandler: CoroutineExceptionHandler,
-    private val repository: BodyMeasurementRepository,
-    private val stringProvider: StringProvider,
-    private val getUnitForBodyMeasurementType: GetUnitForBodyMeasurementTypeUseCase,
+class NewBodyMeasurementEntryViewModel(
+    private val getFormattedDate: (LocalDateTime) -> FormattedDate,
+    private val getBodyMeasurementWithLatestEntry: suspend () -> BodyMeasurementWithLatestEntry,
+    private val getBodyMeasurementEntry: suspend () -> BodyMeasurementEntry?,
+    private val upsertBodyMeasurementEntry: suspend (value: BodyMeasurementValue, time: LocalDateTime) -> Unit,
+    private val textFieldStateManager: TextFieldStateManager,
+    private val getUnitForBodyMeasurementType: suspend (BodyMeasurementType) -> ValueUnit,
     private val savedStateHandle: SavedStateHandle,
-    @ValidatorType.HigherThanZero private val validator: Validator<Float>,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
+) : ViewModel(), NewBodyMeasurementState {
+    private val dateTime = savedStateHandle.getStateFlow(LocalDateTimeKey, LocalDateTime.now())
 
-    override val state: StateFlow<ScreenState> = savedStateHandle
-        .getStateFlow<ScreenState>(SCREEN_STATE_KEY, ScreenState.Loading)
+    override val name: MutableState<String> = mutableStateOf("")
 
-    override val events: MutableSharedFlow<Event> = MutableSharedFlow(replay = 1)
+    override val inputData: MutableState<NewBodyMeasurementState.InputData?> = mutableStateOf(null)
 
-    private val calendar = Calendar.getInstance()
+    override val is24H: MutableState<Boolean> = mutableStateOf(false)
+
+    override val formattedDate: StateFlow<FormattedDate> = dateTime
+        .map { getFormattedDate(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), getFormattedDate(dateTime.value))
+
+    override val entrySaved: MutableState<Boolean> = mutableStateOf(false)
+
+    @AssistedInject
+    constructor(
+        @Assisted id: Long,
+        @Assisted entryId: Long?,
+        formatter: Formatter,
+        repository: BodyMeasurementRepository,
+        textFieldStateManager: TextFieldStateManager,
+        getUnitForBodyMeasurementType: GetUnitForBodyMeasurementTypeUseCase,
+        savedStateHandle: SavedStateHandle,
+    ) : this(
+        getFormattedDate = { formatter.getFormattedDate(it) },
+        getBodyMeasurementWithLatestEntry = { repository.getBodyMeasurementWithLatestEntry(id).first() },
+        getBodyMeasurementEntry = { entryId?.let { repository.getBodyMeasurementEntry(it) } },
+        upsertBodyMeasurementEntry = { value, time ->
+            if (entryId != null) {
+                repository.updateBodyMeasurementEntry(entryId, id, value, time)
+            } else {
+                repository.insertBodyMeasurementEntry(id, value, time)
+            }
+        },
+        textFieldStateManager = textFieldStateManager,
+        getUnitForBodyMeasurementType = { getUnitForBodyMeasurementType(it) },
+        savedStateHandle = savedStateHandle,
+    )
 
     init {
-        if (state.value == ScreenState.Loading) {
-            viewModelScope.launch {
-                savedStateHandle[SCREEN_STATE_KEY] = getInitialState(id)
+        loadData()
+    }
+
+    private fun loadData() {
+        viewModelScope.launch {
+            val bodyMeasurement = getBodyMeasurementWithLatestEntry()
+            val bodyMeasurementEntry = getBodyMeasurementEntry()
+
+            if (bodyMeasurementEntry != null) {
+                updateLocalDateTime { bodyMeasurementEntry.formattedDate.localDateTime }
             }
+
+            name.value = bodyMeasurement.name
+            inputData.value = getInputData(bodyMeasurement, bodyMeasurementEntry)
         }
     }
 
-    private suspend fun getInitialState(id: Long): ScreenState {
-        val bodyMeasurement = repository.getBodyMeasurementWithLatestEntry(id).first()
-        val entry = entryId?.let { entryId -> repository.getBodyMeasurementEntry(entryId) }
-        val unit = getUnitForBodyMeasurementType(bodyMeasurement.type)
+    private suspend fun getInputData(
+        bodyMeasurement: BodyMeasurementWithLatestEntry,
+        bodyMeasurementEntry: BodyMeasurementEntry?,
+    ): NewBodyMeasurementState.InputData {
+        val unit = bodyMeasurementEntry?.value?.unit ?: getUnitForBodyMeasurementType(bodyMeasurement.type)
+        val allowedValueRange = bodyMeasurement.type.getValueRange(unit)
+        val inputValue = bodyMeasurementEntry?.value ?: bodyMeasurement.latestEntry?.value
 
-        return when (entry) {
-            null -> ScreenState.Insert(
-                name = bodyMeasurement.name,
-                values = bodyMeasurement.latestEntry?.value.toValidatableStrings(bodyMeasurement.type.fields),
+        return if (bodyMeasurement.type == BodyMeasurementType.LengthTwoSides) {
+            val doubleValue = inputValue as? BodyMeasurementValue.Double
+            NewBodyMeasurementState.InputData.Double(
+                leftTextFieldState = textFieldStateManager.floatTextField(
+                    initialValue = doubleValue?.left.toStringOrEmpty(),
+                    validators = {
+                        nonEmpty()
+                        valueInRange(allowedValueRange)
+                    }
+                ),
+                rightTextFieldState = textFieldStateManager.floatTextField(
+                    initialValue = doubleValue?.right.toStringOrEmpty(),
+                    validators = {
+                        nonEmpty()
+                        valueInRange(allowedValueRange)
+                    }
+                ),
+                unit = unit
+            )
+        } else {
+            NewBodyMeasurementState.InputData.Single(
+                textFieldState = textFieldStateManager.floatTextField(
+                    initialValue = (inputValue as? BodyMeasurementValue.Single)?.value.toStringOrEmpty(),
+                    validators = {
+                        nonEmpty()
+                        valueInRange(allowedValueRange)
+                    }
+                ),
                 unit = unit,
-                is24H = formatter.is24H(),
-                formattedDate = formatter.getFormattedDate(calendar.toLocalDateTime()),
-            )
-
-            else -> ScreenState.Update(
-                entryId = entry.id,
-                name = bodyMeasurement.name,
-                values = entry.value.toValidatableStrings(bodyMeasurement.type.fields),
-                unit = entry.value.unit,
-                is24H = formatter.is24H(),
-                formattedDate = entry.formattedDate,
             )
         }
     }
 
-    override fun handleIntent(intent: Intent) {
-        val model = state.value
+    override fun setTime(hour: Int, minute: Int) {
+        updateLocalDateTime { dateTime -> dateTime.withHour(hour).withMinute(minute) }
+    }
 
-        viewModelScope.launch(exceptionHandler) {
-            savedStateHandle[SCREEN_STATE_KEY] = when (intent) {
-                is Intent.IncrementValue -> incrementValue(model, intent)
-                is Intent.SetValue -> setValue(model, intent)
-                is Intent.SetTime -> setTime(model, intent)
-                is Intent.SetDate -> setDate(model, intent)
-                is Intent.Save -> save(model)
-            }
+    override fun setDate(year: Int, month: Int, day: Int) {
+        updateLocalDateTime { dateTime -> dateTime.withYear(year).withMonth(month).withDayOfMonth(day) }
+    }
+
+    private fun updateLocalDateTime(update: (dateTime: LocalDateTime) -> LocalDateTime) {
+        savedStateHandle[LocalDateTimeKey] = update(dateTime.value)
+    }
+
+    override fun save(inputData: NewBodyMeasurementState.InputData) {
+        if (inputData.isInvalid.value) {
+            inputData.showErrors()
+            return
+        }
+        viewModelScope.launch {
+            upsertBodyMeasurementEntry(inputData.toBodyMeasurementValue(), dateTime.value)
+            entrySaved.value = true
+            updateLocalDateTime { LocalDateTime.now() }
         }
     }
-
-    private fun incrementValue(model: ScreenState, intent: Intent.IncrementValue): ScreenState {
-        val newValue = model.values[intent.index].value.parse()
-            .plus(intent.incrementBy)
-            .let(validator::validate)
-            .map { number -> formatter.formatNumber(number, format = Formatter.NumberFormat.Decimal) }
-
-        return model.mutate(values = model.values.set(intent.index, newValue))
-    }
-
-    private fun setValue(model: ScreenState, intent: Intent.SetValue): ScreenState {
-        val newValue =
-            intent.value.parse()
-                .let(validator::validate)
-                .map { intent.value }
-
-        return model.mutate(values = model.values.set(intent.index, newValue))
-    }
-
-    private suspend fun setTime(model: ScreenState, intent: Intent.SetTime): ScreenState {
-        calendar.hour = intent.hour
-        calendar.minute = intent.minute
-        return model.mutate(formattedDate = formatter.getFormattedDate(calendar.toLocalDateTime()))
-    }
-
-    private suspend fun setDate(model: ScreenState, intent: Intent.SetDate): ScreenState {
-        calendar.year = intent.year
-        calendar.month = intent.month
-        calendar.day = intent.day
-        return model.mutate(formattedDate = formatter.getFormattedDate(calendar.toLocalDateTime()))
-    }
-
-    private suspend fun save(model: ScreenState): ScreenState {
-        return when {
-            model.values.any { it.isInvalid } -> model.mutate(showErrors = true)
-            model is ScreenState.Update -> {
-                repository.updateBodyMeasurementEntry(
-                    id = model.entryId,
-                    bodyMeasurementID = id,
-                    value = model.values.toBodyValues(unit = model.unit),
-                    timestamp = model.formattedDate.millis,
-                )
-                events.emit(Event.EntrySaved)
-                model
-            }
-
-            else -> {
-                repository.insertBodyMeasurementEntry(
-                    bodyMeasurementID = id,
-                    value = model.values.toBodyValues(unit = model.unit),
-                    timestamp = model.formattedDate.millis,
-                )
-                events.emit(Event.EntrySaved)
-                model
-            }
-        }
-    }
-
-    private fun List<Validatable<String>>.toBodyValues(
-        unit: ValueUnit,
-    ) = when (size) {
-        1 -> BodyMeasurementValue.Single(
-            value = get(0).value.parse(),
-            unit = unit,
-        )
-
-        2 -> BodyMeasurementValue.Double(
-            left = get(0).value.parse(),
-            right = get(1).value.parse(),
-            unit = unit,
-        )
-
-        else -> error("Tried to convert $size items into `BodyValues`.")
-    }
-
-    private fun BodyMeasurementValue?.toValidatableStrings(fieldCount: Int): List<Validatable<String>> = buildList {
-        when (this@toValidatableStrings) {
-            is BodyMeasurementValue.Double -> {
-                add(left.toString().toValid())
-                add(right.toString().toValid())
-            }
-
-            is BodyMeasurementValue.Single -> {
-                add(value.toString().toValid())
-            }
-
-            null -> repeat(fieldCount) {
-                add("".toInvalid(stringProvider.errorMustBeHigherThanZero))
-            }
-        }
-    }
-
-    private fun String.parse(): Float =
-        toFloatOrNull() ?: formatter.toFloatOrZero(this)
 
     @AssistedFactory
     interface Factory {

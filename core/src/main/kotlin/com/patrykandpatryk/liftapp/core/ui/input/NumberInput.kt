@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui.input
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -19,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
+import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.VerticalDivider
 import com.patrykandpatryk.liftapp.core.ui.button.IconButton
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -139,8 +140,8 @@ fun NumberInput(
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isError: Boolean = false,
-    errorMessage: String? = null,
-    supportingText: String? = null,
+    errorText: AnnotatedString? = null,
+    supportingText: AnnotatedString? = null,
 ) {
     Column(modifier = modifier) {
         NumberInput(
@@ -156,14 +157,11 @@ fun NumberInput(
             isError = isError,
         )
 
-        AnimatedVisibility(visible = isError && (errorMessage != null || supportingText != null)) {
-            Text(
-                text = errorMessage ?: supportingText.orEmpty(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.run { if (errorMessage != null) error else onSurface },
-                modifier = Modifier.padding(top = 4.dp, start = 16.dp),
-            )
-        }
+        SupportingText(
+            value = value,
+            supportingText = supportingText,
+            errorText = errorText,
+        )
     }
 }
 
@@ -197,7 +195,7 @@ fun PreviewNumberInputWithError() {
                 onPlusClick = {},
                 onMinusClick = {},
                 isError = true,
-                errorMessage = "Error message.",
+                errorText = AnnotatedString("Error message."),
             )
         }
     }

@@ -5,18 +5,18 @@ import android.content.Context
 import android.content.res.Resources
 import com.patrykandpatryk.liftapp.core.android.IsDarkModeHandler
 import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
-import com.patrykandpatryk.liftapp.core.validation.HigherThanZeroValidator
-import com.patrykandpatryk.liftapp.core.validation.NameValidator
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModePublisher
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
+import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
-import com.patrykandpatryk.liftapp.domain.validation.Validator
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
 import java.io.File
 import java.text.Collator
@@ -28,14 +28,6 @@ internal interface CoreModule {
 
     @Binds
     fun bindStringProvider(provider: StringProviderImpl): StringProvider
-
-    @Binds
-    @ValidatorType.Name
-    fun bindNameValidator(validator: NameValidator): Validator<String>
-
-    @Binds
-    @ValidatorType.HigherThanZero
-    fun bindHigherThanZeroValidatorValidator(validator: HigherThanZeroValidator): Validator<Float>
 
     @Binds
     fun bindIsDarkModeReceiver(useCase: IsDarkModeHandler): IsDarkModeReceiver
@@ -60,7 +52,14 @@ internal interface CoreModule {
         fun provideCoroutineExceptionHandler(): CoroutineExceptionHandler =
             CoroutineExceptionHandler { coroutineContext, throwable ->
                 Timber.e(throwable, "Uncaught exception in $coroutineContext.")
+                throwable.printStackTrace()
             }
+
+        @Provides
+        fun provideViewModelScope(
+            @DefaultDispatcher coroutineDispatcher: CoroutineDispatcher,
+            coroutineExceptionHandler: CoroutineExceptionHandler,
+        ): CoroutineScope = CoroutineScope(coroutineDispatcher + coroutineExceptionHandler)
 
         @Provides
         fun provideContext(application: Application): Context =

@@ -3,15 +3,14 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,42 +20,27 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.FabPosition
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.collectInComposable
-import com.patrykandpatryk.liftapp.core.extension.getMessageTextOrNull
-import com.patrykandpatryk.liftapp.core.extension.interfaceStub
-import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.state.equivalentSnapshotPolicy
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
@@ -68,11 +52,6 @@ import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.core.ui.theme.Colors.IllustrationAlpha
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants
-import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
-import com.patrykandpatryk.liftapp.domain.validation.toValid
-import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
-import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
-import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
 
 @Composable
@@ -84,58 +63,38 @@ fun NewRoutine(
     val viewModel: NewRoutineViewModel = hiltViewModel(
         creationCallback = { factory: NewRoutineViewModel.Factory -> factory.create(routineID) },
     )
-    val state by viewModel.state.collectAsState()
-    val errorMessage by remember {
-        derivedStateOf(
-            equivalentSnapshotPolicy { new, previous -> if (state.showErrors) new == previous else true },
-        ) { state.name.getMessageTextOrNull() ?: "" }
-    }
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
+    val routineSaved by viewModel.routineSaved
+    val routineNotFound by viewModel.routineNotFound
 
     navigator.RegisterResultListener(key = Constants.Keys.PICKED_EXERCISE_IDS) { pickedExerciseIds: List<Long> ->
-        viewModel.handleIntent(Intent.AddPickedExercises(pickedExerciseIds))
+        viewModel.addPickedExercises(pickedExerciseIds)
     }
 
     NewRoutine(
-        state = state,
+        state = viewModel,
         navigator = navigator,
-        onIntent = viewModel::handleIntent,
-        snackbarHostState = snackbarHostState,
-        nameErrorText = errorMessage,
         modifier = modifier,
     )
 
-    viewModel.events.collectInComposable { event ->
-        when (event) {
-            Event.EntrySaved,
-            Event.RoutineNotFound -> navigator.back()
-        }
+    LaunchedEffect(routineNotFound, routineSaved) {
+        if (routineNotFound || routineSaved) navigator.back()
     }
 }
 
 @Composable
 private fun NewRoutine(
-    state: ScreenState,
+    state: NewRoutineState,
     navigator: NewRoutineNavigator,
-    onIntent: (Intent) -> Unit,
-    snackbarHostState: SnackbarHostState,
-    nameErrorText: String,
     modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val density = LocalDensity.current.density
-    var fabTopToParentBottom by remember { mutableStateOf(0.dp) }
 
     Scaffold(
         modifier = modifier
             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
             .imePadding(),
         topBar = {
-            val titleRes = remember(state.isEdit) {
-                if (state.isEdit) R.string.title_edit_routine else R.string.title_new_routine
-            }
+            val titleRes = if (state.isEdit) R.string.title_edit_routine else R.string.title_new_routine
 
             TopAppBar(
                 title = stringResource(id = titleRes),
@@ -143,61 +102,45 @@ private fun NewRoutine(
                 onBackClick = navigator::back,
             )
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                modifier = Modifier
-                    .consumeWindowInsets(insets = WindowInsets.navigationBars)
-                    .onGloballyPositioned { coordinates ->
-                        val parentBottom = coordinates.parentLayoutCoordinates?.size?.height.orZero
-                        val fabTop = coordinates.positionInParent().y
-                        fabTopToParentBottom = ((parentBottom - fabTop) / density).dp
-                    },
-                text = stringResource(id = R.string.action_save),
-                icon = painterResource(id = R.drawable.ic_save),
-                onClick = { onIntent(Intent.Save) },
-            )
+        bottomBar = {
+            Box(modifier = Modifier.fillMaxWidth().navigationBarsPadding()) {
+                ExtendedFloatingActionButton(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(vertical = LocalDimens.current.padding.contentVertical),
+                    text = stringResource(id = R.string.action_save),
+                    icon = painterResource(id = R.drawable.ic_save),
+                    onClick = state::save,
+                )
+            }
         },
-        floatingActionButtonPosition = FabPosition.Center,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            contentPadding = PaddingValues(
-                bottom = fabTopToParentBottom + LocalDimens.current.verticalItemSpacing,
-            ),
+            modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
+            contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
         ) {
             content(
                 state = state,
-                onIntent = onIntent,
                 navigator = navigator,
-                nameErrorText = nameErrorText,
             )
         }
     }
 }
 
 private fun LazyListScope.content(
-    state: ScreenState,
-    onIntent: (Intent) -> Unit,
+    state: NewRoutineState,
     navigator: NewRoutineNavigator,
-    nameErrorText: String,
 ) {
     stickyHeader {
         Column(
-            modifier = Modifier.background(
-                color = MaterialTheme.colorScheme.surface,
-            ),
+            modifier = Modifier.background(color = MaterialTheme.colorScheme.surface),
         ) {
             OutlinedTextField(
-                value = state.name.value,
-                onValueChange = { onIntent(Intent.UpdateName(it)) },
+                textFieldState = state.name,
                 label = { Text(text = stringResource(id = R.string.generic_name)) },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { onIntent(Intent.Save) }),
+                keyboardActions = KeyboardActions(onDone = { state.save() }),
                 maxLines = LocalDimens.current.input.nameMaxLines,
-                supportingText = nameErrorText,
-                isError = state.showErrors && state.name.isInvalid,
-                showSupportingText = state.showErrors,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
@@ -210,7 +153,7 @@ private fun LazyListScope.content(
         }
     }
 
-    if (state.exercises.isInvalid) {
+    if (state.exercises.value.isInvalid) {
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 EmptyState(state)
@@ -218,7 +161,7 @@ private fun LazyListScope.content(
         }
     } else {
         items(
-            items = state.exercises.value,
+            items = state.exercises.value.value,
             key = { it.id },
             contentType = { it::class },
         ) { item ->
@@ -228,11 +171,9 @@ private fun LazyListScope.content(
                 description = item.muscles,
                 iconPainter = painterResource(id = item.type.iconRes),
                 actions = {
-                    IconButton(onClick = { onIntent(Intent.RemovePickedExercise(item.id)) }) {
+                    IconButton(onClick = { state.removePickedExercise(item.id) }) {
                         Icon(
-                            painter = painterResource(
-                                id = R.drawable.ic_remove_circle,
-                            ),
+                            painter = painterResource(id = R.drawable.ic_remove_circle),
                             contentDescription = stringResource(id = R.string.list_remove),
                         )
                     }
@@ -243,6 +184,7 @@ private fun LazyListScope.content(
 
     item(key = R.string.action_add_exercise) {
         Button(
+            colors = ButtonDefaults.filledTonalButtonColors(),
             modifier = Modifier
                 .animateItem()
                 .fillMaxWidth()
@@ -263,14 +205,15 @@ private fun LazyListScope.content(
 }
 
 @Composable
-private fun ColumnScope.EmptyState(state: ScreenState) {
+private fun ColumnScope.EmptyState(state: NewRoutineState) {
     val normalColor = MaterialTheme.colorScheme.onSurfaceVariant
     val errorColor = MaterialTheme.colorScheme.error
 
     val color = remember { Animatable(normalColor) }
+    val showErrors by state.showErrors
 
-    LaunchedEffect(key1 = state.showErrors) {
-        if (state.showErrors) {
+    LaunchedEffect(key1 = showErrors) {
+        if (showErrors) {
             color.animateTo(errorColor, tween())
         } else {
             color.animateTo(normalColor, tween())
@@ -301,16 +244,6 @@ private fun ColumnScope.EmptyState(state: ScreenState) {
 @Composable
 fun NewRoutinePreview() {
     LiftAppTheme {
-        NewRoutine(
-            state = ScreenState(
-                name = "Name".toValid(),
-                id = 0,
-                exercises = emptyList<RoutineExerciseItem>().toValid(),
-            ),
-            navigator = interfaceStub(),
-            snackbarHostState = SnackbarHostState(),
-            onIntent = {},
-            nameErrorText = "",
-        )
+        // TODO
     }
 }

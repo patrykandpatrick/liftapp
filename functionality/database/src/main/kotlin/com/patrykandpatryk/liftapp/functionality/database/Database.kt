@@ -7,8 +7,8 @@ import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMe
 import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementEntity
 import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementEntryEntity
 import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementWithLatestEntryViewResult
-import com.patrykandpatryk.liftapp.functionality.database.converter.CalendarConverters
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
+import com.patrykandpatryk.liftapp.functionality.database.converter.LocalDateTimeConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
 import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
@@ -37,7 +37,7 @@ import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExe
 @TypeConverters(
     value = [
         JsonConverters::class,
-        CalendarConverters::class,
+        LocalDateTimeConverters::class,
     ],
     builtInTypeConverters = BuiltInTypeConverters(
         enums = BuiltInTypeConverters.State.ENABLED,

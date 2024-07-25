@@ -36,7 +36,6 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.DialogDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.date.day
-import com.patrykandpatryk.liftapp.domain.date.getMillisFor
 import com.patrykandpatryk.liftapp.domain.date.isValid
 import com.patrykandpatryk.liftapp.domain.date.month
 import com.patrykandpatryk.liftapp.domain.date.safeParseToCalendar
@@ -46,6 +45,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
@@ -82,7 +83,7 @@ fun DatePicker(
                         state = state,
                         onPositiveButtonClick = onClick@{
                             val calendar = state.resolvedDate ?: return@onClick
-                            onTimePicked(calendar.year, calendar.month, calendar.day)
+                            onTimePicked(calendar.year, calendar.month + 1, calendar.day)
                             state.hide()
                         },
                     )
@@ -151,7 +152,7 @@ private fun DatePickerContent(
 
 @Stable
 class DatePickerState(
-    millis: Long? = null,
+    time: LocalDateTime? = null,
     isShowing: Boolean = false,
     inputDatePattern: String,
     outputDatePattern: String,
@@ -193,7 +194,7 @@ class DatePickerState(
 
     var isShowing: Boolean by mutableStateOf(isShowing)
 
-    var input: String by mutableStateOf(millis?.let(exampleDateFormat::format).orEmpty())
+    var input: String by mutableStateOf(time?.format(DateTimeFormatter.ofPattern(exampleDatePattern)).orEmpty())
 
     fun show() {
         isShowing = true
@@ -221,7 +222,7 @@ class DatePickerState(
 
 @Composable
 fun rememberDatePickerState(
-    millis: Long? = null,
+    time: LocalDateTime? = null,
     isShowing: Boolean = false,
 ): DatePickerState {
     val inputDatePattern = stringResource(id = R.string.picker_date_input_date_format)
@@ -233,9 +234,9 @@ fun rememberDatePickerState(
 
     val errorDelay = integerResource(id = R.integer.input_error_delay).toLong()
 
-    return remember(key1 = millis) {
+    return remember(key1 = time) {
         DatePickerState(
-            millis = millis,
+            time = time,
             isShowing = isShowing,
             inputDatePattern = inputDatePattern,
             outputDatePattern = outputDatePattern,
@@ -253,7 +254,7 @@ fun DatePickerPreview() {
     LiftAppTheme {
         DatePicker(
             state = rememberDatePickerState(
-                millis = getMillisFor(year = 2022, month = 8, day = 13),
+                time = LocalDateTime.now(),
                 isShowing = true,
             ),
             onTimePicked = { _, _, _ -> },

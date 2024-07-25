@@ -1,137 +1,122 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatryk.liftapp.core.di.ValidatorType
 import com.patrykandpatryk.liftapp.core.extension.update
-import com.patrykandpatryk.liftapp.core.logging.LogPublisher
-import com.patrykandpatryk.liftapp.core.logging.UiLogger
+import com.patrykandpatryk.liftapp.core.text.TextFieldState
+import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.Constants.Algorithms.SCREEN_STATE_KEY
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
-import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineExerciseItemsUseCase
+import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.Validator
-import com.patrykandpatryk.liftapp.feature.newroutine.model.Event
-import com.patrykandpatryk.liftapp.feature.newroutine.model.Intent
-import com.patrykandpatryk.liftapp.feature.newroutine.model.ScreenState
+import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
 import com.patrykandpatryk.liftapp.feature.newroutine.usecase.GetRoutineWithExerciseIdsUseCase
 import com.patrykandpatryk.liftapp.feature.newroutine.usecase.UpsertRoutineUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 private const val PICKED_EXERCISES_KEY = "pickedExercises"
 
 @HiltViewModel(assistedFactory = NewRoutineViewModel.Factory::class)
-class NewRoutineViewModel @AssistedInject constructor(
-    @Assisted private val routineID: Long,
+class NewRoutineViewModel(
+    private val routineID: Long,
     private val savedState: SavedStateHandle,
-    private val getRoutine: GetRoutineWithExerciseIdsUseCase,
-    private val upsertRoutine: UpsertRoutineUseCase,
-    private val getExerciseItems: GetRoutineExerciseItemsUseCase,
-    exceptionHandler: CoroutineExceptionHandler,
-    @DefaultDispatcher dispatcher: CoroutineDispatcher,
-    @ValidatorType.Name private val validateName: Validator<String>,
+    private val getRoutine: suspend () -> Pair<Routine, List<Long>>?,
+    private val upsertRoutine: suspend (id: Long, name: String, exerciseIds: List<Long>) -> Unit,
+    private val getExerciseItems: suspend (exerciseIds: List<Long>) -> Flow<List<RoutineExerciseItem>>,
+    private val textFieldStateManager: TextFieldStateManager,
     private val validateExercises: Validator<List<RoutineExerciseItem>>,
-    private val logger: UiLogger,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
-
-    private val coroutineContext = dispatcher + exceptionHandler
-
+    viewModelScope: CoroutineScope,
+) : ViewModel(viewModelScope), NewRoutineState {
     private val hasSavedState = savedState.contains(SCREEN_STATE_KEY)
 
-    override val state: StateFlow<ScreenState> = savedState
-        .getStateFlow(SCREEN_STATE_KEY, getInitialState())
+    override val name: TextFieldState<String> = textFieldStateManager.stringTextField(
+        validators = { nonEmpty() }
+    )
 
-    override val events: MutableSharedFlow<Event> = MutableSharedFlow()
+    override val exercises: MutableState<Validatable<List<RoutineExerciseItem>>> = mutableStateOf(validateExercises(emptyList()))
+
+    override val exerciseIds: List<Long> = derivedStateOf { exercises.value.value.map { it.id } }.value
+
+    override val isEdit: Boolean = routineID != ID_NOT_SET
+
+    override val routineNotFound: MutableState<Boolean> = mutableStateOf(false)
+
+    override val routineSaved: MutableState<Boolean> = mutableStateOf(false)
+
+    override val showErrors: MutableState<Boolean> = mutableStateOf(false)
+
+    @AssistedInject
+    constructor(
+        @Assisted routineID: Long,
+        savedState: SavedStateHandle,
+        getRoutine: GetRoutineWithExerciseIdsUseCase,
+        upsertRoutine: UpsertRoutineUseCase,
+        getExerciseItems: GetRoutineExerciseItemsUseCase,
+        textFieldStateManager: TextFieldStateManager,
+        validateExercises: NonEmptyCollectionValidator<RoutineExerciseItem, List<RoutineExerciseItem>>,
+        viewModelScope: CoroutineScope,
+    ) : this(
+        routineID = routineID,
+        savedState = savedState,
+        getRoutine = { getRoutine(routineID).first() },
+        upsertRoutine = { id, name, exerciseIds -> upsertRoutine(id, name, exerciseIds) },
+        getExerciseItems = { exerciseIds -> getExerciseItems(exerciseIds) },
+        textFieldStateManager = textFieldStateManager,
+        validateExercises = validateExercises,
+        viewModelScope = viewModelScope,
+    )
 
     init {
-
-        Timber.d("Init, hasSavedState=$hasSavedState, id=$routineID")
         if (hasSavedState.not() && routineID != ID_NOT_SET) {
-            loadUpdateState(routineID)
+            loadUpdateState()
         }
         savedState.getStateFlow<List<Long>?>(Constants.Keys.PICKED_EXERCISE_IDS, null)
-            .onEach { ids -> if (ids != null) addExerciseIds(ids) }
+            .onEach { ids -> if (ids != null) addPickedExercises(ids) }
             .launchIn(viewModelScope)
 
         savedState
             .getStateFlow(PICKED_EXERCISES_KEY, emptyList<Long>())
             .flatMapLatest(getExerciseItems::invoke)
             .onEach { exercises ->
-                updateState { state -> state.copy(exercises = validateExercises(exercises)) }
+                this.exercises.value = validateExercises(exercises)
             }
-            .flowOn(coroutineContext)
             .launchIn(viewModelScope)
     }
 
-    private fun getInitialState(): ScreenState =
-        ScreenState(
-            id = routineID,
-            name = validateName(""),
-            exercises = validateExercises(emptyList()),
-        )
-
-    private fun loadUpdateState(routineId: Long) {
-        viewModelScope.launch(coroutineContext) {
-            val routineWithExerciseItems = getRoutine(routineId).first()
+    private fun loadUpdateState() {
+        viewModelScope.launch {
+            val routineWithExerciseItems = getRoutine()
 
             if (routineWithExerciseItems == null) {
-                events.emit(Event.RoutineNotFound)
+                routineNotFound.value = true
             } else {
                 val (routine, exerciseIds) = routineWithExerciseItems
-
-                updateState { state ->
-                    state.copy(
-                        name = validateName(routine.name),
-                        isEdit = true,
-                    )
-                }
-
-                addExerciseIds(exerciseIds)
+                name.updateText(routine.name)
+                addPickedExercises(exerciseIds)
             }
         }
     }
 
-    private inline fun updateState(update: (ScreenState) -> ScreenState) {
-        savedState[SCREEN_STATE_KEY] = update(state.value)
-    }
-
-    override fun handleIntent(intent: Intent) {
-        when (intent) {
-            is Intent.UpdateName -> updateName(intent.name)
-            is Intent.Save -> validateAndSave()
-            is Intent.AddPickedExercises -> addExerciseIds(intent.exerciseIds)
-            is Intent.RemovePickedExercise -> removeExerciseId(intent.exerciseId)
-        }
-    }
-
-    private fun updateName(name: String) {
-        updateState {
-            it.copy(
-                name = validateName(name),
-                showErrors = false,
-            )
-        }
-    }
-
-    private fun addExerciseIds(exerciseIds: List<Long>) {
+    override fun addPickedExercises(exerciseIds: List<Long>) {
         savedState.update(PICKED_EXERCISES_KEY) { ids: List<Long>? ->
             ids
                 ?.plus(exerciseIds)
@@ -140,34 +125,22 @@ class NewRoutineViewModel @AssistedInject constructor(
         }
     }
 
-    private fun removeExerciseId(exerciseId: Long) {
+    override fun removePickedExercise(exerciseId: Long) {
         savedState.update(PICKED_EXERCISES_KEY) { ids: List<Long>? ->
             ids?.minus(exerciseId)
         }
     }
 
-    private fun validateAndSave() {
-        val state = state.value
-        if (validateState(state)) save(state)
-    }
-
-    private fun validateState(state: ScreenState): Boolean {
-        return if (state.name.isInvalid || state.exercises.isInvalid) {
-            updateState { it.copy(showErrors = true) }
-            false
-        } else {
-            true
+    override fun save() {
+        name.updateErrorMessages()
+        if (name.hasError || exercises.value.isInvalid) {
+            showErrors.value = true
+            return
         }
-    }
 
-    private fun save(state: ScreenState) {
-        viewModelScope.launch(coroutineContext) {
-            upsertRoutine(
-                id = state.id,
-                name = state.name.value,
-                exerciseIds = state.exerciseIds,
-            )
-            events.emit(Event.EntrySaved)
+        viewModelScope.launch {
+            upsertRoutine(routineID, name.value, exercises.value.value.map { it.id })
+            routineSaved.value = true
         }
     }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bb84c98733407a1f40b36dc35e3b1cc5",
+    "identityHash": "0141deb4cd2dd41fd5ac3408815de8d4",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "body_measurement_entries",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `body_measurement_id` INTEGER NOT NULL, `value` TEXT NOT NULL, `timestamp` TEXT NOT NULL, FOREIGN KEY(`body_measurement_id`) REFERENCES `body_measurements`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `body_measurement_id` INTEGER NOT NULL, `value` TEXT NOT NULL, `time` TEXT NOT NULL, FOREIGN KEY(`body_measurement_id`) REFERENCES `body_measurements`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -47,7 +47,7 @@
             "notNull": true
           },
           {
-            "fieldPath": "bodyMeasurementId",
+            "fieldPath": "bodyMeasurementID",
             "columnName": "body_measurement_id",
             "affinity": "INTEGER",
             "notNull": true
@@ -59,8 +59,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
+            "fieldPath": "time",
+            "columnName": "time",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -91,13 +91,13 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_body_measurement_entries_body_measurement_id` ON `${TABLE_NAME}` (`body_measurement_id`)"
           },
           {
-            "name": "index_body_measurement_entries_timestamp",
+            "name": "index_body_measurement_entries_time",
             "unique": false,
             "columnNames": [
-              "timestamp"
+              "time"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_body_measurement_entries_timestamp` ON `${TABLE_NAME}` (`timestamp`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_body_measurement_entries_time` ON `${TABLE_NAME}` (`time`)"
           }
         ],
         "foreignKeys": [
@@ -392,7 +392,7 @@
     "views": [
       {
         "viewName": "body_measurements_with_latest_entries",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT body_measurements.*,\n                      latest_body_measurement_entry.id AS bme_id,\n                      latest_body_measurement_entry.body_measurement_id as bme_body_measurement_id,\n                      latest_body_measurement_entry.value as bme_value,\n                      latest_body_measurement_entry.timestamp as bme_timestamp\n                 FROM body_measurements\n                      LEFT JOIN (SELECT *\n                                   FROM body_measurement_entries AS bme1\n                                  WHERE bme1.timestamp IN (SELECT MAX(bme2.timestamp)\n                                                             FROM body_measurement_entries AS bme2\n                                                            GROUP BY bme2.body_measurement_id)\n                                  GROUP BY bme1.body_measurement_id\n                                  ORDER BY bme1.id DESC) AS latest_body_measurement_entry\n                             ON body_measurements.id = latest_body_measurement_entry.body_measurement_id"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT body_measurements.*,\n                      latest_body_measurement_entry.id AS bme_id,\n                      latest_body_measurement_entry.body_measurement_id as bme_body_measurement_id,\n                      latest_body_measurement_entry.value as bme_value,\n                      latest_body_measurement_entry.time as bme_time\n                 FROM body_measurements\n                      LEFT JOIN (SELECT *\n                                   FROM body_measurement_entries AS bme1\n                                  WHERE bme1.time IN (SELECT MAX(bme2.time)\n                                                             FROM body_measurement_entries AS bme2\n                                                             WHERE bme2.body_measurement_id = bme1.body_measurement_id\n                                                            GROUP BY bme2.body_measurement_id)\n                                  GROUP BY bme1.body_measurement_id\n                                  ORDER BY bme1.id DESC) AS latest_body_measurement_entry\n                             ON body_measurements.id = latest_body_measurement_entry.body_measurement_id"
       },
       {
         "viewName": "routine_with_exercise_names",
@@ -401,7 +401,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bb84c98733407a1f40b36dc35e3b1cc5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0141deb4cd2dd41fd5ac3408815de8d4')"
     ]
   }
 }

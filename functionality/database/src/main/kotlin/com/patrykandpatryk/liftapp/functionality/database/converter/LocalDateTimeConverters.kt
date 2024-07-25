@@ -2,20 +2,20 @@ package com.patrykandpatryk.liftapp.functionality.database.converter
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.patrykandpatryk.liftapp.domain.date.parseToCalendar
 import com.patrykandpatryk.liftapp.functionality.database.di.DatabaseDateFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @ProvidedTypeConverter
-class CalendarConverters @Inject constructor(
+class LocalDateTimeConverters @Inject constructor(
     @DatabaseDateFormat private val dateFormat: SimpleDateFormat,
 ) {
 
     @TypeConverter
-    fun toString(calendar: Calendar): String = dateFormat.format(calendar.timeInMillis)
+    fun toString(localDateTime: LocalDateTime): String = localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     @TypeConverter
-    fun toDate(string: String) = dateFormat.parseToCalendar(string)
+    fun toDate(string: String) = LocalDateTime.parse(string)
 }

@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.functionality.database.bodymeasurement
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurement
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
-import com.patrykandpatryk.liftapp.domain.date.toLocalDateTime
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import javax.inject.Inject
@@ -19,13 +18,13 @@ class BodyMeasurementMapper @Inject constructor(
         type = bodyMeasurement.type,
     )
 
-    suspend fun toDomain(entry: BodyMeasurementEntryEntity) = BodyMeasurementEntry(
+    fun toDomain(entry: BodyMeasurementEntryEntity) = BodyMeasurementEntry(
         id = entry.id,
         value = entry.value,
-        formattedDate = formatter.getFormattedDate(entry.timestamp.toLocalDateTime()),
+        formattedDate = formatter.getFormattedDate(entry.time),
     )
 
-    suspend fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
+    fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
         BodyMeasurementWithLatestEntry(
             id = input.bodyMeasurement.id,
             name = stringProvider.getResolvedName(input.bodyMeasurement.name),
