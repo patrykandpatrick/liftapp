@@ -62,6 +62,7 @@ junit = { module = "junit:junit", version.ref = "junit" }
 jupiter = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
 
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -92,7 +93,7 @@ hilt = ["hilt-android", "hilt-navigation"]
 opto = ["opto-core", "opto-domain"]
 ui = ["coil", "compose-ui", "compose-ui-tooling", "compose-material3", "compose-navigation", "vico", "immutable-collections", "compose-navigation-material"]
 
-testing = ["junit", "jupiter", "kotlin-test"]
+testing = ["junit", "jupiter", "kotlin-test", "kotlin-coroutines-test"]
 
 [plugins]
 
