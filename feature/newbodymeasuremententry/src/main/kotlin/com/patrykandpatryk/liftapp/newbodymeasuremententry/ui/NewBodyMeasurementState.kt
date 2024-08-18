@@ -1,33 +1,155 @@
 package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
+import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.getValueRange
+import com.patrykandpatryk.liftapp.domain.extension.toStringOrEmpty
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
+import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
+import com.patrykandpatryk.liftapp.domain.validation.valueInRange
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+
+private const val LocalDateTimeKey = "LocalDateTime"
 
 @Stable
-interface NewBodyMeasurementState {
-    val name: State<String>
-    val inputData: State<InputData?>
-    val is24H: State<Boolean>
-    val formattedDate: StateFlow<FormattedDate>
-    val entrySaved: State<Boolean>
+class NewBodyMeasurementState(
+    private val getFormattedDate: (LocalDateTime) -> FormattedDate,
+    private val getBodyMeasurementWithLatestEntry: suspend () -> BodyMeasurementWithLatestEntry,
+    private val getBodyMeasurementEntry: suspend () -> BodyMeasurementEntry?,
+    private val upsertBodyMeasurementEntry: suspend (value: BodyMeasurementValue, time: LocalDateTime) -> Unit,
+    private val getUnitForBodyMeasurementType: suspend (BodyMeasurementType) -> ValueUnit,
+    private val textFieldStateManager: TextFieldStateManager,
+    private val coroutineScope: CoroutineScope,
+    private val savedStateHandle: SavedStateHandle,
+) {
+    private val dateTime = savedStateHandle.getStateFlow(LocalDateTimeKey, LocalDateTime.now())
 
-    fun setTime(hour: Int, minute: Int)
+    private val _name: MutableState<String> = mutableStateOf("")
 
-    fun setDate(year: Int, month: Int, day: Int)
+    private val _inputData: MutableState<InputData?> = mutableStateOf(null)
 
-    fun save(inputData: InputData)
+    private val _is24H: MutableState<Boolean> = mutableStateOf(false)
+
+    private val _entrySaved: MutableState<Boolean> = mutableStateOf(false)
+
+    val name: State<String> = _name
+
+    val inputData: State<InputData?> = _inputData
+
+    val is24H: State<Boolean> = _is24H
+
+    val formattedDate: StateFlow<FormattedDate> = dateTime
+        .map { getFormattedDate(it) }
+        .stateIn(coroutineScope, SharingStarted.Lazily, getFormattedDate(dateTime.value))
+
+    val entrySaved: State<Boolean> = _entrySaved
+
+    init {
+        loadData()
+    }
+
+    private fun loadData() {
+        coroutineScope.launch {
+            val bodyMeasurement = getBodyMeasurementWithLatestEntry()
+            val bodyMeasurementEntry = getBodyMeasurementEntry()
+
+            if (bodyMeasurementEntry != null) {
+                updateLocalDateTime { bodyMeasurementEntry.formattedDate.localDateTime }
+            }
+
+            _name.value = bodyMeasurement.name
+            _inputData.value = getInputData(bodyMeasurement, bodyMeasurementEntry)
+        }
+    }
+
+    private suspend fun getInputData(
+        bodyMeasurement: BodyMeasurementWithLatestEntry,
+        bodyMeasurementEntry: BodyMeasurementEntry?,
+    ): InputData {
+        val unit = bodyMeasurementEntry?.value?.unit ?: getUnitForBodyMeasurementType(bodyMeasurement.type)
+        val allowedValueRange = bodyMeasurement.type.getValueRange(unit)
+        val inputValue = bodyMeasurementEntry?.value ?: bodyMeasurement.latestEntry?.value
+
+        return if (bodyMeasurement.type == BodyMeasurementType.LengthTwoSides) {
+            val doubleValue = inputValue as? BodyMeasurementValue.Double
+            InputData.Double(
+                leftTextFieldState = textFieldStateManager.floatTextField(
+                    initialValue = doubleValue?.left.toStringOrEmpty(),
+                    validators = {
+                        nonEmpty()
+                        valueInRange(allowedValueRange)
+                    }
+                ),
+                rightTextFieldState = textFieldStateManager.floatTextField(
+                    initialValue = doubleValue?.right.toStringOrEmpty(),
+                    validators = {
+                        nonEmpty()
+                        valueInRange(allowedValueRange)
+                    }
+                ),
+                unit = unit
+            )
+        } else {
+            InputData.Single(
+                textFieldState = textFieldStateManager.floatTextField(
+                    initialValue = (inputValue as? BodyMeasurementValue.Single)?.value.toStringOrEmpty(),
+                    validators = {
+                        nonEmpty()
+                        valueInRange(allowedValueRange)
+                    }
+                ),
+                unit = unit,
+            )
+        }
+    }
+
+    fun setTime(hour: Int, minute: Int) {
+        updateLocalDateTime { dateTime -> dateTime.withHour(hour).withMinute(minute) }
+    }
+
+    fun setDate(year: Int, month: Int, day: Int) {
+        updateLocalDateTime { dateTime -> dateTime.withYear(year).withMonth(month).withDayOfMonth(day) }
+    }
+
+    private fun updateLocalDateTime(update: (dateTime: LocalDateTime) -> LocalDateTime) {
+        savedStateHandle[LocalDateTimeKey] = update(dateTime.value)
+    }
+
+    fun getDateTime(): LocalDateTime = dateTime.value
+
+    fun save(inputData: InputData) {
+        if (inputData.isInvalid()) {
+            inputData.showErrors()
+            return
+        }
+        coroutineScope.launch {
+            upsertBodyMeasurementEntry(inputData.toBodyMeasurementValue(), dateTime.value)
+            _entrySaved.value = true
+            updateLocalDateTime { LocalDateTime.now() }
+        }
+    }
 
     @Stable
     sealed interface InputData {
         val unit: ValueUnit
 
-        val isInvalid: State<Boolean>
+        fun isInvalid(): Boolean
 
         fun showErrors()
 
@@ -38,7 +160,10 @@ interface NewBodyMeasurementState {
             val textFieldState: TextFieldState<Float>,
             override val unit: ValueUnit,
         ) : InputData {
-            override val isInvalid = derivedStateOf { textFieldState.hasError }
+            override fun isInvalid(): Boolean {
+                textFieldState.updateErrorMessages()
+                return textFieldState.hasError
+            }
 
             override fun showErrors() {
                 textFieldState.updateErrorMessages()
@@ -54,7 +179,11 @@ interface NewBodyMeasurementState {
             val rightTextFieldState: TextFieldState<Float>,
             override val unit: ValueUnit,
         ) : InputData {
-            override val isInvalid = derivedStateOf { leftTextFieldState.hasError || rightTextFieldState.hasError }
+            override fun isInvalid(): Boolean {
+                leftTextFieldState.updateErrorMessages()
+                rightTextFieldState.updateErrorMessages()
+                return leftTextFieldState.hasError || rightTextFieldState.hasError
+            }
 
             override fun showErrors() {
                 leftTextFieldState.updateErrorMessages()
@@ -77,6 +206,7 @@ inline fun NewBodyMeasurementState.InputData.forEachTextField(action: (textField
             action(leftTextFieldState, false)
             action(rightTextFieldState, true)
         }
+
         is NewBodyMeasurementState.InputData.Single -> {
             action(textFieldState, true)
         }

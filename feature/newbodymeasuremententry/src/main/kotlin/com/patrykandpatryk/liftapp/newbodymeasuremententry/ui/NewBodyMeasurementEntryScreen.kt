@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -66,7 +67,7 @@ fun NewBodyMeasurementEntryBottomSheet(
     val viewModel = hiltViewModel<NewBodyMeasurementEntryViewModel, NewBodyMeasurementEntryViewModel.Factory>(
         creationCallback = { factory -> factory.create(bodyMeasurementId, bodyMeasurementEntryId) },
     )
-    val entrySaved = viewModel.entrySaved.value
+    val entrySaved = viewModel.state.entrySaved.value
 
     BackHandler(onBack = onDismissRequest)
 
@@ -75,7 +76,7 @@ fun NewBodyMeasurementEntryBottomSheet(
     }
 
     NewBodyMeasurementEntryBottomSheetContent(
-        state = viewModel,
+        state = viewModel.state,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
     )
@@ -228,10 +229,11 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
                 val stringProvider = StringProviderImpl(context)
                 val formatter = Formatter(stringProvider, flowOf(true))
                 val savedStateHandle = SavedStateHandle()
+                val coroutineScope = rememberCoroutineScope()
 
                 NewBodyMeasurementEntryBottomSheetContent(
                     state = remember {
-                        NewBodyMeasurementEntryViewModel(
+                        NewBodyMeasurementState(
                             getFormattedDate = { formatter.getFormattedDate(it) },
                             getBodyMeasurementWithLatestEntry = {
                                 BodyMeasurementWithLatestEntry(
@@ -249,7 +251,8 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
                             upsertBodyMeasurementEntry = { _, _ -> },
                             textFieldStateManager = TextFieldStateManager(stringProvider, formatter, savedStateHandle),
                             getUnitForBodyMeasurementType = { MassUnit.Kilograms },
-                            savedStateHandle,
+                            coroutineScope = coroutineScope,
+                            savedStateHandle = savedStateHandle,
                         )
                     },
                     onDismissRequest = {},
