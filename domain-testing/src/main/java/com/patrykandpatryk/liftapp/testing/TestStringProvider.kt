@@ -72,10 +72,10 @@ object TestStringProvider : StringProvider {
         "This field must be at most %d characters long.".format(maxLength)
 
     override fun valueTooSmall(minValue: String): String =
-        "This field must be at least %d.".format(minValue)
+        "This field must be at least %s.".format(minValue)
 
     override fun valueTooBig(maxValue: String): String =
-        "This field must be at most %d.".format(maxValue)
+        "This field must be at most %s.".format(maxValue)
 
     override fun valueNotValidNumber(): String = "This field must be a valid number."
 
