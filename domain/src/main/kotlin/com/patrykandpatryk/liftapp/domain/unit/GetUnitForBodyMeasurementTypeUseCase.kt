@@ -8,7 +8,6 @@ import javax.inject.Inject
 class GetUnitForBodyMeasurementTypeUseCase @Inject constructor(
     private val preferences: PreferenceRepository,
 ) {
-
     suspend operator fun invoke(bodyMeasurementType: BodyMeasurementType) =
         when (bodyMeasurementType) {
             BodyMeasurementType.Weight,

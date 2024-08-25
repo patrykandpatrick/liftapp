@@ -11,12 +11,20 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntryUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementWithLatestEntryUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.UpsertBodyMeasurementUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.getValueRange
 import com.patrykandpatryk.liftapp.domain.extension.toStringOrEmpty
 import com.patrykandpatryk.liftapp.domain.format.FormattedDate
+import com.patrykandpatryk.liftapp.domain.format.GetFormattedDateUseCase
+import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseCase
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
 import com.patrykandpatryk.liftapp.domain.validation.valueInRange
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -59,6 +67,29 @@ class NewBodyMeasurementState(
         .stateIn(coroutineScope, SharingStarted.Lazily, getFormattedDate(dateTime.value))
 
     val entrySaved: State<Boolean> = _entrySaved
+
+    @AssistedInject
+    constructor(
+        @Assisted id: Long,
+        @Assisted entryId: Long?,
+        @Assisted coroutineScope: CoroutineScope,
+        getFormattedDateUseCase: GetFormattedDateUseCase,
+        getBodyMeasurementWithLatestEntryUseCaseFactory: GetBodyMeasurementWithLatestEntryUseCase.Factory,
+        getBodyMeasurementEntryUseCaseFactory: GetBodyMeasurementEntryUseCase.Factory,
+        upsertBodyMeasurementUseCaseFactory: UpsertBodyMeasurementUseCase.Factory,
+        textFieldStateManager: TextFieldStateManager,
+        getUnitForBodyMeasurementType: GetUnitForBodyMeasurementTypeUseCase,
+        savedStateHandle: SavedStateHandle,
+    ) : this(
+        getFormattedDateUseCase::invoke,
+        getBodyMeasurementWithLatestEntryUseCaseFactory.create(id)::invoke,
+        { if (entryId != null) getBodyMeasurementEntryUseCaseFactory.create(entryId).invoke() else null },
+        upsertBodyMeasurementUseCaseFactory.create(id, entryId)::invoke,
+        getUnitForBodyMeasurementType::invoke,
+        textFieldStateManager,
+        coroutineScope,
+        savedStateHandle,
+    )
 
     init {
         loadData()
@@ -197,6 +228,11 @@ class NewBodyMeasurementState(
                     unit,
                 )
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(id: Long, entryId: Long?, coroutineScope: CoroutineScope): NewBodyMeasurementState
     }
 }
 
