@@ -20,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -32,10 +31,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.state.onClick
-import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
-import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.input.DatePicker
@@ -51,10 +49,8 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
-import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
-import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 
 @Composable
@@ -225,10 +221,9 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
                 shape = BottomSheetShape,
                 shadowElevation = 8.dp,
             ) {
-                val context = LocalContext.current
-                val stringProvider = StringProviderImpl(context)
-                val formatter = Formatter(stringProvider, flowOf(true))
+                val formatter = PreviewResource.formatter()
                 val savedStateHandle = SavedStateHandle()
+                val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
                 val coroutineScope = rememberCoroutineScope()
 
                 NewBodyMeasurementEntryBottomSheetContent(
@@ -249,7 +244,7 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
                             },
                             getBodyMeasurementEntry = { null },
                             upsertBodyMeasurementEntry = { _, _ -> },
-                            textFieldStateManager = TextFieldStateManager(stringProvider, formatter, savedStateHandle),
+                            textFieldStateManager = textFieldStateManager,
                             getUnitForBodyMeasurementType = { MassUnit.Kilograms },
                             coroutineScope = coroutineScope,
                             savedStateHandle = savedStateHandle,
