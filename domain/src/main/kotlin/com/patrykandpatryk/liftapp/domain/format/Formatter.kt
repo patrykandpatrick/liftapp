@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.domain.format
 
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
+import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.text.DecimalFormat
@@ -73,6 +74,9 @@ class Formatter(
             NumberFormat.Integer -> integerOutputFormat.format(number)
         }
     }
+
+    fun formatWeight(weight: Float, massUnit: MassUnit): String =
+        "${formatNumber(weight, format = NumberFormat.Decimal) } ${stringProvider.getDisplayUnit(massUnit)}"
 
     fun toFloatOrZero(value: String): Float =
         try {

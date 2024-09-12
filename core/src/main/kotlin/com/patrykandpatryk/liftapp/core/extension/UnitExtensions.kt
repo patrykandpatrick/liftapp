@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.extension
 
-import android.content.Context
 import androidx.annotation.StringRes
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
@@ -34,23 +33,3 @@ inline val HourFormat.stringResourceId: Int
         HourFormat.H12 -> R.string.settings_hour_format_option_12
         HourFormat.H24 -> R.string.settings_hour_format_option_24
     }
-
-fun LongDistanceUnit.formatValue(
-    context: Context,
-    value: Float,
-    decimalPlaces: Int,
-) = String.format(
-    format = context.getString(R.string.distance_value_and_unit),
-    value.round(decimalPlaces = decimalPlaces),
-    context.getString(stringResourceId),
-)
-
-fun MassUnit.formatValue(
-    context: Context,
-    value: Float,
-    decimalPlaces: Int,
-) = String.format(
-    format = context.getString(R.string.mass_value_and_unit),
-    value.round(decimalPlaces = decimalPlaces),
-    context.getString(stringResourceId),
-)

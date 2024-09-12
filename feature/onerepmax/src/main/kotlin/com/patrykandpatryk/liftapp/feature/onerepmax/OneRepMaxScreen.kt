@@ -18,10 +18,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -29,11 +29,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.formatValue
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.ui.Info
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -45,8 +46,8 @@ fun OneRepMaxScreen(
     navigator: OneRepMaxNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val state = hiltViewModel<OneRepMaxViewModel>()
-    OneRepMaxScreen(state = state, navigator = navigator, modifier = modifier)
+    val viewModel = hiltViewModel<OneRepMaxViewModel>()
+    OneRepMaxScreen(state = viewModel.state, navigator = navigator, modifier = modifier)
 }
 
 @Composable
@@ -56,9 +57,9 @@ fun OneRepMaxScreen(
     modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val massUnit = state.massUnit.collectAsStateWithLifecycle().value
 
     Scaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -83,11 +84,7 @@ fun OneRepMaxScreen(
                 .padding(paddingValues = paddingValues),
         ) {
             Text(
-                text = state.massUnit.value?.formatValue(
-                    context = context,
-                    value = state.oneRepMax.value,
-                    decimalPlaces = ONE_REP_MAX_DECIMAL_PLACES,
-                ).orEmpty(),
+                text = state.oneRepMax.collectAsStateWithLifecycle().value,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(top = 16.dp),
             )
@@ -112,9 +109,7 @@ fun OneRepMaxScreen(
                     ),
                     label = stringResource(id = R.string.mass),
                     trailingIcon = {
-                        state.massUnit.value?.also { massUnit ->
-                            Text(text = stringResource(id = massUnit.stringResourceId))
-                        }
+                        Text(text = stringResource(id = massUnit.stringResourceId))
                     },
                     modifier = Modifier,
                 )
@@ -165,15 +160,18 @@ private fun RowScope.TextField(
     )
 }
 
-private const val ONE_REP_MAX_DECIMAL_PLACES = 1
-
 @MultiDevicePreview
 @Composable
 fun OneRepMaxPreview() {
     LiftAppTheme {
+        val formatter = PreviewResource.formatter()
         OneRepMaxScreen(
             navigator = interfaceStub(),
-            state = OneRepMaxViewModel(OneRepMaxDataSource(flowOf(MassUnit.Kilograms))),
+            state = OneRepMaxState(
+                getMassUnit = { flowOf(MassUnit.Kilograms) },
+                formatWeight = formatter::formatWeight,
+                coroutineScope = rememberCoroutineScope(),
+            ),
         )
     }
 }
