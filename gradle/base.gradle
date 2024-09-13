@@ -3,7 +3,6 @@ apply plugin: "kotlin-parcelize"
 apply plugin: "dagger.hilt.android.plugin"
 apply plugin: "com.google.devtools.ksp"
 
-apply from: "$rootDir/gradle/versioning.gradle"
 apply from: "$rootDir/gradle/versions.gradle"
 
 android {
@@ -12,7 +11,7 @@ android {
     defaultConfig {
         minSdk android.minSdk
         targetSdk android.targetSdk
-        versionCode getProjectVersionCode()
+        versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -23,14 +22,11 @@ android {
     }
 
     buildTypes {
-        debug {
-            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
-        }
+        debug
 
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
         }
     }
 
@@ -40,7 +36,6 @@ android {
     }
 
     kotlinOptions {
-
         jvmTarget = "17"
         freeCompilerArgs += [
                 "-Xjvm-default=all-compatibility",
