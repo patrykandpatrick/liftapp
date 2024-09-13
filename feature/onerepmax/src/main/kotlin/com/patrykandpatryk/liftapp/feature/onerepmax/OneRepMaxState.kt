@@ -4,7 +4,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.extension.smartToFloatOrNull
 import com.patrykandpatryk.liftapp.core.extension.update
@@ -62,7 +61,7 @@ class OneRepMaxState(
     val history: StateFlow<ImmutableList<HistoryEntryModel>> = savedStateHandle
         .getStateFlow<List<HistoryEntryModel>>(HISTORY_KEY, emptyList())
         .map { it.toImmutableList() }
-        .stateIn(coroutineScope, SharingStarted.Lazily, persistentListOf())
+        .stateIn(coroutineScope, SharingStarted.Eagerly, persistentListOf())
 
     @AssistedInject
     constructor(
@@ -81,8 +80,7 @@ class OneRepMaxState(
         val trimmedReps = reps.take(3)
         repsValue.value = when {
             trimmedReps.isEmpty() -> 0
-            trimmedReps.isDigitsOnly() -> trimmedReps.toIntOrNull()
-            else -> null
+            else -> trimmedReps.toIntOrNull()
         } ?: return
 
         _reps.value = trimmedReps
@@ -124,15 +122,6 @@ class OneRepMaxState(
         }
     }
 
-    private fun calculateOneRepMax(
-        mass: Float,
-        reps: Int,
-    ) = when {
-        reps == 0 || mass == 0f -> 0f
-        reps == 1 -> mass
-        else -> mass * (1f + reps.toFloat() / EPLEY_REP_COUNT_DIVISOR)
-    }
-
     @AssistedFactory
     interface Factory {
         fun create(coroutineScope: CoroutineScope, savedStateHandle: SavedStateHandle): OneRepMaxState
@@ -142,5 +131,14 @@ class OneRepMaxState(
         internal const val HISTORY_KEY = "history"
         private const val EPLEY_REP_COUNT_DIVISOR = 30f
         private const val HISTORY_UPDATE_DELAY = 1000L
+
+        fun calculateOneRepMax(
+            mass: Float,
+            reps: Int,
+        ) = when {
+            reps == 0 || mass == 0f -> 0f
+            reps == 1 -> mass
+            else -> mass * (1f + reps.toFloat() / EPLEY_REP_COUNT_DIVISOR)
+        }
     }
 }
