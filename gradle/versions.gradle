@@ -2,7 +2,7 @@ ext {
 
     android = [
             minSdk    : 26,
-            compileSdk: 34,
-            targetSdk : 34,
+            compileSdk: 35,
+            targetSdk : 35,
     ]
 }

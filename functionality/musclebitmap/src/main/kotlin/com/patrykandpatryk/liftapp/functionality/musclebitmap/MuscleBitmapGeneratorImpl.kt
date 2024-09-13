@@ -38,7 +38,7 @@ class MuscleBitmapGeneratorImpl @Inject constructor(
         val wholeBitmap = Bitmap.createBitmap(
             frontBitmapWidth * 2 + config.bitmapMargin,
             frontBitmap.height,
-            frontBitmap.config,
+            frontBitmap.config ?: Bitmap.Config.ARGB_8888,
         )
 
         wholeBitmap.prepareToDraw()
