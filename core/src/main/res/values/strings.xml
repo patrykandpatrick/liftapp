@@ -17,10 +17,13 @@
     <string name="distance_value_and_unit">%1$s %2$s</string>
     <string name="one_rep_max">One-Rep Max</string>
     <string name="one_rep_max_description">1RM is the greatest weight you can lift once. It helps determine strength and best exercise load.</string>
+    <string name="one_rep_max_history_section_title">History</string>
+    <string name="one_rep_max_history_entry">%s × %s = %s</string>
     <string name="reps">Reps</string>
     <string name="and_in_a_list">&amp;</string>
     <string name="list_remove">Remove</string>
 
+    <string name="multiply_character" translatable="false">×</string>
     <string name="goal_format">%1$s–%2$s × %3$s</string>
 
     <string name="muscle_abductors">Abductors</string>

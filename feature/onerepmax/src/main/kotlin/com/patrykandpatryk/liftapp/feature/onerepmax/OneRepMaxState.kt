@@ -5,7 +5,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.extension.smartToFloatOrNull
+import com.patrykandpatryk.liftapp.core.extension.update
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.unit.GetPreferredMassUnitUseCase
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -23,21 +25,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Stable
 class OneRepMaxState(
     getMassUnit: () -> Flow<MassUnit>,
+    private val savedStateHandle: SavedStateHandle,
     private val formatWeight: (Float, MassUnit) -> String,
     private val coroutineScope: CoroutineScope,
 ) {
     private val _mass: MutableState<String> = mutableStateOf("")
 
     private val _reps: MutableState<String> = mutableStateOf("")
-
-    private val _history: MutableStateFlow<ImmutableList<HistoryEntryModel>> = MutableStateFlow(persistentListOf())
 
     private val massValue = MutableStateFlow(0f)
 
@@ -58,14 +59,20 @@ class OneRepMaxState(
     val oneRepMax: StateFlow<String> = combine(oneRepMaxValue, massUnit, formatWeight)
         .stateIn(coroutineScope, SharingStarted.Eagerly, "")
 
-    val history: StateFlow<ImmutableList<HistoryEntryModel>> = _history
+    val history: StateFlow<ImmutableList<HistoryEntryModel>> = savedStateHandle
+        .getStateFlow<List<HistoryEntryModel>>(HISTORY_KEY, emptyList())
+        .map { it.toImmutableList() }
+        .stateIn(coroutineScope, SharingStarted.Lazily, persistentListOf())
 
-    @AssistedInject constructor(
+    @AssistedInject
+    constructor(
         @Assisted coroutineScope: CoroutineScope,
+        @Assisted savedStateHandle: SavedStateHandle,
         getPreferredMassUnitUseCase: GetPreferredMassUnitUseCase,
         formatter: Formatter,
-    ) : this (
+    ) : this(
         getMassUnit = getPreferredMassUnitUseCase::invoke,
+        savedStateHandle = savedStateHandle,
         formatWeight = formatter::formatWeight,
         coroutineScope = coroutineScope,
     )
@@ -92,19 +99,28 @@ class OneRepMaxState(
         addToHistory()
     }
 
+    fun clearHistory() {
+        savedStateHandle.update<List<HistoryEntryModel>>(HISTORY_KEY) { emptyList() }
+    }
+
     private fun addToHistory() {
         historyUpdateJob?.cancel()
         if (oneRepMaxValue.value == 0f) return
+        val historyEntry = HistoryEntryModel(
+            reps = repsValue.value,
+            mass = formatWeight(massValue.value, massUnit.value),
+            oneRepMax = oneRepMax.value,
+        )
 
         historyUpdateJob = coroutineScope.launch {
             delay(HISTORY_UPDATE_DELAY)
-            val historyEntry = HistoryEntryModel(
-                reps = repsValue.value,
-                mass = massValue.value,
-                oneRepMax = oneRepMaxValue.value,
-            )
             if (history.value.firstOrNull() == historyEntry) return@launch
-            _history.update { history -> (history + historyEntry).toImmutableList() }
+            savedStateHandle.update<List<HistoryEntryModel>>(HISTORY_KEY) { history ->
+                buildList {
+                    history?.also(::addAll)
+                    add(historyEntry)
+                }
+            }
         }
     }
 
@@ -119,12 +135,12 @@ class OneRepMaxState(
 
     @AssistedFactory
     interface Factory {
-        fun create(coroutineScope: CoroutineScope): OneRepMaxState
+        fun create(coroutineScope: CoroutineScope, savedStateHandle: SavedStateHandle): OneRepMaxState
     }
 
-    private companion object {
+    companion object {
+        internal const val HISTORY_KEY = "history"
         private const val EPLEY_REP_COUNT_DIVISOR = 30f
-        private const val ONE_REP_MAX_UI_STATE_KEY = "one_rep_max_ui_state"
-        private const val HISTORY_UPDATE_DELAY = 3000L
+        private const val HISTORY_UPDATE_DELAY = 1000L
     }
 }
