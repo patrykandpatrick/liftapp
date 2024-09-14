@@ -2,8 +2,12 @@ package com.patrykandpatryk.liftapp.feature.main.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -79,6 +83,7 @@ private fun HomeScaffold(
                 navItemRoutes = navBarRoutes,
             )
         },
+        contentWindowInsets = WindowInsets(0),
     ) { paddingValues ->
         NavHost(
             route = Home::class,
@@ -135,31 +140,38 @@ private fun NavigationBarWithPadding(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination by remember { derivedStateOf { currentBackStackEntry?.destination } }
 
-    NavigationBar(modifier = modifier) {
-        navItemRoutes.forEach { menuRoute ->
-            val selected by derivedStateOf {
-                currentDestination?.hierarchy?.any { it.route == menuRoute.route::class.qualifiedName } ?: false
+    Column {
+        HorizontalDivider()
+
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.surface,
+            modifier = modifier,
+        ) {
+            navItemRoutes.forEach { menuRoute ->
+                val selected by derivedStateOf {
+                    currentDestination?.hierarchy?.any { it.route == menuRoute.route::class.qualifiedName } ?: false
+                }
+                NavigationBarItem(
+                    selected = selected,
+                    onClick = { navController.navigate(menuRoute.route) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(
+                                id = if (selected) menuRoute.selectedIconRes else menuRoute.deselectedIconRes,
+                            ),
+                            contentDescription = stringResource(id = menuRoute.titleRes),
+                            tint = LocalContentColor.current,
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(id = menuRoute.titleRes),
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+                    alwaysShowLabel = false,
+                )
             }
-            NavigationBarItem(
-                selected = selected,
-                onClick = { navController.navigate(menuRoute.route) },
-                icon = {
-                    Icon(
-                        painter = painterResource(
-                            id = if (selected) menuRoute.selectedIconRes else menuRoute.deselectedIconRes,
-                        ),
-                        contentDescription = stringResource(id = menuRoute.titleRes),
-                        tint = LocalContentColor.current,
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(id = menuRoute.titleRes),
-                        textAlign = TextAlign.Center,
-                    )
-                },
-                alwaysShowLabel = false,
-            )
         }
     }
 }

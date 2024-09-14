@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,7 +25,6 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
-import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import kotlinx.collections.immutable.persistentListOf
@@ -53,13 +54,14 @@ private fun RoutineListScreen(
     modifier: Modifier = Modifier,
 ) {
     val dimensPadding = LocalDimens.current.padding
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val routines by state.routines.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier
             .fillMaxHeight()
-            .padding(bottom = padding.calculateBottomPadding()),
+            .padding(padding)
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = stringResource(id = R.string.action_new_routine),
@@ -68,8 +70,8 @@ private fun RoutineListScreen(
             )
         },
         topBar = {
-            TopAppBar(
-                title = stringResource(id = R.string.route_routines),
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(id = R.string.route_routines)) },
                 scrollBehavior = topAppBarScrollBehavior,
             )
         },
@@ -77,7 +79,6 @@ private fun RoutineListScreen(
     ) { internalPadding ->
         LazyVerticalStaggeredGrid(
             modifier = Modifier
-                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
                 .padding(internalPadding),
             columns = StaggeredGridCells.Adaptive(minSize = LocalDimens.current.routine.minCardWidth),
             contentPadding = PaddingValues(
