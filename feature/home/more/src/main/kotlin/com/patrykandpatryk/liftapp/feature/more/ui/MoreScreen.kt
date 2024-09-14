@@ -15,8 +15,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.interfaceStub
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.ListItem
-import com.patrykandpatryk.liftapp.core.ui.TopAppBar
+import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.more.navigation.MoreNavigator
 import com.patrykandpatryk.liftapp.feature.more.navigation.destinations
 
@@ -39,14 +41,27 @@ fun MoreScreen(
             )
         },
     ) { paddingValues ->
-
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             items(destinations) { destination ->
                 ListItem(
                     title = stringResource(id = destination.titleResourceId),
                     iconPainter = painterResource(id = destination.iconResourceId),
+                    actions = {
+                        Icon(painter = painterResource(id = R.drawable.ic_chevron_right), contentDescription = null)
+                    }
                 ) { destination.navigate(navigator) }
             }
         }
+    }
+}
+
+@MultiDevicePreview
+@Composable
+private fun MoreScreenPreview() {
+    LiftAppTheme {
+        MoreScreen(
+            navigator = interfaceStub(),
+            padding = PaddingValues(),
+        )
     }
 }
