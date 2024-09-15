@@ -36,7 +36,7 @@ import com.patrykandpatryk.liftapp.feature.main.ui.Home
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
-import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutine
+import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutineScreen
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxNavigator
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
@@ -108,7 +108,7 @@ fun NavGraphBuilder.addRoutine(navigator: RoutineNavigator) {
 fun NavGraphBuilder.addNewRoutine(navigator: NewRoutineNavigator) {
     composable<Routes.Routine.Create> {
         val args = it.toRoute<Routes.Routine.Create>()
-        NewRoutine(args.routineID, navigator)
+        NewRoutineScreen(args.routineID, navigator)
     }
 }
 

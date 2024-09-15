@@ -39,6 +39,7 @@ data class Dimens(
         val itemHorizontal: Dp = 16.dp,
         val itemHorizontalSmall: Dp = 8.dp,
         val itemVertical: Dp = 16.dp,
+        val itemVerticalSmall: Dp = 8.dp,
         val segmentedButtonHorizontal: Dp = 12.dp,
         val segmentedButtonVertical: Dp = 12.dp,
         val segmentedButtonElement: Dp = 8.dp,
