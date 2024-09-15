@@ -44,6 +44,7 @@ dependencies {
     implementation libs.lifecycle.runtime
     implementation libs.timber
     implementation libs.viewmodel
+    debugImplementation libs.compose.ui.tooling
 
     ksp libs.hilt.compiler
 

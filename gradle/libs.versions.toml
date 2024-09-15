@@ -44,6 +44,7 @@ coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-ui-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "material3Adaptive" }
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
@@ -93,7 +94,7 @@ accompanist = ["accompanist-navigation-animation", "accompanist-navigation-mater
 kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
 hilt = ["hilt-android", "hilt-navigation"]
 opto = ["opto-core", "opto-domain"]
-ui = ["coil", "compose-ui", "compose-ui-tooling", "compose-material3", "compose-navigation", "vico", "immutable-collections", "compose-navigation-material", "compose-material3-adaptive"]
+ui = ["coil", "compose-ui", "compose-ui-preview", "compose-material3", "compose-navigation", "vico", "immutable-collections", "compose-navigation-material", "compose-material3-adaptive"]
 
 testing = ["junit", "jupiter", "kotlin-test", "kotlin-coroutines-test"]
 
