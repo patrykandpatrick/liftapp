@@ -17,5 +17,10 @@ fun ProvideLandscapeMode(content: @Composable () -> Unit) {
 @Composable
 inline fun <reified T : Any> interfaceStub(): T {
     val classLoader = LocalContext.current.classLoader
-    return Proxy.newProxyInstance(classLoader, arrayOf(T::class.java)) { _, _, _ -> error("Stub!") } as T
+    return Proxy.newProxyInstance(classLoader, arrayOf(T::class.java)) { _, method, _ ->
+        when {
+            method.name == "equals" -> true
+            else -> Unit
+        }
+    } as T
 }
