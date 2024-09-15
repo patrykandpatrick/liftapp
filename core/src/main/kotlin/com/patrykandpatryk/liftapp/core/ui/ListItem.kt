@@ -229,7 +229,7 @@ fun ListItem(
             )
         }
 
-        actions()
+        Row(verticalAlignment = Alignment.CenterVertically, content = actions)
     }
 }
 
@@ -250,11 +250,12 @@ private fun ListItemTitle(
 }
 
 object ListItemDefaults {
-
     val paddingValues: PaddingValues
         @Composable get() = PaddingValues(
-            vertical = LocalDimens.current.padding.itemVertical,
-            horizontal = LocalDimens.current.padding.contentHorizontal,
+            start = LocalDimens.current.padding.contentHorizontal,
+            top = LocalDimens.current.padding.itemVertical,
+            end = LocalDimens.current.padding.contentHorizontalSmall,
+            bottom = LocalDimens.current.padding.itemVertical,
         )
 }
 
