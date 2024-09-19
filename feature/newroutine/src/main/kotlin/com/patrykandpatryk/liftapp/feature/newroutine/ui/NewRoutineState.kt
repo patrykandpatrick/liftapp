@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.extension.update
@@ -60,7 +59,7 @@ class NewRoutineState(
 
     val exercises: State<Validatable<List<RoutineExerciseItem>>> = _exercises
 
-    val exerciseIds: List<Long> = derivedStateOf { exercises.value.value.map { it.id } }.value
+    val exerciseIds: List<Long> get() = exercises.value.value.map { it.id }
 
     val isEdit: Boolean = routineID != ID_NOT_SET
 
