@@ -1,9 +1,11 @@
 package com.patrykandpatryk.liftapp.functionality.database.exercise
 
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
+import com.patrykandpatryk.liftapp.functionality.database.appendSQLOrderByCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -29,10 +31,17 @@ class ExerciseRepositoryImpl @Inject constructor(
             .map { entity -> entity?.let(exerciseMapper::toDomain) }
             .flowOn(dispatcher)
 
-    override fun getRoutineExerciseItems(exerciseIds: List<Long>): Flow<List<RoutineExerciseItem>> =
-        exerciseDao
-            .getExercises(exerciseIds)
+    override fun getRoutineExerciseItems(exerciseIds: List<Long>, ordered: Boolean): Flow<List<RoutineExerciseItem>> {
+        val query = buildString {
+            append("SELECT * FROM exercise WHERE exercise_id IN (${exerciseIds.joinToString(separator = ",")})")
+            if (ordered) {
+                append(" ".appendSQLOrderByCase("exercise_id", exerciseIds))
+            }
+        }
+        return exerciseDao
+            .getExercises(SimpleSQLiteQuery(query))
             .map(exerciseMapper::exerciseEntityToRoutineExerciseItem)
+    }
 
     override suspend fun insert(exercise: Exercise.Insert): Long = withContext(dispatcher) {
         exerciseDao.insert(exercise.toEntity())

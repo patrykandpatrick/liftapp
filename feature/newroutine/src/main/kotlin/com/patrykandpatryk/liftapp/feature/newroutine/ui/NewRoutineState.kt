@@ -14,8 +14,8 @@ import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.Constants.Algorithms.SCREEN_STATE_KEY
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineExerciseItemsUseCase
-import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
+import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.Validator
 import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
@@ -26,17 +26,21 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Stable
 class NewRoutineState(
     private val routineID: Long,
     private val savedStateHandle: SavedStateHandle,
-    private val getRoutine: suspend () -> Pair<Routine, List<Long>>?,
+    private val getRoutine: suspend () -> RoutineWithExercises?,
     private val upsertRoutine: suspend (id: Long, name: String, exerciseIds: List<Long>) -> Unit,
     private val getExerciseItems: suspend (exerciseIds: List<Long>) -> Flow<List<RoutineExerciseItem>>,
     private val textFieldStateManager: TextFieldStateManager,
@@ -44,9 +48,6 @@ class NewRoutineState(
     private val coroutineScope: CoroutineScope,
 ) {
     private val hasSavedState = savedStateHandle.contains(SCREEN_STATE_KEY)
-
-    private val _exercises: MutableState<Validatable<List<RoutineExerciseItem>>> =
-        mutableStateOf(validateExercises(emptyList()))
 
     private val _routineNotFound: MutableState<Boolean> = mutableStateOf(false)
 
@@ -57,7 +58,11 @@ class NewRoutineState(
     val name: TextFieldState<String> = textFieldStateManager
         .stringTextField(validators = { nonEmpty() })
 
-    val exercises: State<Validatable<List<RoutineExerciseItem>>> = _exercises
+    val exercises: StateFlow<Validatable<List<RoutineExerciseItem>>> = savedStateHandle
+        .getStateFlow(PICKED_EXERCISES_KEY, emptyList<Long>())
+        .flatMapLatest(getExerciseItems)
+        .map(validateExercises::invoke)
+        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000), validateExercises(emptyList()))
 
     val exerciseIds: List<Long> get() = exercises.value.value.map { it.id }
 
@@ -99,26 +104,16 @@ class NewRoutineState(
         savedStateHandle.getStateFlow<List<Long>?>(Constants.Keys.PICKED_EXERCISE_IDS, null)
             .onEach { ids -> if (ids != null) addPickedExercises(ids) }
             .launchIn(coroutineScope)
-
-        savedStateHandle
-            .getStateFlow(PICKED_EXERCISES_KEY, emptyList<Long>())
-            .flatMapLatest(getExerciseItems::invoke)
-            .onEach { exercises ->
-                _exercises.value = validateExercises(exercises)
-            }
-            .launchIn(coroutineScope)
     }
 
     private fun loadUpdateState() {
         coroutineScope.launch {
             val routineWithExerciseItems = getRoutine()
-
             if (routineWithExerciseItems == null) {
                 _routineNotFound.value = true
             } else {
-                val (routine, exerciseIds) = routineWithExerciseItems
-                name.updateText(routine.name)
-                addPickedExercises(exerciseIds)
+                name.updateText(routineWithExerciseItems.name)
+                addPickedExercises(routineWithExerciseItems.exercises.map { it.id })
             }
         }
     }

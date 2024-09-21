@@ -4,6 +4,7 @@ import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
@@ -13,6 +14,9 @@ class GetRoutineExerciseItemsUseCase @Inject constructor(
 ) {
 
     operator fun invoke(exerciseIds: List<Long>): Flow<List<RoutineExerciseItem>> =
-        exerciseRepository.getRoutineExerciseItems(exerciseIds)
-            .flowOn(dispatcher)
+        if (exerciseIds.isEmpty()) {
+            flowOf(emptyList())
+        } else {
+            exerciseRepository.getRoutineExerciseItems(exerciseIds, true)
+        }.flowOn(dispatcher)
 }

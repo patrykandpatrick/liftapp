@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,13 +36,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
@@ -62,7 +61,7 @@ import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
-import com.patrykandpatryk.liftapp.domain.routine.Routine
+import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
@@ -90,8 +89,6 @@ private fun NewRoutineScreen(
     navigator: NewRoutineNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
     val routineSaved by state.routineSaved
 
     val routineNotFound by state.routineNotFound
@@ -103,14 +100,12 @@ private fun NewRoutineScreen(
     }
 
     Scaffold(
-        modifier = modifier
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(text = stringResource(if (state.isEdit) R.string.title_edit_routine else R.string.title_new_routine))
                 },
-                scrollBehavior = topAppBarScrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = navigator::back) {
                         Icon(
@@ -235,6 +230,7 @@ private fun Exercises(
     removeExercises: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val exercises = state.exercises.collectAsStateWithLifecycle()
     OutlinedCard(
         modifier = modifier,
     ) {
@@ -263,13 +259,13 @@ private fun Exercises(
             LazyColumn(
                 modifier = Modifier.weight(1f),
             ) {
-                if (state.exercises.value.isInvalid) {
+                if (exercises.value.isInvalid) {
                     item {
                         EmptyState(state, Modifier.fillParentMaxSize())
                     }
                 } else {
                     items(
-                        items = state.exercises.value.value,
+                        items = exercises.value.value,
                         key = { it.id },
                         contentType = { it::class },
                     ) { item ->
@@ -297,7 +293,7 @@ private fun Exercises(
                     .fillMaxWidth()
                     .padding(top = LocalDimens.current.padding.itemVerticalSmall)
                     .padding(horizontal = LocalDimens.current.padding.itemHorizontal)
-                    .animateJump(state.errorEffectState, state.exercises.value.isInvalid),
+                    .animateJump(state.errorEffectState, exercises.value.isInvalid),
                 onClick = pickExercises,
             ) {
                 Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
@@ -353,7 +349,7 @@ private fun NewRoutinePreview() {
             state = NewRoutineState(
                 routineID = ID_NOT_SET,
                 savedStateHandle = savedStateHandle,
-                getRoutine = { Routine("") to emptyList() },
+                getRoutine = { RoutineWithExercises(0, "", emptyList(), emptyList(), emptyList(), emptyList()) },
                 upsertRoutine = { _, _, _ -> },
                 getExerciseItems = { flowOf(emptyList()) },
                 textFieldStateManager = TextFieldStateManager(
