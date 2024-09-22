@@ -150,8 +150,8 @@ fun ListItemWithOptionsPreview() {
                 modifier = Modifier.padding(vertical = 8.dp),
                 mainContent = {
                     ListItem(
-                        title = "This is a title",
-                        description = "This is a description",
+                        title = { Text("This is a title") },
+                        description = { Text("This is a description") },
                     )
                 },
                 isExpanded = isExpanded,

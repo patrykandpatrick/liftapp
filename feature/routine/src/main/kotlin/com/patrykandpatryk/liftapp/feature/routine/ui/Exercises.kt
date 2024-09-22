@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,9 +34,9 @@ import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeContainer
 import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeableDeleteBackground
 import com.patrykandpatryk.liftapp.domain.extension.addOrSet
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
-import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
+import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import kotlin.math.roundToInt
 
 @Composable
@@ -112,11 +113,11 @@ fun LazyItemScope.ListItem(
             val swipeShadow by animateDpAsState(targetValue = if (swipeProgress != 0f) swipeElevation else 0.dp)
 
             ListItem(
+                title = { Text(exercise.name) },
                 modifier = modifier
                     .shadow(swipeShadow)
                     .background(MaterialTheme.colorScheme.surface),
-                title = exercise.name,
-                description = exercise.prettyGoal + "\n" + exercise.muscles,
+                description = { Text(exercise.prettyGoal + "\n" + exercise.muscles) },
                 actions = {
                     Icon(
                         modifier = Modifier

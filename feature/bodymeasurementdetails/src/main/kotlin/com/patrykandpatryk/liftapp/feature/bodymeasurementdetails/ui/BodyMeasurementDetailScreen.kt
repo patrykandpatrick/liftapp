@@ -132,9 +132,9 @@ private fun BodyMeasurementDetailScreen(
                 ListItemWithOptions(
                     mainContent = {
                         ListItem(
+                            title = { Text(entry.value) },
                             modifier = Modifier.animateItem(),
-                            title = entry.value,
-                            description = entry.date,
+                            description = { Text(entry.date) },
                         )
                     },
                     optionItems = listOf(

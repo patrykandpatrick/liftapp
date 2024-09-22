@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -79,8 +80,8 @@ private fun Details(
         ) { muscleModel ->
 
             ListItem(
-                title = stringResource(id = muscleModel.nameRes),
-                description = stringResource(id = muscleModel.type.nameRes),
+                title = { Text(stringResource(id = muscleModel.nameRes)) },
+                description = { Text(stringResource(id = muscleModel.type.nameRes)) },
                 icon = {
                     Box(
                         modifier = Modifier
