@@ -142,9 +142,9 @@ private class WheelPickerMeasurePolicy(
                     val placementY = itemY + (maxItemHeight - placeable.height) / 2
                     placeable.place((width - placeable.width) / 2, placementY.toInt())
                     val listPickerItemSpecNode = placeable.parentData as? ListPickerItemSpecNode
-                    if (itemY < centerLine && itemY + maxItemHeight > centerLine) {
-                        if (state.selectedIndex != index) onItemSelected.value(index)
+                    if (itemY < centerLine && itemY + maxItemHeight > centerLine && state.selectedIndex != index) {
                         state.setSelectedIndex(index)
+                        onItemSelected.value(index)
                     }
 
                     if (listPickerItemSpecNode != null) {
@@ -284,8 +284,10 @@ class WheelPickerState(selectedIndex: Int = 0) {
 
 @Composable
 fun rememberWheelPickerState(selectedIndex: Int = 0): WheelPickerState =
-    rememberSaveable(selectedIndex, saver = WheelPickerState) {
+    rememberSaveable(saver = WheelPickerState) {
         WheelPickerState(selectedIndex)
+    }.apply {
+        setSelectedIndex(selectedIndex)
     }
 
 @LightAndDarkThemePreview
