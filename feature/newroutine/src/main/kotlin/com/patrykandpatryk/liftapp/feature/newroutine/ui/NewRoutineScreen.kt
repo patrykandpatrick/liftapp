@@ -1,15 +1,12 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -49,6 +46,7 @@ import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
@@ -116,27 +114,7 @@ private fun NewRoutineScreen(
                 },
             )
         },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(
-                        horizontal = LocalDimens.current.padding.contentHorizontal,
-                        vertical = LocalDimens.current.padding.itemVertical,
-                    ),
-            ) {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = state::save,
-                ) {
-                    Icon(painterResource(id = R.drawable.ic_save), null)
-                    Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
-                    Text(stringResource(id = R.string.action_save))
-                }
-            }
-        },
+        bottomBar = { BottomAppBar.Save(onClick = state::save) },
     ) { paddingValues ->
         if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
             NewRoutineCompactContent(
