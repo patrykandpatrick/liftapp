@@ -21,10 +21,6 @@ object TestStringProvider : StringProvider {
 
     override val dateFormatShort: String = "d MMMM"
     override val dateFormatLong: String = "EEEE, d MMMM"
-    override val timeFormatShort24h: String = "HH:mm"
-    override val timeFormatShort12h: String = "hh:mm a"
-    override val timeFormatLong24h: String = "HH:mm:ss"
-    override val timeFormatLong12h: String = "hh:mm:ss a"
     override val dateFormatEdit: String = "dd.MM.yyyy"
     override val dateFormatFull: String = "d MMMM YYYY"
 

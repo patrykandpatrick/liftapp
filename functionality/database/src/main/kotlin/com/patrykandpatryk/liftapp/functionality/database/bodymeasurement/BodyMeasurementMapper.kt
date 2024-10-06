@@ -18,13 +18,13 @@ class BodyMeasurementMapper @Inject constructor(
         type = bodyMeasurement.type,
     )
 
-    fun toDomain(entry: BodyMeasurementEntryEntity) = BodyMeasurementEntry(
+    suspend fun toDomain(entry: BodyMeasurementEntryEntity) = BodyMeasurementEntry(
         id = entry.id,
         value = entry.value,
         formattedDate = formatter.getFormattedDate(entry.time),
     )
 
-    fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
+    suspend fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
         BodyMeasurementWithLatestEntry(
             id = input.bodyMeasurement.id,
             name = stringProvider.getResolvedName(input.bodyMeasurement.name),

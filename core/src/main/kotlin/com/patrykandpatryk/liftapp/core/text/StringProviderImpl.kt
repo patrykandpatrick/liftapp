@@ -31,18 +31,6 @@ class StringProviderImpl @Inject constructor(
     override val dateFormatLong: String
         get() = string(string.date_format_long)
 
-    override val timeFormatShort24h: String
-        get() = string(string.time_format_short_24h)
-
-    override val timeFormatShort12h: String
-        get() = string(string.time_format_short_12h)
-
-    override val timeFormatLong24h: String
-        get() = string(string.time_format_long_24h)
-
-    override val timeFormatLong12h: String
-        get() = string(string.time_format_long_12h)
-
     override val errorMustBeHigherThanZero: String
         get() = string(string.error_must_be_higher_than_zero)
 

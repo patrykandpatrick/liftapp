@@ -37,7 +37,7 @@ private const val LocalDateTimeKey = "LocalDateTime"
 
 @Stable
 class NewBodyMeasurementState(
-    private val getFormattedDate: (LocalDateTime) -> FormattedDate,
+    private val getFormattedDate: suspend (LocalDateTime) -> FormattedDate,
     private val getBodyMeasurementWithLatestEntry: suspend () -> BodyMeasurementWithLatestEntry,
     private val getBodyMeasurementEntry: suspend () -> BodyMeasurementEntry?,
     private val upsertBodyMeasurementEntry: suspend (value: BodyMeasurementValue, time: LocalDateTime) -> Unit,
@@ -64,7 +64,7 @@ class NewBodyMeasurementState(
 
     val formattedDate: StateFlow<FormattedDate> = dateTime
         .map { getFormattedDate(it) }
-        .stateIn(coroutineScope, SharingStarted.Lazily, getFormattedDate(dateTime.value))
+        .stateIn(coroutineScope, SharingStarted.Lazily, FormattedDate.Empty)
 
     val entrySaved: State<Boolean> = _entrySaved
 

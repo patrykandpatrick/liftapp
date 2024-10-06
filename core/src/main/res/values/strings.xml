@@ -129,10 +129,6 @@
     <string name="error_value_not_valid_number">The value is not a valid number.</string>
     <string name="error_does_not_equal">%1$s does not equal %2$s</string>
 
-    <string name="time_format_short_12h">hh:mm a</string>
-    <string name="time_format_short_24h">HH:mm</string>
-    <string name="time_format_long_12h">hh:mm:ss a</string>
-    <string name="time_format_long_24h">HH:mm:ss</string>
     <string name="date_format_short">d MMMM</string>
     <string name="date_format_long">EEEE, d MMMM</string>
     <string name="date_format_full">dd.MM.yyyy</string>

@@ -38,11 +38,12 @@ class NewBodyMeasurementStateTest {
         latestEntry = null,
     )
 
-    private val latestEntry = BodyMeasurementEntry(
-        id = 1,
-        value = BodyMeasurementValue.Single(75f, MassUnit.Kilograms),
-        formattedDate = formatter.getFormattedDate(LocalDateTime.now()),
-    )
+    private suspend fun getLatestEntry() =
+        BodyMeasurementEntry(
+            id = 1,
+            value = BodyMeasurementValue.Single(75f, MassUnit.Kilograms),
+            formattedDate = formatter.getFormattedDate(LocalDateTime.now()),
+        )
 
     private val coroutineScope = CoroutineScope(UnconfinedTestDispatcher(testScheduler))
 
@@ -78,7 +79,8 @@ class NewBodyMeasurementStateTest {
     }
 
     @Test
-    fun `Given latestEntry is not null inputData holds the value of the latest entry`() {
+    fun `Given latestEntry is not null inputData holds the value of the latest entry`() = runTest {
+        val latestEntry = getLatestEntry()
         val sut = getSut(bodyMeasurementWithLatestEntry = weightMeasurement.copy(latestEntry = latestEntry))
         val inputData = sut.inputData.value
         assertIs<NewBodyMeasurementState.InputData.Single>(inputData)
