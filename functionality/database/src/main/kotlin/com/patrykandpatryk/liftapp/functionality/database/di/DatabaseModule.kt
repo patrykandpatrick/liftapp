@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
+import com.patrykandpatryk.liftapp.domain.goal.GoalRepository
 import com.patrykandpatryk.liftapp.domain.model.StringResource
 import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
 import com.patrykandpatryk.liftapp.domain.serialization.PolymorphicEnumSerializer
@@ -17,6 +18,7 @@ import com.patrykandpatryk.liftapp.functionality.database.converter.LocalDateTim
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
+import com.patrykandpatryk.liftapp.functionality.database.goal.RoomGoalRepository
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.string.BodyMeasurementStringResource
@@ -46,6 +48,9 @@ interface DatabaseModule {
 
     @Binds
     fun bindRoutineRepository(repository: RoutineRepositoryImpl): RoutineRepository
+
+    @Binds
+    fun bindGoalRepository(repository: RoomGoalRepository): GoalRepository
 
     companion object {
 

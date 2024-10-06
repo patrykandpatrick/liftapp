@@ -4,10 +4,13 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -78,6 +81,7 @@ private fun Exercises(
                 exercise = exercise,
                 onIntent = onIntent,
                 onItemClick = navigator::exercise,
+                onGoalClick = navigator::exerciseGoal,
             )
         }
     }
@@ -90,6 +94,7 @@ fun LazyItemScope.ListItem(
     exercise: RoutineExerciseItem,
     onIntent: (Intent) -> Unit,
     onItemClick: (exerciseID: Long) -> Unit,
+    onGoalClick: (exerciseID: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lastDragDelta = remember { mutableStateOf(0f) }
@@ -109,7 +114,6 @@ fun LazyItemScope.ListItem(
             )
         },
         dismissContent = { swipeProgress, _ ->
-
             val swipeShadow by animateDpAsState(targetValue = if (swipeProgress != 0f) swipeElevation else 0.dp)
 
             ListItem(
@@ -119,8 +123,17 @@ fun LazyItemScope.ListItem(
                     .background(MaterialTheme.colorScheme.surface),
                 description = { Text(exercise.prettyGoal + "\n" + exercise.muscles) },
                 actions = {
+                    IconButton(onClick = { onGoalClick(exercise.id) }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_target),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
                     Icon(
                         modifier = Modifier
+                            .padding(start = 8.dp)
                             .reorderable(
                                 itemIndex = index,
                                 itemYOffset = yOffset,

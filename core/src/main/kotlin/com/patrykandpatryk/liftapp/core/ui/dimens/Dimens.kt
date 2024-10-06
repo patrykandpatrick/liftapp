@@ -15,6 +15,7 @@ data class Dimens(
     val chip: Chip = Chip(),
     val dialog: Dialog = Dialog(),
     val elevation: Elevation = Elevation(),
+    val grid: Grid = Grid(),
     val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
     val input: Input = Input(),
@@ -52,6 +53,12 @@ data class Dimens(
     data class IconButton(
         val minTouchTarget: Dp = 48.dp,
         val rippleRadius: Dp = 20.dp,
+    )
+
+    @Immutable
+    data class Grid(
+        val minCellWidthMedium: Dp = 164.dp,
+        val minCellWidthLarge: Dp = 240.dp,
     )
 
     @Immutable

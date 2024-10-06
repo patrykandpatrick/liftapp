@@ -20,6 +20,11 @@
     <string name="one_rep_max_history_section_title">History</string>
     <string name="one_rep_max_history_entry">%s × %s = %s</string>
     <string name="reps">Reps</string>
+    <string name="goal_info">Set your workout parameters here. Enter the minimum and maximum reps for each exercise, the number of sets, and the rest time between them. Adjust these based on your goals and fitness level.</string>
+    <string name="goal_min_reps">Reps (min)</string>
+    <string name="goal_max_reps">Reps (max)</string>
+    <string name="goal_sets">Sets</string>
+    <string name="goal_rest_time">Rest time</string>
     <string name="and_in_a_list">&amp;</string>
     <string name="list_remove">Remove</string>
 
@@ -81,6 +86,7 @@
     <string name="action_decrease">Decrease</string>
     <string name="action_new_entry">New Entry</string>
     <string name="action_done">Done</string>
+    <string name="action_info">Additional information</string>
 
     <string name="title_new_exercise">New Exercise</string>
     <string name="title_new_routine">New Routine</string>

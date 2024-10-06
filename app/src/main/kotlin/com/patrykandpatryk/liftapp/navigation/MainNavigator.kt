@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
+import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.ComposeNavigationResultListener
 import com.patrykandpatryk.liftapp.core.navigation.NavigationResultListener
@@ -27,7 +28,8 @@ class MainNavigator(private val navController: NavController) :
     NewExerciseNavigator,
     BodyMeasurementDetailsNavigator,
     OneRepMaxNavigator,
-    SettingsNavigator {
+    SettingsNavigator,
+    ExerciseGoalNavigator {
     override fun back() {
         navController.popBackStack()
     }

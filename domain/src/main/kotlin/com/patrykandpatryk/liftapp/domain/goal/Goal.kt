@@ -15,5 +15,8 @@ data class Goal(
 ) : java.io.Serializable {
     companion object {
         val Default = Goal(8, 12, 3, 1L.minutes)
+
+        val RepRange = 1.0..100.0
+        val SetRange = 1.0..100.0
     }
 }

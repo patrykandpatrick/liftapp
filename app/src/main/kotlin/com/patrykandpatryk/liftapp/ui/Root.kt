@@ -21,6 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.toRoute
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
+import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -39,10 +41,10 @@ import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavig
 import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutineScreen
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxNavigator
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
-import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
+import com.patrykandpatryk.liftapp.navigation.MainNavigator
 import com.patrykandpatryk.liftapp.navigation.rememberMainNavigator
 import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
 import kotlin.reflect.KClass
@@ -87,6 +89,7 @@ fun Root(
                 addExerciseDetails(mainNavigator)
                 addExercises(mainNavigator)
                 addRoutine(mainNavigator)
+                addRoutineExerciseGoal(mainNavigator)
             }
         }
     }
@@ -98,10 +101,17 @@ fun NavGraphBuilder.addHome(mainNavController: NavController) {
     }
 }
 
-fun NavGraphBuilder.addRoutine(navigator: RoutineNavigator) {
+fun NavGraphBuilder.addRoutine(mainNavigator: MainNavigator) {
     composable<Routes.Routine.Details> {
         val args = it.toRoute<Routes.Routine.Details>()
-        RoutineScreen(args.routineID, navigator)
+        RoutineScreen(args.routineID, mainNavigator.getRoutineNavigator(args.routineID))
+    }
+}
+
+fun NavGraphBuilder.addRoutineExerciseGoal(navigator: ExerciseGoalNavigator) {
+    composable<Routes.Routine.ExerciseGoal> {
+        val args = it.toRoute<Routes.Routine.ExerciseGoal>()
+        ExerciseGoalScreen(navigator, args.routineID, args.exerciseID)
     }
 }
 

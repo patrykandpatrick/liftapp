@@ -7,4 +7,5 @@ interface RoutineNavigator {
     fun back()
     fun editRoutine()
     fun exercise(exerciseID: Long)
+    fun exerciseGoal(exerciseID: Long)
 }

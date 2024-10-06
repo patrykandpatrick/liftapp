@@ -31,9 +31,9 @@ data class GoalEntity(
     @ColumnInfo(name = "goal_id")
     val id: Long,
     @ColumnInfo(name = "goal_routine_id", index = true)
-    val routineId: Long,
+    val routineID: Long,
     @ColumnInfo(name = "goal_exercise_id", index = true)
-    val exerciseId: Long,
+    val exerciseID: Long,
     @ColumnInfo(name = "goal_min_reps")
     val minReps: Int,
     @ColumnInfo(name = "goal_max_reps")
