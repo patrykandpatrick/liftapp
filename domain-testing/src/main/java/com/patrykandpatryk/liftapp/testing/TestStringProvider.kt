@@ -61,6 +61,8 @@ object TestStringProvider : StringProvider {
 
     override fun fieldMustBeHigherThanZero(): String = "This field must be higher than zero."
 
+    override fun fieldMustBeHigherOrEqualTo(value: String): String = "The value must be higher, or equal to %s.".format(value)
+
     override fun fieldTooShort(actual: Int, minLength: Int): String =
         "This field must be at least %d characters long.".format(minLength)
 

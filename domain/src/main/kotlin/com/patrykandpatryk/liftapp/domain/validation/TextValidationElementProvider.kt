@@ -61,3 +61,7 @@ fun <T : Number> TextValidationElementProvider<T>.validNumberHigherThanZero() {
 fun <T : Number> TextValidationElementProvider<T>.isMultiplyOf(vararg valueProviders: ValueProvider<Number>) {
     addCondition(IsMultiplyOf(stringProvider, formatter, valueProviders))
 }
+
+fun <T : Number> TextValidationElementProvider<T>.isHigherOrEqualTo(vararg valueProvider: ValueProvider<Number>) {
+    addCondition(IsHigherOrEqualTo(stringProvider, formatter, valueProvider))
+}

@@ -50,6 +50,8 @@ interface StringProvider {
 
     fun fieldMustBeHigherThanZero(): String
 
+    fun fieldMustBeHigherOrEqualTo(value: String): String
+
     fun doesNotEqual(formula: String, actual: String): String
 }
 

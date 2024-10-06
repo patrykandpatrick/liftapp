@@ -123,3 +123,26 @@ class IsMultiplyOf(
     override fun validateString(value: String): TextValidator.TextValidationElement.Result =
         validate(value.toDoubleOrZero())
 }
+
+class IsHigherOrEqualTo(
+    private val stringProvider: StringProvider,
+    private val formatter: Formatter,
+    private val fields: Array<out ValueProvider<Number>>,
+) : TextValidator.TextValidationElement<Number> {
+    override fun validate(value: Number): TextValidator.TextValidationElement.Result {
+        val expectedValue = fields.fold(0.0) { acc, valueProvider -> acc + valueProvider.value.toDouble() }
+        return if (value.toDouble() >= expectedValue) {
+            TextValidator.TextValidationElement.Result.Valid
+        } else {
+            TextValidator.TextValidationElement.Result.Invalid(
+                stringProvider.fieldMustBeHigherOrEqualTo(
+                    formatter.formatNumber(expectedValue, format = Formatter.NumberFormat.Decimal)
+                )
+            )
+        }
+    }
+
+    override fun validateString(value: String): TextValidator.TextValidationElement.Result =
+        validate(value.toDoubleOrZero())
+}
+

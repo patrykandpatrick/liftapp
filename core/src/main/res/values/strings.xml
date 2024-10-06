@@ -119,13 +119,14 @@
 
     <string name="error_x_empty">%s cannot be empty.</string>
     <string name="error_pick_main_muscles">Pick at least one main muscle.</string>
-    <string name="error_must_be_higher_than_zero">The value must be higher than zero.</string>
+    <string name="error_must_be_higher_than_zero">The value must be more than zero.</string>
+    <string name="error_must_be_higher_than_or_equal_to">The value must be more, or equal to %s.</string>
     <string name="error_name_too_long">The name is too long (%1$s/%2$s).</string>
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>
     <string name="error_field_too_short">The value must have at least %s characters (%s/%s).</string>
     <string name="error_field_too_long">The value must have at most %s characters (%s/%s).</string>
-    <string name="error_value_too_small">The value must be higher than %s.</string>
-    <string name="error_value_too_big">The value must be smaller than %s.</string>
+    <string name="error_value_too_small">The value must be more than %s.</string>
+    <string name="error_value_too_big">The value must be less than %s.</string>
     <string name="error_value_not_valid_number">The value is not a valid number.</string>
     <string name="error_does_not_equal">%1$s does not equal %2$s</string>
 

@@ -81,6 +81,8 @@ class StringProviderImpl @Inject constructor(
 
     override fun fieldMustBeHigherThanZero(): String = string(string.error_must_be_higher_than_zero)
 
+    override fun fieldMustBeHigherOrEqualTo(value: String): String = string(string.error_must_be_higher_than_or_equal_to, value)
+
     override fun doesNotEqual(actual: String, expected: String): String = string(string.error_does_not_equal, actual, expected)
     private fun string(
         @StringRes id: Int,
