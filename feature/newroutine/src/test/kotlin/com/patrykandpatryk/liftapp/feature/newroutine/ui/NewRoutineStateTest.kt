@@ -142,8 +142,8 @@ class NewRoutineStateTest {
 
     companion object {
         private val exerciseItems = listOf(
-            RoutineExerciseItem(1L, "name1", "description1", ExerciseType.Weight, Goal(), ""),
-            RoutineExerciseItem(2L, "name2", "description2", ExerciseType.Reps, Goal(), ""),
+            RoutineExerciseItem(1L, "name1", "description1", ExerciseType.Weight, Goal.Default, ""),
+            RoutineExerciseItem(2L, "name2", "description2", ExerciseType.Reps, Goal.Default, ""),
         ).associateBy { it.id }
 
         val routine = RoutineWithExercises(

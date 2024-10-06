@@ -25,7 +25,7 @@ class ExerciseEntity(
     @ColumnInfo(name = "exercise_tertiary_muscles")
     val tertiaryMuscles: List<Muscle>,
     @ColumnInfo(name = "exercise_goal")
-    val goal: Goal = Goal(), // TODO add custom goals for built-in exercises.
+    val goal: Goal = Goal.Default, // TODO add custom goals for built-in exercises.
 ) {
 
     class Update(
