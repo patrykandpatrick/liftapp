@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import com.patrykandpatryk.liftapp.domain.extension.toIntOrZero
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.validation.TextValidator
 import com.patrykandpatryk.liftapp.domain.validation.ValidationResult
@@ -23,7 +22,8 @@ abstract class TextFieldState<T : Any>(
     protected val _text = mutableStateOf(initialText)
     protected val _errorMessage = mutableStateOf<String?>(null)
 
-    override val value: T get() = toValue(_text.value)
+    override val value: T get() = toValue(_text.value) ?: defaultValue
+    abstract val defaultValue: T
     val text: String by _text
     val errorMessage: String? by _errorMessage
     val hasError by derivedStateOf { _errorMessage.value != null }
@@ -31,7 +31,7 @@ abstract class TextFieldState<T : Any>(
     private val validationResult
         get() = textValidator?.validate(value, text) ?: ValidationResult.Valid(value)
 
-    abstract fun toValue(text: String): T
+    abstract fun toValue(text: String): T?
 
     abstract fun toText(value: T): String
 
@@ -44,7 +44,7 @@ abstract class TextFieldState<T : Any>(
     }
 
     private fun updateText(text: String, fromUser: Boolean) {
-        val convertedValue = toValue(text)
+        val convertedValue = toValue(text) ?: return
         if (veto(convertedValue)) return
         _text.value = text
         updateErrorMessages()
@@ -70,6 +70,8 @@ class StringTextFieldState(
     veto: (String) -> Boolean = { false },
     enabled: TextFieldState<String>.() -> Boolean,
 ) : TextFieldState<String>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
+    override val defaultValue: String = ""
+
     override fun toValue(text: String): String = text
 
     override fun toText(value: String): String = value
@@ -84,7 +86,9 @@ class IntTextFieldState(
     veto: (Int) -> Boolean = { false },
     enabled: TextFieldState<Int>.() -> Boolean,
 ) : TextFieldState<Int>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
-    override fun toValue(text: String): Int = text.toIntOrZero()
+    override val defaultValue: Int = 0
+
+    override fun toValue(text: String): Int? = text.ifBlank { "0" }.toIntOrNull()
 
     override fun toText(value: Int): String = value.toString()
 }
@@ -99,6 +103,8 @@ class FloatTextFieldState(
     veto: (Float) -> Boolean = { false },
     enabled: TextFieldState<Float>.() -> Boolean,
 ) : TextFieldState<Float>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
+    override val defaultValue: Float = 0f
+
     override fun toValue(text: String): Float = formatter.toFloatOrZero(text)
 
     override fun toText(value: Float): String = formatter.toInputDecimalNumber(value)
