@@ -5,6 +5,6 @@ import androidx.compose.runtime.Stable
 @Stable
 interface RoutineNavigator {
     fun back()
-    fun editRoutine(routineId: Long)
+    fun editRoutine()
     fun exercise(exerciseID: Long)
 }

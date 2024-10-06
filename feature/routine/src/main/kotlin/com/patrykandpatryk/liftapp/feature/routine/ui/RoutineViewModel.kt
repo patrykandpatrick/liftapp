@@ -136,7 +136,7 @@ class RoutineViewModel @AssistedInject constructor(
 
     private fun handleEdit() {
         viewModelScope.launch {
-            eventChannel.send(Event.EditRoutine(routineId))
+            eventChannel.send(Event.EditRoutine)
         }
     }
 

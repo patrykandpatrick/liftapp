@@ -26,11 +26,11 @@ import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.tabItems
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
-import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.routine.model.Event
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.routine.model.tabs
+import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,7 +60,7 @@ fun RoutineScreen(
     viewModel.events.collectInComposable { event ->
         when (event) {
             Event.RoutineNotFound -> navigator.back()
-            is Event.EditRoutine -> navigator.editRoutine(event.id)
+            is Event.EditRoutine -> navigator.editRoutine()
         }
     }
 

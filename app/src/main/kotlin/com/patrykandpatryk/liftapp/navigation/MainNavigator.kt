@@ -21,7 +21,6 @@ import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 @Stable
 class MainNavigator(private val navController: NavController) :
     NavigationResultListener by ComposeNavigationResultListener(navController),
-    RoutineNavigator,
     NewRoutineNavigator,
     ExerciseDetailsNavigator,
     ExerciseListNavigator,
@@ -31,14 +30,6 @@ class MainNavigator(private val navController: NavController) :
     SettingsNavigator {
     override fun back() {
         navController.popBackStack()
-    }
-
-    override fun editRoutine(routineId: Long) {
-        navController.navigate(Routes.Routine.edit(routineId))
-    }
-
-    override fun exercise(exerciseID: Long) {
-        navController.navigate(Routes.Exercise.details(exerciseID))
     }
 
     override fun onExercisesPicked(exerciseIDs: List<Long>) {
@@ -61,6 +52,24 @@ class MainNavigator(private val navController: NavController) :
 
     override fun newBodyMeasurement(bodyMeasurementId: Long, bodyEntryMeasurementId: Long?) {
         navController.navigate(Routes.BodyMeasurement.newMeasurement(bodyMeasurementId, bodyEntryMeasurementId ?: ID_NOT_SET))
+    }
+
+    fun getRoutineNavigator(routineID: Long): RoutineNavigator = object : RoutineNavigator {
+        override fun back() {
+            navController.popBackStack()
+        }
+
+        override fun editRoutine() {
+            navController.navigate(Routes.Routine.edit(routineID))
+        }
+
+        override fun exercise(exerciseID: Long) {
+            navController.navigate(Routes.Exercise.details(exerciseID))
+        }
+
+        override fun exerciseGoal(exerciseID: Long) {
+            navController.navigate(Routes.Routine.exerciseGoal(routineID, exerciseID))
+        }
     }
 }
 
