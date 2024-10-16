@@ -27,7 +27,7 @@ viewmodel = "2.8.5"
 timber = "5.0.1"
 vico = "1.13.0-alpha.9"
 
-androidPlugin = "8.6.0"
+androidPlugin = "8.7.1"
 kspPlugin = "2.0.20-1.0.25"
 
 [libraries]
@@ -103,6 +103,7 @@ testing = ["junit", "jupiter", "kotlin-test", "kotlin-coroutines-test"]
 application = { id = "com.android.application", version.ref = "androidPlugin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinXSerialization = { id = "kotlinx-serialization" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
 library = { id = "com.android.library", version.ref = "androidPlugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
