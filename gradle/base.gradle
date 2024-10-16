@@ -51,7 +51,6 @@ android {
                 "-opt-in=androidx.compose.ui.text.ExperimentalTextApi",
                 "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
                 "-opt-in=androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi",
-                "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
         ]
     }
 }

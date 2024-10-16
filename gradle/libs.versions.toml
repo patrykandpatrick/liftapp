@@ -1,5 +1,4 @@
 [versions]
-accompanist = "0.34.0"
 activity = "1.9.2"
 appcompat = "1.7.0"
 coil = "2.2.2"
@@ -31,11 +30,6 @@ androidPlugin = "8.7.1"
 kspPlugin = "2.0.20-1.0.25"
 
 [libraries]
-
-accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
-accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
-accompanist-system-ui-controler = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-
 activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 
@@ -90,7 +84,6 @@ vico = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "vico" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel" }
 
 [bundles]
-accompanist = ["accompanist-navigation-animation", "accompanist-navigation-material", "accompanist-system-ui-controler"]
 kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
 hilt = ["hilt-android", "hilt-navigation"]
 opto = ["opto-core", "opto-domain"]

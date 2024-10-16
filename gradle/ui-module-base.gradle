@@ -36,7 +36,6 @@ dependencies {
 
     debugImplementation libs.compose.ui.test.manifest
 
-    implementation libs.bundles.accompanist
     implementation libs.bundles.hilt
     implementation libs.bundles.ui
     implementation libs.activity

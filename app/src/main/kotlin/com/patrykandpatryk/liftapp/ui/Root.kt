@@ -5,9 +5,7 @@ import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -20,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.toRoute
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
@@ -57,16 +54,7 @@ fun Root(
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
-    val systemUiController = rememberSystemUiController()
     val mainNavigator = rememberMainNavigator(navController)
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = darkTheme.not(),
-            isNavigationBarContrastEnforced = false,
-        )
-    }
 
     LiftAppTheme(darkTheme = darkTheme) {
         ModalBottomSheetLayout(
