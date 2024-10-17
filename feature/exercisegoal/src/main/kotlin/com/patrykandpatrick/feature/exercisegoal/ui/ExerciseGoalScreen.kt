@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -19,10 +20,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,10 +33,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
+import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
+import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.Info
+import com.patrykandpatryk.liftapp.core.ui.InfoDefaults
 import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -46,7 +50,9 @@ import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlin.time.Duration
 
 @Composable
 fun ExerciseGoalScreen(
@@ -79,7 +85,7 @@ private fun ExerciseGoalScreen(
     modifier: Modifier = Modifier,
 ) {
     val dimens = LocalDimens.current
-    val infoVisible = remember { mutableStateOf(true) }
+    val infoVisible = state.goalInfoVisible.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier,
@@ -96,7 +102,7 @@ private fun ExerciseGoalScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { infoVisible.value = !infoVisible.value }) {
+                    IconButton(onClick = state::toggleGoalInfoVisible) {
                         Icon(
                             imageVector = Icons.TwoTone.Info,
                             contentDescription = stringResource(id = R.string.action_info),
@@ -120,58 +126,82 @@ private fun ExerciseGoalScreen(
             verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
             horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
         ) {
-            if (infoVisible.value) {
-                item(
-                    key = "info",
-                    span = { GridItemSpan(maxLineSpan) },
-                ) {
-                    Info(
-                        stringResource(id = R.string.goal_info),
-                        modifier = Modifier.animateItem(),
-                    )
-                }
-            }
-
-            item(key = "min_reps") {
-                OutlinedTextField(
-                    textFieldState = state.minReps,
-                    label = { Text(stringResource(id = R.string.goal_min_reps)) },
-                    singleLine = true,
-                    keyboardOptions = keyboardOptions,
-                    modifier = Modifier.animateItem(),
-                )
-            }
-
-            item(key = "max_reps") {
-                OutlinedTextField(
-                    textFieldState = state.maxReps,
-                    label = { Text(stringResource(id = R.string.goal_max_reps)) },
-                    singleLine = true,
-                    keyboardOptions = keyboardOptions,
-                    modifier = Modifier.animateItem(),
-                )
-            }
-
-            item(key = "sets") {
-                OutlinedTextField(
-                    textFieldState = state.sets,
-                    label = { Text(stringResource(id = R.string.goal_sets)) },
-                    singleLine = true,
-                    keyboardOptions = keyboardOptions,
-                    modifier = Modifier.animateItem(),
-                )
-            }
-
-            item(key = "rest_time") {
-                WheelPickerDurationInputField(
-                    text = state.formattedRestTime.collectAsStateWithLifecycle().value,
-                    duration = state.restTime.collectAsStateWithLifecycle().value,
-                    onTimeChange = state::setRestTime,
-                    label = stringResource(id = R.string.goal_rest_time),
-                    modifier = Modifier.animateItem(),
+            infoVisible.value?.also { infoVisible ->
+                content(
+                    infoVisible = infoVisible,
+                    toggleInfoVisible = state::toggleGoalInfoVisible,
+                    minReps = state.minReps,
+                    maxReps = state.maxReps,
+                    sets = state.sets,
+                    formattedRestTime = state.formattedRestTime,
+                    restTime = state.restTime,
+                    setRestTime = state::setRestTime,
                 )
             }
         }
+    }
+}
+
+private fun LazyGridScope.content(
+    infoVisible: Boolean,
+    toggleInfoVisible: () -> Unit,
+    minReps: TextFieldState<Int>,
+    maxReps: TextFieldState<Int>,
+    sets: TextFieldState<Int>,
+    formattedRestTime: StateFlow<String>,
+    restTime: StateFlow<Duration>,
+    setRestTime: (Duration) -> Unit,
+) {
+    if (infoVisible) {
+        item(
+            key = "info",
+            span = { GridItemSpan(maxLineSpan) },
+        ) {
+            Info(
+                stringResource(id = R.string.goal_info),
+                Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+            ) { InfoDefaults.DismissButton(toggleInfoVisible) }
+        }
+    }
+
+    item(key = "min_reps") {
+        OutlinedTextField(
+            textFieldState = minReps,
+            label = { Text(stringResource(id = R.string.goal_min_reps)) },
+            singleLine = true,
+            keyboardOptions = keyboardOptions,
+            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+        )
+    }
+
+    item(key = "max_reps") {
+        OutlinedTextField(
+            textFieldState = maxReps,
+            label = { Text(stringResource(id = R.string.goal_max_reps)) },
+            singleLine = true,
+            keyboardOptions = keyboardOptions,
+            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+        )
+    }
+
+    item(key = "sets") {
+        OutlinedTextField(
+            textFieldState = sets,
+            label = { Text(stringResource(id = R.string.goal_sets)) },
+            singleLine = true,
+            keyboardOptions = keyboardOptions,
+            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+        )
+    }
+
+    item(key = "rest_time") {
+        WheelPickerDurationInputField(
+            text = formattedRestTime.collectAsStateWithLifecycle().value,
+            duration = restTime.collectAsStateWithLifecycle().value,
+            onTimeChange = setRestTime,
+            label = stringResource(id = R.string.goal_rest_time),
+            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+        )
     }
 }
 
@@ -179,30 +209,36 @@ private fun ExerciseGoalScreen(
 @Composable
 private fun ExerciseGoalPreview() {
     LiftAppTheme {
-        val savedStateHandle = SavedStateHandle()
+        val savedStateHandle = remember { SavedStateHandle() }
         val formatter = PreviewResource.formatter()
+        val coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined }
+        val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
+        val preference = PreviewResource.preference(true)
 
         ExerciseGoalScreen(
             navigator = interfaceStub(),
-            state = ExerciseGoalState(
-                exercise = flowOf(
-                    Exercise(
-                        id = 1L,
-                        displayName = "Bench Press",
-                        name = Name.Raw("Bench Press"),
-                        exerciseType = ExerciseType.Weight,
-                        mainMuscles = emptyList(),
-                        secondaryMuscles = emptyList(),
-                        tertiaryMuscles = emptyList(),
-                    )
-                ),
-                goal = flowOf(Goal.Default),
-                saveGoal = {},
-                getFormattedDuration = { formatter.getFormattedDuration(it, Formatter.DateFormat.MinutesSeconds) },
-                coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined },
-                savedStateHandle = savedStateHandle,
-                textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle),
-            )
+            state = remember {
+                ExerciseGoalState(
+                    exercise = flowOf(
+                        Exercise(
+                            id = 1L,
+                            displayName = "Bench Press",
+                            name = Name.Raw("Bench Press"),
+                            exerciseType = ExerciseType.Weight,
+                            mainMuscles = emptyList(),
+                            secondaryMuscles = emptyList(),
+                            tertiaryMuscles = emptyList(),
+                        )
+                    ),
+                    goal = flowOf(Goal.Default),
+                    saveGoal = {},
+                    getFormattedDuration = { formatter.getFormattedDuration(it, Formatter.DateFormat.MinutesSeconds) },
+                    coroutineScope = coroutineScope,
+                    savedStateHandle = savedStateHandle,
+                    textFieldStateManager = textFieldStateManager,
+                    goalInfoVisiblePreference = preference,
+                )
+            }
         )
     }
 }

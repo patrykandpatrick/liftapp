@@ -4,7 +4,11 @@ import android.app.Application
 import android.text.format.DateFormat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.patrykandpatrick.opto.core.PreferenceImpl
+import com.patrykandpatrick.opto.core.PreferenceManager
+import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
@@ -12,8 +16,6 @@ import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
-import com.patrykandpatrick.opto.core.PreferenceImpl
-import com.patrykandpatrick.opto.core.PreferenceManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -21,6 +23,7 @@ import javax.inject.Inject
 private const val KEY_MASS_UNIT = "mass_unit"
 private const val KEY_DISTANCE_UNIT = "distance_unit"
 private const val KEY_HOUR_FORMAT = "hour_format"
+private const val KEY_GOAL_INFO_VISIBLE = "goal_info_visible"
 
 class PreferenceRepositoryImpl @Inject constructor(
     override val preferencesDataStore: DataStore<Preferences>,
@@ -38,6 +41,8 @@ class PreferenceRepositoryImpl @Inject constructor(
         .map { longDistanceUnit -> longDistanceUnit.getCorrespondingShortDistanceUnit() }
 
     override val hourFormat = enumPreference(KEY_HOUR_FORMAT, HourFormat.Auto)
+
+    override val goalInfoVisible: Preference<Boolean> = preference(booleanPreferencesKey(KEY_GOAL_INFO_VISIBLE), true)
 
     override val is24H: Flow<Boolean>
         get() = hourFormat.get()

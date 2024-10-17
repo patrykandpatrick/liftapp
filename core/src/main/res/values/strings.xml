@@ -87,6 +87,7 @@
     <string name="action_new_entry">New Entry</string>
     <string name="action_done">Done</string>
     <string name="action_info">Additional information</string>
+    <string name="action_dismiss">Dismiss</string>
 
     <string name="title_new_exercise">New Exercise</string>
     <string name="title_new_routine">New Routine</string>

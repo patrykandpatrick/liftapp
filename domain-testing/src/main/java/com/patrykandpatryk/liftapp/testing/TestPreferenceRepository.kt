@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.testing
 
+import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
@@ -7,7 +8,6 @@ import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
-import com.patrykandpatrick.opto.domain.Preference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -36,6 +36,8 @@ class TestPreferenceRepository : PreferenceRepository {
                 -> true
             }
         }
+
+    override val goalInfoVisible: Preference<Boolean> = preference(true)
 
     override val allPreferences: Flow<AllPreferences> = combine(
         massUnit.get(),
