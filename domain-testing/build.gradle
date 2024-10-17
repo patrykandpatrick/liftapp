@@ -1,6 +1,6 @@
 plugins {
     id "java-library"
-    id "org.jetbrains.kotlin.jvm"
+    alias(libs.plugins.kotlinJvm)
 }
 
 java {
@@ -8,9 +8,11 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
-
     implementation project(":domain")
-
     implementation libs.opto.domain
 }
