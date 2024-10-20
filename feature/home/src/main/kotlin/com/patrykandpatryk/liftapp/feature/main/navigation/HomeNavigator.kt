@@ -25,8 +25,8 @@ class HomeNavigator(private val navController: NavController) : DashboardNavigat
         navController.navigate(Routes.Exercise.new())
     }
 
-    override fun editExercise(exerciseID: Long) {
-        navController.navigate(Routes.Exercise.edit(exerciseID))
+    override fun exerciseDetails(exerciseID: Long) {
+        navController.navigate(Routes.Exercise.details(exerciseID))
     }
 
     override fun back() {

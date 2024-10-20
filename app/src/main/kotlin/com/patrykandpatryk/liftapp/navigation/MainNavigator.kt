@@ -48,6 +48,10 @@ class MainNavigator(private val navController: NavController) :
         navController.navigate(Routes.Exercise.edit(exerciseID))
     }
 
+    override fun exerciseDetails(exerciseID: Long) {
+        navController.navigate(Routes.Exercise.details(exerciseID))
+    }
+
     override fun pickExercises(disabledExerciseIDs: List<Long>) {
         navController.navigate(Routes.Exercise.pick(disabledExerciseIDs))
     }

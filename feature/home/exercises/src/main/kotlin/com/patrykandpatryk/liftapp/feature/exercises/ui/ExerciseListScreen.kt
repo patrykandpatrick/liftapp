@@ -223,7 +223,7 @@ private fun LazyItemScope.ExerciseItem(
             iconPainter = painterResource(id = item.iconRes),
             modifier = Modifier
                 .animateItem()
-                .clickable { navigator.editExercise(item.id) },
+                .clickable { navigator.exerciseDetails(item.id) },
             enabled = item.enabled,
             titleHighlightPosition = item.nameHighlightPosition,
         )
