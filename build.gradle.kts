@@ -1,10 +1,8 @@
 buildscript {
-    apply from: "gradle/versions.gradle"
-
     dependencies {
-        classpath libs.hilt.gradle.plugin
-        classpath libs.kotlin.serialization.plugin
-        classpath libs.safeArgs
+        classpath(libs.hilt.gradle.plugin)
+        classpath(libs.kotlin.serialization.plugin)
+        classpath(libs.safeArgs)
     }
 
     repositories {

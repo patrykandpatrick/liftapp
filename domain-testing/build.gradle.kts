@@ -1,5 +1,5 @@
 plugins {
-    id "java-library"
+    id("java-library")
     alias(libs.plugins.kotlinJvm)
 }
 
@@ -13,6 +13,6 @@ kotlin {
 }
 
 dependencies {
-    implementation project(":domain")
-    implementation libs.opto.domain
+    implementation(project(":domain"))
+    implementation(libs.opto.domain)
 }

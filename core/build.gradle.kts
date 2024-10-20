@@ -11,6 +11,6 @@ android {
 }
 
 dependencies {
-    add("implementation", project(":navigation"))
-    add("implementation", libs.opto.domain)
+    implementation(project(":navigation"))
+    implementation(libs.opto.domain)
 }
