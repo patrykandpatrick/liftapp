@@ -13,4 +13,4 @@ jobs:
                     distribution: adopt
             -   run: |
                     chmod +x gradlew
-                    ./gradlew test
+                    ./gradlew testDebugUnitTest
