@@ -2,8 +2,9 @@ package com.patrykandpatrick.feature.exercisegoal.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -34,6 +35,7 @@ import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigato
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.thenIf
+import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
@@ -115,7 +117,7 @@ private fun ExerciseGoalScreen(
     ) { paddingValues ->
         LazyVerticalGrid(
             modifier = modifier
-                .imePadding()
+                .padding(WindowInsets.ime.toPaddingValues(additionalBottom = -paddingValues.calculateBottomPadding()))
                 .padding(paddingValues)
                 .fillMaxSize(),
             columns = GridCells.Adaptive(minSize = dimens.grid.minCellWidthLarge),

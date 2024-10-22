@@ -38,19 +38,19 @@ fun WindowInsets.toPaddingValues(
     return object : PaddingValues {
 
         override fun calculateLeftPadding(layoutDirection: LayoutDirection) = with(density) {
-            getLeft(density = this, layoutDirection = layoutDirection).toDp() + additionalLeft
+            (getLeft(density = this, layoutDirection = layoutDirection).toDp() + additionalLeft).coerceAtLeast(0.dp)
         }
 
         override fun calculateTopPadding() = with(density) {
-            getTop(density = this).toDp() + additionalTop
+            (getTop(density = this).toDp() + additionalTop).coerceAtLeast(0.dp)
         }
 
         override fun calculateRightPadding(layoutDirection: LayoutDirection) = with(density) {
-            getRight(density = this, layoutDirection = layoutDirection).toDp() + additionalRight
+            (getRight(density = this, layoutDirection = layoutDirection).toDp() + additionalRight).coerceAtLeast(0.dp)
         }
 
         override fun calculateBottomPadding() = with(density) {
-            getBottom(density = this).toDp() + additionalBottom
+            (getBottom(density = this).toDp() + additionalBottom).coerceAtLeast(0.dp)
         }
     }
 }
