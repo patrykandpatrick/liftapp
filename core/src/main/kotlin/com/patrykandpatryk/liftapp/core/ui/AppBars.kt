@@ -68,12 +68,7 @@ fun TopAppBarWithTabs(
             actions = actions,
             navigationIcon = {
                 if (onBackClick != null) {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = stringResource(id = R.string.action_close),
-                        )
-                    }
+                    AppBars.BackArrow(onClick = onBackClick)
                 }
             },
         )
@@ -172,6 +167,18 @@ fun DialogTopBar(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 imageVector = Icons.Outlined.Close,
                 tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = stringResource(id = R.string.action_close),
+            )
+        }
+    }
+}
+
+object AppBars {
+    @Composable
+    fun BackArrow(onClick: () -> Unit, modifier: Modifier = Modifier) {
+        IconButton(onClick = onClick, modifier = modifier) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = stringResource(id = R.string.action_close),
             )
         }
