@@ -21,6 +21,8 @@ import androidx.navigation.get
 import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
+import com.patrykandpatrick.liftapp.feature.workout.navigator.WorkoutNavigator
+import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -80,6 +82,7 @@ fun Root(
                 addExercises(mainNavigator)
                 addRoutine(mainNavigator)
                 addRoutineExerciseGoal(mainNavigator)
+                addWorkout(mainNavigator)
             }
         }
     }
@@ -166,6 +169,17 @@ fun NavGraphBuilder.addSettings(navigator: SettingsNavigator) {
 fun NavGraphBuilder.addOneRepMax(navigator: OneRepMaxNavigator) {
     composable<Routes.OneRepMax> {
         OneRepMaxScreen(navigator)
+    }
+}
+
+fun NavGraphBuilder.addWorkout(navigator: WorkoutNavigator) {
+    composable<Routes.Workout> { backStackEntry ->
+        val args = backStackEntry.toRoute<Routes.Workout>()
+        WorkoutScreen(
+            routineID = args.routineID,
+            workoutID = args.workoutID,
+            navigator = navigator,
+        )
     }
 }
 

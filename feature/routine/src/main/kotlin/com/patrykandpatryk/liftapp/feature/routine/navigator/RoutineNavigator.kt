@@ -8,4 +8,5 @@ interface RoutineNavigator {
     fun editRoutine()
     fun exercise(exerciseID: Long)
     fun exerciseGoal(exerciseID: Long)
+    fun newWorkout()
 }

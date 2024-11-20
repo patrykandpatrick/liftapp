@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":feature:routine"))
     implementation(project(":feature:newroutine"))
     implementation(project(":feature:exercisegoal"))
+    implementation(project(":feature:workout"))
     project(":functionality") {
         subprojects.forEach(::implementation)
     }

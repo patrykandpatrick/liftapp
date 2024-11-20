@@ -1,10 +1,12 @@
 package com.patrykandpatryk.liftapp.feature.routine.ui
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -20,11 +22,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.tabItems
+import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
 import com.patrykandpatryk.liftapp.feature.routine.model.Event
 import com.patrykandpatryk.liftapp.feature.routine.model.Intent
@@ -112,6 +116,15 @@ private fun RoutineScreen(
                         contentDescription = stringResource(id = R.string.action_edit),
                     )
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                ExtendedFloatingActionButton(
+                    text = stringResource(R.string.action_work_out),
+                    icon = painterResource(R.drawable.ic_workout),
+                    onClick = { navigator.newWorkout()},
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+                )
             }
         },
         snackbarHost = {
