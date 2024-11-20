@@ -29,7 +29,9 @@
     <string name="list_remove">Remove</string>
 
     <string name="multiply_character" translatable="false">×</string>
-    <string name="goal_format">%1$s–%2$s × %3$s</string>
+    <string name="goal_format_short">%1$s–%2$s × %3$s</string>
+    <string name="goal_format_long">%1$s–%2$s %3$s × %4$s %5$s</string>
+    <string name="goal_format_long_single_rep">%1$s %2$s × %3$s %4$s</string>
 
     <string name="muscle_abductors">Abductors</string>
     <string name="muscle_abs">Abs</string>
@@ -88,6 +90,7 @@
     <string name="action_done">Done</string>
     <string name="action_info">Additional information</string>
     <string name="action_dismiss">Dismiss</string>
+    <string name="action_work_out">Work out</string>
 
     <string name="title_new_exercise">New Exercise</string>
     <string name="title_new_routine">New Routine</string>
@@ -141,4 +144,7 @@
     <string name="date_format_long">EEEE, d MMMM</string>
     <string name="date_format_full">dd.MM.yyyy</string>
     <string name="date_format_edit">d MMMM YYYY</string>
+
+    <string name="content_description_add_set">Add set</string>
+    <string name="content_description_remove_set">Remove set</string>
 </resources>

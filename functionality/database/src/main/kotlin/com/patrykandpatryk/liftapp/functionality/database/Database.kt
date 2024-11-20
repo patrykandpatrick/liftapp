@@ -17,6 +17,11 @@ import com.patrykandpatryk.liftapp.functionality.database.routine.ExerciseWithRo
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineEntity
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExerciseNamesView
+import com.patrykandpatryk.liftapp.functionality.database.workout.ExerciseSetEntity
+import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutDao
+import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutEntity
+import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutGoalEntity
+import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutWithExerciseEntity
 
 @androidx.room.Database(
     entities = [
@@ -26,6 +31,10 @@ import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineWithExe
         RoutineEntity::class,
         ExerciseWithRoutineEntity::class,
         GoalEntity::class,
+        WorkoutEntity::class,
+        WorkoutWithExerciseEntity::class,
+        WorkoutGoalEntity::class,
+        ExerciseSetEntity::class,
     ],
     views = [
         BodyMeasurementWithLatestEntryViewResult::class,
@@ -52,4 +61,6 @@ abstract class Database : RoomDatabase() {
     abstract val routineDao: RoutineDao
 
     abstract val goalDao: GoalDao
+
+    abstract val workoutDao: WorkoutDao
 }

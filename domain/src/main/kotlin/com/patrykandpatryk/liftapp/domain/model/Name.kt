@@ -8,7 +8,7 @@ sealed class Name : java.io.Serializable {
 
     @Serializable
     @SerialName("Raw")
-    open class Raw(val value: String) : Name() {
+    data class Raw(val value: String) : Name() {
 
         override fun toString(): String =
             "Raw(value='$value')"
@@ -16,12 +16,13 @@ sealed class Name : java.io.Serializable {
 
     @Serializable
     @SerialName("Resource")
-    class Resource(val resource: StringResource) : Name() {
+    data class Resource(val resource: StringResource) : Name() {
 
         override fun toString(): String =
             "Resource(resourceName='$resource')"
     }
 
-    @Serializable
-    object Empty : Raw("")
+    companion object {
+        val Empty = Raw("")
+    }
 }

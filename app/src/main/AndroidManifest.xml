@@ -17,6 +17,7 @@
             android:name="com.patrykandpatryk.liftapp.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.LiftApp"
+            android:windowSoftInputMode="adjustResize"
             android:configChanges="uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

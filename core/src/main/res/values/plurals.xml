@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="set_count">
+        <item quantity="one">set</item>
+        <item quantity="other">sets</item>
+    </plurals>
+    <plurals name="rep_count">
+        <item quantity="one">rep</item>
+        <item quantity="other">reps</item>
+    </plurals>
+</resources>

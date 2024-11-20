@@ -56,7 +56,7 @@ class StringProviderImpl @Inject constructor(
         string(muscle.stringRes)
 
     override fun toPrettyString(goal: Goal): String =
-        string(string.goal_format, goal.minReps, goal.maxReps, goal.sets)
+        string(string.goal_format_short, goal.minReps, goal.maxReps, goal.sets)
 
     override fun getResolvedName(name: Name): String = when (name) {
         is Name.Raw -> name.value

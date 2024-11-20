@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.domain.goal.GoalRepository
 import com.patrykandpatryk.liftapp.domain.model.StringResource
 import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
 import com.patrykandpatryk.liftapp.domain.serialization.PolymorphicEnumSerializer
+import com.patrykandpatryk.liftapp.domain.workout.WorkoutRepository
 import com.patrykandpatryk.liftapp.functionality.database.Database
 import com.patrykandpatryk.liftapp.functionality.database.DatabaseCallback
 import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementDao
@@ -23,6 +24,8 @@ import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.string.BodyMeasurementStringResource
 import com.patrykandpatryk.liftapp.functionality.database.string.ExerciseStringResource
+import com.patrykandpatryk.liftapp.functionality.database.workout.RoomWorkoutRepository
+import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutDao
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -51,6 +54,9 @@ interface DatabaseModule {
 
     @Binds
     fun bindGoalRepository(repository: RoomGoalRepository): GoalRepository
+
+    @Binds
+    fun bindWorkoutRepository(repository: RoomWorkoutRepository): WorkoutRepository
 
     companion object {
 
@@ -90,6 +96,10 @@ interface DatabaseModule {
         @Provides
         fun provideGoalDao(database: Database): GoalDao =
             database.goalDao
+
+        @Provides
+        fun provideWorkoutDao(database: Database): WorkoutDao =
+            database.workoutDao
 
         @Provides
         @IntoSet

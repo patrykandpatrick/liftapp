@@ -41,4 +41,5 @@ include ":feature:newroutine"
 include ":feature:routine"
 include ":functionality:musclebitmap"
 include ":navigation"
-include ':feature:exercisegoal'
+include ":feature:exercisegoal"
+include ":feature:workout"
