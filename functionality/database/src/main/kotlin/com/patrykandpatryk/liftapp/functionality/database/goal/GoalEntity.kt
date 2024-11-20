@@ -38,6 +38,7 @@ data class GoalEntity(
     val minReps: Int,
     @ColumnInfo(name = "goal_max_reps")
     val maxReps: Int,
+    @ColumnInfo(name = "goal_sets")
     val sets: Int,
     @ColumnInfo(name = "goal_break_duration")
     val breakDurationMillis: Long,
