@@ -13,7 +13,7 @@ class ExerciseGoalViewModel @AssistedInject constructor(
     @Assisted("exerciseID") private val exerciseID: Long,
     stateFactory: ExerciseGoalState.Factory,
     coroutineScope: CoroutineScope,
-) : ViewModel() {
+) : ViewModel(coroutineScope) {
     val state: ExerciseGoalState = stateFactory.create(routineID, exerciseID, coroutineScope)
 
     @AssistedFactory
