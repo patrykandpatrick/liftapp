@@ -24,5 +24,8 @@ data class Workout(
         val secondaryMuscles: List<Muscle>,
         val tertiaryMuscles: List<Muscle>,
         val goal: Goal,
-    ) : Serializable
+        val sets: List<ExerciseSet>,
+    ) : Serializable {
+        val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isComplete }
+    }
 }

@@ -8,4 +8,6 @@ data class WorkoutExerciseDto(
     val exercise: ExerciseEntity,
     @Embedded
     val goal: WorkoutGoalEntity?,
+    @Embedded
+    val set: ExerciseSetEntity?,
 )

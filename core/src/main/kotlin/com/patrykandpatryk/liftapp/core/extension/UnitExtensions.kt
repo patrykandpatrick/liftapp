@@ -1,6 +1,8 @@
 package com.patrykandpatryk.liftapp.core.extension
 
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.extension.getTypeErrorMessage
@@ -33,3 +35,6 @@ inline val HourFormat.stringResourceId: Int
         HourFormat.H12 -> R.string.settings_hour_format_option_12
         HourFormat.H24 -> R.string.settings_hour_format_option_24
     }
+
+@Composable
+fun ValueUnit.prettyString(): String = stringResource(stringResourceId)

@@ -33,6 +33,16 @@
     <string name="goal_format_long">%1$s–%2$s %3$s × %4$s %5$s</string>
     <string name="goal_format_long_single_rep">%1$s %2$s × %3$s %4$s</string>
 
+    <string name="exercise_set_not_completed">Not completed</string>
+    <!-- Example: 80 kg × 10 reps -->
+    <string name="exercise_set_format_calisthenics">%1$s %2$s × %3$s %4$s</string>
+    <!-- Example: 80 (+10) kg × 10 reps -->
+    <string name="exercise_set_format_calisthenics_with_weight">%1$s (+%2$s) %3$s × %4$s %5$s</string>
+    <!-- Example: 10 reps -->
+    <string name="exercise_set_format_reps">%1$s %2$s</string>
+    <!-- Example: 100 kg × 10 reps -->
+    <string name="exercise_set_format_weight">%1$s %2$s × %3$s %4$s</string>
+
     <string name="muscle_abductors">Abductors</string>
     <string name="muscle_abs">Abs</string>
     <string name="muscle_adductors">Adductors</string>

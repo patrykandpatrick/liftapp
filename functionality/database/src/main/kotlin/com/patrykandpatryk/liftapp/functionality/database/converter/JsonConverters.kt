@@ -6,10 +6,11 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import javax.inject.Inject
-import kotlinx.serialization.decodeFromString
+import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 @ProvidedTypeConverter
 class JsonConverters @Inject constructor(
@@ -39,4 +40,16 @@ class JsonConverters @Inject constructor(
 
     @TypeConverter
     fun toGoal(string: String): Goal = json.decodeFromString(string)
+
+    @TypeConverter
+    fun toString(valueUnit: ValueUnit): String = json.encodeToString(valueUnit)
+
+    @TypeConverter
+    fun toValueUnit(string: String): ValueUnit = json.decodeFromString(string)
+
+    @TypeConverter
+    fun toString(massUnit: MassUnit): String = json.encodeToString(massUnit)
+
+    @TypeConverter
+    fun toMassUnit(string: String): MassUnit = json.decodeFromString(string)
 }

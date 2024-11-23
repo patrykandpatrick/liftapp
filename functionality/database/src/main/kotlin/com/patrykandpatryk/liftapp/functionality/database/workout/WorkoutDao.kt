@@ -20,11 +20,12 @@ interface WorkoutDao {
 
     @Transaction
     @Query(
-        value = "SELECT exercise.*, workout_goal.* FROM workout_with_exercise as wwe " +
+        value = "SELECT exercise.*, workout_goal.*, exercise_set.* FROM workout_with_exercise as wwe " +
                 "LEFT JOIN exercise on wwe.exercise_id = exercise.exercise_id " +
                 "LEFT JOIN workout_goal " +
                 "ON wwe.exercise_id = workout_goal_exercise_id AND workout_goal_workout_id = :workoutID " +
-                "WHERE wwe.workout_id = :workoutID ORDER BY order_index",
+                "LEFT JOIN exercise_set on exercise_set_workout_id = :workoutID AND exercise_set_exercise_id = wwe.exercise_id " +
+                "WHERE wwe.workout_id = :workoutID ORDER BY order_index, workout_exercise_set_index",
     )
     fun getWorkoutExercises(workoutID: Long): Flow<List<WorkoutExerciseDto>>
 

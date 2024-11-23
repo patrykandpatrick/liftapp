@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.BottomSheetScaffold
@@ -134,11 +135,17 @@ private fun WorkoutScreen(
                         )
                     }
 
-                    items(exercise.goal.sets, key = { it }) { set ->
-                        SetItem(setIndex = set, setItemState = SetItemState.NotStarted)
+                    itemsIndexed(exercise.sets, key = { index, _ -> index }) { index, set ->
+                        val isActive = exercise.firstIncompleteSetIndex == index
+                        SetItem(
+                            setIndex = index,
+                            set = set,
+                            isActive = isActive,
+                            enabled = isActive || set.isComplete,
+                            onClick = { /* TODO */ }
+                        )
                     }
                 }
-
             }
         }
     }
