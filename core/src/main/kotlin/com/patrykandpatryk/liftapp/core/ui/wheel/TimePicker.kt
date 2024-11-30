@@ -50,10 +50,10 @@ fun TimePicker(
     val minutes = remember { List(60) { it } }
     val seconds = remember { List(60) { it } }
     val timeOfDays = TimeOfDay.entries
-    val hourState = rememberWheelPickerState(selectedIndex = hour ?: 0)
-    val minuteState = rememberWheelPickerState(selectedIndex = minute ?: 0)
-    val secondState = rememberWheelPickerState(selectedIndex = second ?: 0)
-    val timeOfDayState = rememberWheelPickerState(selectedIndex = timeOfDays.indexOf(timeOfDay))
+    val hourState = rememberWheelPickerState(initialSelectedIndex = hour ?: 0)
+    val minuteState = rememberWheelPickerState(initialSelectedIndex = minute ?: 0)
+    val secondState = rememberWheelPickerState(initialSelectedIndex = second ?: 0)
+    val timeOfDayState = rememberWheelPickerState(initialSelectedIndex = timeOfDays.indexOf(timeOfDay))
     val onTimeChangeState = rememberUpdatedState(onTimeChange)
 
     val onItemSelected = remember {
@@ -61,11 +61,11 @@ fun TimePicker(
             hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
             onTimeChangeState.value(
                 calculateDuration(
-                    hour = hours[hourState.selectedIndex - if (is24h || timeOfDay == TimeOfDay.AM) 0 else 12],
-                    minute = minutes[minuteState.selectedIndex],
-                    second = seconds[secondState.selectedIndex],
+                    hour = hours[hourState.currentItem - if (is24h || timeOfDay == TimeOfDay.AM) 0 else 12],
+                    minute = minutes[minuteState.currentItem],
+                    second = seconds[secondState.currentItem],
                     is24h = is24h,
-                    timeOfDay = timeOfDays[timeOfDayState.selectedIndex]
+                    timeOfDay = timeOfDays[timeOfDayState.currentItem]
                 )
             )
         }
