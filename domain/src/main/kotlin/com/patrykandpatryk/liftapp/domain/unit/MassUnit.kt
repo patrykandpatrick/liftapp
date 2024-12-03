@@ -27,7 +27,7 @@ enum class MassUnit(
 
     override val isMetric: Boolean get() = this == Kilograms
 
-    fun toKilograms(value: Float): Float = (value * kilogramsConversion).toFloat()
+    fun toKilograms(value: Double): Double = value * kilogramsConversion
 
-    fun toPounds(value: Float): Float = (value * poundsConversion).toFloat()
+    fun toPounds(value: Double): Double = value * poundsConversion
 }

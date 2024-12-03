@@ -94,20 +94,28 @@ class IntTextFieldState(
 }
 
 @Stable
-class FloatTextFieldState(
+class DoubleTextFieldState(
     private val formatter: Formatter,
     initialValue: String = "",
-    textValidator: TextValidator<Float>? = null,
+    textValidator: TextValidator<Double>? = null,
     onTextChange: (String) -> Unit = {},
-    onValueChange: (Float) -> Unit = {},
-    veto: (Float) -> Boolean = { false },
-    enabled: TextFieldState<Float>.() -> Boolean,
-) : TextFieldState<Float>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
-    override val defaultValue: Float = 0f
+    onValueChange: (Double) -> Unit = {},
+    veto: (Double) -> Boolean = { false },
+    enabled: TextFieldState<Double>.() -> Boolean,
+) : TextFieldState<Double>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
+    override val defaultValue: Double = 0.0
 
-    override fun toValue(text: String): Float = formatter.toFloatOrZero(text)
+    override fun toValue(text: String): Double? = formatter.toDoubleOrNull(text.ifBlank { "0" })
 
-    override fun toText(value: Float): String = formatter.toInputDecimalNumber(value)
+    override fun toText(value: Double): String = formatter.toInputDecimalNumber(value)
 }
 
 inline fun <reified R> TextFieldState<*>.getCondition(): R? = textValidator?.getTextValidatorElement(R::class.java)
+
+fun TextFieldState<Double>.updateValueBy(value: Double) {
+    updateValue(this.value + value)
+}
+
+fun TextFieldState<Int>.updateValueBy(value: Int) {
+    updateValue(this.value + value)
+}

@@ -41,7 +41,7 @@ class NewBodyMeasurementStateTest {
     private suspend fun getLatestEntry() =
         BodyMeasurementEntry(
             id = 1,
-            value = BodyMeasurementValue.Single(75f, MassUnit.Kilograms),
+            value = BodyMeasurementValue.SingleValue(75.0, MassUnit.Kilograms),
             formattedDate = formatter.getFormattedDate(LocalDateTime.now()),
         )
 
@@ -74,8 +74,8 @@ class NewBodyMeasurementStateTest {
     fun `Given latestEntry is null inputData holds 0 value`() {
         val sut = getSut()
         val inputData = sut.inputData.value
-        assertIs<NewBodyMeasurementState.InputData.Single>(inputData)
-        assertEquals(0f, inputData.textFieldState.value)
+        assertIs<NewBodyMeasurementState.InputData.SingleValue>(inputData)
+        assertEquals(0.0, inputData.textFieldState.value)
     }
 
     @Test
@@ -83,7 +83,7 @@ class NewBodyMeasurementStateTest {
         val latestEntry = getLatestEntry()
         val sut = getSut(bodyMeasurementWithLatestEntry = weightMeasurement.copy(latestEntry = latestEntry))
         val inputData = sut.inputData.value
-        assertIs<NewBodyMeasurementState.InputData.Single>(inputData)
+        assertIs<NewBodyMeasurementState.InputData.SingleValue>(inputData)
         assertEquals(latestEntry.value, inputData.toBodyMeasurementValue())
     }
 
@@ -128,7 +128,7 @@ class NewBodyMeasurementStateTest {
         var savedValue: BodyMeasurementValue? = null
         val sut = getSut(upsertBodyMeasurementEntry = { value, _ -> savedValue = value })
         val inputData = sut.inputData.value
-        assertIs<NewBodyMeasurementState.InputData.Single>(inputData)
+        assertIs<NewBodyMeasurementState.InputData.SingleValue>(inputData)
         inputData.textFieldState.updateText("75")
         assertFalse(inputData.isInvalid())
         sut.save(inputData)

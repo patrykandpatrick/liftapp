@@ -25,6 +25,12 @@ object Constants {
         const val NAME_MAX_CHARS = 60
         const val TYPING_DEBOUNCE_MILLIS = 500L
         const val CLEAR_ERROR_DELAY = 4000L
+
+        object Increment {
+            private const val BODY_WEIGHT_SHORT = .1
+            private const val BODY_WEIGHT_LONG = .5
+
+            fun getBodyWeight(long: Boolean) = if (long) BODY_WEIGHT_LONG else BODY_WEIGHT_SHORT
     }
 
     object Keys {

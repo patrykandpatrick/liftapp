@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,7 @@ import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.state.onClick
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
+import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.input.DatePicker
@@ -43,8 +43,7 @@ import com.patrykandpatryk.liftapp.core.ui.input.rememberDatePickerState
 import com.patrykandpatryk.liftapp.core.ui.input.rememberTimePickerState
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.domain.Constants.Input.INCREMENT_LONG
-import com.patrykandpatryk.liftapp.domain.Constants.Input.INCREMENT_SHORT
+import com.patrykandpatryk.liftapp.domain.Constants.Input.Increment
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
@@ -174,7 +173,7 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
 
 @Composable
 private fun NumberInput(
-    textFieldState: TextFieldState<Float>,
+    textFieldState: TextFieldState<Double>,
     unit: ValueUnit,
     isLast: Boolean,
     onSave: () -> Unit,
@@ -182,18 +181,14 @@ private fun NumberInput(
 ) {
     NumberInput(
         modifier = modifier,
-        value = textFieldState.text,
-        onValueChange = textFieldState::updateText,
+        textFieldState = textFieldState,
         hint = stringResource(id = R.string.value),
         suffix = stringResource(id = unit.stringResourceId),
         onMinusClick = { long ->
-            val updatedValue = textFieldState.value - getIncrement(long)
-            if (updatedValue >= 0) {
-                textFieldState.updateValue(updatedValue)
-            }
+            textFieldState.updateValueBy(-Increment.getBodyWeight(long))
         },
         onPlusClick = { long ->
-            textFieldState.updateValue(textFieldState.value + getIncrement(long))
+            textFieldState.updateValueBy(Increment.getBodyWeight(long))
         },
         keyboardActions = KeyboardActions(
             onDone = { onSave() },
@@ -202,12 +197,8 @@ private fun NumberInput(
             keyboardType = KeyboardType.Decimal,
             imeAction = if (isLast) ImeAction.Done else ImeAction.Next,
         ),
-        isError = textFieldState.hasError,
-        errorText = textFieldState.errorMessage?.let(::AnnotatedString),
     )
 }
-
-private fun getIncrement(long: Boolean) = if (long) INCREMENT_LONG else INCREMENT_SHORT
 
 @MultiDevicePreview
 @Composable
@@ -237,7 +228,7 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
                                     BodyMeasurementType.Weight,
                                     BodyMeasurementEntry(
                                         id = 0,
-                                        value = BodyMeasurementValue.Single(85f, MassUnit.Kilograms),
+                                        value = BodyMeasurementValue.SingleValue(85.0, MassUnit.Kilograms),
                                         formattedDate = formatter.getFormattedDate(LocalDateTime.now()),
                                     )
                                 )

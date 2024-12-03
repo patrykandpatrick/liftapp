@@ -118,16 +118,16 @@ class NewBodyMeasurementState(
         val inputValue = bodyMeasurementEntry?.value ?: bodyMeasurement.latestEntry?.value
 
         return if (bodyMeasurement.type == BodyMeasurementType.LengthTwoSides) {
-            val doubleValue = inputValue as? BodyMeasurementValue.Double
-            InputData.Double(
-                leftTextFieldState = textFieldStateManager.floatTextField(
+            val doubleValue = inputValue as? BodyMeasurementValue.DoubleValue
+            InputData.DoubleValue(
+                leftTextFieldState = textFieldStateManager.doubleTextField(
                     initialValue = doubleValue?.left.toStringOrEmpty(),
                     validators = {
                         nonEmpty()
                         valueInRange(allowedValueRange)
                     }
                 ),
-                rightTextFieldState = textFieldStateManager.floatTextField(
+                rightTextFieldState = textFieldStateManager.doubleTextField(
                     initialValue = doubleValue?.right.toStringOrEmpty(),
                     validators = {
                         nonEmpty()
@@ -137,9 +137,9 @@ class NewBodyMeasurementState(
                 unit = unit
             )
         } else {
-            InputData.Single(
-                textFieldState = textFieldStateManager.floatTextField(
-                    initialValue = (inputValue as? BodyMeasurementValue.Single)?.value.toStringOrEmpty(),
+            InputData.SingleValue(
+                textFieldState = textFieldStateManager.doubleTextField(
+                    initialValue = (inputValue as? BodyMeasurementValue.SingleValue)?.value.toStringOrEmpty(),
                     validators = {
                         nonEmpty()
                         valueInRange(allowedValueRange)
@@ -187,8 +187,8 @@ class NewBodyMeasurementState(
         fun toBodyMeasurementValue(): BodyMeasurementValue
 
         @Stable
-        data class Single(
-            val textFieldState: TextFieldState<Float>,
+        data class SingleValue(
+            val textFieldState: TextFieldState<Double>,
             override val unit: ValueUnit,
         ) : InputData {
             override fun isInvalid(): Boolean {
@@ -201,13 +201,13 @@ class NewBodyMeasurementState(
             }
 
             override fun toBodyMeasurementValue(): BodyMeasurementValue =
-                BodyMeasurementValue.Single(textFieldState.value, unit)
+                BodyMeasurementValue.SingleValue(textFieldState.value, unit)
         }
 
         @Stable
-        data class Double(
-            val leftTextFieldState: TextFieldState<Float>,
-            val rightTextFieldState: TextFieldState<Float>,
+        data class DoubleValue(
+            val leftTextFieldState: TextFieldState<Double>,
+            val rightTextFieldState: TextFieldState<Double>,
             override val unit: ValueUnit,
         ) : InputData {
             override fun isInvalid(): Boolean {
@@ -222,7 +222,7 @@ class NewBodyMeasurementState(
             }
 
             override fun toBodyMeasurementValue(): BodyMeasurementValue =
-                BodyMeasurementValue.Double(
+                BodyMeasurementValue.DoubleValue(
                     leftTextFieldState.value,
                     rightTextFieldState.value,
                     unit,
@@ -236,14 +236,14 @@ class NewBodyMeasurementState(
     }
 }
 
-inline fun NewBodyMeasurementState.InputData.forEachTextField(action: (textFieldState: TextFieldState<Float>, isLast: Boolean) -> Unit) {
+inline fun NewBodyMeasurementState.InputData.forEachTextField(action: (textFieldState: TextFieldState<Double>, isLast: Boolean) -> Unit) {
     when (this) {
-        is NewBodyMeasurementState.InputData.Double -> {
+        is NewBodyMeasurementState.InputData.DoubleValue -> {
             action(leftTextFieldState, false)
             action(rightTextFieldState, true)
         }
 
-        is NewBodyMeasurementState.InputData.Single -> {
+        is NewBodyMeasurementState.InputData.SingleValue -> {
             action(textFieldState, true)
         }
     }

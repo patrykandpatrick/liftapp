@@ -84,14 +84,14 @@ class Formatter(
     fun formatWeight(weight: Float, massUnit: MassUnit): String =
         "${formatNumber(weight, format = NumberFormat.Decimal)} ${stringProvider.getDisplayUnit(massUnit)}"
 
-    fun toFloatOrZero(value: String): Float =
+    fun toDoubleOrNull(value: String): Double? =
         try {
-            decimalInputFormat.parse(value)?.toFloat()
-        } catch (exception: ParseException) {
+            decimalInputFormat.parse(value)?.toDouble()
+        } catch (_: ParseException) {
             null
-        } ?: 0f
+        }
 
-    fun toInputDecimalNumber(value: Float): String = decimalInputFormat.format(value)
+    fun toInputDecimalNumber(value: Double): String = decimalInputFormat.format(value)
 
     fun isValidNumber(value: String): Boolean = decimalNumberRegex.matches(value)
 

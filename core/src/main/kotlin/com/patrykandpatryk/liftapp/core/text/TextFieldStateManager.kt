@@ -59,15 +59,15 @@ class TextFieldStateManager @Inject constructor(
         enabled = enabled,
     ).also { textFields.add(it) }
 
-    fun floatTextField(
+    fun doubleTextField(
         initialValue: String = "",
-        validators: TextValidationElementProvider<Float>.() -> Unit = {},
+        validators: TextValidationElementProvider<Double>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
-        onValueChange: (Float) -> Unit = {},
-        veto: (Float) -> Boolean = { false },
-        enabled: TextFieldState<Float>.() -> Boolean = { true },
-    ): FloatTextFieldState = FloatTextFieldState(
+        onValueChange: (Double) -> Unit = {},
+        veto: (Double) -> Boolean = { false },
+        enabled: TextFieldState<Double>.() -> Boolean = { true },
+    ): DoubleTextFieldState = DoubleTextFieldState(
         initialValue = savedStateHandle[savedStateKey] ?: initialValue,
         textValidator = validator(validators),
         onValueChange = onValueChange,

@@ -20,32 +20,32 @@ class UnitConverterImpl @Inject constructor(
     private val preferences: PreferenceRepository,
 ) : UnitConverter {
 
-    override suspend fun convertToPreferredUnit(from: LongDistanceUnit, value: Float): Float =
+    override suspend fun convertToPreferredUnit(from: LongDistanceUnit, value: Double): Double =
         when (getPreferredLongDistanceUnit()) {
             LongDistanceUnit.Kilometer -> from.toKilometers(value)
             LongDistanceUnit.Mile -> from.toMiles(value)
         }
 
-    override suspend fun convertToPreferredUnit(from: MediumDistanceUnit, value: Float): Float =
+    override suspend fun convertToPreferredUnit(from: MediumDistanceUnit, value: Double): Double =
         when (getPreferredMediumDistanceUnit()) {
             MediumDistanceUnit.Meter -> from.toMeters(value)
             MediumDistanceUnit.Foot -> from.toFeet(value)
         }
 
-    override suspend fun convertToPreferredUnit(from: ShortDistanceUnit, value: Float): Float =
+    override suspend fun convertToPreferredUnit(from: ShortDistanceUnit, value: Double): Double =
         when (getPreferredShortDistanceUnit()) {
             ShortDistanceUnit.Centimeter -> from.toCentimeters(value)
             ShortDistanceUnit.Inch -> from.toInch(value)
             else -> error(getTypeErrorMessage(unit = from))
         }
 
-    override suspend fun convertToPreferredUnit(from: MassUnit, value: Float): Float =
+    override suspend fun convertToPreferredUnit(from: MassUnit, value: Double): Double =
         when (getPreferredMassUnit()) {
             MassUnit.Kilograms -> from.toKilograms(value)
             MassUnit.Pounds -> from.toPounds(value)
         }
 
-    override suspend fun convertToPreferredUnitAndFormat(from: ValueUnit, vararg values: Float): String {
+    override suspend fun convertToPreferredUnitAndFormat(from: ValueUnit, vararg values: Double): String {
         val convertedValues = when (from) {
             is MassUnit -> values.map { convertToPreferredUnit(from = from, value = it) }.toTypedArray()
             is LongDistanceUnit -> values.map { convertToPreferredUnit(from = from, value = it) }.toTypedArray()

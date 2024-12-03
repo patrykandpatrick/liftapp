@@ -27,9 +27,9 @@ enum class LongDistanceUnit(
 
     override val isMetric: Boolean get() = this == Kilometer
 
-    fun toKilometers(value: Float): Float = (value * kilometerConversion).toFloat()
+    fun toKilometers(value: Double): Double = value * kilometerConversion
 
-    fun toMiles(value: Float): Float = (value * mileConversion).toFloat()
+    fun toMiles(value: Double): Double = value * mileConversion
 
     fun getCorrespondingMediumDistanceUnit(): MediumDistanceUnit = when (this) {
         Kilometer -> MediumDistanceUnit.Meter
@@ -66,9 +66,9 @@ enum class MediumDistanceUnit(
 
     override val isMetric: Boolean get() = this == Meter
 
-    fun toMeters(value: Float): Float = (value * meterConversion).toFloat()
+    fun toMeters(value: Double): Double = value * meterConversion
 
-    fun toFeet(value: Float): Float = (value * footConversion).toFloat()
+    fun toFeet(value: Double): Double = value * footConversion
 }
 
 @Serializable
@@ -95,7 +95,7 @@ enum class ShortDistanceUnit(
 
     override val isMetric: Boolean get() = this == Centimeter
 
-    fun toCentimeters(value: Float): Float = (value * centimeterConversion).toFloat()
+    fun toCentimeters(value: Double): Double = value * centimeterConversion
 
-    fun toInch(value: Float): Float = (value * inchConversion).toFloat()
+    fun toInch(value: Double): Double = value * inchConversion
 }

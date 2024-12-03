@@ -41,7 +41,7 @@ class JsonConvertersTest {
 
     @Test
     fun `Conversion of BodyMeasurementValue#Single to String and back yields the same result`() {
-        val input = BodyMeasurementValue.Single(Random.nextFloat(), MassUnit.Kilograms)
+        val input = BodyMeasurementValue.SingleValue(Random.nextDouble(), MassUnit.Kilograms)
         val serializedInput = converter.toString(input)
         val deserializedInput = converter.toBodyValues(serializedInput)
         assertEquals(input, deserializedInput)
@@ -49,7 +49,7 @@ class JsonConvertersTest {
 
     @Test
     fun `Conversion of BodyMeasurementValue#Double to String and back yields the same result`() {
-        val input = BodyMeasurementValue.Double(Random.nextFloat(), Random.nextFloat(), MassUnit.Kilograms)
+        val input = BodyMeasurementValue.DoubleValue(Random.nextDouble(), Random.nextDouble(), MassUnit.Kilograms)
         val serializedInput = converter.toString(input)
         val deserializedInput = converter.toBodyValues(serializedInput)
         assertEquals(input, deserializedInput)
