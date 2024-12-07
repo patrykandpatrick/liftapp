@@ -14,6 +14,7 @@ data class Dimens(
     val card: Card = Card(),
     val chip: Chip = Chip(),
     val dialog: Dialog = Dialog(),
+    val divider: Divider = Divider(),
     val elevation: Elevation = Elevation(),
     val grid: Grid = Grid(),
     val height: Height = Height(),
@@ -146,6 +147,12 @@ data class Dimens(
         val velocityThreshold: Dp = 124.dp,
         val backgroundVisibilityThreshold: Dp = 56.dp,
         val swipeElevation: Dp = 2.dp,
+    )
+
+    @Immutable
+    data class Divider(
+        val sinPeriodLength: Dp = 3.dp,
+        val sinHeight: Dp = 6.dp,
     )
 }
 
