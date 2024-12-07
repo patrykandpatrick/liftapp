@@ -4,6 +4,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.validation.TextValidator
 import com.patrykandpatryk.liftapp.domain.validation.ValidationResult
@@ -19,14 +22,17 @@ abstract class TextFieldState<T : Any>(
     protected val veto: (T) -> Boolean,
     protected val enabled: TextFieldState<T>.() -> Boolean,
 ) : ValueProvider<T> {
-    protected val _text = mutableStateOf(initialText)
+    var textFieldValue by mutableStateOf(TextFieldValue(initialText))
+        protected set
     protected val _errorMessage = mutableStateOf<String?>(null)
 
-    override val value: T get() = toValue(_text.value) ?: defaultValue
+    override val value: T get() = toValue(text) ?: defaultValue
     abstract val defaultValue: T
-    val text: String by _text
+    val text: String get() = textFieldValue.text
     val errorMessage: String? by _errorMessage
     val hasError by derivedStateOf { _errorMessage.value != null }
+
+    val isValid: Boolean get() = validationResult is ValidationResult.Valid
 
     private val validationResult
         get() = textValidator?.validate(value, text) ?: ValidationResult.Valid(value)
@@ -36,17 +42,28 @@ abstract class TextFieldState<T : Any>(
     abstract fun toText(value: T): String
 
     fun updateText(text: String) {
-        updateText(text, true)
+        updateText(textFieldValue = textFieldValue.copy(text), fromUser = true)
+    }
+
+    fun updateText(textFieldValue: TextFieldValue) {
+        updateText(textFieldValue = textFieldValue, fromUser = true)
     }
 
     fun updateValue(value: T) {
-        updateText(toText(value), false)
+        val text = toText(value)
+        updateText(
+            textFieldValue = textFieldValue.copy(
+                text = text,
+                selection = TextRange(text.length)
+            ),
+            fromUser = false,
+        )
     }
 
-    private fun updateText(text: String, fromUser: Boolean) {
-        val convertedValue = toValue(text) ?: return
+    private fun updateText(textFieldValue: TextFieldValue, fromUser: Boolean) {
+        val convertedValue = toValue(textFieldValue.text) ?: return
         if (veto(convertedValue)) return
-        _text.value = text
+        this.textFieldValue = textFieldValue
         updateErrorMessages()
         if (fromUser) {
             onTextChange(text)
@@ -68,7 +85,7 @@ class StringTextFieldState(
     onTextChange: (String) -> Unit = {},
     onValueChange: (String) -> Unit = {},
     veto: (String) -> Boolean = { false },
-    enabled: TextFieldState<String>.() -> Boolean,
+    enabled: TextFieldState<String>.() -> Boolean = { true },
 ) : TextFieldState<String>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
     override val defaultValue: String = ""
 
@@ -84,7 +101,7 @@ class IntTextFieldState(
     onTextChange: (String) -> Unit = {},
     onValueChange: (Int) -> Unit = {},
     veto: (Int) -> Boolean = { false },
-    enabled: TextFieldState<Int>.() -> Boolean,
+    enabled: TextFieldState<Int>.() -> Boolean = { true },
 ) : TextFieldState<Int>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
     override val defaultValue: Int = 0
 
@@ -101,7 +118,7 @@ class DoubleTextFieldState(
     onTextChange: (String) -> Unit = {},
     onValueChange: (Double) -> Unit = {},
     veto: (Double) -> Boolean = { false },
-    enabled: TextFieldState<Double>.() -> Boolean,
+    enabled: TextFieldState<Double>.() -> Boolean = { true },
 ) : TextFieldState<Double>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
     override val defaultValue: Double = 0.0
 

@@ -20,19 +20,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewResource
+import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.VerticalDivider
 import com.patrykandpatryk.liftapp.core.ui.button.IconButton
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.domain.validation.valueInRange
 
 @Composable
 fun NumberInput(
-    value: String,
-    onValueChange: (String) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     onPlusClick: (isLong: Boolean) -> Unit,
     onMinusClick: (isLong: Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -128,9 +132,8 @@ fun NumberInput(
 }
 
 @Composable
-fun NumberInput(
-    value: String,
-    onValueChange: (String) -> Unit,
+fun <T : Any> NumberInput(
+    textFieldState: TextFieldState<T>,
     onPlusClick: (isLong: Boolean) -> Unit,
     onMinusClick: (isLong: Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -139,14 +142,12 @@ fun NumberInput(
     suffix: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    isError: Boolean = false,
-    errorText: AnnotatedString? = null,
     supportingText: AnnotatedString? = null,
 ) {
     Column(modifier = modifier) {
         NumberInput(
-            value = value,
-            onValueChange = onValueChange,
+            value = textFieldState.textFieldValue,
+            onValueChange = textFieldState::updateText,
             onPlusClick = onPlusClick,
             onMinusClick = onMinusClick,
             hint = hint,
@@ -154,13 +155,13 @@ fun NumberInput(
             suffix = suffix,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            isError = isError,
+            isError = textFieldState.hasError,
         )
 
         SupportingText(
-            value = value,
+            value = textFieldState.text,
             supportingText = supportingText,
-            errorText = errorText,
+            errorText = textFieldState.errorMessage?.let(::AnnotatedString),
         )
     }
 }
@@ -172,7 +173,7 @@ fun PreviewNumberInput() {
         Surface {
             NumberInput(
                 modifier = Modifier.padding(16.dp),
-                value = "40",
+                value = TextFieldValue("40"),
                 hint = "Weight",
                 onValueChange = {},
                 onPlusClick = {},
@@ -189,13 +190,15 @@ fun PreviewNumberInputWithError() {
         Surface {
             NumberInput(
                 modifier = Modifier.padding(16.dp),
-                value = "40",
+                textFieldState = PreviewResource
+                    .textFieldStateManager()
+                    .doubleTextField(
+                        initialValue = "40",
+                        validators = { valueInRange(50.0, 100.0) },
+                    ),
                 hint = "Weight",
-                onValueChange = {},
                 onPlusClick = {},
                 onMinusClick = {},
-                isError = true,
-                errorText = AnnotatedString("Error message."),
             )
         }
     }
@@ -208,7 +211,7 @@ fun PreviewNumberInputWithPrefixAndSuffix() {
         Surface {
             NumberInput(
                 modifier = Modifier.padding(16.dp),
-                value = "40",
+                value = TextFieldValue("40"),
                 hint = "Weight",
                 onValueChange = {},
                 onPlusClick = {},
