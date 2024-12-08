@@ -11,10 +11,12 @@ object Constants {
         const val ID_NOT_SET = 0L
     }
 
-    object Input {
-        const val INCREMENT_SHORT = 0.1f
-        const val INCREMENT_LONG = 0.5f
+    object Format {
+        const val DECIMAL_PATTERN = "0.##"
+        const val INTEGER_PATTERN = "0"
+    }
 
+    object Input {
         const val BODY_MIN_VALUE = .1
         const val BODY_MAX_WEIGHT_METRIC = 315.0
         const val BODY_MAX_WEIGHT_IMPERIAL = 700.0
@@ -29,8 +31,29 @@ object Constants {
         object Increment {
             private const val BODY_WEIGHT_SHORT = .1
             private const val BODY_WEIGHT_LONG = .5
+            private const val WEIGHT_SHORT = .25
+            private const val WEIGHT_LONG = 1.0
+            private const val REPS_SHORT = 1
+            private const val REPS_LONG = 5
+            private const val DISTANCE_SHORT = 0.25
+            private const val DISTANCE_LONG = 1.0
+            private const val CALORIES_SHORT = 25.0
+            private const val CALORIES_LONG = 100.0
 
             fun getBodyWeight(long: Boolean) = if (long) BODY_WEIGHT_LONG else BODY_WEIGHT_SHORT
+
+            fun getWeight(long: Boolean) = if (long) WEIGHT_LONG else WEIGHT_SHORT
+
+            fun getReps(long: Boolean) = if (long) REPS_LONG else REPS_SHORT
+
+            fun getDistance(long: Boolean) = if (long) DISTANCE_LONG else DISTANCE_SHORT
+
+            fun getCalories(long: Boolean) = if (long) CALORIES_LONG else CALORIES_SHORT
+        }
+    }
+
+    object Workout {
+        const val EXERCISE_CHANGE_DELAY = 500L
     }
 
     object Keys {

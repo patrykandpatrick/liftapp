@@ -20,6 +20,12 @@ class UnitConverterImpl @Inject constructor(
     private val preferences: PreferenceRepository,
 ) : UnitConverter {
 
+    override fun convert(from: MassUnit, to: MassUnit, value: Double): Double =
+        when (to) {
+            MassUnit.Kilograms -> from.toKilograms(value)
+            MassUnit.Pounds -> from.toPounds(value)
+        }
+
     override suspend fun convertToPreferredUnit(from: LongDistanceUnit, value: Double): Double =
         when (getPreferredLongDistanceUnit()) {
             LongDistanceUnit.Kilometer -> from.toKilometers(value)
@@ -40,10 +46,7 @@ class UnitConverterImpl @Inject constructor(
         }
 
     override suspend fun convertToPreferredUnit(from: MassUnit, value: Double): Double =
-        when (getPreferredMassUnit()) {
-            MassUnit.Kilograms -> from.toKilograms(value)
-            MassUnit.Pounds -> from.toPounds(value)
-        }
+        convert(from, getPreferredMassUnit(), value)
 
     override suspend fun convertToPreferredUnitAndFormat(from: ValueUnit, vararg values: Double): String {
         val convertedValues = when (from) {

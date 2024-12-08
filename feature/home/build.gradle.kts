@@ -11,7 +11,7 @@ plugins {
 
 dependencies {
     add("implementation", project(":navigation"))
-    project.subprojects.forEach { project -> add("implementation", project) }
+    project.subprojects.forEach { project -> add("api", project) }
 }
 
 android {

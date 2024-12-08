@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0f933d653730a3bcce299cb60bdafdfb",
+    "identityHash": "242747f64fddc167af50c9b279fde897",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -390,7 +390,7 @@
       },
       {
         "tableName": "workout",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_routine_id` INTEGER NOT NULL, `workout_name` TEXT NOT NULL, `workout_date` TEXT NOT NULL, `workout_duration` INTEGER NOT NULL, `workout_notes` TEXT NOT NULL, FOREIGN KEY(`workout_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_routine_id` INTEGER NOT NULL, `workout_name` TEXT NOT NULL, `workout_date` TEXT NOT NULL, `workout_duration` INTEGER NOT NULL, `workout_notes` TEXT NOT NULL, `workout_body_weight` TEXT, FOREIGN KEY(`workout_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -427,6 +427,12 @@
             "columnName": "workout_notes",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "bodyWeight",
+            "columnName": "workout_body_weight",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -435,7 +441,17 @@
             "workout_id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_workout_workout_routine_id",
+            "unique": false,
+            "columnNames": [
+              "workout_routine_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workout_workout_routine_id` ON `${TABLE_NAME}` (`workout_routine_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "routine",
@@ -625,13 +641,13 @@
             "notNull": true
           },
           {
-            "fieldPath": "workoutId",
+            "fieldPath": "workoutID",
             "columnName": "exercise_set_workout_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "exerciseId",
+            "fieldPath": "exerciseID",
             "columnName": "exercise_set_exercise_id",
             "affinity": "INTEGER",
             "notNull": true
@@ -749,7 +765,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0f933d653730a3bcce299cb60bdafdfb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '242747f64fddc167af50c9b279fde897')"
     ]
   }
 }

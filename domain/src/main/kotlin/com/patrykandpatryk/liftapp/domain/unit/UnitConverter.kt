@@ -2,6 +2,8 @@ package com.patrykandpatryk.liftapp.domain.unit
 
 interface UnitConverter {
 
+    fun convert(from: MassUnit, to: MassUnit, value: Double): Double
+
     suspend fun convertToPreferredUnit(from: LongDistanceUnit, value: Double): Double
 
     suspend fun convertToPreferredUnit(from: MediumDistanceUnit, value: Double): Double

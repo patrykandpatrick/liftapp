@@ -1,9 +1,14 @@
 apply plugin: "com.android.library"
 apply from: "$rootDir/gradle/ui-module-base.gradle"
 
-dependencies {
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "kotlinx-serialization"
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
+dependencies {
     implementation project(":core")
+    implementation project(":navigation")
 
     implementation libs.bundles.opto
 }

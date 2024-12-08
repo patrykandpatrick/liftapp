@@ -81,9 +81,14 @@ val chartStyle: ChartStyle
 data object Alpha{
     const val disabled: Float = 0.38f
     const val standard: Float = 1f
+    const val unfocused: Float = 0.6f
 
     @Stable
-    fun get(enabled: Boolean): Float = if (enabled) standard else disabled
+    fun get(enabled: Boolean = true, focused: Boolean = true): Float = when {
+        !enabled -> disabled
+        !focused -> unfocused
+        else -> standard
+    }
 }
 
 @Composable

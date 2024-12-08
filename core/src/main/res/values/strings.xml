@@ -27,12 +27,14 @@
     <string name="goal_rest_time">Rest time</string>
     <string name="and_in_a_list">&amp;</string>
     <string name="list_remove">Remove</string>
+    <string name="energy_unit_kcal">kcal</string>
 
     <string name="multiply_character" translatable="false">×</string>
     <string name="goal_format_short">%1$s–%2$s × %3$s</string>
     <string name="goal_format_long">%1$s–%2$s %3$s × %4$s %5$s</string>
     <string name="goal_format_long_single_rep">%1$s %2$s × %3$s %4$s</string>
 
+    <string name="exercise_set_set_index">Set %d</string>
     <string name="exercise_set_not_completed">Not completed</string>
     <!-- Example: 80 kg × 10 reps -->
     <string name="exercise_set_format_calisthenics">%1$s %2$s × %3$s %4$s</string>
@@ -42,6 +44,7 @@
     <string name="exercise_set_format_reps">%1$s %2$s</string>
     <!-- Example: 100 kg × 10 reps -->
     <string name="exercise_set_format_weight">%1$s %2$s × %3$s %4$s</string>
+    <string name="exercise_set_format_cardio">%1$s ꞏ %2$s ꞏ %3$s</string>
 
     <string name="muscle_abductors">Abductors</string>
     <string name="muscle_abs">Abs</string>
@@ -68,6 +71,13 @@
     <string name="exercise_type_reps">Reps</string>
     <string name="exercise_type_cardio">Cardio</string>
     <string name="exercise_type_time">Time</string>
+
+    <string name="exercise_set_input_weight">Weight</string>
+    <string name="exercise_set_input_body_weight">Body weight</string>
+    <string name="exercise_set_input_reps">Reps</string>
+    <string name="exercise_set_input_duration">Duration</string>
+    <string name="exercise_set_input_distance">Distance</string>
+    <string name="exercise_set_input_calories">Calories</string>
 
     <string name="routine_delete_message">This won’t delete any exercises.</string>
     <string name="exercise_delete_message">This will delete all assigned sets.</string>
@@ -154,6 +164,9 @@
     <string name="date_format_long">EEEE, d MMMM</string>
     <string name="date_format_full">dd.MM.yyyy</string>
     <string name="date_format_edit">d MMMM YYYY</string>
+    <string name="time_hours_short">h</string>
+    <string name="time_minutes_short">m</string>
+    <string name="time_seconds_short">s</string>
 
     <string name="content_description_add_set">Add set</string>
     <string name="content_description_remove_set">Remove set</string>

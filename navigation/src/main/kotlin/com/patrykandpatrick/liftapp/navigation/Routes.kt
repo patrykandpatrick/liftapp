@@ -68,16 +68,4 @@ object Routes {
 
     @Serializable
     object OneRepMax
-
-    @Serializable
-    class Workout internal constructor(
-        val routineID: Long = ID_NOT_SET,
-        val workoutID: Long = ID_NOT_SET,
-    ) {
-        companion object {
-            fun new(routineID: Long) = Workout(routineID)
-
-            fun edit(workoutID: Long) = Workout(workoutID = workoutID)
-        }
-    }
 }

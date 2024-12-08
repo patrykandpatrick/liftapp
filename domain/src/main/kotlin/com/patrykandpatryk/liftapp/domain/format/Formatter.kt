@@ -1,5 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.format
 
+import com.patrykandpatryk.liftapp.domain.Constants.Format.DECIMAL_PATTERN
+import com.patrykandpatryk.liftapp.domain.Constants.Format.INTEGER_PATTERN
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -29,13 +31,13 @@ class Formatter(
 
     private val decimalOutputFormat = DecimalFormat("#,###.##", decimalSymbols)
 
-    private val decimalInputFormat = DecimalFormat("#.##", decimalSymbols)
+    private val decimalInputFormat = DecimalFormat(DECIMAL_PATTERN, decimalSymbols)
 
-    private val integerOutputFormat = DecimalFormat("#,###", decimalSymbols)
+    private val integerOutputFormat = DecimalFormat(INTEGER_PATTERN, decimalSymbols)
 
     private val percentFormat = DecimalFormat("#%")
 
-    private val decimalNumberRegex = """\d+${decimalSymbols.decimalSeparator}?\d*""".toRegex()
+    private val decimalNumberRegex = """-?\d+${decimalSymbols.decimalSeparator}?\d*""".toRegex()
 
     private suspend fun formatDate(localDateTime: LocalDateTime, dateFormat: DateFormat): String =
         localDateTime.format(DateTimeFormatter.ofPattern(dateFormat.getPattern()))

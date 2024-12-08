@@ -111,6 +111,22 @@ class IntTextFieldState(
 }
 
 @Stable
+class LongTextFieldState(
+    initialValue: String = "",
+    textValidator: TextValidator<Long>? = null,
+    onTextChange: (String) -> Unit = {},
+    onValueChange: (Long) -> Unit = {},
+    veto: (Long) -> Boolean = { false },
+    enabled: TextFieldState<Long>.() -> Boolean = { true },
+) : TextFieldState<Long>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
+    override val defaultValue: Long = 0
+
+    override fun toValue(text: String): Long? = text.ifBlank { "0" }.toLongOrNull()
+
+    override fun toText(value: Long): String = value.toString()
+}
+
+@Stable
 class DoubleTextFieldState(
     private val formatter: Formatter,
     initialValue: String = "",

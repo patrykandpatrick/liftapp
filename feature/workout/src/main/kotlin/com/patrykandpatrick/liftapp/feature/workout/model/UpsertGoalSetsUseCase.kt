@@ -1,21 +1,22 @@
-package com.patrykandpatryk.liftapp.domain.workout
+package com.patrykandpatrick.liftapp.feature.workout.model
 
+import com.patrykandpatryk.liftapp.domain.workout.UpsertWorkoutGoalContract
 import javax.inject.Inject
 
 class UpsertGoalSetsUseCase @Inject constructor(
-    private val workoutRepository: WorkoutRepository
+    private val contract: UpsertWorkoutGoalContract,
 ) {
     suspend operator fun invoke(
         workoutID: Long,
-        exercise: Workout.Exercise,
-        sets: Int,
+        exercise: EditableWorkout.Exercise,
+        delta: Int,
     ) {
-        workoutRepository.upsertWorkoutGoal(
+        contract.upsertWorkoutGoal(
             workoutID = workoutID,
             exerciseID = exercise.id,
             minReps = exercise.goal.minReps,
             maxReps = exercise.goal.maxReps,
-            sets = sets,
+            sets = (exercise.goal.sets + delta).coerceAtLeast(1),
             breakDurationMillis = exercise.goal.breakDuration.inWholeMilliseconds,
         )
     }

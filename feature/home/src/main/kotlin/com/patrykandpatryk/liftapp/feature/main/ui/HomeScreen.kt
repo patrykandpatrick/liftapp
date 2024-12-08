@@ -19,7 +19,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
@@ -41,15 +41,15 @@ import com.patrykandpatryk.liftapp.feature.dashboard.ui.DashboardScreen
 import com.patrykandpatryk.liftapp.feature.exercises.ui.ExerciseListScreen
 import com.patrykandpatryk.liftapp.feature.main.HomeViewModel
 import com.patrykandpatryk.liftapp.feature.main.navigation.Home
+import com.patrykandpatryk.liftapp.feature.main.navigation.HomeNavigator
 import com.patrykandpatryk.liftapp.feature.main.navigation.HomeRoute
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
-import com.patrykandpatryk.liftapp.feature.main.navigation.rememberHomeNavigator
 import com.patrykandpatryk.liftapp.feature.more.ui.MoreScreen
 import com.patrykandpatryk.liftapp.feature.routines.RoutineListScreen
 
 @Composable
-fun Home(
-    mainNavController: NavController,
+fun HomeScreen(
+    homeNavigator: HomeNavigator,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
@@ -57,7 +57,7 @@ fun Home(
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
     HomeScaffold(
-        mainNavController = mainNavController,
+        homeNavigator = homeNavigator,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
     )
@@ -65,12 +65,11 @@ fun Home(
 
 @Composable
 private fun HomeScaffold(
-    mainNavController: NavController,
+    homeNavigator: HomeNavigator,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
-    val homeNavigator = rememberHomeNavigator(navController = mainNavController)
 
     Scaffold(
         modifier = modifier,
@@ -182,7 +181,7 @@ fun HomePreview() {
     LiftAppTheme {
         HomeScaffold(
             snackbarHostState = remember { SnackbarHostState() },
-            mainNavController = NavController(LocalContext.current),
+            homeNavigator = interfaceStub(),
         )
     }
 }

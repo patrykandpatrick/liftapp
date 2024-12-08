@@ -14,11 +14,11 @@ import kotlin.test.assertEquals
 class UnitConverterTest {
 
     private val testedValues = arrayOf(
-        1f,
-        4.2f,
-        9.99f,
-        69f,
-        123.45f,
+        1.0,
+        4.2,
+        9.99,
+        69.0,
+        123.45,
     )
 
     private val preferenceRepository = TestPreferenceRepository()
@@ -109,7 +109,7 @@ class UnitConverterTest {
         }
     }
 
-    private fun Float.convert(
+    private fun Double.convert(
         from: MassUnit,
         to: MassUnit,
     ) = runBlocking {
@@ -127,7 +127,7 @@ class UnitConverterTest {
         )
     }
 
-    private fun Float.convert(
+    private fun Double.convert(
         from: LongDistanceUnit,
         to: LongDistanceUnit,
     ) = runBlocking {

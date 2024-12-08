@@ -59,6 +59,26 @@ class TextFieldStateManager @Inject constructor(
         enabled = enabled,
     ).also { textFields.add(it) }
 
+    fun longTextField(
+        initialValue: String = "",
+        validators: TextValidationElementProvider<Long>.() -> Unit = {},
+        savedStateKey: String = generateSavedStateKey(),
+        onTextChange: (String) -> Unit = {},
+        onValueChange: (Long) -> Unit = {},
+        veto: (Long) -> Boolean = { false },
+        enabled: TextFieldState<Long>.() -> Boolean = { true },
+    ): LongTextFieldState = LongTextFieldState(
+        initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+        textValidator = validator(validators),
+        onTextChange = {
+            savedStateHandle[savedStateKey] = it
+            onTextChange(it)
+        },
+        onValueChange = onValueChange,
+        veto = veto,
+        enabled = enabled,
+    ).also { textFields.add(it) }
+
     fun doubleTextField(
         initialValue: String = "",
         validators: TextValidationElementProvider<Double>.() -> Unit = {},

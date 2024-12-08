@@ -81,7 +81,7 @@ class MainNavigator(private val navController: NavController) :
         }
 
         override fun newWorkout() {
-            navController.navigate(Routes.Workout.new(routineID))
+            navController.navigate(WorkoutRouteData.new(routineID))
         }
     }
 }

@@ -6,6 +6,7 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import kotlinx.serialization.encodeToString
@@ -52,4 +53,10 @@ class JsonConverters @Inject constructor(
 
     @TypeConverter
     fun toMassUnit(string: String): MassUnit = json.decodeFromString(string)
+
+    @TypeConverter
+    fun toString(longDistanceUnit: LongDistanceUnit): String = json.encodeToString(longDistanceUnit)
+
+    @TypeConverter
+    fun toLongDistanceUnit(string: String): LongDistanceUnit = json.decodeFromString(string)
 }

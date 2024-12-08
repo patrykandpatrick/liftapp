@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavDestinationBuilder
 import androidx.navigation.NavGraphBuilder
@@ -21,7 +20,8 @@ import androidx.navigation.get
 import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
-import com.patrykandpatrick.liftapp.feature.workout.navigator.WorkoutNavigator
+import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
+import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
@@ -34,7 +34,8 @@ import com.patrykandpatryk.liftapp.feature.exercise.navigation.ExerciseDetailsNa
 import com.patrykandpatryk.liftapp.feature.exercise.ui.ExerciseDetails
 import com.patrykandpatryk.liftapp.feature.exercises.navigation.ExerciseListNavigator
 import com.patrykandpatryk.liftapp.feature.exercises.ui.ExerciseListScreen
-import com.patrykandpatryk.liftapp.feature.main.ui.Home
+import com.patrykandpatryk.liftapp.feature.main.navigation.HomeNavigator
+import com.patrykandpatryk.liftapp.feature.main.ui.HomeScreen
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
@@ -45,6 +46,7 @@ import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
 import com.patrykandpatryk.liftapp.navigation.MainNavigator
+import com.patrykandpatryk.liftapp.navigation.rememberHomeNavigator
 import com.patrykandpatryk.liftapp.navigation.rememberMainNavigator
 import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
 import kotlin.reflect.KClass
@@ -58,6 +60,7 @@ fun Root(
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
     val mainNavigator = rememberMainNavigator(navController)
+    val homeNavigator = rememberHomeNavigator(navController)
 
     LiftAppTheme(darkTheme = darkTheme) {
         ModalBottomSheetLayout(
@@ -70,7 +73,7 @@ fun Root(
                 startDestination = Routes.Home,
                 modifier = modifier,
             ) {
-                addHome(navController)
+                addHome(homeNavigator)
                 addAbout()
                 addSettings(mainNavigator)
                 addOneRepMax(mainNavigator)
@@ -88,9 +91,9 @@ fun Root(
     }
 }
 
-fun NavGraphBuilder.addHome(mainNavController: NavController) {
+fun NavGraphBuilder.addHome(homeNavigator: HomeNavigator) {
     composable<Routes.Home> {
-        Home(mainNavController)
+        HomeScreen(homeNavigator)
     }
 }
 
@@ -173,13 +176,8 @@ fun NavGraphBuilder.addOneRepMax(navigator: OneRepMaxNavigator) {
 }
 
 fun NavGraphBuilder.addWorkout(navigator: WorkoutNavigator) {
-    composable<Routes.Workout> { backStackEntry ->
-        val args = backStackEntry.toRoute<Routes.Workout>()
-        WorkoutScreen(
-            routineID = args.routineID,
-            workoutID = args.workoutID,
-            navigator = navigator,
-        )
+    composable<WorkoutRouteData> { backStackEntry ->
+        WorkoutScreen(navigator = navigator)
     }
 }
 
