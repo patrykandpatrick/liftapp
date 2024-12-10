@@ -82,7 +82,7 @@ class Formatter(
     }
 
     fun formatWeight(weight: Float, massUnit: MassUnit): String =
-        "${formatNumber(weight, format = NumberFormat.Decimal)} ${stringProvider.getDisplayUnit(massUnit)}"
+        "${formatNumber(weight, format = NumberFormat.Decimal)}${stringProvider.getDisplayUnit(massUnit)}"
 
     fun toDoubleOrNull(value: String): Double? =
         try {
