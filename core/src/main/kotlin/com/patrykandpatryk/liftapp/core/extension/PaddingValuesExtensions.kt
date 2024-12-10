@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 
 @Composable
 @ReadOnlyComposable
@@ -19,6 +20,10 @@ fun PaddingValues.calculateStartPadding(): Dp =
 @ReadOnlyComposable
 fun PaddingValues.calculateEndPadding(): Dp =
     calculateEndPadding(LocalLayoutDirection.current)
+
+fun PaddingValues.horizontal(): Dp = calculateStartPadding(LayoutDirection.Ltr) + calculateEndPadding(LayoutDirection.Ltr)
+
+fun PaddingValues.vertical(): Dp = calculateTopPadding() + calculateBottomPadding()
 
 @Composable
 @ReadOnlyComposable

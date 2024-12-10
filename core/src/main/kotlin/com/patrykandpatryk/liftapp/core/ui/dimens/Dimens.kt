@@ -92,6 +92,9 @@ data class Dimens(
     @Immutable
     data class Input(
         val nameMaxLines: Int = 3,
+        val cornerRadius: Dp = 4.dp,
+        val labelStartMargin: Dp = 12.dp,
+        val labelHorizontalPadding: Dp = 4.dp,
     )
 
     @Immutable
