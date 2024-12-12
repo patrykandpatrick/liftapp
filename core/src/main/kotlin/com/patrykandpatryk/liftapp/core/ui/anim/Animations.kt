@@ -18,10 +18,6 @@ fun slideAndFadeIn(
     springDampingRatio: Float = ENTER_TRANSITION_SPRING_DAMPING_RATIO,
     fadeHeightDivider: Int = ENTER_TRANSITION_FADE_HEIGHT_DIVIDER,
 ): EnterTransition =
-    slideIn(
-        animationSpec = spring(dampingRatio = springDampingRatio),
-    ) { fullSize ->
+    slideIn(animationSpec = spring(dampingRatio = springDampingRatio)) { fullSize ->
         IntOffset(x = 0, y = fullSize.height / fadeHeightDivider)
-    } + fadeIn(
-        animationSpec = tween(fadeDuration),
-    )
+    } + fadeIn(animationSpec = tween(fadeDuration))

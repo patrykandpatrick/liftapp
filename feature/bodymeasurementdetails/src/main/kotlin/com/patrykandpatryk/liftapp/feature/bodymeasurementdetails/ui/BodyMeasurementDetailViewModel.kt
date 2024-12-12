@@ -26,7 +26,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @HiltViewModel(assistedFactory = BodyMeasurementDetailViewModel.Factory::class)
-class BodyMeasurementDetailViewModel @AssistedInject constructor(
+class BodyMeasurementDetailViewModel
+@AssistedInject
+constructor(
     @Assisted bodyMeasurementID: Long,
     repository: BodyMeasurementRepository,
     private val exceptionHandler: CoroutineExceptionHandler,
@@ -39,19 +41,22 @@ class BodyMeasurementDetailViewModel @AssistedInject constructor(
 
     private val expandedItemId = MutableStateFlow<Long?>(null)
 
-    override val state: StateFlow<ScreenState> = combine(
-        repository.getBodyMeasurement(bodyMeasurementID),
-        repository.getBodyMeasurementEntries(bodyMeasurementID),
-        expandedItemId,
-        transform = ::mapPopulatedState,
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = ScreenState.Loading(
-            bodyMeasurementID = bodyMeasurementID,
-            chartEntryModelProducer = chartEntryModelProducer,
-        ),
-    )
+    override val state: StateFlow<ScreenState> =
+        combine(
+                repository.getBodyMeasurement(bodyMeasurementID),
+                repository.getBodyMeasurementEntries(bodyMeasurementID),
+                expandedItemId,
+                transform = ::mapPopulatedState,
+            )
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue =
+                    ScreenState.Loading(
+                        bodyMeasurementID = bodyMeasurementID,
+                        chartEntryModelProducer = chartEntryModelProducer,
+                    ),
+            )
 
     override val events: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 1)
 
@@ -59,30 +64,34 @@ class BodyMeasurementDetailViewModel @AssistedInject constructor(
         bodyMeasurement: BodyMeasurement,
         entries: List<BodyMeasurementEntry>,
         expandedItemId: Long?,
-    ): ScreenState.Populated = withContext(exceptionHandler) {
-        chartEntryModelProducer.setEntries(chartEntryMapper(entries))
+    ): ScreenState.Populated =
+        withContext(exceptionHandler) {
+            chartEntryModelProducer.setEntries(chartEntryMapper(entries))
 
-        ScreenState.Populated(
-            bodyMeasurementID = bodyMeasurement.id,
-            name = bodyMeasurement.name,
-            entries = entries.map { entry ->
-                ScreenState.Entry(
-                    id = entry.id,
-                    value = formatBodyMeasurementValueToString(entry.value),
-                    date = entry.formattedDate.dateShort,
-                    isExpanded = entry.id == expandedItemId,
-                )
-            },
-            chartEntryModelProducer = chartEntryModelProducer,
-        )
-    }
+            ScreenState.Populated(
+                bodyMeasurementID = bodyMeasurement.id,
+                name = bodyMeasurement.name,
+                entries =
+                    entries.map { entry ->
+                        ScreenState.Entry(
+                            id = entry.id,
+                            value = formatBodyMeasurementValueToString(entry.value),
+                            date = entry.formattedDate.dateShort,
+                            isExpanded = entry.id == expandedItemId,
+                        )
+                    },
+                chartEntryModelProducer = chartEntryModelProducer,
+            )
+        }
 
     override fun handleIntent(intent: Intent) {
         when (intent) {
-            is Intent.ExpandItem -> expandedItemId.update { currentId ->
-                if (currentId == intent.id) null else intent.id
-            }
-            is Intent.DeleteBodyMeasurementEntry -> viewModelScope.launch { deleteBodyMeasurementEntry(intent.id) }
+            is Intent.ExpandItem ->
+                expandedItemId.update { currentId ->
+                    if (currentId == intent.id) null else intent.id
+                }
+            is Intent.DeleteBodyMeasurementEntry ->
+                viewModelScope.launch { deleteBodyMeasurementEntry(intent.id) }
         }
     }
 

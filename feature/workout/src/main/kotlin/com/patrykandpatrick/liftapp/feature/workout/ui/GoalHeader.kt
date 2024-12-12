@@ -42,12 +42,13 @@ internal fun GoalHeader(
 ) {
     Row(
         verticalAlignment = Alignment.Companion.CenterVertically,
-        modifier = modifier
-            .padding(
-                horizontal = LocalDimens.current.padding.contentHorizontal,
-                vertical = LocalDimens.current.padding.itemVertical,
-            )
-            .fillMaxWidth(),
+        modifier =
+            modifier
+                .padding(
+                    horizontal = LocalDimens.current.padding.contentHorizontal,
+                    vertical = LocalDimens.current.padding.itemVertical,
+                )
+                .fillMaxWidth(),
     ) {
         Text(
             text = goal.getPrettyStringLong(),
@@ -59,22 +60,22 @@ internal fun GoalHeader(
 
         Row(
             verticalAlignment = Alignment.Companion.CenterVertically,
-            modifier = Modifier.Companion
-                .height(IntrinsicSize.Min)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = PillShape,
-                )
-                .clip(PillShape)
-                .padding(horizontal = 2.dp)
+            modifier =
+                Modifier.Companion.height(IntrinsicSize.Min)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        shape = PillShape,
+                    )
+                    .clip(PillShape)
+                    .padding(horizontal = 2.dp),
         ) {
             Box(
                 contentAlignment = Alignment.Companion.Center,
-                modifier = Modifier.Companion
-                    .width(56.dp)
-                    .height(40.dp)
-                    .clickable(onClick = onRemoveSetClick, role = Role.Companion.Button)
+                modifier =
+                    Modifier.Companion.width(56.dp)
+                        .height(40.dp)
+                        .clickable(onClick = onRemoveSetClick, role = Role.Companion.Button),
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_remove_circle),
@@ -87,10 +88,10 @@ internal fun GoalHeader(
 
             Box(
                 contentAlignment = Alignment.Companion.Center,
-                modifier = Modifier.Companion
-                    .width(56.dp)
-                    .height(40.dp)
-                    .clickable(onClick = onAddSetClick, role = Role.Companion.Button)
+                modifier =
+                    Modifier.Companion.width(56.dp)
+                        .height(40.dp)
+                        .clickable(onClick = onAddSetClick, role = Role.Companion.Button),
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_add_circle),

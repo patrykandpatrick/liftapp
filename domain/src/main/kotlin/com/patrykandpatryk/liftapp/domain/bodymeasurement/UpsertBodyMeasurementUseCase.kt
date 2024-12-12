@@ -5,7 +5,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.time.LocalDateTime
 
-class UpsertBodyMeasurementUseCase @AssistedInject constructor(
+class UpsertBodyMeasurementUseCase
+@AssistedInject
+constructor(
     @Assisted private val id: Long,
     @Assisted private val entryId: Long?,
     private val repository: BodyMeasurementRepository,

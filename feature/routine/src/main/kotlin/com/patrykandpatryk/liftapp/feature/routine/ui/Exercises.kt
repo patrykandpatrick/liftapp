@@ -43,10 +43,7 @@ import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import kotlin.math.roundToInt
 
 @Composable
-internal fun Exercises(
-    navigator: RoutineNavigator,
-    modifier: Modifier = Modifier,
-) {
+internal fun Exercises(navigator: RoutineNavigator, modifier: Modifier = Modifier) {
     val viewModel: RoutineViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsState()
@@ -68,13 +65,10 @@ private fun Exercises(
 ) {
     val itemRanges = rememberItemRanges()
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-    ) {
-        itemsIndexed(
-            items = state.exercises,
-            key = { _, exercise -> exercise.id },
-        ) { index, exercise ->
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        itemsIndexed(items = state.exercises, key = { _, exercise -> exercise.id }) {
+            index,
+            exercise ->
             ListItem(
                 index = index,
                 itemRanges = itemRanges,
@@ -108,56 +102,57 @@ fun LazyItemScope.ListItem(
 
     SwipeContainer(
         background = { swipeProgress, swipeOffset ->
-            SwipeableDeleteBackground(
-                swipeProgress = swipeProgress,
-                swipeOffset = swipeOffset,
-            )
+            SwipeableDeleteBackground(swipeProgress = swipeProgress, swipeOffset = swipeOffset)
         },
         dismissContent = { swipeProgress, _ ->
-            val swipeShadow by animateDpAsState(targetValue = if (swipeProgress != 0f) swipeElevation else 0.dp)
+            val swipeShadow by
+                animateDpAsState(targetValue = if (swipeProgress != 0f) swipeElevation else 0.dp)
 
             ListItem(
                 title = { Text(exercise.name) },
-                modifier = modifier
-                    .shadow(swipeShadow)
-                    .background(MaterialTheme.colorScheme.surface),
+                modifier =
+                    modifier.shadow(swipeShadow).background(MaterialTheme.colorScheme.surface),
                 description = { Text(exercise.prettyGoal + "\n" + exercise.muscles) },
                 actions = {
                     IconButton(onClick = { onGoalClick(exercise.id) }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_target),
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                     }
 
                     Icon(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .reorderable(
-                                itemIndex = index,
-                                itemYOffset = yOffset,
-                                itemRanges = itemRanges,
-                                onIsDragging = { isDragging = it },
-                                onDelta = { delta ->
-                                    yOffset += delta
-                                    lastDragDelta.value = delta
-                                },
-                                onItemReordered = { from, to -> onIntent(Intent.Reorder(from = from, to = to)) },
-                            ),
+                        modifier =
+                            Modifier.padding(start = 8.dp)
+                                .reorderable(
+                                    itemIndex = index,
+                                    itemYOffset = yOffset,
+                                    itemRanges = itemRanges,
+                                    onIsDragging = { isDragging = it },
+                                    onDelta = { delta ->
+                                        yOffset += delta
+                                        lastDragDelta.value = delta
+                                    },
+                                    onItemReordered = { from, to ->
+                                        onIntent(Intent.Reorder(from = from, to = to))
+                                    },
+                                ),
                         painter = painterResource(id = R.drawable.ic_drag_handle),
                         contentDescription = null,
                     )
                 },
-            ) { onItemClick(exercise.id) }
+            ) {
+                onItemClick(exercise.id)
+            }
         },
         onDismiss = { onIntent(Intent.DeleteExercise(exercise.id)) },
-        modifier = Modifier
-            .thenIf(isDragging.not()) { animateItem() }
-            .offset { IntOffset(x = 0, y = yOffset.roundToInt()) }
-            .shadow(dragShadow)
-            .zIndex(if (isDragging) 1f else 0f)
-            .background(color = MaterialTheme.colorScheme.surface)
-            .onItemYRange { yRange -> itemRanges.addOrSet(index, yRange) },
+        modifier =
+            Modifier.thenIf(isDragging.not()) { animateItem() }
+                .offset { IntOffset(x = 0, y = yOffset.roundToInt()) }
+                .shadow(dragShadow)
+                .zIndex(if (isDragging) 1f else 0f)
+                .background(color = MaterialTheme.colorScheme.surface)
+                .onItemYRange { yRange -> itemRanges.addOrSet(index, yRange) },
     )
 }

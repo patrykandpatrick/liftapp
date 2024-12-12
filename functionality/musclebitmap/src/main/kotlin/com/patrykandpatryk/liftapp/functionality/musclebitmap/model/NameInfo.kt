@@ -5,7 +5,8 @@ import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageType
 import kotlinx.serialization.Serializable
 
 @Serializable
-class NameInfo private constructor(
+class NameInfo
+private constructor(
     val mainMuscles: List<Muscle>,
     val secondaryMuscles: List<Muscle>,
     val tertiaryMuscles: List<Muscle>,
@@ -48,13 +49,14 @@ class NameInfo private constructor(
             isDark: Boolean,
             version: Int = 1,
             muscleImageType: MuscleImageType = MuscleImageType.FrontAndRear,
-        ): NameInfo = NameInfo(
-            mainMuscles = mainMuscles.sorted(),
-            secondaryMuscles = secondaryMuscles.sorted(),
-            tertiaryMuscles = tertiaryMuscles.sorted(),
-            isDark = isDark,
-            version = version,
-            muscleImageType = muscleImageType,
-        )
+        ): NameInfo =
+            NameInfo(
+                mainMuscles = mainMuscles.sorted(),
+                secondaryMuscles = secondaryMuscles.sorted(),
+                tertiaryMuscles = tertiaryMuscles.sorted(),
+                isDark = isDark,
+                version = version,
+                muscleImageType = muscleImageType,
+            )
     }
 }

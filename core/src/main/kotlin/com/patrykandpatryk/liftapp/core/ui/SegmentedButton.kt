@@ -48,14 +48,15 @@ fun SegmentedButtonContainer(
     buttons: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .height(IntrinsicSize.Max)
-            .clip(shape)
-            .border(
-                width = MaterialTheme.dimens.strokeWidth,
-                color = MaterialTheme.colorScheme.outline,
-                shape = shape,
-            ),
+        modifier =
+            modifier
+                .height(IntrinsicSize.Max)
+                .clip(shape)
+                .border(
+                    width = MaterialTheme.dimens.strokeWidth,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = shape,
+                ),
         verticalAlignment = Alignment.CenterVertically,
         content = buttons,
     )
@@ -85,14 +86,15 @@ fun VerticalSegmentedButtonContainer(
     buttons: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .width(IntrinsicSize.Max)
-            .clip(shape)
-            .border(
-                width = MaterialTheme.dimens.strokeWidth,
-                color = MaterialTheme.colorScheme.outline,
-                shape = shape,
-            ),
+        modifier =
+            modifier
+                .width(IntrinsicSize.Max)
+                .clip(shape)
+                .border(
+                    width = MaterialTheme.dimens.strokeWidth,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = shape,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
         content = buttons,
     )
@@ -118,10 +120,11 @@ fun <T> VerticalSegmentedButtonContainer(
 @Composable
 fun VerticalDivider(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .background(color = MaterialTheme.colorScheme.outline)
-            .fillMaxHeight()
-            .width(MaterialTheme.dimens.strokeWidth),
+        modifier =
+            modifier
+                .background(color = MaterialTheme.colorScheme.outline)
+                .fillMaxHeight()
+                .width(MaterialTheme.dimens.strokeWidth)
     )
 }
 
@@ -139,9 +142,7 @@ fun RowScope.SegmentedButton(
         onClick = onClick,
         selected = selected,
         icon = icon,
-        modifier = modifier
-            .fillMaxHeight()
-            .weight(weight = 1f),
+        modifier = modifier.fillMaxHeight().weight(weight = 1f),
         showIcon = showIcon,
     )
 }
@@ -160,9 +161,7 @@ fun ColumnScope.SegmentedButton(
         onClick = onClick,
         selected = selected,
         icon = icon,
-        modifier = modifier
-            .fillMaxWidth()
-            .weight(weight = 1f, fill = false),
+        modifier = modifier.fillMaxWidth().weight(weight = 1f, fill = false),
         showIcon = showIcon,
     )
 }
@@ -178,35 +177,46 @@ private fun SegmentedButton(
 ) {
 
     Row(
-        modifier = modifier
-            .background(color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
-            .clickable(
-                onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(
-                    color = if (selected) {
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    },
+        modifier =
+            modifier
+                .background(
+                    color =
+                        if (selected) MaterialTheme.colorScheme.secondaryContainer
+                        else Color.Transparent
+                )
+                .clickable(
+                    onClick = onClick,
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication =
+                        ripple(
+                            color =
+                                if (selected) {
+                                    MaterialTheme.colorScheme.onSecondaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                }
+                        ),
+                )
+                .padding(
+                    horizontal = MaterialTheme.dimens.padding.segmentedButtonHorizontal,
+                    vertical = MaterialTheme.dimens.padding.segmentedButtonVertical,
                 ),
-            )
-            .padding(
-                horizontal = MaterialTheme.dimens.padding.segmentedButtonHorizontal,
-                vertical = MaterialTheme.dimens.padding.segmentedButtonVertical,
+        horizontalArrangement =
+            Arrangement.spacedBy(
+                space = MaterialTheme.dimens.padding.segmentedButtonElement,
+                alignment = Alignment.CenterHorizontally,
             ),
-        horizontalArrangement = Arrangement.spacedBy(
-            space = MaterialTheme.dimens.padding.segmentedButtonElement,
-            alignment = Alignment.CenterHorizontally,
-        ),
     ) {
-        val iconPainter = when {
-            showIcon.not() -> null
-            selected -> painterResource(id = R.drawable.ic_check)
-            else -> icon
-        }
+        val iconPainter =
+            when {
+                showIcon.not() -> null
+                selected -> painterResource(id = R.drawable.ic_check)
+                else -> icon
+            }
 
-        val tint = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
+        val tint =
+            if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+            else MaterialTheme.colorScheme.onSurface
 
         if (iconPainter != null) {
             Icon(
@@ -234,9 +244,7 @@ fun PreviewSegmentedButtonWithIcons() {
             var selectedIndex by remember { mutableStateOf(1) }
 
             SegmentedButtonContainer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 items = listOf("First Item", "Second Item", "Third Item"),
             ) { index, text ->
                 SegmentedButton(
@@ -258,9 +266,7 @@ fun PreviewSegmentedButtonWithNoIcons() {
             var selectedIndex by remember { mutableStateOf(1) }
 
             SegmentedButtonContainer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 items = listOf("First Item", "Second Item"),
             ) { index, text ->
                 SegmentedButton(

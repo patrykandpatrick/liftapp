@@ -16,7 +16,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Singleton
-class UiLogger @Inject constructor(
+class UiLogger
+@Inject
+constructor(
     @IsDebug private val isDebug: Boolean,
     private val exceptionMapper: Mapper<DisplayableException, String>,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
@@ -31,12 +33,7 @@ class UiLogger @Inject constructor(
     override fun isLoggable(tag: String?, priority: Int): Boolean =
         (isDebug && priority >= Log.INFO) || tag == Constants.Logging.DISPLAYABLE_ERROR
 
-    override fun log(
-        priority: Int,
-        tag: String?,
-        message: String,
-        t: Throwable?,
-    ) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         scope.launch {
             when (t) {
                 is DisplayableException -> UiMessage.SnackbarText(exceptionMapper(t))

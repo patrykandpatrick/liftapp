@@ -34,29 +34,35 @@ data class BackdropState(
     val initialState: BackdropValue = BackdropValue.Closed,
     private val density: Density,
 ) {
-    internal val anchoredDraggableState = AnchoredDraggableState<BackdropValue>(
-        initialValue = BackdropValue.Closed,
-        positionalThreshold = { distance -> distance / 2 },
-        velocityThreshold = { with(density) { 200.dp.toPx() } },
-        snapAnimationSpec = spring(),
-        decayAnimationSpec = splineBasedDecay(density),
-    )
+    internal val anchoredDraggableState =
+        AnchoredDraggableState<BackdropValue>(
+            initialValue = BackdropValue.Closed,
+            positionalThreshold = { distance -> distance / 2 },
+            velocityThreshold = { with(density) { 200.dp.toPx() } },
+            snapAnimationSpec = spring(),
+            decayAnimationSpec = splineBasedDecay(density),
+        )
 
-    val nestedScrollConnection: NestedScrollConnection = BackdropNestedScrollConnection(anchoredDraggableState)
+    val nestedScrollConnection: NestedScrollConnection =
+        BackdropNestedScrollConnection(anchoredDraggableState)
 
-    val isOpened: Boolean by derivedStateOf { anchoredDraggableState.currentValue == BackdropValue.Opened }
+    val isOpened: Boolean by derivedStateOf {
+        anchoredDraggableState.currentValue == BackdropValue.Opened
+    }
 
-    val offset: Float by derivedStateOf { anchoredDraggableState.offset - anchoredDraggableState.anchors.minAnchor() }
+    val offset: Float by derivedStateOf {
+        anchoredDraggableState.offset - anchoredDraggableState.anchors.minAnchor()
+    }
 
     val offsetFraction: Float by derivedStateOf {
-        offset / (anchoredDraggableState.anchors.maxAnchor() - anchoredDraggableState.anchors.minAnchor())
+        offset /
+            (anchoredDraggableState.anchors.maxAnchor() -
+                anchoredDraggableState.anchors.minAnchor())
     }
 }
 
 @Composable
-fun rememberBackdropState(
-    initialState: BackdropValue = BackdropValue.Closed,
-): BackdropState {
+fun rememberBackdropState(initialState: BackdropValue = BackdropValue.Closed): BackdropState {
     val density = LocalDensity.current
     return remember(initialState, density) { BackdropState(initialState, density) }
 }
@@ -78,46 +84,42 @@ fun Backdrop(
         measurePolicy = { measurables, constraints ->
             val backdrop = measurables[0].measure(constraints)
             val frontMaxHeight = constraints.maxHeight - backPeekHeight.roundToPx()
-            val front = measurables[1].measure(
-                constraints
-                    .copy(
+            val front =
+                measurables[1].measure(
+                    constraints.copy(
                         minHeight = constraints.minHeight.coerceAtMost(frontMaxHeight),
                         maxHeight = frontMaxHeight,
                     )
-            )
-            val backdropOpenLength = minOf(
-                constraints.maxHeight - contentPeekHeight.toPx(),
-                backdrop.height.toFloat(),
-            )
+                )
+            val backdropOpenLength =
+                minOf(constraints.maxHeight - contentPeekHeight.toPx(), backdrop.height.toFloat())
 
             state.anchoredDraggableState.updateAnchors(
                 DraggableAnchors {
                     BackdropValue.Closed at backPeekHeight.toPx()
                     BackdropValue.Opened at backdropOpenLength
-                },
+                }
             )
             layout(constraints.maxWidth, constraints.maxHeight) {
                 backdrop.place(0, 0)
                 front.place(0, state.anchoredDraggableState.offset.roundToInt())
             }
         },
-        modifier = modifier
-            .anchoredDraggable(state.anchoredDraggableState, Orientation.Vertical),
+        modifier = modifier.anchoredDraggable(state.anchoredDraggableState, Orientation.Vertical),
     )
 }
 
 private class BackdropNestedScrollConnection(
-    private val anchoredDraggableState: AnchoredDraggableState<BackdropValue>,
+    private val anchoredDraggableState: AnchoredDraggableState<BackdropValue>
 ) : NestedScrollConnection {
     var blockDrag: Boolean? = null
     var blockScroll: Boolean? = null
 
-    override fun onPreScroll(
-        available: Offset,
-        source: NestedScrollSource
-    ): Offset =
-        if (blockScroll == true ||
-            available.y < 0 && anchoredDraggableState.offset != anchoredDraggableState.anchors.minAnchor()
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
+        if (
+            blockScroll == true ||
+                available.y < 0 &&
+                    anchoredDraggableState.offset != anchoredDraggableState.anchors.minAnchor()
         ) {
             blockScroll = true
             anchoredDraggableState.dispatchRawDelta(available.y)
@@ -129,16 +131,17 @@ private class BackdropNestedScrollConnection(
     override fun onPostScroll(
         consumed: Offset,
         available: Offset,
-        source: NestedScrollSource
+        source: NestedScrollSource,
     ): Offset {
         if (blockDrag == null) blockDrag = available.y == 0f
         return when {
             available.y > 0 -> {
-                val consumedY = if (blockDrag == true) {
-                    0f
-                } else {
-                    anchoredDraggableState.dispatchRawDelta(available.y)
-                }
+                val consumedY =
+                    if (blockDrag == true) {
+                        0f
+                    } else {
+                        anchoredDraggableState.dispatchRawDelta(available.y)
+                    }
                 Offset(available.x, consumedY)
             }
 
@@ -148,22 +151,23 @@ private class BackdropNestedScrollConnection(
     }
 
     override suspend fun onPreFling(available: Velocity): Velocity =
-        if (available.y < 0 && anchoredDraggableState.offset != anchoredDraggableState.anchors.minAnchor()) {
+        if (
+            available.y < 0 &&
+                anchoredDraggableState.offset != anchoredDraggableState.anchors.minAnchor()
+        ) {
             anchoredDraggableState.settle(available.y / 4)
             Velocity(0f, available.y)
         } else {
-            val consumedVelocityY = when {
-                available.y > 0f && blockDrag == true -> 0f
-                blockScroll == true -> available.y
-                else -> anchoredDraggableState.settle(available.y)
-            }
+            val consumedVelocityY =
+                when {
+                    available.y > 0f && blockDrag == true -> 0f
+                    blockScroll == true -> available.y
+                    else -> anchoredDraggableState.settle(available.y)
+                }
             Velocity(0f, consumedVelocityY)
         }
 
-    override suspend fun onPostFling(
-        consumed: Velocity,
-        available: Velocity
-    ): Velocity {
+    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
         blockDrag = null
         blockScroll = null
         return Velocity(0f, anchoredDraggableState.settle(available.y))

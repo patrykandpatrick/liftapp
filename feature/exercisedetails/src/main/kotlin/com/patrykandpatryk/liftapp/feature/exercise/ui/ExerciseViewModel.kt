@@ -31,7 +31,9 @@ import timber.log.Timber
 private const val SCREEN_STATE_KEY = "screenState"
 
 @HiltViewModel(assistedFactory = ExerciseViewModel.Factory::class)
-class ExerciseViewModel @AssistedInject constructor(
+class ExerciseViewModel
+@AssistedInject
+constructor(
     @Assisted private val exerciseID: Long,
     private val logger: UiLogger,
     getExercise: GetExerciseUseCase,
@@ -44,41 +46,41 @@ class ExerciseViewModel @AssistedInject constructor(
 
     private val eventChannel = Channel<Event>()
 
-    override val state: StateFlow<ScreenState> = savedStateHandle
-        .getStateFlow(SCREEN_STATE_KEY, ScreenState.Loading)
+    override val state: StateFlow<ScreenState> =
+        savedStateHandle.getStateFlow(SCREEN_STATE_KEY, ScreenState.Loading)
 
     override val events: Flow<Event> = eventChannel.receiveAsFlow()
 
     init {
-        combine(
-            getExercise(exerciseID),
-            isDarkModeReceiver(),
-        ) { exercise, isSystemInLightMode ->
-            if (exercise == null) {
-                Timber.e("Exercise with id $exerciseID not found, or deleted.")
-                eventChannel.send(Event.ExerciseNotFound)
-            } else {
+        combine(getExercise(exerciseID), isDarkModeReceiver()) { exercise, isSystemInLightMode ->
+                if (exercise == null) {
+                    Timber.e("Exercise with id $exerciseID not found, or deleted.")
+                    eventChannel.send(Event.ExerciseNotFound)
+                } else {
 
-                val bitmapPath = muscleImageProvider.getMuscleImagePath(
-                    exercise.mainMuscles,
-                    exercise.secondaryMuscles,
-                    exercise.tertiaryMuscles,
-                    isDark = isSystemInLightMode,
-                )
+                    val bitmapPath =
+                        muscleImageProvider.getMuscleImagePath(
+                            exercise.mainMuscles,
+                            exercise.secondaryMuscles,
+                            exercise.tertiaryMuscles,
+                            isDark = isSystemInLightMode,
+                        )
 
-                updateScreenState {
-                    mutate(
-                        name = stringProvider.getResolvedName(exercise.name),
-                        imagePath = bitmapPath,
-                        muscles = MuscleModel.create(
-                            primaryMuscles = exercise.mainMuscles,
-                            secondaryMuscles = exercise.secondaryMuscles,
-                            tertiaryMuscles = exercise.tertiaryMuscles,
-                        ),
-                    )
+                    updateScreenState {
+                        mutate(
+                            name = stringProvider.getResolvedName(exercise.name),
+                            imagePath = bitmapPath,
+                            muscles =
+                                MuscleModel.create(
+                                    primaryMuscles = exercise.mainMuscles,
+                                    secondaryMuscles = exercise.secondaryMuscles,
+                                    tertiaryMuscles = exercise.tertiaryMuscles,
+                                ),
+                        )
+                    }
                 }
             }
-        }.launchIn(viewModelScope)
+            .launchIn(viewModelScope)
     }
 
     override fun handleIntent(intent: Intent) {
@@ -91,16 +93,12 @@ class ExerciseViewModel @AssistedInject constructor(
     }
 
     private fun sendEditExerciseEvent() {
-        viewModelScope.launch {
-            eventChannel.send(Event.EditExercise(id = exerciseID))
-        }
+        viewModelScope.launch { eventChannel.send(Event.EditExercise(id = exerciseID)) }
     }
 
     private fun deleteExercise() {
         updateScreenState { mutate(showDeleteDialog = false) }
-        viewModelScope.launch {
-            deleteExercise(exerciseID)
-        }
+        viewModelScope.launch { deleteExercise(exerciseID) }
     }
 
     private inline fun updateScreenState(block: ScreenState.() -> ScreenState) {

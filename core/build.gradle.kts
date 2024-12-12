@@ -1,14 +1,8 @@
-apply {
-    from("$rootDir/gradle/ui-module-base.gradle")
-}
+apply { from("$rootDir/gradle/ui-module-base.gradle") }
 
-plugins {
-    alias(libs.plugins.library)
-}
+plugins { alias(libs.plugins.library) }
 
-android {
-    namespace = "com.patrykandpatryk.liftapp.core"
-}
+android { namespace = "com.patrykandpatryk.liftapp.core" }
 
 dependencies {
     implementation(project(":navigation"))

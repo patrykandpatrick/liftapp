@@ -30,11 +30,12 @@ import kotlinx.collections.immutable.persistentListOf
 
 val RoutineCardShape: Shape =
     CorneredShape(
-        topLeft = Corner.Absolute(16f, CutCornerTreatment),
-        topRight = Corner.Absolute(12f, RoundedCornerTreatment),
-        bottomLeft = Corner.Absolute(12f, RoundedCornerTreatment),
-        bottomRight = Corner.Absolute(12f, RoundedCornerTreatment),
-    ).composeShape()
+            topLeft = Corner.Absolute(16f, CutCornerTreatment),
+            topRight = Corner.Absolute(12f, RoundedCornerTreatment),
+            bottomLeft = Corner.Absolute(12f, RoundedCornerTreatment),
+            bottomRight = Corner.Absolute(12f, RoundedCornerTreatment),
+        )
+        .composeShape()
 
 @Composable
 fun RoutineCard(
@@ -47,9 +48,7 @@ fun RoutineCard(
     val cardPadding = LocalDimens.current.card
 
     OutlinedCard(
-        modifier = modifier
-            .clip(RoutineCardShape)
-            .clickable(onClick = onClick),
+        modifier = modifier.clip(RoutineCardShape).clickable(onClick = onClick),
         shape = RoutineCardShape,
     ) {
         Column(
@@ -59,20 +58,18 @@ fun RoutineCard(
             ),
             verticalArrangement = Arrangement.spacedBy(padding.contentVerticalSmall),
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-            )
+            Text(text = title, style = MaterialTheme.typography.headlineSmall)
 
             Text(
-                text = buildAnnotatedString {
-                    pushStyle(ParagraphStyle(lineHeight = 24.sp))
-                    exercises.forEachIndexedExtended { _, _, isLast, value ->
-                        append("• $value")
-                        if (!isLast) append("\n")
-                    }
-                    pop()
-                },
+                text =
+                    buildAnnotatedString {
+                        pushStyle(ParagraphStyle(lineHeight = 24.sp))
+                        exercises.forEachIndexedExtended { _, _, isLast, value ->
+                            append("• $value")
+                            if (!isLast) append("\n")
+                        }
+                        pop()
+                    },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -16,8 +16,7 @@ import androidx.compose.ui.layout.positionInParent
 import kotlin.math.roundToInt
 
 @Composable
-fun rememberItemRanges(key: Any? = null): ArrayList<IntRange> =
-    remember(key) { ArrayList() }
+fun rememberItemRanges(key: Any? = null): ArrayList<IntRange> = remember(key) { ArrayList() }
 
 fun Modifier.onItemYRange(onYRange: (IntRange) -> Unit): Modifier =
     onGloballyPositioned { layoutCoordinates ->
@@ -37,41 +36,42 @@ fun Modifier.reorderable(
     var hasBeenReordered by remember(itemIndex) { mutableStateOf(false) }
 
     draggable(
-        state = rememberDraggableState { delta ->
-            onDelta(delta)
+        state =
+            rememberDraggableState { delta ->
+                onDelta(delta)
 
-            val itemRange = itemRanges[itemIndex]
+                val itemRange = itemRanges[itemIndex]
 
-            val newIndex = when {
-                itemYOffset < 0f -> itemRanges.indexOfFirst { range ->
-                    range.last < itemRange.first - itemYOffset && range.first > itemRange.first
+                val newIndex =
+                    when {
+                        itemYOffset < 0f ->
+                            itemRanges.indexOfFirst { range ->
+                                range.last < itemRange.first - itemYOffset &&
+                                    range.first > itemRange.first
+                            }
+
+                        itemYOffset > 0f ->
+                            itemRanges.indexOfLast { range ->
+                                range.first > itemRange.last - itemYOffset &&
+                                    range.last < itemRange.last
+                            }
+
+                        else -> -1
+                    }
+
+                if (hasBeenReordered.not() && newIndex != -1 && newIndex != itemIndex) {
+                    hasBeenReordered = true
+                    onItemReordered(itemIndex, newIndex)
                 }
-
-                itemYOffset > 0f -> itemRanges.indexOfLast { range ->
-                    range.first > itemRange.last - itemYOffset && range.last < itemRange.last
-                }
-
-                else -> -1
-            }
-
-            if (hasBeenReordered.not() && newIndex != -1 && newIndex != itemIndex) {
-                hasBeenReordered = true
-                onItemReordered(itemIndex, newIndex)
-            }
-        },
+            },
         orientation = Orientation.Vertical,
-        onDragStarted = {
-            onIsDragging(true)
-        },
+        onDragStarted = { onIsDragging(true) },
         onDragStopped = { velocity ->
-
             var remainingScroll = itemYOffset
 
-            animate(
-                initialValue = itemYOffset,
-                targetValue = 0f,
-                initialVelocity = velocity,
-            ) { value, _ ->
+            animate(initialValue = itemYOffset, targetValue = 0f, initialVelocity = velocity) {
+                value,
+                _ ->
                 onDelta(value - remainingScroll)
                 remainingScroll = value
             }

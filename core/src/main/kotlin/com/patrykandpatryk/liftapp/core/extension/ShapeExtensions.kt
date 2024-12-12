@@ -16,11 +16,13 @@ fun <T : CornerBasedShape> T.scaleCornerSize(scale: Float): T =
             topEnd = scaledCornerSize(topEnd, scale),
             bottomEnd = scaledCornerSize(bottomEnd, scale),
             bottomStart = scaledCornerSize(bottomStart, scale),
-        ) as T
+        )
+            as T
     }
 
-fun scaledCornerSize(base: CornerSize, scale: Float): CornerSize = object : CornerSize {
+fun scaledCornerSize(base: CornerSize, scale: Float): CornerSize =
+    object : CornerSize {
 
-    override fun toPx(shapeSize: Size, density: Density): Float =
-        base.toPx(shapeSize, density) * scale.coerceAtLeast(0f)
-}
+        override fun toPx(shapeSize: Size, density: Density): Float =
+            base.toPx(shapeSize, density) * scale.coerceAtLeast(0f)
+    }

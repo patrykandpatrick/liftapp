@@ -48,10 +48,7 @@ import com.patrykandpatryk.liftapp.feature.more.ui.MoreScreen
 import com.patrykandpatryk.liftapp.feature.routines.RoutineListScreen
 
 @Composable
-fun HomeScreen(
-    homeNavigator: HomeNavigator,
-    modifier: Modifier = Modifier,
-) {
+fun HomeScreen(homeNavigator: HomeNavigator, modifier: Modifier = Modifier) {
     val viewModel: HomeViewModel = hiltViewModel()
     val snackbarHostState = remember { SnackbarHostState() }
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
@@ -73,14 +70,9 @@ private fun HomeScaffold(
 
     Scaffold(
         modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
-            NavigationBarWithPadding(
-                navController = navController,
-                navItemRoutes = navBarRoutes,
-            )
+            NavigationBarWithPadding(navController = navController, navItemRoutes = navBarRoutes)
         },
         contentWindowInsets = WindowInsets(0),
     ) { paddingValues ->
@@ -89,15 +81,16 @@ private fun HomeScaffold(
             navController = navController,
             startDestination = navBarRoutes.first().route,
             enterTransition = { slideAndFadeIn() },
-            exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = EXIT_ANIM_DURATION))
-            },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = EXIT_ANIM_DURATION)) },
         ) {
             navBarRoutes.forEach { routeItem ->
                 when (routeItem.route) {
                     HomeRoute.BodyMeasurements ->
                         composable<HomeRoute.BodyMeasurements> {
-                            BodyMeasurementListScreen(navigator = homeNavigator, padding = paddingValues)
+                            BodyMeasurementListScreen(
+                                navigator = homeNavigator,
+                                padding = paddingValues,
+                            )
                         }
 
                     HomeRoute.Dashboard ->
@@ -142,22 +135,24 @@ private fun NavigationBarWithPadding(
     Column {
         HorizontalDivider()
 
-        NavigationBar(
-            containerColor = MaterialTheme.colorScheme.surface,
-            modifier = modifier,
-        ) {
+        NavigationBar(containerColor = MaterialTheme.colorScheme.surface, modifier = modifier) {
             navItemRoutes.forEach { menuRoute ->
                 val selected by derivedStateOf {
-                    currentDestination?.hierarchy?.any { it.route == menuRoute.route::class.qualifiedName } ?: false
+                    currentDestination?.hierarchy?.any {
+                        it.route == menuRoute.route::class.qualifiedName
+                    } ?: false
                 }
                 NavigationBarItem(
                     selected = selected,
                     onClick = { navController.navigate(menuRoute.route) },
                     icon = {
                         Icon(
-                            painter = painterResource(
-                                id = if (selected) menuRoute.selectedIconRes else menuRoute.deselectedIconRes,
-                            ),
+                            painter =
+                                painterResource(
+                                    id =
+                                        if (selected) menuRoute.selectedIconRes
+                                        else menuRoute.deselectedIconRes
+                                ),
                             contentDescription = stringResource(id = menuRoute.titleRes),
                             tint = LocalContentColor.current,
                         )

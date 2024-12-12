@@ -51,22 +51,12 @@ data class Dimens(
         val exercisesControlsVertical: Dp = 8.dp,
     )
 
-    @Immutable
-    data class IconButton(
-        val minTouchTarget: Dp = 48.dp,
-        val rippleRadius: Dp = 20.dp,
-    )
+    @Immutable data class IconButton(val minTouchTarget: Dp = 48.dp, val rippleRadius: Dp = 20.dp)
 
     @Immutable
-    data class Grid(
-        val minCellWidthMedium: Dp = 164.dp,
-        val minCellWidthLarge: Dp = 240.dp,
-    )
+    data class Grid(val minCellWidthMedium: Dp = 164.dp, val minCellWidthLarge: Dp = 240.dp)
 
-    @Immutable
-    data class Height(
-        val searchBar: Dp = 48.dp,
-    )
+    @Immutable data class Height(val searchBar: Dp = 48.dp)
 
     @Immutable
     data class Dialog(
@@ -85,10 +75,7 @@ data class Dimens(
         val contentPaddingVertical: Dp = 16.dp,
     )
 
-    @Immutable
-    data class Chip(
-        val iconSize: Dp = 18.dp,
-    )
+    @Immutable data class Chip(val iconSize: Dp = 18.dp)
 
     @Immutable
     data class Input(
@@ -114,36 +101,17 @@ data class Dimens(
         val listItemHorizontalMargin: Dp = 16.dp,
     )
 
-    @Immutable
-    data class Routine(
-        val minCardWidth: Dp = 140.dp,
-    )
+    @Immutable data class Routine(val minCardWidth: Dp = 140.dp)
 
-    @Immutable
-    data class Tab(
-        val verticalPadding: Dp = 16.dp,
-        val iconToTextPadding: Dp = 4.dp,
-    )
+    @Immutable data class Tab(val verticalPadding: Dp = 16.dp, val iconToTextPadding: Dp = 4.dp)
 
-    @Immutable
-    data class Toolbar(
-        val height: Dp = 56.dp,
-    )
+    @Immutable data class Toolbar(val height: Dp = 56.dp)
 
-    @Immutable
-    data class SearchBar(
-        val tonalElevation: Dp = 3.dp,
-    )
+    @Immutable data class SearchBar(val tonalElevation: Dp = 3.dp)
 
-    @Immutable
-    data class Button(
-        val iconPadding: Dp = 8.dp,
-    )
+    @Immutable data class Button(val iconPadding: Dp = 8.dp)
 
-    @Immutable
-    data class Elevation(
-        val dragElevation: Dp = 2.dp,
-    )
+    @Immutable data class Elevation(val dragElevation: Dp = 2.dp)
 
     @Immutable
     data class Swipe(
@@ -153,35 +121,21 @@ data class Dimens(
         val swipeElevation: Dp = 2.dp,
     )
 
-    @Immutable
-    data class Divider(
-        val sinPeriodLength: Dp = 3.dp,
-        val sinHeight: Dp = 6.dp,
-    )
+    @Immutable data class Divider(val sinPeriodLength: Dp = 3.dp, val sinHeight: Dp = 6.dp)
 }
 
 val PortraitDimens = Dimens()
 
-val LandscapeDimens = Dimens(
-    padding = Dimens.Padding(
-        contentHorizontal = 56.dp,
-    ),
-)
+val LandscapeDimens = Dimens(padding = Dimens.Padding(contentHorizontal = 56.dp))
 
 val DialogDimens: Dimens
-    @Composable get() =
+    @Composable
+    get() =
         LocalDimens.current.run {
-            copy(
-                padding = padding.copy(
-                    contentHorizontal = 24.dp,
-                    contentVertical = 24.dp,
-                ),
-            )
+            copy(padding = padding.copy(contentHorizontal = 24.dp, contentVertical = 24.dp))
         }
 
 val LocalDimens = staticCompositionLocalOf { Dimens() }
 
 val MaterialTheme.dimens: Dimens
-    @Composable
-    @ReadOnlyComposable
-    get() = LocalDimens.current
+    @Composable @ReadOnlyComposable get() = LocalDimens.current

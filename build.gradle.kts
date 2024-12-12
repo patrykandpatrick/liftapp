@@ -5,9 +5,7 @@ buildscript {
         classpath(libs.safeArgs)
     }
 
-    repositories {
-        gradlePluginPortal()
-    }
+    repositories { gradlePluginPortal() }
 }
 
 plugins {

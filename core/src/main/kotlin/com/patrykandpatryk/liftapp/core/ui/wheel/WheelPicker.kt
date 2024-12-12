@@ -59,13 +59,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import kotlin.math.abs
+import kotlin.math.max
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.math.max
 
 @Composable
 fun WheelPicker(
@@ -73,7 +73,8 @@ fun WheelPicker(
     state: WheelPickerState = rememberWheelPickerState(),
     itemExtent: Int = 3,
     onItemSelected: (Int) -> Unit = {},
-    scrollAnimationSpec: AnimationSpec<Float> = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow),
+    scrollAnimationSpec: AnimationSpec<Float> =
+        spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow),
     highlight: @Composable () -> Unit = {},
     items: @Composable WheelPickerScope.() -> Unit,
 ) {
@@ -84,52 +85,60 @@ fun WheelPicker(
 
     Layout(
         contents = listOf(highlight) + { items(scope) },
-        measurePolicy = remember(state, itemExtent) {
-            WheelPickerMeasurePolicy(
-                state = state,
-                itemExtent = itemExtent,
-                onItemSelected = onItemSelectedState,
-            )
-        },
-        modifier = modifier
-            .clip(RectangleShape)
-            .draggable(
-                state = state.draggableState,
-                orientation = Orientation.Vertical,
-                onDragStopped = { velocity -> state.snap(velocity) },
-                interactionSource = state.internalInteractionSource,
-            )
-            .pointerInput(state) {
-                detectTapGestures { offset ->
-                    val firstVisibleIndex = state.currentItem - (size.height / state.maxItemHeight) / 2
-                    val clickedItemIndex = offset.y.toInt() / state.maxItemHeight
-                    coroutineScope.launch {
-                        state.animateScrollTo(firstVisibleIndex + clickedItemIndex, MutatePriority.UserInput)
-                    }
-                }
-            }
-            .pointerInput(state) {
-                awaitEachGesture {
-                    var pressInteraction: PressInteraction.Press? = null
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        when (event.type) {
-                            PointerEventType.Press ->
-                                PressInteraction
-                                    .Press(event.changes.first().position)
-                                    .also { pressInteraction = it }
-
-                            PointerEventType.Release ->
-                                pressInteraction?.let(PressInteraction::Release)
-
-                            else -> null
-                        }?.also { interaction ->
-                            coroutineScope.launch { state.internalInteractionSource.emit(interaction) }
-                        }
-                        state.isDragInProgress = event.type == PointerEventType.Move
-                    }
-                }
+        measurePolicy =
+            remember(state, itemExtent) {
+                WheelPickerMeasurePolicy(
+                    state = state,
+                    itemExtent = itemExtent,
+                    onItemSelected = onItemSelectedState,
+                )
             },
+        modifier =
+            modifier
+                .clip(RectangleShape)
+                .draggable(
+                    state = state.draggableState,
+                    orientation = Orientation.Vertical,
+                    onDragStopped = { velocity -> state.snap(velocity) },
+                    interactionSource = state.internalInteractionSource,
+                )
+                .pointerInput(state) {
+                    detectTapGestures { offset ->
+                        val firstVisibleIndex =
+                            state.currentItem - (size.height / state.maxItemHeight) / 2
+                        val clickedItemIndex = offset.y.toInt() / state.maxItemHeight
+                        coroutineScope.launch {
+                            state.animateScrollTo(
+                                firstVisibleIndex + clickedItemIndex,
+                                MutatePriority.UserInput,
+                            )
+                        }
+                    }
+                }
+                .pointerInput(state) {
+                    awaitEachGesture {
+                        var pressInteraction: PressInteraction.Press? = null
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            when (event.type) {
+                                PointerEventType.Press ->
+                                    PressInteraction.Press(event.changes.first().position).also {
+                                        pressInteraction = it
+                                    }
+
+                                PointerEventType.Release ->
+                                    pressInteraction?.let(PressInteraction::Release)
+
+                                else -> null
+                            }?.also { interaction ->
+                                coroutineScope.launch {
+                                    state.internalInteractionSource.emit(interaction)
+                                }
+                            }
+                            state.isDragInProgress = event.type == PointerEventType.Move
+                        }
+                    }
+                },
     )
 }
 
@@ -138,7 +147,10 @@ private class WheelPickerMeasurePolicy(
     private val itemExtent: Int,
     private val onItemSelected: State<(Int) -> Unit>,
 ) : MultiContentMeasurePolicy {
-    override fun MeasureScope.measure(measurables: List<List<Measurable>>, constraints: Constraints): MeasureResult {
+    override fun MeasureScope.measure(
+        measurables: List<List<Measurable>>,
+        constraints: Constraints,
+    ): MeasureResult {
         val itemPlaceables = measurables[1].map { it.measure(constraints) }
         var width = itemPlaceables.maxOf { it.width }
         var maxItemHeight = itemPlaceables.maxOf { it.height }
@@ -162,28 +174,42 @@ private class WheelPickerMeasurePolicy(
         }
 
         return layout(width, height) {
-            highlightPlaceables.forEach { placeable -> placeable.place(0, (height - placeable.height) / 2) }
+            highlightPlaceables.forEach { placeable ->
+                placeable.place(0, (height - placeable.height) / 2)
+            }
 
-            val firstItemIndex = (((state.maxScroll - state.scroll.floatValue) / maxItemHeight).toInt()
-                    - visibleItemCount / 2).coerceAtLeast(0)
-            val lastItemIndex = (firstItemIndex + visibleItemCount).coerceAtMost(itemPlaceables.lastIndex)
+            val firstItemIndex =
+                (((state.maxScroll - state.scroll.floatValue) / maxItemHeight).toInt() -
+                        visibleItemCount / 2)
+                    .coerceAtLeast(0)
+            val lastItemIndex =
+                (firstItemIndex + visibleItemCount).coerceAtMost(itemPlaceables.lastIndex)
             for (index in firstItemIndex..lastItemIndex) {
                 val placeable = itemPlaceables[index]
                 val itemY = (state.scroll.floatValue + maxItemHeight * index)
                 val placementY = itemY + (maxItemHeight - placeable.height) / 2
                 placeable.place((width - placeable.width) / 2, placementY.toInt())
                 val listPickerItemSpecNode = placeable.parentData as? ListPickerItemSpecNode
-                if (itemY < centerLine && itemY + maxItemHeight > centerLine && state.currentItem != index) {
+                if (
+                    itemY < centerLine &&
+                        itemY + maxItemHeight > centerLine &&
+                        state.currentItem != index
+                ) {
                     state.currentItem = index
                     onItemSelected.value(index)
                 }
 
                 if (state.currentItem == index) {
-                    state.currentItemOffset = ((centerLine - itemY - maxItemHeight / 2) / maxItemHeight).coerceIn(-.5f, .5f)
+                    state.currentItemOffset =
+                        ((centerLine - itemY - maxItemHeight / 2) / maxItemHeight).coerceIn(
+                            -.5f,
+                            .5f,
+                        )
                 }
 
                 if (listPickerItemSpecNode != null) {
-                    val selectedPositionOffset = (itemY + maxItemHeight / 2 - centerLine) / maxItemHeight
+                    val selectedPositionOffset =
+                        (itemY + maxItemHeight / 2 - centerLine) / maxItemHeight
                     val viewPortOffset = (itemY + maxItemHeight / 2 - centerLine) / (height / 2)
                     listPickerItemSpecNode.onPositionChange?.invoke(
                         selectedPositionOffset.coerceIn(-1f, 1f),
@@ -223,7 +249,8 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
 
     internal val internalInteractionSource = MutableInteractionSource()
 
-    val interactionSource: InteractionSource get() = internalInteractionSource
+    val interactionSource: InteractionSource
+        get() = internalInteractionSource
 
     val scroll = mutableFloatStateOf(0f)
 
@@ -272,7 +299,10 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
         return true
     }
 
-    private suspend fun startScroll(scrollPriority: MutatePriority, scroll: suspend CoroutineScope.() -> Unit) {
+    private suspend fun startScroll(
+        scrollPriority: MutatePriority,
+        scroll: suspend CoroutineScope.() -> Unit,
+    ) {
         if (stopScrollJob(scrollPriority)) {
             currentScrollPriority = scrollPriority
             scrollJob = coroutineScope {
@@ -284,28 +314,39 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
         }
     }
 
-    internal suspend fun snap(velocity: Float, scrollPriority: MutatePriority = MutatePriority.UserInput) {
+    internal suspend fun snap(
+        velocity: Float,
+        scrollPriority: MutatePriority = MutatePriority.UserInput,
+    ) {
         startScroll(scrollPriority) { performSnap(velocity) }
     }
 
     private suspend fun performSnap(velocity: Float) {
-        val targetValue = FloatExponentialDecaySpec()
-            .getTargetValue(currentScroll, velocity)
-            .coerceIn(minScroll, maxScroll)
+        val targetValue =
+            FloatExponentialDecaySpec()
+                .getTargetValue(currentScroll, velocity)
+                .coerceIn(minScroll, maxScroll)
         val remainder = targetValue % maxItemHeight
-        val snapScrollValue = targetValue - remainder - if (abs(remainder) > maxItemHeight / 2) maxItemHeight else 0
+        val snapScrollValue =
+            targetValue - remainder - if (abs(remainder) > maxItemHeight / 2) maxItemHeight else 0
         animate(
             initialValue = currentScroll,
             targetValue = snapScrollValue,
             initialVelocity = velocity,
             animationSpec = scrollAnimationSpec,
-        ) { value, _ -> setScroll(value) }
+        ) { value, _ ->
+            setScroll(value)
+        }
     }
 
     private fun getTargetScrollValue(index: Int, positionOffset: Float): Float =
         maxScroll - maxItemHeight * (index + positionOffset).coerceIn(0f, itemCount - 1f)
 
-    suspend fun scrollTo(index: Int, positionOffset: Float = 0f, scrollPriority: MutatePriority = MutatePriority.Default) {
+    suspend fun scrollTo(
+        index: Int,
+        positionOffset: Float = 0f,
+        scrollPriority: MutatePriority = MutatePriority.Default,
+    ) {
         startScroll(scrollPriority) { performScrollTo(index, positionOffset) }
     }
 
@@ -313,7 +354,10 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
         setScroll(getTargetScrollValue(index, positionOffset))
     }
 
-    suspend fun animateScrollTo(index: Int, scrollPriority: MutatePriority = MutatePriority.Default) {
+    suspend fun animateScrollTo(
+        index: Int,
+        scrollPriority: MutatePriority = MutatePriority.Default,
+    ) {
         startScroll(scrollPriority) { performAnimateScrollTo(index) }
     }
 
@@ -322,7 +366,9 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
             initialValue = currentScroll,
             targetValue = getTargetScrollValue(index, 0f),
             animationSpec = scrollAnimationSpec,
-        ) { value, _ -> setScroll(value) }
+        ) { value, _ ->
+            setScroll(value)
+        }
     }
 
     companion object : Saver<WheelPickerState, Bundle> {
@@ -338,9 +384,7 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
 
 @Composable
 fun rememberWheelPickerState(initialSelectedIndex: Int = 0): WheelPickerState =
-    rememberSaveable(saver = WheelPickerState) {
-        WheelPickerState(initialSelectedIndex)
-    }
+    rememberSaveable(saver = WheelPickerState) { WheelPickerState(initialSelectedIndex) }
 
 @LightAndDarkThemePreview
 @Composable
@@ -350,59 +394,70 @@ fun WheelPickerPreview() {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(24.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             ) {
                 WheelPicker(
                     items = {
                         val deselectedColor = MaterialTheme.colorScheme.onSurface
                         val selectedColor = MaterialTheme.colorScheme.primary
 
-                        List(10) { it.toString() }.forEach {
-                            val positionOffset = remember { mutableFloatStateOf(1f) }
-                            val textColor = remember { mutableStateOf(deselectedColor) }
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = textColor.value,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                                    .onPositionChange { offset, viewPortOffset ->
-                                        positionOffset.floatValue = abs(viewPortOffset)
-                                        textColor.value = lerp(selectedColor, deselectedColor, abs(offset))
-                                    }
-                                    .graphicsLayer {
-                                        alpha = 0f + (1 - positionOffset.floatValue) //* .75f
-                                        scaleY = .5f + (1 - positionOffset.floatValue) * .5f
-                                    }
-                            )
-                        }
+                        List(10) { it.toString() }
+                            .forEach {
+                                val positionOffset = remember { mutableFloatStateOf(1f) }
+                                val textColor = remember { mutableStateOf(deselectedColor) }
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = textColor.value,
+                                    modifier =
+                                        Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                            .onPositionChange { offset, viewPortOffset ->
+                                                positionOffset.floatValue = abs(viewPortOffset)
+                                                textColor.value =
+                                                    lerp(
+                                                        selectedColor,
+                                                        deselectedColor,
+                                                        abs(offset),
+                                                    )
+                                            }
+                                            .graphicsLayer {
+                                                alpha =
+                                                    0f + (1 - positionOffset.floatValue) // * .75f
+                                                scaleY = .5f + (1 - positionOffset.floatValue) * .5f
+                                            },
+                                )
+                            }
                     },
                     highlight = {
-                        Box(Modifier.border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)))
+                        Box(
+                            Modifier.border(
+                                2.dp,
+                                MaterialTheme.colorScheme.outline,
+                                RoundedCornerShape(8.dp),
+                            )
+                        )
                     },
                 )
 
                 WheelPicker(
                     items = {
-                        listOf("\uD83D\uDCAA", "\uD83D\uDC7E", "\uD83E\uDEF5").forEach {
-                            Text(it)
-                        }
+                        listOf("\uD83D\uDCAA", "\uD83D\uDC7E", "\uD83E\uDEF5").forEach { Text(it) }
                     },
                     state = rememberWheelPickerState(1),
                     highlight = {
                         Box(
-                            Modifier
-                                .height(44.dp)
+                            Modifier.height(44.dp)
                                 .aspectRatio(2f)
                                 .border(
                                     width = 1.dp,
-                                    brush = Brush.verticalGradient(
-                                        listOf(
-                                            MaterialTheme.colorScheme.primary.copy(alpha = .3f),
-                                            MaterialTheme.colorScheme.primary.copy(alpha = .1f),
+                                    brush =
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                MaterialTheme.colorScheme.primary.copy(alpha = .3f),
+                                                MaterialTheme.colorScheme.primary.copy(alpha = .1f),
+                                            )
                                         ),
-                                    ),
-                                    shape = RoundedCornerShape(12.dp)
+                                    shape = RoundedCornerShape(12.dp),
                                 )
                                 .padding(horizontal = 4.dp)
                         )

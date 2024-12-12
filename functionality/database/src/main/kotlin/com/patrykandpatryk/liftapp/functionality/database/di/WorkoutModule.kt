@@ -12,8 +12,7 @@ import dagger.hilt.android.components.ViewModelComponent
 @Module
 @InstallIn(ViewModelComponent::class)
 interface WorkoutModule {
-    @Binds
-    fun bindGetWorkoutContract(repository: RoomWorkoutRepository): GetWorkoutContract
+    @Binds fun bindGetWorkoutContract(repository: RoomWorkoutRepository): GetWorkoutContract
 
     @Binds
     fun bindUpsertExerciseSetContract(repository: RoomWorkoutRepository): UpsertExerciseSetContract

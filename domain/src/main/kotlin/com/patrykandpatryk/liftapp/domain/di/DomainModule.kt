@@ -12,13 +12,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+import kotlin.reflect.KClass
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import javax.inject.Singleton
-import kotlin.reflect.KClass
 
 typealias StringResourceSerializers =
     Set<@JvmSuppressWildcards Pair<KClass<StringResource>, KSerializer<StringResource>>>
@@ -30,15 +30,22 @@ interface DomainModule {
     companion object {
         @Provides
         @Singleton
-        fun provideJson(
-            stringResourceSerializers: StringResourceSerializers,
-        ): Json = Json {
+        fun provideJson(stringResourceSerializers: StringResourceSerializers): Json = Json {
             serializersModule = SerializersModule {
                 polymorphic(ValueUnit::class) {
                     subclass(MassUnit::class, PolymorphicEnumSerializer(MassUnit.serializer()))
-                    subclass(LongDistanceUnit::class, PolymorphicEnumSerializer(LongDistanceUnit.serializer()))
-                    subclass(MediumDistanceUnit::class, PolymorphicEnumSerializer(MediumDistanceUnit.serializer()))
-                    subclass(ShortDistanceUnit::class, PolymorphicEnumSerializer(ShortDistanceUnit.serializer()))
+                    subclass(
+                        LongDistanceUnit::class,
+                        PolymorphicEnumSerializer(LongDistanceUnit.serializer()),
+                    )
+                    subclass(
+                        MediumDistanceUnit::class,
+                        PolymorphicEnumSerializer(MediumDistanceUnit.serializer()),
+                    )
+                    subclass(
+                        ShortDistanceUnit::class,
+                        PolymorphicEnumSerializer(ShortDistanceUnit.serializer()),
+                    )
                     subclass(PercentageUnit::class)
                 }
 

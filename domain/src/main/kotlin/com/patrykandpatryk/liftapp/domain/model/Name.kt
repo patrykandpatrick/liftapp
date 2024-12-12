@@ -10,16 +10,14 @@ sealed class Name : java.io.Serializable {
     @SerialName("Raw")
     data class Raw(val value: String) : Name() {
 
-        override fun toString(): String =
-            "Raw(value='$value')"
+        override fun toString(): String = "Raw(value='$value')"
     }
 
     @Serializable
     @SerialName("Resource")
     data class Resource(val resource: StringResource) : Name() {
 
-        override fun toString(): String =
-            "Resource(resourceName='$resource')"
+        override fun toString(): String = "Resource(resourceName='$resource')"
     }
 
     companion object {

@@ -7,24 +7,27 @@ import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import javax.inject.Inject
 
-class BodyMeasurementMapper @Inject constructor(
-    private val formatter: Formatter,
-    private val stringProvider: StringProvider,
-) {
+class BodyMeasurementMapper
+@Inject
+constructor(private val formatter: Formatter, private val stringProvider: StringProvider) {
 
-    fun toDomain(bodyMeasurement: BodyMeasurementEntity): BodyMeasurement = BodyMeasurement(
-        id = bodyMeasurement.id,
-        name = stringProvider.getResolvedName(bodyMeasurement.name),
-        type = bodyMeasurement.type,
-    )
+    fun toDomain(bodyMeasurement: BodyMeasurementEntity): BodyMeasurement =
+        BodyMeasurement(
+            id = bodyMeasurement.id,
+            name = stringProvider.getResolvedName(bodyMeasurement.name),
+            type = bodyMeasurement.type,
+        )
 
-    suspend fun toDomain(entry: BodyMeasurementEntryEntity) = BodyMeasurementEntry(
-        id = entry.id,
-        value = entry.value,
-        formattedDate = formatter.getFormattedDate(entry.time),
-    )
+    suspend fun toDomain(entry: BodyMeasurementEntryEntity) =
+        BodyMeasurementEntry(
+            id = entry.id,
+            value = entry.value,
+            formattedDate = formatter.getFormattedDate(entry.time),
+        )
 
-    suspend fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
+    suspend fun toDomain(
+        input: BodyMeasurementWithLatestEntryViewResult
+    ): BodyMeasurementWithLatestEntry =
         BodyMeasurementWithLatestEntry(
             id = input.bodyMeasurement.id,
             name = stringProvider.getResolvedName(input.bodyMeasurement.name),

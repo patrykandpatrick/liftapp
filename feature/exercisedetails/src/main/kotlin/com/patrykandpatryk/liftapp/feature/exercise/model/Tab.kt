@@ -12,7 +12,8 @@ import com.patrykandpatryk.liftapp.feature.exercise.ui.Details
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-internal val tabs: ImmutableList<Tab> = persistentListOf(
+internal val tabs: ImmutableList<Tab> =
+    persistentListOf(
         Tab(
             nameRes = R.string.tab_stats,
             content = {
@@ -24,10 +25,5 @@ internal val tabs: ImmutableList<Tab> = persistentListOf(
                 }
             },
         ),
-        Tab(
-            nameRes = R.string.tab_details,
-            content = {
-                Details()
-            },
-        ),
+        Tab(nameRes = R.string.tab_details, content = { Details() }),
     )

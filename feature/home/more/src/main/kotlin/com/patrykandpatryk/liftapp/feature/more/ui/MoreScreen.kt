@@ -23,17 +23,12 @@ import com.patrykandpatryk.liftapp.feature.more.navigation.MoreNavigator
 import com.patrykandpatryk.liftapp.feature.more.navigation.destinations
 
 @Composable
-fun MoreScreen(
-    navigator: MoreNavigator,
-    padding: PaddingValues,
-    modifier: Modifier = Modifier,
-) {
+fun MoreScreen(navigator: MoreNavigator, padding: PaddingValues, modifier: Modifier = Modifier) {
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
-        modifier = modifier
-            .padding(padding)
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier =
+            modifier.padding(padding).nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(id = R.string.route_more)) },
@@ -47,9 +42,14 @@ fun MoreScreen(
                     title = stringResource(id = destination.titleResourceId),
                     iconPainter = painterResource(id = destination.iconResourceId),
                     actions = {
-                        Icon(painter = painterResource(id = R.drawable.ic_chevron_right), contentDescription = null)
-                    }
-                ) { destination.navigate(navigator) }
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                        )
+                    },
+                ) {
+                    destination.navigate(navigator)
+                }
             }
         }
     }
@@ -58,10 +58,5 @@ fun MoreScreen(
 @MultiDevicePreview
 @Composable
 private fun MoreScreenPreview() {
-    LiftAppTheme {
-        MoreScreen(
-            navigator = interfaceStub(),
-            padding = PaddingValues(),
-        )
-    }
+    LiftAppTheme { MoreScreen(navigator = interfaceStub(), padding = PaddingValues()) }
 }

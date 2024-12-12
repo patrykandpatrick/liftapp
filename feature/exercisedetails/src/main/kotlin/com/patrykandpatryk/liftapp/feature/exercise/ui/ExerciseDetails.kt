@@ -44,9 +44,10 @@ fun ExerciseDetails(
     navigator: ExerciseDetailsNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: ExerciseViewModel = hiltViewModel(
-        creationCallback = { factory: ExerciseViewModel.Factory -> factory.create(exerciseID) },
-    )
+    val viewModel: ExerciseViewModel =
+        hiltViewModel(
+            creationCallback = { factory: ExerciseViewModel.Factory -> factory.create(exerciseID) }
+        )
 
     val state by viewModel.state.collectAsState()
 
@@ -96,9 +97,7 @@ private fun ExerciseDetails(
                 title = state.name,
                 onBackClick = navigator::back,
                 selectedTabIndex = pagerState.currentPage,
-                onTabSelected = { index ->
-                    scope.launch { pagerState.animateScrollToPage(index) }
-                },
+                onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
                 tabs = tabs.tabItems,
             )
         },
@@ -119,14 +118,10 @@ private fun ExerciseDetails(
                 }
             }
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-
         HorizontalPager(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             state = pagerState,
             contentPadding = paddingValues,
         ) { index ->
@@ -145,7 +140,9 @@ private fun DeleteExerciseDialog(
     if (isVisible) {
         AlertDialog(
             onDismissRequest = onDismissRequest,
-            title = { Text(text = stringResource(id = R.string.generic_delete_something, exerciseName)) },
+            title = {
+                Text(text = stringResource(id = R.string.generic_delete_something, exerciseName))
+            },
             text = { Text(text = stringResource(id = R.string.exercise_delete_message)) },
             dismissButton = {
                 TextButton(onClick = onDismissRequest) {
@@ -166,10 +163,7 @@ private fun DeleteExerciseDialog(
 fun PreviewExerciseDetails() {
     LiftAppTheme {
         ExerciseDetails(
-            state = ScreenState.Populated(
-                name = "Bicep Curl",
-                showDeleteDialog = false,
-            ),
+            state = ScreenState.Populated(name = "Bicep Curl", showDeleteDialog = false),
             navigator = interfaceStub(),
             onIntent = {},
             snackbarHostState = SnackbarHostState(),

@@ -4,6 +4,8 @@ import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import com.patrykandpatryk.liftapp.domain.workout.WorkoutRepository
+import java.time.LocalDateTime
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.async
@@ -19,10 +21,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import javax.inject.Inject
 
-class RoomWorkoutRepository @Inject constructor(
+class RoomWorkoutRepository
+@Inject
+constructor(
     private val workoutDao: WorkoutDao,
     private val workoutMapper: WorkoutMapper,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
@@ -33,22 +35,21 @@ class RoomWorkoutRepository @Inject constructor(
     override fun getWorkout(routineID: Long, workoutID: Long?): Flow<Workout> =
         getWorkoutEntity(routineID, workoutID)
             .flatMapLatest { workoutEntity ->
-                workoutDao.getWorkoutExercises(workoutEntity.id)
-                    .map { exercises -> workoutEntity to exercises }
+                workoutDao.getWorkoutExercises(workoutEntity.id).map { exercises ->
+                    workoutEntity to exercises
+                }
             }
-            .map { (workoutEntity, exercises) ->
-                workoutMapper.toDomain(workoutEntity, exercises)
-            }
+            .map { (workoutEntity, exercises) -> workoutMapper.toDomain(workoutEntity, exercises) }
             .flowOn(coroutineContext)
 
     private fun getWorkoutEntity(routineID: Long, workoutID: Long?): Flow<WorkoutEntity> =
         flow {
-            if (workoutID != null) {
-                emitAll(workoutDao.getWorkout(workoutID))
-            } else {
-                emit(null)
+                if (workoutID != null) {
+                    emitAll(workoutDao.getWorkout(workoutID))
+                } else {
+                    emit(null)
+                }
             }
-        }
             .distinctUntilChanged()
             .transformLatest { workout ->
                 if (workout == null) {
@@ -56,19 +57,20 @@ class RoomWorkoutRepository @Inject constructor(
                 } else {
                     emit(workout)
                 }
-            }.filterNotNull()
-
-    private suspend fun insertEmptyWorkout(routineID: Long): Long =
-        coroutineScope {
-            val routineName = async {
-                checkNotNull(workoutDao.getRoutineName(routineID).first()) {
-                    "Routine with ID $routineID not found"
-                }
             }
+            .filterNotNull()
 
-            val bodyWeight = async { workoutDao.getLatestBodyWeight() }
+    private suspend fun insertEmptyWorkout(routineID: Long): Long = coroutineScope {
+        val routineName = async {
+            checkNotNull(workoutDao.getRoutineName(routineID).first()) {
+                "Routine with ID $routineID not found"
+            }
+        }
 
-            val workoutID = workoutDao.insertWorkout(
+        val bodyWeight = async { workoutDao.getLatestBodyWeight() }
+
+        val workoutID =
+            workoutDao.insertWorkout(
                 WorkoutEntity(
                     name = routineName.await(),
                     routineID = routineID,
@@ -79,21 +81,15 @@ class RoomWorkoutRepository @Inject constructor(
                 )
             )
 
-
-            launch {
-                insertWorkoutWithExercises(workoutID, routineID)
-            }
-            launch {
-                workoutDao.copyRoutineGoalsToWorkoutGoals(routineID, workoutID)
-            }
-            workoutID
-        }
+        launch { insertWorkoutWithExercises(workoutID, routineID) }
+        launch { workoutDao.copyRoutineGoalsToWorkoutGoals(routineID, workoutID) }
+        workoutID
+    }
 
     private suspend fun insertWorkoutWithExercises(workoutID: Long, routineID: Long) {
         val exerciseIDs = workoutDao.getExerciseIDs(routineID).first()
-        val workoutWithExercises = exerciseIDs.mapIndexed { index, id ->
-            WorkoutWithExerciseEntity(workoutID, id, index)
-        }
+        val workoutWithExercises =
+            exerciseIDs.mapIndexed { index, id -> WorkoutWithExerciseEntity(workoutID, id, index) }
         workoutDao.insertWorkoutWithExercises(workoutWithExercises)
     }
 
@@ -103,12 +99,24 @@ class RoomWorkoutRepository @Inject constructor(
         minReps: Int,
         maxReps: Int,
         sets: Int,
-        breakDurationMillis: Long
+        breakDurationMillis: Long,
     ) {
-        workoutDao.upsertWorkoutGoal(workoutID, exerciseID, minReps, maxReps, sets, breakDurationMillis)
+        workoutDao.upsertWorkoutGoal(
+            workoutID,
+            exerciseID,
+            minReps,
+            maxReps,
+            sets,
+            breakDurationMillis,
+        )
     }
 
-    override suspend fun upsertExerciseSet(workoutID: Long, exerciseId: Long, set: ExerciseSet, setIndex: Int) {
+    override suspend fun upsertExerciseSet(
+        workoutID: Long,
+        exerciseId: Long,
+        set: ExerciseSet,
+        setIndex: Int,
+    ) {
         workoutDao.upsertExerciseSet(
             workoutID,
             exerciseId,
@@ -119,7 +127,7 @@ class RoomWorkoutRepository @Inject constructor(
             set.distance,
             set.distanceUnit,
             set.kcal,
-            setIndex
+            setIndex,
         )
     }
 }

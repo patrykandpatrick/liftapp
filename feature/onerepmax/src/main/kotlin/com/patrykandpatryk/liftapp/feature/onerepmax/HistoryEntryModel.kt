@@ -1,8 +1,8 @@
 package com.patrykandpatryk.liftapp.feature.onerepmax
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import java.util.UUID
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class HistoryEntryModel(

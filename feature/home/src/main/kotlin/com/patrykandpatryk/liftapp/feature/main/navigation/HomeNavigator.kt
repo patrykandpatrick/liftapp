@@ -8,5 +8,9 @@ import com.patrykandpatryk.liftapp.feature.more.navigation.MoreNavigator
 import com.patrykandpatryk.liftapp.feature.routines.RoutineListNavigator
 
 @Immutable
-interface HomeNavigator : DashboardNavigator, RoutineListNavigator, ExerciseListNavigator,
-    BodyMeasurementListNavigator, MoreNavigator
+interface HomeNavigator :
+    DashboardNavigator,
+    RoutineListNavigator,
+    ExerciseListNavigator,
+    BodyMeasurementListNavigator,
+    MoreNavigator

@@ -5,8 +5,7 @@ import androidx.compose.runtime.Immutable
 
 sealed class ExercisesItem(open val key: Any) {
 
-    @Immutable
-    class Header(val title: String) : ExercisesItem(title)
+    @Immutable class Header(val title: String) : ExercisesItem(title)
 
     @Immutable
     data class Exercise(

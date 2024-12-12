@@ -38,8 +38,11 @@ class MainNavigator(private val navController: NavController) :
     }
 
     override fun onExercisesPicked(exerciseIDs: List<Long>) {
-        val previousRoute: String = requireNotNull(navController.previousBackStackEntry?.destination?.route)
-        navController.getBackStackEntry(previousRoute).savedStateHandle[Constants.Keys.PICKED_EXERCISE_IDS] = exerciseIDs
+        val previousRoute: String =
+            requireNotNull(navController.previousBackStackEntry?.destination?.route)
+        navController
+            .getBackStackEntry(previousRoute)
+            .savedStateHandle[Constants.Keys.PICKED_EXERCISE_IDS] = exerciseIDs
         navController.popBackStack()
     }
 
@@ -60,30 +63,36 @@ class MainNavigator(private val navController: NavController) :
     }
 
     override fun newBodyMeasurement(bodyMeasurementId: Long, bodyEntryMeasurementId: Long?) {
-        navController.navigate(Routes.BodyMeasurement.newMeasurement(bodyMeasurementId, bodyEntryMeasurementId ?: ID_NOT_SET))
+        navController.navigate(
+            Routes.BodyMeasurement.newMeasurement(
+                bodyMeasurementId,
+                bodyEntryMeasurementId ?: ID_NOT_SET,
+            )
+        )
     }
 
-    fun getRoutineNavigator(routineID: Long): RoutineNavigator = object : RoutineNavigator {
-        override fun back() {
-            navController.popBackStack()
-        }
+    fun getRoutineNavigator(routineID: Long): RoutineNavigator =
+        object : RoutineNavigator {
+            override fun back() {
+                navController.popBackStack()
+            }
 
-        override fun editRoutine() {
-            navController.navigate(Routes.Routine.edit(routineID))
-        }
+            override fun editRoutine() {
+                navController.navigate(Routes.Routine.edit(routineID))
+            }
 
-        override fun exercise(exerciseID: Long) {
-            navController.navigate(Routes.Exercise.details(exerciseID))
-        }
+            override fun exercise(exerciseID: Long) {
+                navController.navigate(Routes.Exercise.details(exerciseID))
+            }
 
-        override fun exerciseGoal(exerciseID: Long) {
-            navController.navigate(Routes.Routine.exerciseGoal(routineID, exerciseID))
-        }
+            override fun exerciseGoal(exerciseID: Long) {
+                navController.navigate(Routes.Routine.exerciseGoal(routineID, exerciseID))
+            }
 
-        override fun newWorkout() {
-            navController.navigate(WorkoutRouteData.new(routineID))
+            override fun newWorkout() {
+                navController.navigate(WorkoutRouteData.new(routineID))
+            }
         }
-    }
 }
 
 @Composable

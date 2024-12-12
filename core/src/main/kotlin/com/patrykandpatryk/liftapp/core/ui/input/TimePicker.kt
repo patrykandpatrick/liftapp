@@ -63,25 +63,23 @@ fun TimePicker(
 ) {
     CompositionLocalProvider(LocalDimens provides DialogDimens) {
         if (state.isShowing) {
-            Dialog(
-                onDismissRequest = { state.isShowing = false },
-                properties = properties,
-            ) {
+            Dialog(onDismissRequest = { state.isShowing = false }, properties = properties) {
                 Surface(
-                    modifier = modifier
-                        .widthIn(
-                            min = LocalDimens.current.dialog.minWidth,
-                            max = LocalDimens.current.dialog.maxWidth,
-                        )
-                        .width(IntrinsicSize.Min)
-                        .padding(all = LocalDimens.current.dialog.paddingLarge),
+                    modifier =
+                        modifier
+                            .widthIn(
+                                min = LocalDimens.current.dialog.minWidth,
+                                max = LocalDimens.current.dialog.maxWidth,
+                            )
+                            .width(IntrinsicSize.Min)
+                            .padding(all = LocalDimens.current.dialog.paddingLarge),
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = LocalDimens.current.dialog.tonalElevation,
                     shape = MaterialTheme.shapes.extraLarge,
                 ) {
                     TimePickerContent(
-                        modifier = Modifier
-                            .padding(
+                        modifier =
+                            Modifier.padding(
                                 horizontal = LocalDimens.current.padding.contentHorizontal,
                                 vertical = LocalDimens.current.padding.contentVertical,
                             ),
@@ -107,9 +105,7 @@ private fun TimePickerContent(
 ) {
     val focusManager = LocalFocusManager.current
 
-    Column(
-        modifier = modifier,
-    ) {
+    Column(modifier = modifier) {
         Text(
             modifier = Modifier.padding(bottom = LocalDimens.current.padding.itemVertical),
             text = stringResource(id = R.string.picker_time_title),
@@ -118,31 +114,28 @@ private fun TimePickerContent(
         )
 
         Row(
-            modifier = Modifier
-                .padding(top = LocalDimens.current.dialog.paddingLarge)
-                .height(IntrinsicSize.Max),
-            horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.contentHorizontalSmall),
+            modifier =
+                Modifier.padding(top = LocalDimens.current.dialog.paddingLarge)
+                    .height(IntrinsicSize.Max),
+            horizontalArrangement =
+                Arrangement.spacedBy(LocalDimens.current.padding.contentHorizontalSmall),
         ) {
-            val inputTextStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center)
+            val inputTextStyle =
+                MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center)
 
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(weight = 1f, fill = false),
-            ) {
+            Column(modifier = Modifier.fillMaxHeight().weight(weight = 1f, fill = false)) {
                 TextField(
                     focusedValue = state.hour,
                     unfocusedValue = state.formattedHour,
                     onValueChange = { hour ->
-                        state.updateHour(hour) {
-                            focusManager.moveFocus(FocusDirection.Next)
-                        }
+                        state.updateHour(hour) { focusManager.moveFocus(FocusDirection.Next) }
                     },
                     textStyle = inputTextStyle,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Next,
-                    ),
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Next,
+                        ),
                 )
 
                 SupportingText(text = stringResource(id = R.string.picker_time_hour))
@@ -154,20 +147,17 @@ private fun TimePickerContent(
                 style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(weight = 1f, fill = false),
-            ) {
+            Column(modifier = Modifier.fillMaxHeight().weight(weight = 1f, fill = false)) {
                 TextField(
                     focusedValue = state.minute,
                     unfocusedValue = state.formattedMinute,
                     onValueChange = state::updateMinute,
                     textStyle = inputTextStyle,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Done,
-                    ),
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done,
+                        ),
                     keyboardActions = KeyboardActions(onDone = { onPositiveButtonClick() }),
                 )
 
@@ -214,17 +204,13 @@ private fun ColumnScope.TextField(
 }
 
 @Composable
-private fun TimeOfDayIndicator(
-    state: TimePickerState,
-    modifier: Modifier = Modifier,
-) {
+private fun TimeOfDayIndicator(state: TimePickerState, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxHeight()) {
         VerticalSegmentedButtonContainer(
             modifier = Modifier.weight(weight = 1f),
             items = TimeOfDay.values().toList(),
             shape = MaterialTheme.shapes.extraSmall,
         ) { _, timeOfDay ->
-
             SegmentedButton(
                 modifier = Modifier.fillMaxHeight(),
                 text = timeOfDay.text,
@@ -251,9 +237,7 @@ class TimePickerState(
 
     private val timeRange = if (is24h) 0..24 else 0..12
 
-    val formattedHour: String by derivedStateOf {
-        decimalFormat.format(this.hour.toIntOrZero())
-    }
+    val formattedHour: String by derivedStateOf { decimalFormat.format(this.hour.toIntOrZero()) }
 
     val formattedMinute: String by derivedStateOf {
         decimalFormat.format(this.minute.toIntOrZero())
@@ -307,10 +291,11 @@ class TimePickerState(
 
     private fun getDisplayHour(hour: Int): String =
         if (is24h.not() && hour > 12) {
-            hour - 12
-        } else {
-            hour
-        }.let(decimalFormat::format)
+                hour - 12
+            } else {
+                hour
+            }
+            .let(decimalFormat::format)
 }
 
 @Composable
@@ -319,14 +304,10 @@ fun rememberTimePickerState(
     hour: Int,
     minute: Int,
     is24h: Boolean = true,
-) = remember(keys = arrayOf(is24h, hour, minute)) {
-    TimePickerState(
-        isShowing = isShowing,
-        hour = hour,
-        minute = minute,
-        is24h = is24h,
-    )
-}
+) =
+    remember(keys = arrayOf(is24h, hour, minute)) {
+        TimePickerState(isShowing = isShowing, hour = hour, minute = minute, is24h = is24h)
+    }
 
 @MultiDevicePreview
 @Composable
@@ -334,12 +315,8 @@ fun TimePicker12HPreview() {
     LiftAppTheme {
         TimePicker(
             modifier = Modifier.padding(16.dp),
-            state = rememberTimePickerState(
-                isShowing = true,
-                is24h = false,
-                hour = 21,
-                minute = 37,
-            ),
+            state =
+                rememberTimePickerState(isShowing = true, is24h = false, hour = 21, minute = 37),
             onTimePicked = { _, _ -> },
         )
     }
@@ -351,11 +328,7 @@ fun TimePicker24HPreview() {
     LiftAppTheme {
         TimePicker(
             modifier = Modifier.padding(16.dp),
-            state = rememberTimePickerState(
-                isShowing = true,
-                hour = 21,
-                minute = 37,
-            ),
+            state = rememberTimePickerState(isShowing = true, hour = 21, minute = 37),
             onTimePicked = { _, _ -> },
         )
     }

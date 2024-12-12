@@ -22,20 +22,16 @@ fun DialogButtons(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(
-            space = LocalDimens.current.padding.itemHorizontalSmall,
-            alignment = Alignment.End,
-        ),
+        horizontalArrangement =
+            Arrangement.spacedBy(
+                space = LocalDimens.current.padding.itemHorizontalSmall,
+                alignment = Alignment.End,
+            ),
     ) {
-        TextButton(onClick = onNegativeButtonClick) {
-            Text(text = negativeButtonText)
-        }
+        TextButton(onClick = onNegativeButtonClick) { Text(text = negativeButtonText) }
 
         if (onPositiveButtonClick != null) {
-            TextButton(
-                onClick = onPositiveButtonClick,
-                enabled = isPositiveButtonEnabled,
-            ) {
+            TextButton(onClick = onPositiveButtonClick, enabled = isPositiveButtonEnabled) {
                 Text(text = positiveButtonText)
             }
         }

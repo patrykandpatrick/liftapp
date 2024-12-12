@@ -2,8 +2,8 @@ package com.patrykandpatryk.liftapp.feature.newroutine.model
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
-import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
+import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

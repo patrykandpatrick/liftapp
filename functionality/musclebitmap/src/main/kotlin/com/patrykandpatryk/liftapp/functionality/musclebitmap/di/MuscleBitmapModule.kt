@@ -29,11 +29,9 @@ interface MuscleBitmapModule {
     @Binds
     fun bindMuscleBitmapGenerator(generator: MuscleBitmapGeneratorImpl): MuscleBitmapGenerator
 
-    @Binds
-    fun bindMuscleImageProvider(provider: MuscleImageProviderImpl): MuscleImageProvider
+    @Binds fun bindMuscleImageProvider(provider: MuscleImageProviderImpl): MuscleImageProvider
 
-    @Binds
-    fun bindNameInfoEncoder(coder: NameInfoCoder): NameInfoEncoder
+    @Binds fun bindNameInfoEncoder(coder: NameInfoCoder): NameInfoEncoder
 
     companion object {
 
@@ -47,8 +45,6 @@ interface MuscleBitmapModule {
                 bitmapMargin = context.resources.getDimensionPixelSize(R.dimen.bitmap_margin),
             )
 
-        @Provides
-        fun provideSha1Algorithm(): MessageDigest =
-            MessageDigest.getInstance(SHA1_NAME)
+        @Provides fun provideSha1Algorithm(): MessageDigest = MessageDigest.getInstance(SHA1_NAME)
     }
 }

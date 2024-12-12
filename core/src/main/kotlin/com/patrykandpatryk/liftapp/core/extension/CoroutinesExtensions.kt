@@ -11,7 +11,5 @@ import kotlinx.coroutines.flow.FlowCollector
 @Composable
 @NonRestartableComposable
 fun <T> Flow<T>.collectInComposable(collector: FlowCollector<T>) {
-    LaunchedEffect(key1 = collector) {
-        collect(collector)
-    }
+    LaunchedEffect(key1 = collector) { collect(collector) }
 }

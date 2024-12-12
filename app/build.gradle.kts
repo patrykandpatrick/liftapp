@@ -1,10 +1,6 @@
-apply {
-    from("$rootDir/gradle/ui-module-base.gradle")
-}
+apply { from("$rootDir/gradle/ui-module-base.gradle") }
 
-plugins {
-    alias(libs.plugins.application)
-}
+plugins { alias(libs.plugins.application) }
 
 android {
     namespace = "pl.patrykgoworowski.mintlift"
@@ -39,7 +35,5 @@ dependencies {
     implementation(project(":feature:newroutine"))
     implementation(project(":feature:exercisegoal"))
     implementation(project(":feature:workout"))
-    project(":functionality") {
-        subprojects.forEach(::implementation)
-    }
+    project(":functionality") { subprojects.forEach(::implementation) }
 }

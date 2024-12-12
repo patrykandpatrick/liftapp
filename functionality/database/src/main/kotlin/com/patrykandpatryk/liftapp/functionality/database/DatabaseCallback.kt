@@ -6,12 +6,14 @@ import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.Insert
 import com.patrykandpatryk.liftapp.functionality.database.exercise.InsertDefaultExercises
 import com.patrykandpatryk.liftapp.functionality.database.exercise.InsertDefaultRoutines
 import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class DatabaseCallback @Inject constructor(
+class DatabaseCallback
+@Inject
+constructor(
     private val insertDefaultBodyMeasurements: Lazy<InsertDefaultBodyMeasurementsUseCase>,
     private val insertDefaultExercises: Lazy<InsertDefaultExercises>,
     private val insertDefaultRoutines: Lazy<InsertDefaultRoutines>,

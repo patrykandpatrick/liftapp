@@ -12,18 +12,20 @@ import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapConfig
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.MuscleBitmapGenerator
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.model.NameInfoEncoder
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Provider
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 private const val TARGET_SUBDIRECTORY = "muscle_images"
 
 private const val QUALITY = 100
 
-class MuscleImageProviderImpl @Inject constructor(
+class MuscleImageProviderImpl
+@Inject
+constructor(
     private val muscleImageGeneratorImpl: MuscleBitmapGenerator,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     @IODispatcher private val ioDispatcher: CoroutineDispatcher,
@@ -45,27 +47,31 @@ class MuscleImageProviderImpl @Inject constructor(
             targetDir.mkdirs()
         }
 
-        val imageName = nameInfoEncoder.encodeToName(
-            primaryMuscles = primaryMuscles,
-            secondaryMuscles = secondaryMuscles,
-            tertiaryMuscles = tertiaryMuscles,
-            isDark = isDark,
-        )
+        val imageName =
+            nameInfoEncoder.encodeToName(
+                primaryMuscles = primaryMuscles,
+                secondaryMuscles = secondaryMuscles,
+                tertiaryMuscles = tertiaryMuscles,
+                isDark = isDark,
+            )
 
         val targetFile = File(targetDir, imageName)
 
         Timber.d("targetFile=${targetFile.path}")
 
         if (targetFile.exists().not()) {
-            val bitmap = withContext(defaultDispatcher) {
-                Timber.d("Generating bitmap")
-                muscleImageGeneratorImpl.generateBitmap(
-                    config = configProvider.get(),
-                    primaryMuscles = primaryMuscles,
-                    secondaryMuscles = secondaryMuscles,
-                    tertiaryMuscles = tertiaryMuscles,
-                ).also { Timber.d("Bitmap generated") }
-            }
+            val bitmap =
+                withContext(defaultDispatcher) {
+                    Timber.d("Generating bitmap")
+                    muscleImageGeneratorImpl
+                        .generateBitmap(
+                            config = configProvider.get(),
+                            primaryMuscles = primaryMuscles,
+                            secondaryMuscles = secondaryMuscles,
+                            tertiaryMuscles = tertiaryMuscles,
+                        )
+                        .also { Timber.d("Bitmap generated") }
+                }
 
             withContext(ioDispatcher) {
                 val outputStream = targetFile.outputStream()

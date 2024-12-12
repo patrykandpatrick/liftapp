@@ -11,11 +11,13 @@ object IconButtonDefaults {
         containerColor: Color = Color.Transparent,
         contentColor: Color = LocalContentColor.current,
         disabledContainerColor: Color = Color.Transparent,
-        disabledContentColor: Color = contentColor.copy(alpha = IconButtonTokens.DisabledContentColorAlpha),
-    ) = IconButtonColors(
-        containerColor = containerColor,
-        contentColor = contentColor,
-        disabledContainerColor = disabledContainerColor,
-        disabledContentColor = disabledContentColor,
-    )
+        disabledContentColor: Color =
+            contentColor.copy(alpha = IconButtonTokens.DisabledContentColorAlpha),
+    ) =
+        IconButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
+        )
 }

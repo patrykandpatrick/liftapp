@@ -18,20 +18,15 @@ interface LoggingModule {
 
     @Binds
     fun bindDisplayableExceptionMapper(
-        mapper: DisplayableExceptionMapper,
+        mapper: DisplayableExceptionMapper
     ): Mapper<DisplayableException, String>
 
     companion object {
 
-        @IsDebug
-        @Provides
-        fun provideIsDebug(): Boolean = BuildConfig.DEBUG
+        @IsDebug @Provides fun provideIsDebug(): Boolean = BuildConfig.DEBUG
 
         @Provides
-        fun provideLoggingTrees(
-            @IsDebug isDebug: Boolean,
-            uiLogger: UiLogger,
-        ): Array<Timber.Tree> =
+        fun provideLoggingTrees(@IsDebug isDebug: Boolean, uiLogger: UiLogger): Array<Timber.Tree> =
             if (isDebug) {
                 arrayOf(Timber.DebugTree(), uiLogger)
             } else {

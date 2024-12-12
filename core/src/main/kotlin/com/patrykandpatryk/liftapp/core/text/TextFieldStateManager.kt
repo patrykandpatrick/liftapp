@@ -8,7 +8,9 @@ import com.patrykandpatryk.liftapp.domain.validation.TextValidator
 import java.util.LinkedList
 import javax.inject.Inject
 
-class TextFieldStateManager @Inject constructor(
+class TextFieldStateManager
+@Inject
+constructor(
     private val stringProvider: StringProvider,
     private val formatter: Formatter,
     private val savedStateHandle: SavedStateHandle,
@@ -27,17 +29,19 @@ class TextFieldStateManager @Inject constructor(
         onValueChange: (String) -> Unit = {},
         veto: (String) -> Boolean = { false },
         enabled: TextFieldState<String>.() -> Boolean = { true },
-    ): StringTextFieldState = StringTextFieldState(
-        initialValue = savedStateHandle[savedStateKey] ?: initialValue,
-        textValidator = validator(validators),
-        onTextChange = {
-            savedStateHandle[savedStateKey] = it
-            onTextChange(it)
-        },
-        onValueChange = onValueChange,
-        veto = veto,
-        enabled = enabled
-    ).also { textFields.add(it) }
+    ): StringTextFieldState =
+        StringTextFieldState(
+                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                textValidator = validator(validators),
+                onTextChange = {
+                    savedStateHandle[savedStateKey] = it
+                    onTextChange(it)
+                },
+                onValueChange = onValueChange,
+                veto = veto,
+                enabled = enabled,
+            )
+            .also { textFields.add(it) }
 
     fun intTextField(
         initialValue: String = "",
@@ -47,17 +51,19 @@ class TextFieldStateManager @Inject constructor(
         onValueChange: (Int) -> Unit = {},
         veto: (Int) -> Boolean = { false },
         enabled: TextFieldState<Int>.() -> Boolean = { true },
-    ): IntTextFieldState = IntTextFieldState(
-        initialValue = savedStateHandle[savedStateKey] ?: initialValue,
-        textValidator = validator(validators),
-        onTextChange = {
-            savedStateHandle[savedStateKey] = it
-            onTextChange(it)
-        },
-        onValueChange = onValueChange,
-        veto = veto,
-        enabled = enabled,
-    ).also { textFields.add(it) }
+    ): IntTextFieldState =
+        IntTextFieldState(
+                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                textValidator = validator(validators),
+                onTextChange = {
+                    savedStateHandle[savedStateKey] = it
+                    onTextChange(it)
+                },
+                onValueChange = onValueChange,
+                veto = veto,
+                enabled = enabled,
+            )
+            .also { textFields.add(it) }
 
     fun longTextField(
         initialValue: String = "",
@@ -67,17 +73,19 @@ class TextFieldStateManager @Inject constructor(
         onValueChange: (Long) -> Unit = {},
         veto: (Long) -> Boolean = { false },
         enabled: TextFieldState<Long>.() -> Boolean = { true },
-    ): LongTextFieldState = LongTextFieldState(
-        initialValue = savedStateHandle[savedStateKey] ?: initialValue,
-        textValidator = validator(validators),
-        onTextChange = {
-            savedStateHandle[savedStateKey] = it
-            onTextChange(it)
-        },
-        onValueChange = onValueChange,
-        veto = veto,
-        enabled = enabled,
-    ).also { textFields.add(it) }
+    ): LongTextFieldState =
+        LongTextFieldState(
+                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                textValidator = validator(validators),
+                onTextChange = {
+                    savedStateHandle[savedStateKey] = it
+                    onTextChange(it)
+                },
+                onValueChange = onValueChange,
+                veto = veto,
+                enabled = enabled,
+            )
+            .also { textFields.add(it) }
 
     fun doubleTextField(
         initialValue: String = "",
@@ -87,36 +95,44 @@ class TextFieldStateManager @Inject constructor(
         onValueChange: (Double) -> Unit = {},
         veto: (Double) -> Boolean = { false },
         enabled: TextFieldState<Double>.() -> Boolean = { true },
-    ): DoubleTextFieldState = DoubleTextFieldState(
-        initialValue = savedStateHandle[savedStateKey] ?: initialValue,
-        textValidator = validator(validators),
-        onValueChange = onValueChange,
-        onTextChange = {
-            savedStateHandle[savedStateKey] = it
-            onTextChange(it)
-        },
-        veto = veto,
-        formatter = formatter,
-        enabled = enabled,
-    ).also { textFields.add(it) }
+    ): DoubleTextFieldState =
+        DoubleTextFieldState(
+                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                textValidator = validator(validators),
+                onValueChange = onValueChange,
+                onTextChange = {
+                    savedStateHandle[savedStateKey] = it
+                    onTextChange(it)
+                },
+                veto = veto,
+                formatter = formatter,
+                enabled = enabled,
+            )
+            .also { textFields.add(it) }
 
     fun hasErrors(): Boolean {
         textFields.forEach { it.updateErrorMessages() }
         return textFields.any { it.hasError }
     }
 
-    private fun <T> validator(conditions: TextValidationElementProvider<T>.() -> Unit): TextValidator<T> {
+    private fun <T> validator(
+        conditions: TextValidationElementProvider<T>.() -> Unit
+    ): TextValidator<T> {
         val provider = TextValidationElementProviderImpl<T>()
         provider.apply(conditions)
         return TextValidator(
-            typeTextValidationElements = provider.typeTextValidationElements, stringTextValidationElements = provider.stringTextValidationElements
+            typeTextValidationElements = provider.typeTextValidationElements,
+            stringTextValidationElements = provider.stringTextValidationElements,
         )
     }
 
-    private inner class TextValidationElementProviderImpl<T> : TextValidationElementProvider<T>(stringProvider, formatter) {
-        public override val typeTextValidationElements: MutableSet<TextValidator.TextValidationElement<T>> =
+    private inner class TextValidationElementProviderImpl<T> :
+        TextValidationElementProvider<T>(stringProvider, formatter) {
+        public override val typeTextValidationElements:
+            MutableSet<TextValidator.TextValidationElement<T>> =
             super.typeTextValidationElements
-        public override val stringTextValidationElements: MutableSet<TextValidator.TextValidationElement<String>> =
+        public override val stringTextValidationElements:
+            MutableSet<TextValidator.TextValidationElement<String>> =
             super.stringTextValidationElements
     }
 }

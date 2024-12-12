@@ -9,11 +9,13 @@ import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseMapper
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseWithGoalDto
+import javax.inject.Inject
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 
-class RoutineMapper @Inject constructor(
+class RoutineMapper
+@Inject
+constructor(
     private val json: Json,
     private val stringProvider: StringProvider,
     private val exerciseMapper: ExerciseMapper,
@@ -42,7 +44,8 @@ class RoutineMapper @Inject constructor(
 
     fun toDomain(input: List<RoutineWithExerciseNamesView>): List<RoutineWithExerciseNames> =
         input.map { routineWithExerciseNamesView ->
-            val names: List<Name> = json.decodeFromString("[${routineWithExerciseNamesView.exerciseNames}]")
+            val names: List<Name> =
+                json.decodeFromString("[${routineWithExerciseNamesView.exerciseNames}]")
 
             RoutineWithExerciseNames(
                 id = routineWithExerciseNamesView.routine.id,
@@ -52,14 +55,12 @@ class RoutineMapper @Inject constructor(
         }
 }
 
-internal fun Routine.toEntity(): RoutineEntity = RoutineEntity(
-    id = id,
-    name = name,
-)
+internal fun Routine.toEntity(): RoutineEntity = RoutineEntity(id = id, name = name)
 
 private inline fun List<ExerciseWithGoalDto>.flattenMuscles(
-    getMuscles: ExerciseEntity.() -> List<Muscle>,
+    getMuscles: ExerciseEntity.() -> List<Muscle>
 ): MutableList<Muscle> =
     fold(HashSet<Muscle>()) { set, exerciseWithGoal ->
-        set.apply { addAll(getMuscles(exerciseWithGoal.exerciseEntity)) }
-    }.toMutableList()
+            set.apply { addAll(getMuscles(exerciseWithGoal.exerciseEntity)) }
+        }
+        .toMutableList()

@@ -10,6 +10,5 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface DataModule {
 
-    @Binds
-    fun bindUnitConverter(converter: UnitConverterImpl): UnitConverter
+    @Binds fun bindUnitConverter(converter: UnitConverterImpl): UnitConverter
 }

@@ -9,13 +9,6 @@ interface SavedStateHandleViewModel {
 
     val savedStateHandle: SavedStateHandle
 
-    fun <T : Any> saveable(
-        key: String,
-        saver: Saver<T, out Any> = autoSaver(),
-        init: () -> T,
-    ) = savedStateHandle.saveable(
-        key = key,
-        saver = saver,
-        init = init,
-    )
+    fun <T : Any> saveable(key: String, saver: Saver<T, out Any> = autoSaver(), init: () -> T) =
+        savedStateHandle.saveable(key = key, saver = saver, init = init)
 }

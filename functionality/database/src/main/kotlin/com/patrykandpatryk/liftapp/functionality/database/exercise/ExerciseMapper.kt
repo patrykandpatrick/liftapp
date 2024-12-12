@@ -7,9 +7,7 @@ import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.functionality.database.goal.toDomain
 import javax.inject.Inject
 
-class ExerciseMapper @Inject constructor(
-    private val stringProvider: StringProvider,
-) {
+class ExerciseMapper @Inject constructor(private val stringProvider: StringProvider) {
 
     fun toDomain(exercise: ExerciseEntity): Exercise =
         Exercise(
@@ -22,17 +20,17 @@ class ExerciseMapper @Inject constructor(
             tertiaryMuscles = exercise.tertiaryMuscles,
         )
 
-    fun toDomain(exercises: List<ExerciseEntity>): List<Exercise> =
-        exercises.map(::toDomain)
+    fun toDomain(exercises: List<ExerciseEntity>): List<Exercise> = exercises.map(::toDomain)
 
-    fun exerciseEntityToRoutineExerciseItem(exercises: List<ExerciseEntity>): List<RoutineExerciseItem> =
+    fun exerciseEntityToRoutineExerciseItem(
+        exercises: List<ExerciseEntity>
+    ): List<RoutineExerciseItem> =
         exercises.map { exercise ->
             RoutineExerciseItem(
                 id = exercise.id,
                 name = stringProvider.getResolvedName(exercise.name),
-                muscles = exercise
-                    .mainMuscles
-                    .joinToPrettyString(
+                muscles =
+                    exercise.mainMuscles.joinToPrettyString(
                         andText = stringProvider.andInAList,
                         toString = stringProvider::getMuscleName,
                     ),
@@ -42,17 +40,17 @@ class ExerciseMapper @Inject constructor(
             )
         }
 
-    fun exerciseWithGoalDtoToRoutineExerciseItem(exercises: List<ExerciseWithGoalDto>): List<RoutineExerciseItem> =
+    fun exerciseWithGoalDtoToRoutineExerciseItem(
+        exercises: List<ExerciseWithGoalDto>
+    ): List<RoutineExerciseItem> =
         exercises.map { (exercise, goalEntity) ->
-
             val goal = goalEntity?.toDomain() ?: exercise.goal
 
             RoutineExerciseItem(
                 id = exercise.id,
                 name = stringProvider.getResolvedName(exercise.name),
-                muscles = exercise
-                    .mainMuscles
-                    .joinToPrettyString(
+                muscles =
+                    exercise.mainMuscles.joinToPrettyString(
                         andText = stringProvider.andInAList,
                         toString = stringProvider::getMuscleName,
                     ),
@@ -72,8 +70,7 @@ internal fun Exercise.Insert.toEntity(): ExerciseEntity =
         tertiaryMuscles = tertiaryMuscles,
     )
 
-internal fun List<Exercise.Insert>.toEntity(): List<ExerciseEntity> =
-    map { it.toEntity() }
+internal fun List<Exercise.Insert>.toEntity(): List<ExerciseEntity> = map { it.toEntity() }
 
 internal fun Exercise.Update.toEntity(): ExerciseEntity.Update =
     ExerciseEntity.Update(

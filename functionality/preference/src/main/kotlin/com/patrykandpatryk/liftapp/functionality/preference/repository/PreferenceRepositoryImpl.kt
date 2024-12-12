@@ -16,16 +16,18 @@ import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 private const val KEY_MASS_UNIT = "mass_unit"
 private const val KEY_DISTANCE_UNIT = "distance_unit"
 private const val KEY_HOUR_FORMAT = "hour_format"
 private const val KEY_GOAL_INFO_VISIBLE = "goal_info_visible"
 
-class PreferenceRepositoryImpl @Inject constructor(
+class PreferenceRepositoryImpl
+@Inject
+constructor(
     override val preferencesDataStore: DataStore<Preferences>,
     private val application: Application,
 ) : PreferenceRepository, PreferenceManager {
@@ -34,19 +36,24 @@ class PreferenceRepositoryImpl @Inject constructor(
 
     override val longDistanceUnit = enumPreference(KEY_DISTANCE_UNIT, LongDistanceUnit.Kilometer)
 
-    override val mediumDistanceUnit: Flow<MediumDistanceUnit> = longDistanceUnit.get()
-        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingMediumDistanceUnit() }
+    override val mediumDistanceUnit: Flow<MediumDistanceUnit> =
+        longDistanceUnit.get().map { longDistanceUnit ->
+            longDistanceUnit.getCorrespondingMediumDistanceUnit()
+        }
 
-    override val shortDistanceUnit: Flow<ShortDistanceUnit> = longDistanceUnit.get()
-        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingShortDistanceUnit() }
+    override val shortDistanceUnit: Flow<ShortDistanceUnit> =
+        longDistanceUnit.get().map { longDistanceUnit ->
+            longDistanceUnit.getCorrespondingShortDistanceUnit()
+        }
 
     override val hourFormat = enumPreference(KEY_HOUR_FORMAT, HourFormat.Auto)
 
-    override val goalInfoVisible: Preference<Boolean> = preference(booleanPreferencesKey(KEY_GOAL_INFO_VISIBLE), true)
+    override val goalInfoVisible: Preference<Boolean> =
+        preference(booleanPreferencesKey(KEY_GOAL_INFO_VISIBLE), true)
 
     override val is24H: Flow<Boolean>
-        get() = hourFormat.get()
-            .map { preferenceHourFormat ->
+        get() =
+            hourFormat.get().map { preferenceHourFormat ->
                 when (preferenceHourFormat) {
                     HourFormat.Auto -> DateFormat.is24HourFormat(application)
                     HourFormat.H12 -> false
@@ -54,26 +61,29 @@ class PreferenceRepositoryImpl @Inject constructor(
                 }
             }
 
-    override val allPreferences = preferencesDataStore.data.map { preferences ->
+    override val allPreferences =
+        preferencesDataStore.data.map { preferences ->
+            val longDistanceUnit = longDistanceUnit.getFromPreferences(preferences = preferences)
 
-        val longDistanceUnit = longDistanceUnit.getFromPreferences(preferences = preferences)
-
-        AllPreferences(
-            massUnit = massUnit.getFromPreferences(preferences = preferences),
-            longDistanceUnit = longDistanceUnit,
-            mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
-            shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
-            hourFormat = hourFormat.getFromPreferences(preferences = preferences),
-        )
-    }
+            AllPreferences(
+                massUnit = massUnit.getFromPreferences(preferences = preferences),
+                longDistanceUnit = longDistanceUnit,
+                mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
+                shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
+                hourFormat = hourFormat.getFromPreferences(preferences = preferences),
+            )
+        }
 }
 
 private inline fun <reified E : Enum<E>> PreferenceManager.enumPreference(
     key: String,
     defaultValue: E,
-): PreferenceImpl<String, E> = preference(
-    stringPreferencesKey(key),
-    defaultValue = defaultValue,
-    serialize = { it.toString() },
-    deserialize = { E::class.java.getMethod("valueOf", String::class.java).invoke(null, it) as E },
-)
+): PreferenceImpl<String, E> =
+    preference(
+        stringPreferencesKey(key),
+        defaultValue = defaultValue,
+        serialize = { it.toString() },
+        deserialize = {
+            E::class.java.getMethod("valueOf", String::class.java).invoke(null, it) as E
+        },
+    )

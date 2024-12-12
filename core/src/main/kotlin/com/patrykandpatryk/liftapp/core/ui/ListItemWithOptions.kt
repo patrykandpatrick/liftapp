@@ -48,31 +48,30 @@ fun ListItemWithOptions(
 ) {
     val dimens = LocalDimens.current
 
-    val elevation by animateDpAsState(
-        targetValue = if (isExpanded) dimens.card.smallElevation else 0.dp,
-    )
+    val elevation by
+        animateDpAsState(targetValue = if (isExpanded) dimens.card.smallElevation else 0.dp)
 
-    val margins by animateDpAsState(
-        targetValue = if (isExpanded) dimens.padding.contentHorizontalSmall else 0.dp,
-    )
+    val margins by
+        animateDpAsState(
+            targetValue = if (isExpanded) dimens.padding.contentHorizontalSmall else 0.dp
+        )
 
-    val cornerRadius by animateDpAsState(
-        targetValue = if (isExpanded) dimens.card.smallCornerRadius else 0.dp,
-    )
+    val cornerRadius by
+        animateDpAsState(targetValue = if (isExpanded) dimens.card.smallCornerRadius else 0.dp)
 
     val shape = RoundedCornerShape(cornerRadius)
 
     Column(
-        modifier = modifier
-            .padding(horizontal = margins)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    elevation = elevation,
-                ),
-                shape = shape,
-            )
-            .clip(shape)
-            .clickable { setExpanded(!isExpanded) },
+        modifier =
+            modifier
+                .padding(horizontal = margins)
+                .background(
+                    color =
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(elevation = elevation),
+                    shape = shape,
+                )
+                .clip(shape)
+                .clickable { setExpanded(!isExpanded) }
     ) {
         mainContent()
 
@@ -88,12 +87,13 @@ fun ListItemWithOptions(
         AnimatedVisibility(visible = isExpanded) {
             Row {
                 optionItems.forEach { (iconPainter, label, onClick) ->
-
                     Option(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable(onClick = onClick)
-                            .padding(vertical = MaterialTheme.dimens.padding.contentVerticalSmall),
+                        modifier =
+                            Modifier.weight(1f)
+                                .clickable(onClick = onClick)
+                                .padding(
+                                    vertical = MaterialTheme.dimens.padding.contentVerticalSmall
+                                ),
                         iconPainter = iconPainter,
                         label = label,
                     )
@@ -104,14 +104,11 @@ fun ListItemWithOptions(
 }
 
 @Composable
-fun Option(
-    modifier: Modifier = Modifier,
-    iconPainter: Painter?,
-    label: String? = null,
-) {
+fun Option(modifier: Modifier = Modifier, iconPainter: Painter?, label: String? = null) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.supportingTextVertical),
+        verticalArrangement =
+            Arrangement.spacedBy(LocalDimens.current.padding.supportingTextVertical),
     ) {
         if (iconPainter != null) {
             Icon(
@@ -132,12 +129,7 @@ fun Option(
     }
 }
 
-@Stable
-data class OptionItem(
-    val iconPainter: Painter,
-    val label: String,
-    val onClick: () -> Unit,
-)
+@Stable data class OptionItem(val iconPainter: Painter, val label: String, val onClick: () -> Unit)
 
 @LightAndDarkThemePreview
 @Composable
@@ -156,23 +148,24 @@ fun ListItemWithOptionsPreview() {
                 },
                 isExpanded = isExpanded,
                 setExpanded = setExpanded,
-                optionItems = listOf(
-                    OptionItem(
-                        iconPainter = painterResource(id = R.drawable.ic_settings),
-                        label = stringResource(id = R.string.route_settings),
-                        onClick = {},
+                optionItems =
+                    listOf(
+                        OptionItem(
+                            iconPainter = painterResource(id = R.drawable.ic_settings),
+                            label = stringResource(id = R.string.route_settings),
+                            onClick = {},
+                        ),
+                        OptionItem(
+                            iconPainter = painterResource(id = R.drawable.ic_edit),
+                            label = stringResource(id = R.string.action_edit),
+                            onClick = {},
+                        ),
+                        OptionItem(
+                            iconPainter = painterResource(id = R.drawable.ic_delete),
+                            label = stringResource(id = R.string.action_delete),
+                            onClick = {},
+                        ),
                     ),
-                    OptionItem(
-                        iconPainter = painterResource(id = R.drawable.ic_edit),
-                        label = stringResource(id = R.string.action_edit),
-                        onClick = {},
-                    ),
-                    OptionItem(
-                        iconPainter = painterResource(id = R.drawable.ic_delete),
-                        label = stringResource(id = R.string.action_delete),
-                        onClick = {},
-                    ),
-                ),
             )
         }
     }

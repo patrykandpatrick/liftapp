@@ -20,16 +20,16 @@ import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 fun ListSectionTitle(
     title: String,
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues = PaddingValues(
-        vertical = LocalDimens.current.padding.itemVertical,
-        horizontal = LocalDimens.current.padding.contentHorizontal,
-    ),
+    paddingValues: PaddingValues =
+        PaddingValues(
+            vertical = LocalDimens.current.padding.itemVertical,
+            horizontal = LocalDimens.current.padding.contentHorizontal,
+        ),
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .padding(paddingValues),
+        modifier = modifier.padding(paddingValues),
     ) {
         CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.primary) {
             Text(
@@ -47,11 +47,6 @@ fun ListSectionTitle(
 @Composable
 fun ListSectionTitlePreview() {
     LiftAppTheme {
-        Surface {
-            ListSectionTitle(
-                title = "Title",
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
+        Surface { ListSectionTitle(title = "Title", modifier = Modifier.fillMaxWidth()) }
     }
 }

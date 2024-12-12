@@ -12,8 +12,7 @@ val isLandscape: Boolean
     get() = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
 val isPortrait: Boolean
-    @Composable
-    get() = isLandscape.not()
+    @Composable get() = isLandscape.not()
 
 val Context.isDarkMode: Boolean
     get() = resources.configuration.isDarkMode

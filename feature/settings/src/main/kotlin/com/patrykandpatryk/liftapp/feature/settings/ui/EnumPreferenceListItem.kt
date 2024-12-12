@@ -43,12 +43,9 @@ fun <T : Enum<T>> EnumPreferenceListItem(
         Dialog(onDismissRequest = { dialogVisible = false }) {
             DialogContent(
                 title = title,
-                actions = {
-                    DialogButtons(onNegativeButtonClick = { dialogVisible = false })
-                },
+                actions = { DialogButtons(onNegativeButtonClick = { dialogVisible = false }) },
             ) {
                 values.forEach { value ->
-
                     ValueRow(
                         title = getValueTitle(value),
                         selected = value == selectedValue,
@@ -64,23 +61,13 @@ fun <T : Enum<T>> EnumPreferenceListItem(
 }
 
 @Composable
-private fun ValueRow(
-    title: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
+private fun ValueRow(title: String, selected: Boolean, onClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(space = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp),
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 12.dp),
     ) {
-        RadioButton(
-            selected = selected,
-            onClick = onClick,
-        )
+        RadioButton(selected = selected, onClick = onClick)
 
         Text(text = title)
     }

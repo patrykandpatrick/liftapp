@@ -29,73 +29,56 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 
 @Composable
-internal fun Details(
-    modifier: Modifier = Modifier,
-) {
+internal fun Details(modifier: Modifier = Modifier) {
     val viewModel: RoutineViewModel = hiltViewModel()
 
     val state by viewModel.state.collectAsState()
 
-    Details(
-        modifier = modifier,
-        state = state,
-    )
+    Details(modifier = modifier, state = state)
 }
 
 @Composable
-private fun Details(
-    state: ScreenState,
-    modifier: Modifier = Modifier,
-) {
+private fun Details(state: ScreenState, modifier: Modifier = Modifier) {
     val dimens = LocalDimens.current
     val muscleDimens = dimens.muscle
 
     LazyVerticalGrid(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         columns = GridCells.Adaptive(minSize = muscleDimens.gridCellMinSize),
-        contentPadding = PaddingValues(
-            horizontal = dimens.padding.contentHorizontal,
-            vertical = dimens.padding.contentVertical,
-        ),
+        contentPadding =
+            PaddingValues(
+                horizontal = dimens.padding.contentHorizontal,
+                vertical = dimens.padding.contentVertical,
+            ),
         horizontalArrangement = Arrangement.spacedBy(muscleDimens.listItemHorizontalMargin),
     ) {
-        item(
-            key = state.imagePath,
-            span = { GridItemSpan(maxLineSpan) },
-        ) {
+        item(key = state.imagePath, span = { GridItemSpan(maxLineSpan) }) {
             AsyncImage(
-                modifier = Modifier
-                    .aspectRatio(ratio = 1f)
-                    .fillMaxWidth()
-                    .padding(vertical = dimens.padding.contentVertical),
+                modifier =
+                    Modifier.aspectRatio(ratio = 1f)
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.padding.contentVertical),
                 model = state.imagePath,
                 contentDescription = null,
             )
         }
 
-        items(
-            items = state.muscles,
-            key = { it.muscle },
-        ) { muscleModel ->
-
+        items(items = state.muscles, key = { it.muscle }) { muscleModel ->
             ListItem(
                 title = { Text(stringResource(id = muscleModel.nameRes)) },
                 description = { Text(stringResource(id = muscleModel.type.nameRes)) },
                 icon = {
                     Box(
-                        modifier = Modifier
-                            .size(muscleDimens.tileSize)
-                            .background(
-                                color = colorResource(id = muscleModel.type.colorRes),
-                                shape = RoundedCornerShape(muscleDimens.tileCornerSize),
-                            ),
+                        modifier =
+                            Modifier.size(muscleDimens.tileSize)
+                                .background(
+                                    color = colorResource(id = muscleModel.type.colorRes),
+                                    shape = RoundedCornerShape(muscleDimens.tileCornerSize),
+                                )
                     )
                 },
-                paddingValues = PaddingValues(
-                    vertical = dimens.padding.itemVertical,
-                    horizontal = 0.dp,
-                ),
+                paddingValues =
+                    PaddingValues(vertical = dimens.padding.itemVertical, horizontal = 0.dp),
             )
         }
     }

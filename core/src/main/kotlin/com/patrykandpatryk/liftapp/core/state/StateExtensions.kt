@@ -13,16 +13,17 @@ fun <T : InteractionSource> T.onClick(onClick: suspend () -> Unit): T {
     val action = rememberUpdatedState(newValue = onClick)
 
     LaunchedEffect(key1 = Unit) {
-        interactions
-            .collectLatest { interaction ->
-                if (interaction is PressInteraction.Press) action.value()
-            }
+        interactions.collectLatest { interaction ->
+            if (interaction is PressInteraction.Press) action.value()
+        }
     }
 
     return this
 }
 
-fun <T> equivalentSnapshotPolicy(isEquivalent: (new: T, previous: T) -> Boolean): SnapshotMutationPolicy<T> =
+fun <T> equivalentSnapshotPolicy(
+    isEquivalent: (new: T, previous: T) -> Boolean
+): SnapshotMutationPolicy<T> =
     object : SnapshotMutationPolicy<T> {
         override fun equivalent(a: T, b: T): Boolean = isEquivalent(a, b)
     }

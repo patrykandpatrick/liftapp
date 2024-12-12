@@ -124,11 +124,7 @@ fun OutlinedTextField(
             colors = colors,
         )
 
-        SupportingText(
-            value = value,
-            supportingText = supportingText,
-            errorText = errorText,
-        )
+        SupportingText(value = value, supportingText = supportingText, errorText = errorText)
     }
 }
 
@@ -153,10 +149,11 @@ fun SupportingText(
 
     CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodySmall) {
         Column(
-            modifier = modifier.padding(
-                horizontal = MaterialTheme.dimens.padding.supportingTextHorizontal,
-                vertical = MaterialTheme.dimens.padding.supportingTextVertical,
-            ),
+            modifier =
+                modifier.padding(
+                    horizontal = MaterialTheme.dimens.padding.supportingTextHorizontal,
+                    vertical = MaterialTheme.dimens.padding.supportingTextVertical,
+                )
         ) {
             AnimatedVisibility(visible = errorVisible) {
                 LaunchedEffect(key1 = transition.currentState, key2 = errorText) {
@@ -165,19 +162,13 @@ fun SupportingText(
                     }
                 }
                 if (cachedErrorText != null) {
-                    Text(
-                        text = cachedErrorText,
-                        color = MaterialTheme.colorScheme.error,
-                    )
+                    Text(text = cachedErrorText, color = MaterialTheme.colorScheme.error)
                 }
             }
 
             AnimatedVisibility(visible = supportingText != null) {
                 if (supportingText != null) {
-                    Text(
-                        text = supportingText,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Text(text = supportingText, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }

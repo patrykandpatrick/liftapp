@@ -6,5 +6,6 @@ import com.patrykandpatryk.liftapp.core.navigation.NavigationResultListener
 @Stable
 interface NewRoutineNavigator : NavigationResultListener {
     fun back()
+
     fun pickExercises(disabledExerciseIDs: List<Long>)
 }

@@ -6,17 +6,12 @@ import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun CollectSnackbarMessages(
-    messages: Flow<UiMessage>,
-    snackbarHostState: SnackbarHostState,
-) {
+fun CollectSnackbarMessages(messages: Flow<UiMessage>, snackbarHostState: SnackbarHostState) {
     LaunchedEffect(key1 = Unit) {
-        messages
-            .collect { uiMessage ->
-                when (uiMessage) {
-                    is UiMessage.SnackbarText ->
-                        snackbarHostState.showSnackbar(uiMessage.message)
-                }
+        messages.collect { uiMessage ->
+            when (uiMessage) {
+                is UiMessage.SnackbarText -> snackbarHostState.showSnackbar(uiMessage.message)
             }
+        }
     }
 }

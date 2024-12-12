@@ -5,13 +5,15 @@ import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
 import javax.inject.Inject
 
-class StateToExerciseInsertMapper @Inject constructor() : Mapper<NewExerciseState.Valid, Exercise.Insert> {
+class StateToExerciseInsertMapper @Inject constructor() :
+    Mapper<NewExerciseState.Valid, Exercise.Insert> {
 
-    override suspend fun map(input: NewExerciseState.Valid): Exercise.Insert = Exercise.Insert(
-        name = input.name.value,
-        exerciseType = input.type,
-        mainMuscles = input.mainMuscles.value,
-        secondaryMuscles = input.secondaryMuscles,
-        tertiaryMuscles = input.tertiaryMuscles,
-    )
+    override suspend fun map(input: NewExerciseState.Valid): Exercise.Insert =
+        Exercise.Insert(
+            name = input.name.value,
+            exerciseType = input.type,
+            mainMuscles = input.mainMuscles.value,
+            secondaryMuscles = input.secondaryMuscles,
+            tertiaryMuscles = input.tertiaryMuscles,
+        )
 }

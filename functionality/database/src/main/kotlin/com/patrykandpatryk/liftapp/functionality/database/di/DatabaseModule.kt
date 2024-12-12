@@ -30,11 +30,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import kotlinx.serialization.KSerializer
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Singleton
 import kotlin.reflect.KClass
+import kotlinx.serialization.KSerializer
 
 @Suppress("UNCHECKED_CAST")
 @Module
@@ -42,16 +42,15 @@ import kotlin.reflect.KClass
 interface DatabaseModule {
 
     @Binds
-    fun bindBodyMeasurementRepository(repository: BodyMeasurementRepositoryImpl): BodyMeasurementRepository
+    fun bindBodyMeasurementRepository(
+        repository: BodyMeasurementRepositoryImpl
+    ): BodyMeasurementRepository
 
-    @Binds
-    fun bindExerciseRepository(repository: ExerciseRepositoryImpl): ExerciseRepository
+    @Binds fun bindExerciseRepository(repository: ExerciseRepositoryImpl): ExerciseRepository
 
-    @Binds
-    fun bindRoutineRepository(repository: RoutineRepositoryImpl): RoutineRepository
+    @Binds fun bindRoutineRepository(repository: RoutineRepositoryImpl): RoutineRepository
 
-    @Binds
-    fun bindGoalRepository(repository: RoomGoalRepository): GoalRepository
+    @Binds fun bindGoalRepository(repository: RoomGoalRepository): GoalRepository
 
     companion object {
 
@@ -69,8 +68,7 @@ interface DatabaseModule {
             localDateTimeConverters: LocalDateTimeConverters,
             databaseCallback: DatabaseCallback,
         ): Database =
-            Room
-                .databaseBuilder(application, Database::class.java, Constants.Database.Name)
+            Room.databaseBuilder(application, Database::class.java, Constants.Database.Name)
                 .addCallback(databaseCallback)
                 .addTypeConverter(jsonConverters)
                 .addTypeConverter(localDateTimeConverters)
@@ -80,36 +78,28 @@ interface DatabaseModule {
         fun provideBodyMeasurementDao(database: Database): BodyMeasurementDao =
             database.bodyMeasurementDao
 
-        @Provides
-        fun provideExerciseDao(database: Database): ExerciseDao =
-            database.exerciseDao
+        @Provides fun provideExerciseDao(database: Database): ExerciseDao = database.exerciseDao
 
-        @Provides
-        fun provideRoutineDao(database: Database): RoutineDao =
-            database.routineDao
+        @Provides fun provideRoutineDao(database: Database): RoutineDao = database.routineDao
 
-        @Provides
-        fun provideGoalDao(database: Database): GoalDao =
-            database.goalDao
+        @Provides fun provideGoalDao(database: Database): GoalDao = database.goalDao
 
-        @Provides
-        fun provideWorkoutDao(database: Database): WorkoutDao =
-            database.workoutDao
+        @Provides fun provideWorkoutDao(database: Database): WorkoutDao = database.workoutDao
 
         @Provides
         @IntoSet
-        fun provideExerciseStringResourceSerializer(): Pair<KClass<StringResource>, KSerializer<StringResource>> =
-            (ExerciseStringResource::class to PolymorphicEnumSerializer(ExerciseStringResource.serializer()))
+        fun provideExerciseStringResourceSerializer():
+            Pair<KClass<StringResource>, KSerializer<StringResource>> =
+            (ExerciseStringResource::class to
+                PolymorphicEnumSerializer(ExerciseStringResource.serializer()))
                 as Pair<KClass<StringResource>, KSerializer<StringResource>>
 
         @Provides
         @IntoSet
-        fun provideBodyMeasurementStringResourceSerializer(): Pair<
-            KClass<StringResource>,
-            KSerializer<StringResource>,
-            > = (
-            BodyMeasurementStringResource::class to
-                PolymorphicEnumSerializer(BodyMeasurementStringResource.serializer())
-            ) as Pair<KClass<StringResource>, KSerializer<StringResource>>
+        fun provideBodyMeasurementStringResourceSerializer():
+            Pair<KClass<StringResource>, KSerializer<StringResource>> =
+            (BodyMeasurementStringResource::class to
+                PolymorphicEnumSerializer(BodyMeasurementStringResource.serializer()))
+                as Pair<KClass<StringResource>, KSerializer<StringResource>>
     }
 }

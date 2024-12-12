@@ -25,8 +25,6 @@ interface CoroutinesModule {
         @DefaultDispatcher
         fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 
-        @Provides
-        @IODispatcher
-        fun provideIODispatcher(): CoroutineDispatcher = Dispatchers.IO
+        @Provides @IODispatcher fun provideIODispatcher(): CoroutineDispatcher = Dispatchers.IO
     }
 }

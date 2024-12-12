@@ -4,7 +4,8 @@ import androidx.room.DatabaseView
 import androidx.room.Embedded
 
 @DatabaseView(
-    value = """SELECT body_measurements.*,
+    value =
+        """SELECT body_measurements.*,
                       latest_body_measurement_entry.id AS bme_id,
                       latest_body_measurement_entry.body_measurement_id as bme_body_measurement_id,
                       latest_body_measurement_entry.value as bme_value,
@@ -23,6 +24,5 @@ import androidx.room.Embedded
 )
 class BodyMeasurementWithLatestEntryViewResult(
     @Embedded val bodyMeasurement: BodyMeasurementEntity,
-    @Embedded(prefix = "bme_")
-    val entry: BodyMeasurementEntryEntity?,
+    @Embedded(prefix = "bme_") val entry: BodyMeasurementEntryEntity?,
 )

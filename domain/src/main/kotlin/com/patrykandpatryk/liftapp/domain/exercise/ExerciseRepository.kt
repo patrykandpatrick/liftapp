@@ -9,7 +9,10 @@ interface ExerciseRepository {
 
     fun getExercise(id: Long): Flow<Exercise?>
 
-    fun getRoutineExerciseItems(exerciseIds: List<Long>, ordered: Boolean): Flow<List<RoutineExerciseItem>>
+    fun getRoutineExerciseItems(
+        exerciseIds: List<Long>,
+        ordered: Boolean,
+    ): Flow<List<RoutineExerciseItem>>
 
     suspend fun insert(exercise: Exercise.Insert): Long
 

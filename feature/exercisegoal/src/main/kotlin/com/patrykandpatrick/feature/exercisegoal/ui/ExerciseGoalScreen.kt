@@ -51,10 +51,10 @@ import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
+import kotlin.time.Duration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlin.time.Duration
 
 @Composable
 fun ExerciseGoalScreen(
@@ -63,21 +63,16 @@ fun ExerciseGoalScreen(
     exerciseID: Long,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel = hiltViewModel<ExerciseGoalViewModel, ExerciseGoalViewModel.Factory>(
-        creationCallback = { factory -> factory.create(routineID, exerciseID) }
-    )
+    val viewModel =
+        hiltViewModel<ExerciseGoalViewModel, ExerciseGoalViewModel.Factory>(
+            creationCallback = { factory -> factory.create(routineID, exerciseID) }
+        )
 
     val state = viewModel.state
 
-    ExerciseGoalScreen(
-        navigator = navigator,
-        state = state,
-        modifier = modifier,
-    )
+    ExerciseGoalScreen(navigator = navigator, state = state, modifier = modifier)
 
-    LaunchedEffect(state) {
-        state.goalSaved.collect { if (it) navigator.back() }
-    }
+    LaunchedEffect(state) { state.goalSaved.collect { if (it) navigator.back() } }
 }
 
 @Composable
@@ -110,21 +105,27 @@ private fun ExerciseGoalScreen(
                             contentDescription = stringResource(id = R.string.action_info),
                         )
                     }
-                }
+                },
             )
         },
         bottomBar = { BottomAppBar.Save(onClick = state::save) },
     ) { paddingValues ->
         LazyVerticalGrid(
-            modifier = modifier
-                .padding(WindowInsets.ime.toPaddingValues(additionalBottom = -paddingValues.calculateBottomPadding()))
-                .padding(paddingValues)
-                .fillMaxSize(),
+            modifier =
+                modifier
+                    .padding(
+                        WindowInsets.ime.toPaddingValues(
+                            additionalBottom = -paddingValues.calculateBottomPadding()
+                        )
+                    )
+                    .padding(paddingValues)
+                    .fillMaxSize(),
             columns = GridCells.Adaptive(minSize = dimens.grid.minCellWidthLarge),
-            contentPadding = PaddingValues(
-                horizontal = dimens.padding.contentHorizontal,
-                vertical = dimens.padding.contentVertical,
-            ),
+            contentPadding =
+                PaddingValues(
+                    horizontal = dimens.padding.contentHorizontal,
+                    vertical = dimens.padding.contentVertical,
+                ),
             verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
             horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
         ) {
@@ -155,14 +156,13 @@ private fun LazyGridScope.content(
     setRestTime: (Duration) -> Unit,
 ) {
     if (infoVisible) {
-        item(
-            key = "info",
-            span = { GridItemSpan(maxLineSpan) },
-        ) {
+        item(key = "info", span = { GridItemSpan(maxLineSpan) }) {
             Info(
                 stringResource(id = R.string.goal_info),
                 Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
-            ) { InfoDefaults.DismissButton(toggleInfoVisible) }
+            ) {
+                InfoDefaults.DismissButton(toggleInfoVisible)
+            }
         }
     }
 
@@ -219,34 +219,35 @@ private fun ExerciseGoalPreview() {
 
         ExerciseGoalScreen(
             navigator = interfaceStub(),
-            state = remember {
-                ExerciseGoalState(
-                    exercise = flowOf(
-                        Exercise(
-                            id = 1L,
-                            displayName = "Bench Press",
-                            name = Name.Raw("Bench Press"),
-                            exerciseType = ExerciseType.Weight,
-                            mainMuscles = emptyList(),
-                            secondaryMuscles = emptyList(),
-                            tertiaryMuscles = emptyList(),
-                        )
-                    ),
-                    goal = flowOf(Goal.Default),
-                    saveGoal = {},
-                    getFormattedDuration = { formatter.getFormattedDuration(it, Formatter.DateFormat.MinutesSeconds) },
-                    coroutineScope = coroutineScope,
-                    savedStateHandle = savedStateHandle,
-                    textFieldStateManager = textFieldStateManager,
-                    goalInfoVisiblePreference = preference,
-                )
-            }
+            state =
+                remember {
+                    ExerciseGoalState(
+                        exercise =
+                            flowOf(
+                                Exercise(
+                                    id = 1L,
+                                    displayName = "Bench Press",
+                                    name = Name.Raw("Bench Press"),
+                                    exerciseType = ExerciseType.Weight,
+                                    mainMuscles = emptyList(),
+                                    secondaryMuscles = emptyList(),
+                                    tertiaryMuscles = emptyList(),
+                                )
+                            ),
+                        goal = flowOf(Goal.Default),
+                        saveGoal = {},
+                        getFormattedDuration = {
+                            formatter.getFormattedDuration(it, Formatter.DateFormat.MinutesSeconds)
+                        },
+                        coroutineScope = coroutineScope,
+                        savedStateHandle = savedStateHandle,
+                        textFieldStateManager = textFieldStateManager,
+                        goalInfoVisiblePreference = preference,
+                    )
+                },
         )
     }
 }
 
 private val keyboardOptions: KeyboardOptions
-    get() = KeyboardOptions(
-        keyboardType = KeyboardType.Number,
-        imeAction = ImeAction.Next,
-    )
+    get() = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)

@@ -9,50 +9,39 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
+import javax.inject.Inject
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 
 @ProvidedTypeConverter
-class JsonConverters @Inject constructor(
-    private val json: Json,
-) {
+class JsonConverters @Inject constructor(private val json: Json) {
+
+    @TypeConverter fun toString(name: Name): String = json.encodeToString(name)
+
+    @TypeConverter fun toName(string: String): Name = json.decodeFromString(string)
 
     @TypeConverter
-    fun toString(name: Name): String = json.encodeToString(name)
-
-    @TypeConverter
-    fun toName(string: String): Name = json.decodeFromString(string)
-
-    @TypeConverter
-    fun toString(bodyMeasurementValue: BodyMeasurementValue): String = json.encodeToString(bodyMeasurementValue)
+    fun toString(bodyMeasurementValue: BodyMeasurementValue): String =
+        json.encodeToString(bodyMeasurementValue)
 
     @TypeConverter
     fun toBodyValues(string: String): BodyMeasurementValue = json.decodeFromString(string)
 
-    @TypeConverter
-    fun toString(muscles: List<Muscle>): String = json.encodeToString(muscles)
+    @TypeConverter fun toString(muscles: List<Muscle>): String = json.encodeToString(muscles)
 
-    @TypeConverter
-    fun toMuscles(string: String): List<Muscle> = json.decodeFromString(string)
+    @TypeConverter fun toMuscles(string: String): List<Muscle> = json.decodeFromString(string)
 
-    @TypeConverter
-    fun toString(goal: Goal): String = json.encodeToString(goal)
+    @TypeConverter fun toString(goal: Goal): String = json.encodeToString(goal)
 
-    @TypeConverter
-    fun toGoal(string: String): Goal = json.decodeFromString(string)
+    @TypeConverter fun toGoal(string: String): Goal = json.decodeFromString(string)
 
-    @TypeConverter
-    fun toString(valueUnit: ValueUnit): String = json.encodeToString(valueUnit)
+    @TypeConverter fun toString(valueUnit: ValueUnit): String = json.encodeToString(valueUnit)
 
-    @TypeConverter
-    fun toValueUnit(string: String): ValueUnit = json.decodeFromString(string)
+    @TypeConverter fun toValueUnit(string: String): ValueUnit = json.decodeFromString(string)
 
-    @TypeConverter
-    fun toString(massUnit: MassUnit): String = json.encodeToString(massUnit)
+    @TypeConverter fun toString(massUnit: MassUnit): String = json.encodeToString(massUnit)
 
-    @TypeConverter
-    fun toMassUnit(string: String): MassUnit = json.decodeFromString(string)
+    @TypeConverter fun toMassUnit(string: String): MassUnit = json.decodeFromString(string)
 
     @TypeConverter
     fun toString(longDistanceUnit: LongDistanceUnit): String = json.encodeToString(longDistanceUnit)

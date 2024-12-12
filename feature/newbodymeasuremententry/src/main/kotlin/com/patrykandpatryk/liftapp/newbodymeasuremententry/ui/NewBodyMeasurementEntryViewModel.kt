@@ -8,17 +8,16 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel(assistedFactory = NewBodyMeasurementEntryViewModel.Factory::class)
-class NewBodyMeasurementEntryViewModel @AssistedInject constructor(
+class NewBodyMeasurementEntryViewModel
+@AssistedInject
+constructor(
     @Assisted id: Long,
     @Assisted entryId: Long?,
     stateFactory: NewBodyMeasurementState.Factory,
 ) : ViewModel() {
 
-    val state: NewBodyMeasurementState = stateFactory.create(
-        id = id,
-        entryId = entryId,
-        coroutineScope = viewModelScope,
-    )
+    val state: NewBodyMeasurementState =
+        stateFactory.create(id = id, entryId = entryId, coroutineScope = viewModelScope)
 
     @AssistedFactory
     interface Factory {

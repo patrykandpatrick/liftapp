@@ -46,38 +46,38 @@ fun Info(
     var size by remember { mutableStateOf(IntSize.Zero) }
     Column(
         verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemVerticalSmall),
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary.copy(alpha = .1f),
-                        Color.Transparent,
-                    ),
-                    center = Offset(size.width * .1f, size.height * -1f),
-                    radius = (size.width * .8f).coerceAtLeast(1f),
-                ),
-                shape = shape
-            )
-            .border(
-                width = 1.dp,
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.surfaceVariant,
-                    ),
-                    center = Offset(size.width * .1f, 0f),
-                    radius = (size.width * .5f).coerceAtLeast(1f),
-                ),
-                shape = shape,
-            )
-            .padding(
-                start = 16.dp,
-                top = 12.dp,
-                end = 16.dp,
-                bottom = 8.dp
-            )
-            .onGloballyPositioned { layoutCoordinates -> size = layoutCoordinates.size },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(
+                    brush =
+                        Brush.radialGradient(
+                            colors =
+                                listOf(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = .1f),
+                                    Color.Transparent,
+                                ),
+                            center = Offset(size.width * .1f, size.height * -1f),
+                            radius = (size.width * .8f).coerceAtLeast(1f),
+                        ),
+                    shape = shape,
+                )
+                .border(
+                    width = 1.dp,
+                    brush =
+                        Brush.radialGradient(
+                            colors =
+                                listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                ),
+                            center = Offset(size.width * .1f, 0f),
+                            radius = (size.width * .5f).coerceAtLeast(1f),
+                        ),
+                    shape = shape,
+                )
+                .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp)
+                .onGloballyPositioned { layoutCoordinates -> size = layoutCoordinates.size },
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(space = 16.dp)) {
             Icon(
@@ -95,7 +95,8 @@ fun Info(
 
         if (buttons != null) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
+                horizontalArrangement =
+                    Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
                 modifier = Modifier.align(Alignment.End),
                 content = buttons,
             )
@@ -108,11 +109,7 @@ fun Info(
 object InfoDefaults {
     @Composable
     fun DismissButton(onDismiss: () -> Unit) {
-        TextButton(onDismiss) {
-            Text(
-                text = stringResource(id = R.string.action_dismiss),
-            )
-        }
+        TextButton(onDismiss) { Text(text = stringResource(id = R.string.action_dismiss)) }
     }
 }
 
@@ -123,7 +120,7 @@ fun InfoPreview() {
         Surface {
             Info(
                 text = stringResource(id = R.string.one_rep_max_description),
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
     }
@@ -137,7 +134,7 @@ fun InfoWithButtonPreview() {
             Info(
                 text = stringResource(id = R.string.one_rep_max_description),
                 modifier = Modifier.padding(16.dp),
-                buttons = { InfoDefaults.DismissButton { } }
+                buttons = { InfoDefaults.DismissButton {} },
             )
         }
     }

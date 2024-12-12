@@ -42,27 +42,30 @@ sealed class NewExerciseState {
         mainMuscles: Validatable<List<Muscle>> = this.mainMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,
-    ): NewExerciseState = when {
-        name is Validatable.Valid && mainMuscles is Validatable.Valid -> Valid(
-            name = name,
-            displayName = displayName,
-            type = type,
-            mainMuscles = mainMuscles,
-            secondaryMuscles = secondaryMuscles,
-            tertiaryMuscles = tertiaryMuscles,
-            id = id,
-        )
-        else -> Invalid(
-            name = name,
-            displayName = displayName,
-            type = type,
-            mainMuscles = mainMuscles,
-            secondaryMuscles = secondaryMuscles,
-            tertiaryMuscles = tertiaryMuscles,
-            showErrors = showErrors && (name.isValid.not() || mainMuscles.isValid.not()),
-            id = id,
-        )
-    }
+    ): NewExerciseState =
+        when {
+            name is Validatable.Valid && mainMuscles is Validatable.Valid ->
+                Valid(
+                    name = name,
+                    displayName = displayName,
+                    type = type,
+                    mainMuscles = mainMuscles,
+                    secondaryMuscles = secondaryMuscles,
+                    tertiaryMuscles = tertiaryMuscles,
+                    id = id,
+                )
+            else ->
+                Invalid(
+                    name = name,
+                    displayName = displayName,
+                    type = type,
+                    mainMuscles = mainMuscles,
+                    secondaryMuscles = secondaryMuscles,
+                    tertiaryMuscles = tertiaryMuscles,
+                    showErrors = showErrors && (name.isValid.not() || mainMuscles.isValid.not()),
+                    id = id,
+                )
+        }
 
     @Parcelize
     @Immutable
@@ -76,8 +79,7 @@ sealed class NewExerciseState {
         override val id: Long = ID_NOT_SET,
     ) : NewExerciseState(), Parcelable {
 
-        @IgnoredOnParcel
-        override val showErrors: Boolean = false
+        @IgnoredOnParcel override val showErrors: Boolean = false
 
         companion object {
             const val serialVersionUID = 1L

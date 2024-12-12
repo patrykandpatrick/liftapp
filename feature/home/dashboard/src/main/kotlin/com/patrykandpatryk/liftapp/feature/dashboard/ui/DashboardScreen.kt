@@ -21,9 +21,8 @@ fun DashboardScreen(
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier = modifier
-            .padding(padding)
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier =
+            modifier.padding(padding).nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = stringResource(id = R.string.route_dashboard),

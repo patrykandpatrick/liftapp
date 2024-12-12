@@ -1,11 +1,5 @@
-apply {
-    from("$rootDir/gradle/feature-module-base.gradle")
-}
+apply { from("$rootDir/gradle/feature-module-base.gradle") }
 
-plugins {
-    alias(libs.plugins.library)
-}
+plugins { alias(libs.plugins.library) }
 
-android {
-    namespace = "com.patrykandpatryk.liftapp.feature.dashboard"
-}
+android { namespace = "com.patrykandpatryk.liftapp.feature.dashboard" }

@@ -72,11 +72,7 @@ fun OutlinedTextField(
             colors = colors,
         )
 
-        SupportingText(
-            text = supportingText,
-            visible = showSupportingText,
-            isError = isError,
-        )
+        SupportingText(text = supportingText, visible = showSupportingText, isError = isError)
     }
 }
 
@@ -87,7 +83,8 @@ fun ColumnScope.SupportingText(
     visible: Boolean = true,
     isError: Boolean = false,
 ) {
-    val contentColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+    val contentColor =
+        if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
 
     AnimatedVisibility(visible = visible) {
         CompositionLocalProvider(
@@ -95,10 +92,11 @@ fun ColumnScope.SupportingText(
             LocalTextStyle provides MaterialTheme.typography.bodySmall,
         ) {
             Box(
-                modifier = modifier.padding(
-                    horizontal = MaterialTheme.dimens.padding.supportingTextHorizontal,
-                    vertical = MaterialTheme.dimens.padding.supportingTextVertical,
-                ),
+                modifier =
+                    modifier.padding(
+                        horizontal = MaterialTheme.dimens.padding.supportingTextHorizontal,
+                        vertical = MaterialTheme.dimens.padding.supportingTextVertical,
+                    )
             ) {
                 Text(text = text)
             }

@@ -92,34 +92,33 @@ fun CheckableListItem(
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    val animationFraction by animateFloatAsState(
-        targetValue = if (checked) 1f else 0f,
-        animationSpec = tween(),
-    )
+    val animationFraction by
+        animateFloatAsState(targetValue = if (checked) 1f else 0f, animationSpec = tween())
 
     val shape = MaterialTheme.shapes.small.scaleCornerSize(animationFraction)
 
     ListItem(
         title = { Text(title) },
-        modifier = modifier
-            .border(
-                width = MaterialTheme.dimens.strokeWidth,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = animationFraction),
-                shape = shape,
-            )
-            .clip(shape),
+        modifier =
+            modifier
+                .border(
+                    width = MaterialTheme.dimens.strokeWidth,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = animationFraction),
+                    shape = shape,
+                )
+                .clip(shape),
         description = getDefaultDescription(description),
         trailing = trailing,
         icon = {
             if (iconPainter != null) {
                 Icon(
-                    modifier = Modifier
-                        .size(MaterialTheme.dimens.list.itemIconBackgroundSize)
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = PillShape,
-                        )
-                        .padding(8.dp),
+                    modifier =
+                        Modifier.size(MaterialTheme.dimens.list.itemIconBackgroundSize)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = PillShape,
+                            )
+                            .padding(8.dp),
                     painter = iconPainter,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -127,10 +126,7 @@ fun CheckableListItem(
             }
         },
         actions = {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = if (enabled) onCheckedChange else null,
-            )
+            Checkbox(checked = checked, onCheckedChange = if (enabled) onCheckedChange else null)
         },
         enabled = enabled,
         paddingValues = paddingValues,
@@ -153,11 +149,12 @@ fun ListItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
-        modifier = modifier
-            .alpha(Alpha.get(enabled))
-            .fillMaxWidth()
-            .thenIfNotNull(value = onClick) { clickable(onClick = it, enabled = enabled) }
-            .padding(paddingValues),
+        modifier =
+            modifier
+                .alpha(Alpha.get(enabled))
+                .fillMaxWidth()
+                .thenIfNotNull(value = onClick) { clickable(onClick = it, enabled = enabled) }
+                .padding(paddingValues),
     ) {
         icon?.invoke(this)
 
@@ -191,24 +188,26 @@ fun ListItem(
 
 object ListItemDefaults {
     val paddingValues: PaddingValues
-        @Composable get() = PaddingValues(
-            start = LocalDimens.current.padding.contentHorizontal,
-            top = LocalDimens.current.padding.itemVertical,
-            end = LocalDimens.current.padding.contentHorizontalSmall,
-            bottom = LocalDimens.current.padding.itemVertical,
-        )
+        @Composable
+        get() =
+            PaddingValues(
+                start = LocalDimens.current.padding.contentHorizontal,
+                top = LocalDimens.current.padding.itemVertical,
+                end = LocalDimens.current.padding.contentHorizontalSmall,
+                bottom = LocalDimens.current.padding.itemVertical,
+            )
 
     internal fun getDefaultIcon(painter: Painter?): (@Composable RowScope.() -> Unit)? =
         if (painter != null) {
             {
                 Icon(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = PillShape,
-                        )
-                        .padding(8.dp),
+                    modifier =
+                        Modifier.size(40.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = PillShape,
+                            )
+                            .padding(8.dp),
                     painter = painter,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -217,41 +216,45 @@ object ListItemDefaults {
         } else null
 
     @Composable
-    fun ListItemTitle(
-        title: String,
-        titleHighlightPosition: IntRange,
-    ) {
+    fun ListItemTitle(title: String, titleHighlightPosition: IntRange) {
         if (!titleHighlightPosition.isEmpty()) {
             var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
             val highlightColor = MaterialTheme.colorScheme.tertiaryContainer
             val highlightCornerRadiusPx =
-                with(LocalDensity.current) { MaterialTheme.dimens.list.itemTitleHighlightCornerRadius.toPx() }
+                with(LocalDensity.current) {
+                    MaterialTheme.dimens.list.itemTitleHighlightCornerRadius.toPx()
+                }
             ListItemTitle(
                 text = title,
-                modifier = Modifier.drawBehind {
-                    textLayoutResult?.run {
-                        titleHighlightPosition
-                            .take(titleHighlightPosition.length)
-                            .map { getBoundingBox(it) }
-                            .groupBy { it.bottom }
-                            .forEach { (_, boundingBoxes) ->
-                                val boundingBox = boundingBoxes.first().copy(right = boundingBoxes.last().right)
-                                drawRoundRect(
-                                    highlightColor,
-                                    boundingBox.topLeft,
-                                    boundingBox.size,
-                                    CornerRadius(highlightCornerRadiusPx),
-                                )
-                            }
-                    }
-                },
-                spanStyles = listOf(
-                    AnnotatedString.Range(
-                        SpanStyle(MaterialTheme.colorScheme.onTertiaryContainer),
-                        titleHighlightPosition.first,
-                        titleHighlightPosition.last,
+                modifier =
+                    Modifier.drawBehind {
+                        textLayoutResult?.run {
+                            titleHighlightPosition
+                                .take(titleHighlightPosition.length)
+                                .map { getBoundingBox(it) }
+                                .groupBy { it.bottom }
+                                .forEach { (_, boundingBoxes) ->
+                                    val boundingBox =
+                                        boundingBoxes
+                                            .first()
+                                            .copy(right = boundingBoxes.last().right)
+                                    drawRoundRect(
+                                        highlightColor,
+                                        boundingBox.topLeft,
+                                        boundingBox.size,
+                                        CornerRadius(highlightCornerRadiusPx),
+                                    )
+                                }
+                        }
+                    },
+                spanStyles =
+                    listOf(
+                        AnnotatedString.Range(
+                            SpanStyle(MaterialTheme.colorScheme.onTertiaryContainer),
+                            titleHighlightPosition.first,
+                            titleHighlightPosition.last,
+                        )
                     ),
-                ),
                 onTextLayout = { textLayoutResult = it },
             )
         } else {
@@ -285,11 +288,7 @@ object ListItemDefaults {
 @LightAndDarkThemePreview
 @Composable
 fun PreviewTitleItem() {
-    LiftAppTheme {
-        Surface {
-            ListItem(title = { Text("This is a title") })
-        }
-    }
+    LiftAppTheme { Surface { ListItem(title = { Text("This is a title") }) } }
 }
 
 @LightAndDarkThemePreview
@@ -329,20 +328,16 @@ fun PreviewTitleWithLongDescAndIconItem() {
                 description = "This is a description with two lines",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {}) {
                         Icon(
-                            painter = painterResource(
-                                id = R.drawable.ic_remove_circle,
-                            ),
+                            painter = painterResource(id = R.drawable.ic_remove_circle),
                             contentDescription = null,
                         )
                     }
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {}) {
                         Icon(
-                            painter = painterResource(
-                                id = R.drawable.ic_edit,
-                            ),
+                            painter = painterResource(id = R.drawable.ic_edit),
                             contentDescription = null,
                         )
                     }
@@ -363,11 +358,9 @@ fun PreviewTitleWithLongDescTrailingAndIconItem() {
                 trailing = "100+",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {}) {
                         Icon(
-                            painter = painterResource(
-                                id = R.drawable.ic_edit,
-                            ),
+                            painter = painterResource(id = R.drawable.ic_edit),
                             contentDescription = null,
                         )
                     }

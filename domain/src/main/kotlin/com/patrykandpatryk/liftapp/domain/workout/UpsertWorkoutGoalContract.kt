@@ -7,6 +7,6 @@ fun interface UpsertWorkoutGoalContract {
         minReps: Int,
         maxReps: Int,
         sets: Int,
-        breakDurationMillis: Long
+        breakDurationMillis: Long,
     )
 }

@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.core.search
 
-import org.junit.Test
 import kotlin.test.assertContentEquals
+import org.junit.Test
 
 class SearchAlgorithmImplTest {
     private val items = listOf("Apple", "Cherry", "Banana", "Pineapple")

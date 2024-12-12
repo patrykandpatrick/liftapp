@@ -24,33 +24,26 @@ import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutGoalEnt
 import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutWithExerciseEntity
 
 @androidx.room.Database(
-    entities = [
-        BodyMeasurementEntity::class,
-        BodyMeasurementEntryEntity::class,
-        ExerciseEntity::class,
-        RoutineEntity::class,
-        ExerciseWithRoutineEntity::class,
-        GoalEntity::class,
-        WorkoutEntity::class,
-        WorkoutWithExerciseEntity::class,
-        WorkoutGoalEntity::class,
-        ExerciseSetEntity::class,
-    ],
-    views = [
-        BodyMeasurementWithLatestEntryViewResult::class,
-        RoutineWithExerciseNamesView::class,
-    ],
+    entities =
+        [
+            BodyMeasurementEntity::class,
+            BodyMeasurementEntryEntity::class,
+            ExerciseEntity::class,
+            RoutineEntity::class,
+            ExerciseWithRoutineEntity::class,
+            GoalEntity::class,
+            WorkoutEntity::class,
+            WorkoutWithExerciseEntity::class,
+            WorkoutGoalEntity::class,
+            ExerciseSetEntity::class,
+        ],
+    views = [BodyMeasurementWithLatestEntryViewResult::class, RoutineWithExerciseNamesView::class],
     version = 1,
     exportSchema = true,
 )
 @TypeConverters(
-    value = [
-        JsonConverters::class,
-        LocalDateTimeConverters::class,
-    ],
-    builtInTypeConverters = BuiltInTypeConverters(
-        enums = BuiltInTypeConverters.State.ENABLED,
-    ),
+    value = [JsonConverters::class, LocalDateTimeConverters::class],
+    builtInTypeConverters = BuiltInTypeConverters(enums = BuiltInTypeConverters.State.ENABLED),
 )
 abstract class Database : RoomDatabase() {
 

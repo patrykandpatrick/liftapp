@@ -19,8 +19,8 @@ sealed class ExerciseSet : Serializable {
     data class Weight(
         override val weight: Double,
         override val reps: Int,
-        override val weightUnit: MassUnit
-    ): ExerciseSet() {
+        override val weightUnit: MassUnit,
+    ) : ExerciseSet() {
         override val isComplete: Boolean
             get() = weight > 0 && reps > 0
 
@@ -34,18 +34,17 @@ sealed class ExerciseSet : Serializable {
         val bodyWeight: Double,
         override val reps: Int,
         override val weightUnit: MassUnit,
-    ): ExerciseSet() {
+    ) : ExerciseSet() {
         override val isComplete: Boolean
             get() = weight > 0 && reps > 0
 
         companion object {
-            fun empty(bodyWeight: Double, massUnit: MassUnit) = Calisthenics(0.0, bodyWeight, 0, massUnit)
+            fun empty(bodyWeight: Double, massUnit: MassUnit) =
+                Calisthenics(0.0, bodyWeight, 0, massUnit)
         }
     }
 
-    data class Reps(
-        override val reps: Int,
-    ): ExerciseSet() {
+    data class Reps(override val reps: Int) : ExerciseSet() {
         override val isComplete: Boolean
             get() = reps > 0
 
@@ -59,7 +58,7 @@ sealed class ExerciseSet : Serializable {
         override val distance: Double,
         override val kcal: Double,
         override val distanceUnit: LongDistanceUnit,
-    ): ExerciseSet() {
+    ) : ExerciseSet() {
         override val isComplete: Boolean
             get() = duration.inWholeSeconds > 0 && distance > 0
 
@@ -68,9 +67,7 @@ sealed class ExerciseSet : Serializable {
         }
     }
 
-    data class Time(
-        override val duration: Duration,
-    ): ExerciseSet() {
+    data class Time(override val duration: Duration) : ExerciseSet() {
         override val isComplete: Boolean
             get() = duration.inWholeSeconds > 0
 

@@ -52,21 +52,19 @@ fun NumberInput(
     val hapticFeedback = LocalHapticFeedback.current
 
     OutlinedTextField(
-        modifier = modifier
-            .height(IntrinsicSize.Max)
-            .fillMaxWidth(),
+        modifier = modifier.height(IntrinsicSize.Max).fillMaxWidth(),
         value = value,
         onValueChange = onValueChange,
-        label = if (hint != null) {
-            {
-                Text(text = hint)
-            }
-        } else {
-            null
-        },
+        label =
+            if (hint != null) {
+                { Text(text = hint) }
+            } else {
+                null
+            },
         leadingIcon = {
             Row(
-                modifier = Modifier.padding(end = LocalDimens.current.padding.contentHorizontalSmall),
+                modifier =
+                    Modifier.padding(end = LocalDimens.current.padding.contentHorizontalSmall)
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
@@ -85,14 +83,14 @@ fun NumberInput(
                 }
 
                 VerticalDivider(
-                    modifier = Modifier.padding(vertical = LocalDimens.current.padding.itemVertical),
+                    modifier = Modifier.padding(vertical = LocalDimens.current.padding.itemVertical)
                 )
 
                 if (prefix != null) {
                     Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = LocalDimens.current.padding.contentHorizontal),
+                        modifier =
+                            Modifier.align(Alignment.CenterVertically)
+                                .padding(start = LocalDimens.current.padding.contentHorizontal),
                         text = prefix,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -101,20 +99,21 @@ fun NumberInput(
         },
         trailingIcon = {
             Row(
-                modifier = Modifier.padding(start = LocalDimens.current.padding.contentHorizontalSmall),
+                modifier =
+                    Modifier.padding(start = LocalDimens.current.padding.contentHorizontalSmall)
             ) {
                 if (suffix != null) {
                     Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = LocalDimens.current.padding.contentHorizontal),
+                        modifier =
+                            Modifier.align(Alignment.CenterVertically)
+                                .padding(end = LocalDimens.current.padding.contentHorizontal),
                         text = suffix,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
                 VerticalDivider(
-                    modifier = Modifier.padding(vertical = LocalDimens.current.padding.itemVertical),
+                    modifier = Modifier.padding(vertical = LocalDimens.current.padding.itemVertical)
                 )
 
                 IconButton(
@@ -200,12 +199,12 @@ fun PreviewNumberInputWithError() {
         Surface {
             NumberInput(
                 modifier = Modifier.padding(16.dp),
-                textFieldState = PreviewResource
-                    .textFieldStateManager()
-                    .doubleTextField(
-                        initialValue = "40",
-                        validators = { valueInRange(50.0, 100.0) },
-                    ),
+                textFieldState =
+                    PreviewResource.textFieldStateManager()
+                        .doubleTextField(
+                            initialValue = "40",
+                            validators = { valueInRange(50.0, 100.0) },
+                        ),
                 hint = "Weight",
                 onPlusClick = {},
                 onMinusClick = {},

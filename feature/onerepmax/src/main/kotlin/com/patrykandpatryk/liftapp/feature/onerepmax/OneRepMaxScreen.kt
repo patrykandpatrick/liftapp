@@ -66,17 +66,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
-fun OneRepMaxScreen(
-    navigator: OneRepMaxNavigator,
-    modifier: Modifier = Modifier,
-) {
+fun OneRepMaxScreen(navigator: OneRepMaxNavigator, modifier: Modifier = Modifier) {
     val viewModel = hiltViewModel<OneRepMaxViewModel>()
     OneRepMaxScreen(
         state = viewModel.state,
         navigator = navigator,
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
-            .windowInsetsPadding(WindowInsets.displayCutout),
+        modifier =
+            modifier
+                .background(MaterialTheme.colorScheme.background)
+                .windowInsetsPadding(WindowInsets.displayCutout),
     )
 }
 
@@ -86,7 +84,10 @@ private fun OneRepMaxScreen(
     state: OneRepMaxState,
     modifier: Modifier = Modifier,
 ) {
-    if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+    if (
+        currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass ==
+            WindowWidthSizeClass.COMPACT
+    ) {
         OneRepMaxScreenCompact(state = state, navigator = navigator, modifier = modifier)
     } else {
         OneRepMaxScreenLarge(state = state, navigator = navigator, modifier = modifier)
@@ -111,7 +112,7 @@ private fun OneRepMaxScreenCompact(
                             contentDescription = stringResource(id = R.string.action_close),
                         )
                     }
-                }
+                },
             )
         },
     ) { paddingValues ->
@@ -119,38 +120,39 @@ private fun OneRepMaxScreenCompact(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(horizontal = LocalDimens.current.padding.contentHorizontal)
-                .padding(paddingValues = paddingValues),
+            modifier =
+                Modifier.padding(horizontal = LocalDimens.current.padding.contentHorizontal)
+                    .padding(paddingValues = paddingValues),
         ) {
             Calculator(state = state)
 
             Info(
                 text = stringResource(id = R.string.one_rep_max_description),
-                modifier = Modifier
-                    .padding(top = LocalDimens.current.verticalItemSpacing),
+                modifier = Modifier.padding(top = LocalDimens.current.verticalItemSpacing),
             )
 
             AnimatedVisibility(
                 visible = history.isNotEmpty(),
-                enter = fadeIn(
-                    animationSpec = spring(stiffness = Spring.StiffnessForAppearance)
-                ) + scaleIn(
-                    initialScale = .95f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium,
-                    )
-                ),
-                exit = fadeOut(
-                    spring(stiffness = Spring.StiffnessForAppearance)
-                ) + scaleOut(
-                    targetScale = .95f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium,
-                    )
-                ),
+                enter =
+                    fadeIn(animationSpec = spring(stiffness = Spring.StiffnessForAppearance)) +
+                        scaleIn(
+                            initialScale = .95f,
+                            animationSpec =
+                                spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium,
+                                ),
+                        ),
+                exit =
+                    fadeOut(spring(stiffness = Spring.StiffnessForAppearance)) +
+                        scaleOut(
+                            targetScale = .95f,
+                            animationSpec =
+                                spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium,
+                                ),
+                        ),
             ) {
                 History(
                     history = history,
@@ -180,58 +182,46 @@ fun OneRepMaxScreenLarge(
                             contentDescription = stringResource(id = R.string.action_close),
                         )
                     }
-                }
+                },
             )
         },
     ) { paddingValues ->
         val history = state.history.collectAsStateWithLifecycle().value
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(space = LocalDimens.current.padding.itemHorizontal),
-            modifier = Modifier
-                .padding(
-                    horizontal = LocalDimens.current.padding.contentHorizontal,
-                    vertical = LocalDimens.current.padding.contentVertical,
-                )
-                .padding(paddingValues = paddingValues),
+            horizontalArrangement =
+                Arrangement.spacedBy(space = LocalDimens.current.padding.itemHorizontal),
+            modifier =
+                Modifier.padding(
+                        horizontal = LocalDimens.current.padding.contentHorizontal,
+                        vertical = LocalDimens.current.padding.contentVertical,
+                    )
+                    .padding(paddingValues = paddingValues),
         ) {
             Calculator(
                 state = state,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .weight(1f),
+                modifier = Modifier.align(Alignment.CenterVertically).weight(1f),
             )
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(LocalDimens.current.verticalItemSpacing),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f),
+                modifier = Modifier.fillMaxHeight().weight(1f),
             ) {
                 Info(text = stringResource(id = R.string.one_rep_max_description))
 
-                History(
-                    history = history,
-                    removeHistory = state::clearHistory,
-                )
+                History(history = history, removeHistory = state::clearHistory)
             }
         }
     }
 }
 
 @Composable
-private fun Calculator(
-    state: OneRepMaxState,
-    modifier: Modifier = Modifier,
-) {
+private fun Calculator(state: OneRepMaxState, modifier: Modifier = Modifier) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val massUnit = state.massUnit.collectAsStateWithLifecycle().value
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier,
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Text(
             text = state.oneRepMax.collectAsStateWithLifecycle().value,
             style = MaterialTheme.typography.headlineMedium,
@@ -252,14 +242,13 @@ private fun Calculator(
             TextField(
                 value = state.mass.value,
                 onValueChange = state::updateMass,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Decimal,
-                ),
+                keyboardOptions =
+                    KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Decimal,
+                    ),
                 label = stringResource(id = R.string.mass),
-                trailingIcon = {
-                    Text(text = stringResource(id = massUnit.stringResourceId))
-                },
+                trailingIcon = { Text(text = stringResource(id = massUnit.stringResourceId)) },
                 modifier = Modifier,
             )
 
@@ -267,12 +256,13 @@ private fun Calculator(
                 value = state.reps.value,
                 onValueChange = state::updateReps,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus(force = true)
-                    },
-                ),
+                keyboardActions =
+                    KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus(force = true)
+                        }
+                    ),
                 label = stringResource(id = R.string.reps),
                 modifier = Modifier,
             )
@@ -308,17 +298,16 @@ private fun History(
     removeHistory: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-    ) {
+    OutlinedCard(modifier = modifier) {
         Column(
             verticalArrangement = Arrangement.spacedBy(space = 8.dp),
-            modifier = Modifier.padding(
-                start = LocalDimens.current.padding.itemHorizontal,
-                end = 8.dp,
-                top = 8.dp,
-                bottom = LocalDimens.current.verticalItemSpacing,
-            ),
+            modifier =
+                Modifier.padding(
+                    start = LocalDimens.current.padding.itemHorizontal,
+                    end = 8.dp,
+                    top = 8.dp,
+                    bottom = LocalDimens.current.verticalItemSpacing,
+                ),
         ) {
             ListSectionTitle(
                 title = stringResource(R.string.one_rep_max_history_section_title),
@@ -330,11 +319,12 @@ private fun History(
                             contentDescription = null,
                         )
                     }
-                }
+                },
             )
 
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
+                verticalArrangement =
+                    Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
                 reverseLayout = true,
                 modifier = Modifier.weight(1f),
             ) {
@@ -350,17 +340,15 @@ private fun History(
 }
 
 @Composable
-private fun HistoryEntry(
-    historyEntryModel: HistoryEntryModel,
-    modifier: Modifier = Modifier,
-) {
+private fun HistoryEntry(historyEntryModel: HistoryEntryModel, modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(
-            R.string.one_rep_max_history_entry,
-            historyEntryModel.mass,
-            historyEntryModel.reps,
-            historyEntryModel.oneRepMax
-        ),
+        text =
+            stringResource(
+                R.string.one_rep_max_history_entry,
+                historyEntryModel.mass,
+                historyEntryModel.reps,
+                historyEntryModel.oneRepMax,
+            ),
         style = MaterialTheme.typography.titleSmall,
         modifier = modifier.fillMaxWidth(),
     )
@@ -371,18 +359,17 @@ private fun OneRepMaxPreview(history: List<HistoryEntryModel>) {
     LiftAppTheme {
         val formatter = PreviewResource.formatter()
         val savedStateHandle = remember {
-            SavedStateHandle().apply {
-                set(OneRepMaxState.HISTORY_KEY, history)
-            }
+            SavedStateHandle().apply { set(OneRepMaxState.HISTORY_KEY, history) }
         }
         OneRepMaxScreen(
             navigator = interfaceStub(),
-            state = OneRepMaxState(
-                coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined },
-                savedStateHandle = savedStateHandle,
-                getMassUnit = { flowOf(MassUnit.Kilograms) },
-                formatWeight = formatter::formatWeight,
-            ),
+            state =
+                OneRepMaxState(
+                    coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined },
+                    savedStateHandle = savedStateHandle,
+                    getMassUnit = { flowOf(MassUnit.Kilograms) },
+                    formatWeight = formatter::formatWeight,
+                ),
         )
     }
 }
@@ -397,9 +384,6 @@ private fun OneRepMaxPreview_NoHistory() {
 @Composable
 private fun OneRepMaxPreview_WithHistory() {
     OneRepMaxPreview(
-        listOf(
-            HistoryEntryModel(5, "100 kg", "116.67 kg"),
-            HistoryEntryModel(8, "90 kg", "114 kg"),
-        )
+        listOf(HistoryEntryModel(5, "100 kg", "116.67 kg"), HistoryEntryModel(8, "90 kg", "114 kg"))
     )
 }

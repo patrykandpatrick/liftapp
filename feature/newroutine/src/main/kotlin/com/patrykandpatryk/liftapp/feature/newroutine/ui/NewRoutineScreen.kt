@@ -70,15 +70,12 @@ fun NewRoutineScreen(
     navigator: NewRoutineNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: NewRoutineViewModel = hiltViewModel(
-        creationCallback = { factory: NewRoutineViewModel.Factory -> factory.create(routineID) },
-    )
+    val viewModel: NewRoutineViewModel =
+        hiltViewModel(
+            creationCallback = { factory: NewRoutineViewModel.Factory -> factory.create(routineID) }
+        )
 
-    NewRoutineScreen(
-        state = viewModel.state,
-        navigator = navigator,
-        modifier = modifier,
-    )
+    NewRoutineScreen(state = viewModel.state, navigator = navigator, modifier = modifier)
 }
 
 @Composable
@@ -92,7 +89,8 @@ private fun NewRoutineScreen(
     val routineNotFound by state.routineNotFound
 
     LaunchedEffect(Unit) {
-        navigator.registerResultListener(key = Constants.Keys.PICKED_EXERCISE_IDS) { pickedExerciseIds: List<Long> ->
+        navigator.registerResultListener(key = Constants.Keys.PICKED_EXERCISE_IDS) {
+            pickedExerciseIds: List<Long> ->
             state.addPickedExercises(pickedExerciseIds)
         }
     }
@@ -102,7 +100,13 @@ private fun NewRoutineScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = stringResource(if (state.isEdit) R.string.title_edit_routine else R.string.title_new_routine))
+                    Text(
+                        text =
+                            stringResource(
+                                if (state.isEdit) R.string.title_edit_routine
+                                else R.string.title_new_routine
+                            )
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = navigator::back) {
@@ -116,7 +120,10 @@ private fun NewRoutineScreen(
         },
         bottomBar = { BottomAppBar.Save(onClick = state::save) },
     ) { paddingValues ->
-        if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+        if (
+            currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass ==
+                WindowWidthSizeClass.COMPACT
+        ) {
             NewRoutineCompactContent(
                 state = state,
                 pickExercises = { navigator.pickExercises(state.exerciseIds) },
@@ -140,15 +147,15 @@ private fun NewRoutineScreen(
 private fun NewRoutineCompactContent(
     state: NewRoutineState,
     pickExercises: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
-        modifier = modifier
-            .padding(
+        modifier =
+            modifier.padding(
                 horizontal = LocalDimens.current.padding.contentHorizontal,
                 vertical = LocalDimens.current.padding.contentVertical,
-            )
+            ),
     ) {
         OutlinedTextField(
             textFieldState = state.name,
@@ -159,11 +166,7 @@ private fun NewRoutineCompactContent(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Exercises(
-            state = state,
-            pickExercises = pickExercises,
-            removeExercises = {},
-        )
+        Exercises(state = state, pickExercises = pickExercises, removeExercises = {})
     }
 }
 
@@ -171,15 +174,16 @@ private fun NewRoutineCompactContent(
 private fun NewRoutineContentLarge(
     state: NewRoutineState,
     pickExercises: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(space = LocalDimens.current.padding.itemHorizontal),
-        modifier = modifier
-            .padding(
+        horizontalArrangement =
+            Arrangement.spacedBy(space = LocalDimens.current.padding.itemHorizontal),
+        modifier =
+            modifier.padding(
                 horizontal = LocalDimens.current.padding.contentHorizontal,
                 vertical = LocalDimens.current.padding.contentVertical,
-            )
+            ),
     ) {
         OutlinedTextField(
             textFieldState = state.name,
@@ -194,9 +198,7 @@ private fun NewRoutineContentLarge(
             state = state,
             pickExercises = pickExercises,
             removeExercises = {},
-            modifier = Modifier
-                .weight(1f)
-                .padding(top = 6.dp),
+            modifier = Modifier.weight(1f).padding(top = 6.dp),
         )
     }
 }
@@ -209,15 +211,12 @@ private fun Exercises(
     modifier: Modifier = Modifier,
 ) {
     val exercises = state.exercises.collectAsStateWithLifecycle()
-    OutlinedCard(
-        modifier = modifier,
-    ) {
+    OutlinedCard(modifier = modifier) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
-            modifier = Modifier.padding(
-                top = 8.dp,
-                bottom = LocalDimens.current.verticalItemSpacing,
-            ),
+            verticalArrangement =
+                Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
+            modifier =
+                Modifier.padding(top = 8.dp, bottom = LocalDimens.current.verticalItemSpacing),
         ) {
             ListSectionTitle(
                 title = stringResource(R.string.title_exercises),
@@ -230,17 +229,13 @@ private fun Exercises(
                         )
                     }
                 },
-                modifier = Modifier
-                    .padding(start = LocalDimens.current.padding.itemHorizontal, end = 8.dp),
+                modifier =
+                    Modifier.padding(start = LocalDimens.current.padding.itemHorizontal, end = 8.dp),
             )
 
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-            ) {
+            LazyColumn(modifier = Modifier.weight(1f)) {
                 if (exercises.value.isInvalid) {
-                    item {
-                        EmptyState(state, Modifier.fillParentMaxSize())
-                    }
+                    item { EmptyState(state, Modifier.fillParentMaxSize()) }
                 } else {
                     items(
                         items = exercises.value.value,
@@ -256,7 +251,8 @@ private fun Exercises(
                                 IconButton(onClick = { state.removePickedExercise(item.id) }) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_remove_circle),
-                                        contentDescription = stringResource(id = R.string.list_remove),
+                                        contentDescription =
+                                            stringResource(id = R.string.list_remove),
                                     )
                                 }
                             },
@@ -267,11 +263,11 @@ private fun Exercises(
 
             Button(
                 colors = ButtonDefaults.filledTonalButtonColors(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = LocalDimens.current.padding.itemVerticalSmall)
-                    .padding(horizontal = LocalDimens.current.padding.itemHorizontal)
-                    .animateJump(state.errorEffectState, exercises.value.isInvalid),
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .padding(top = LocalDimens.current.padding.itemVerticalSmall)
+                        .padding(horizontal = LocalDimens.current.padding.itemHorizontal)
+                        .animateJump(state.errorEffectState, exercises.value.isInvalid),
                 onClick = pickExercises,
             ) {
                 Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
@@ -283,25 +279,19 @@ private fun Exercises(
 }
 
 @Composable
-private fun EmptyState(
-    state: NewRoutineState,
-    modifier: Modifier = Modifier,
-) {
+private fun EmptyState(state: NewRoutineState, modifier: Modifier = Modifier) {
     val normalColor = MaterialTheme.colorScheme.onSurfaceVariant
     val errorColor = MaterialTheme.colorScheme.error
 
     val showErrors by state.showErrors
     val color = animateColorAsState(if (showErrors) errorColor else normalColor, label = "color")
 
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier,
-    ) {
+    Column(verticalArrangement = Arrangement.Center, modifier = modifier) {
         Icon(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = MaterialTheme.dimens.verticalItemSpacing)
-                .size(128.dp),
+            modifier =
+                Modifier.align(Alignment.CenterHorizontally)
+                    .padding(vertical = MaterialTheme.dimens.verticalItemSpacing)
+                    .size(128.dp),
             painter = painterResource(id = R.drawable.ic_weightlifter_down),
             contentDescription = null,
             tint = color.value.copy(alpha = IllustrationAlpha),
@@ -311,9 +301,9 @@ private fun EmptyState(
             text = stringResource(id = R.string.state_no_exercises),
             style = MaterialTheme.typography.bodyMedium,
             color = color.value,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = MaterialTheme.dimens.verticalItemSpacing),
+            modifier =
+                Modifier.align(Alignment.CenterHorizontally)
+                    .padding(bottom = MaterialTheme.dimens.verticalItemSpacing),
         )
     }
 }
@@ -324,21 +314,32 @@ private fun NewRoutinePreview() {
     LiftAppTheme {
         val savedStateHandle = remember { SavedStateHandle() }
         NewRoutineScreen(
-            state = NewRoutineState(
-                routineID = ID_NOT_SET,
-                savedStateHandle = savedStateHandle,
-                getRoutine = { RoutineWithExercises(0, "", emptyList(), emptyList(), emptyList(), emptyList()) },
-                upsertRoutine = { _, _, _ -> },
-                getExerciseItems = { flowOf(emptyList()) },
-                textFieldStateManager = TextFieldStateManager(
-                    stringProvider = PreviewResource.stringProvider,
-                    formatter = PreviewResource.formatter(),
+            state =
+                NewRoutineState(
+                    routineID = ID_NOT_SET,
                     savedStateHandle = savedStateHandle,
+                    getRoutine = {
+                        RoutineWithExercises(
+                            0,
+                            "",
+                            emptyList(),
+                            emptyList(),
+                            emptyList(),
+                            emptyList(),
+                        )
+                    },
+                    upsertRoutine = { _, _, _ -> },
+                    getExerciseItems = { flowOf(emptyList()) },
+                    textFieldStateManager =
+                        TextFieldStateManager(
+                            stringProvider = PreviewResource.stringProvider,
+                            formatter = PreviewResource.formatter(),
+                            savedStateHandle = savedStateHandle,
+                        ),
+                    validateExercises = NonEmptyCollectionValidator(PreviewResource.stringProvider),
+                    coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined },
                 ),
-                validateExercises = NonEmptyCollectionValidator(PreviewResource.stringProvider),
-                coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined },
-            ),
-            navigator = interfaceStub()
+            navigator = interfaceStub(),
         )
     }
 }

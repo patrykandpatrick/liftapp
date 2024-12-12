@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
-import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
+import kotlinx.coroutines.flow.Flow
 
 interface BodyMeasurementRepository {
 

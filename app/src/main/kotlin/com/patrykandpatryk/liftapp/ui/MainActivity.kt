@@ -16,11 +16,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var darkModePublisher: IsDarkModePublisher
+    @Inject lateinit var darkModePublisher: IsDarkModePublisher
 
-    @Inject
-    lateinit var darkModeReceiver: IsDarkModeReceiver
+    @Inject lateinit var darkModeReceiver: IsDarkModeReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

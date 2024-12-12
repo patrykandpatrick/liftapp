@@ -23,10 +23,7 @@ import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
 
 @Composable
-fun Settings(
-    navigator: SettingsNavigator,
-    modifier: Modifier = Modifier,
-) {
+fun Settings(navigator: SettingsNavigator, modifier: Modifier = Modifier) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val viewModel = hiltViewModel<SettingsViewModel>()
     val allPreferences by viewModel.allPreferences.collectAsState(initial = null)
@@ -41,13 +38,8 @@ fun Settings(
             )
         },
     ) { paddingValues ->
-        LazyColumn(
-            contentPadding = paddingValues,
-            modifier = Modifier.fillMaxHeight(),
-        ) {
-            item {
-                ListSectionTitle(title = stringResource(id = R.string.units))
-            }
+        LazyColumn(contentPadding = paddingValues, modifier = Modifier.fillMaxHeight()) {
+            item { ListSectionTitle(title = stringResource(id = R.string.units)) }
 
             item {
                 EnumPreferenceListItem(
@@ -71,9 +63,7 @@ fun Settings(
                 )
             }
 
-            item {
-                ListSectionTitle(title = stringResource(id = R.string.settings_time_and_date))
-            }
+            item { ListSectionTitle(title = stringResource(id = R.string.settings_time_and_date)) }
 
             item {
                 EnumPreferenceListItem(

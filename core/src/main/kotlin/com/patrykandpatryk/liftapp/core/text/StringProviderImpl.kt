@@ -12,9 +12,7 @@ import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import javax.inject.Inject
 
-class StringProviderImpl @Inject constructor(
-    private val context: Context,
-) : StringProvider {
+class StringProviderImpl @Inject constructor(private val context: Context) : StringProvider {
 
     override val andInAList: String
         get() = string(string.and_in_a_list)
@@ -41,27 +39,27 @@ class StringProviderImpl @Inject constructor(
         get() = string(string.date_format_edit)
 
     override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
-        string(unit.stringResourceId)
-            .let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
+        string(unit.stringResourceId).let { displayUnit ->
+            if (unit.hasLeadingSpace) " $displayUnit" else displayUnit
+        }
 
     override fun quoted(value: String): String = string(string.generic_quoted, value)
 
     override fun getErrorNameTooLong(actual: Int, limit: Int): String =
         string(string.error_name_too_long, actual, limit)
 
-    override fun getErrorCannotBeEmpty(name: String): String =
-        string(string.error_x_empty, name)
+    override fun getErrorCannotBeEmpty(name: String): String = string(string.error_x_empty, name)
 
-    override fun getMuscleName(muscle: Muscle): String =
-        string(muscle.stringRes)
+    override fun getMuscleName(muscle: Muscle): String = string(muscle.stringRes)
 
     override fun toPrettyString(goal: Goal): String =
         string(string.goal_format_short, goal.minReps, goal.maxReps, goal.sets)
 
-    override fun getResolvedName(name: Name): String = when (name) {
-        is Name.Raw -> name.value
-        is Name.Resource -> context.getString(name.resource.resourceId)
-    }
+    override fun getResolvedName(name: Name): String =
+        when (name) {
+            is Name.Raw -> name.value
+            is Name.Resource -> context.getString(name.resource.resourceId)
+        }
 
     override fun fieldTooShort(actual: Int, minLength: Int): String =
         string(string.error_field_too_short, minLength, actual, minLength)
@@ -81,11 +79,12 @@ class StringProviderImpl @Inject constructor(
 
     override fun fieldMustBeHigherThanZero(): String = string(string.error_must_be_higher_than_zero)
 
-    override fun fieldMustBeHigherOrEqualTo(value: String): String = string(string.error_must_be_higher_than_or_equal_to, value)
+    override fun fieldMustBeHigherOrEqualTo(value: String): String =
+        string(string.error_must_be_higher_than_or_equal_to, value)
 
-    override fun doesNotEqual(actual: String, expected: String): String = string(string.error_does_not_equal, actual, expected)
-    private fun string(
-        @StringRes id: Int,
-        vararg formatArgs: Any,
-    ): String = if (formatArgs.isNotEmpty()) context.getString(id, *formatArgs) else context.getString(id)
+    override fun doesNotEqual(actual: String, expected: String): String =
+        string(string.error_does_not_equal, actual, expected)
+
+    private fun string(@StringRes id: Int, vararg formatArgs: Any): String =
+        if (formatArgs.isNotEmpty()) context.getString(id, *formatArgs) else context.getString(id)
 }

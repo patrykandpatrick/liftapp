@@ -16,11 +16,14 @@ import dagger.hilt.android.components.ViewModelComponent
 interface NewExerciseModule {
 
     @Binds
-    fun bindStateToInsertMapper(mapper: StateToExerciseInsertMapper): Mapper<NewExerciseState.Valid, Exercise.Insert>
+    fun bindStateToInsertMapper(
+        mapper: StateToExerciseInsertMapper
+    ): Mapper<NewExerciseState.Valid, Exercise.Insert>
 
     @Binds
-    fun bindToUpdateStateMapper(mapper: StateToExerciseUpdateMapper): Mapper<NewExerciseState.Valid, Exercise.Update>
+    fun bindToUpdateStateMapper(
+        mapper: StateToExerciseUpdateMapper
+    ): Mapper<NewExerciseState.Valid, Exercise.Update>
 
-    @Binds
-    fun bindExerciseMapper(mapper: ExerciseToStateMapper): Mapper<Exercise, NewExerciseState>
+    @Binds fun bindExerciseMapper(mapper: ExerciseToStateMapper): Mapper<Exercise, NewExerciseState>
 }

@@ -32,7 +32,8 @@ enum class BodyMeasurementType(
     ),
 }
 
-fun BodyMeasurementType.getValueRange(unit: ValueUnit): ClosedFloatingPointRange<Double> = when {
-    unit.isMetric -> metricValueRange
-    else -> imperialValueRange
-}
+fun BodyMeasurementType.getValueRange(unit: ValueUnit): ClosedFloatingPointRange<Double> =
+    when {
+        unit.isMetric -> metricValueRange
+        else -> imperialValueRange
+    }

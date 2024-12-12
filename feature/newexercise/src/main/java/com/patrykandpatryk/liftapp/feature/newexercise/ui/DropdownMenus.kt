@@ -43,7 +43,9 @@ fun <T> DropdownMenu(
         selectedItems = listOf(selectedItem),
         items = items,
         getItemText = getItemText,
-        getItemsText = { collection -> collection.firstOrNull()?.let { getItemText(it) }.orEmpty() },
+        getItemsText = { collection ->
+            collection.firstOrNull()?.let { getItemText(it) }.orEmpty()
+        },
         label = label,
         onClick = onClick,
         modifier = modifier,
@@ -77,31 +79,20 @@ fun <T> DropdownMenu(
     ) {
         Column {
             OutlinedTextField(
-                modifier = Modifier
-                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                    .fillMaxWidth(),
+                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth(),
                 readOnly = true,
                 value = getItemsText(selectedItems),
                 onValueChange = {},
                 label = { Text(text = label) },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             )
 
             if (errorText != null) {
-                SupportingText(
-                    visible = isError,
-                    text = errorText,
-                    isError = isError,
-                )
+                SupportingText(visible = isError, text = errorText, isError = isError)
             }
         }
 
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) },
-        ) {
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { onExpandedChange(false) }) {
             items.forEach { item ->
                 DropdownMenuItem(
                     text = { Text(text = getItemText(item)) },
@@ -125,9 +116,7 @@ fun <T> DropdownMenu(
 }
 
 @Composable
-private fun PreviewExerciseTypeDropdownMenu(
-    expanded: Boolean,
-) {
+private fun PreviewExerciseTypeDropdownMenu(expanded: Boolean) {
     LiftAppTheme {
         Surface {
             val (isExpanded, setExpanded) = remember { mutableStateOf(expanded) }

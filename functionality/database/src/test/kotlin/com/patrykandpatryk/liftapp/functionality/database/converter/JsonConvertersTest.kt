@@ -6,10 +6,10 @@ import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.functionality.database.string.ExerciseStringResource
-import org.junit.Test
 import kotlin.random.Random
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import org.junit.Test
 
 class JsonConvertersTest {
 
@@ -49,7 +49,12 @@ class JsonConvertersTest {
 
     @Test
     fun `Conversion of BodyMeasurementValue#Double to String and back yields the same result`() {
-        val input = BodyMeasurementValue.DoubleValue(Random.nextDouble(), Random.nextDouble(), MassUnit.Kilograms)
+        val input =
+            BodyMeasurementValue.DoubleValue(
+                Random.nextDouble(),
+                Random.nextDouble(),
+                MassUnit.Kilograms,
+            )
         val serializedInput = converter.toString(input)
         val deserializedInput = converter.toBodyValues(serializedInput)
         assertEquals(input, deserializedInput)

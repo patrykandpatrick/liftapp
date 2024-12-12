@@ -1,6 +1,4 @@
-apply {
-    from("$rootDir/gradle/feature-module-base.gradle")
-}
+apply { from("$rootDir/gradle/feature-module-base.gradle") }
 
 plugins {
     alias(libs.plugins.library)
@@ -14,6 +12,4 @@ dependencies {
     project.subprojects.forEach { project -> add("api", project) }
 }
 
-android {
-    namespace = "com.patrykandpatryk.liftapp.feature.home"
-}
+android { namespace = "com.patrykandpatryk.liftapp.feature.home" }

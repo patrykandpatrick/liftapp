@@ -34,10 +34,12 @@ class TextValidator<T>(
 
     interface TextValidationElement<in T> {
         fun validate(value: T): Result
+
         fun validateString(value: String): Result
 
         sealed class Result {
             data object Valid : Result()
+
             data class Invalid(val message: String) : Result()
         }
 

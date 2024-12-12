@@ -11,6 +11,5 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface SearchModule {
 
-    @Binds
-    fun bindSearchAlgorithmImpl(searchAlgorithmImpl: SearchAlgorithmImpl): SearchAlgorithm
+    @Binds fun bindSearchAlgorithmImpl(searchAlgorithmImpl: SearchAlgorithmImpl): SearchAlgorithm
 }

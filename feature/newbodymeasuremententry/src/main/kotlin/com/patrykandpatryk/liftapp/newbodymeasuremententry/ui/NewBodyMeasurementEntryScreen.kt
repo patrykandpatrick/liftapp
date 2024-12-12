@@ -57,18 +57,19 @@ fun NewBodyMeasurementEntryBottomSheet(
     bodyMeasurementId: Long,
     bodyMeasurementEntryId: Long?,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val viewModel = hiltViewModel<NewBodyMeasurementEntryViewModel, NewBodyMeasurementEntryViewModel.Factory>(
-        creationCallback = { factory -> factory.create(bodyMeasurementId, bodyMeasurementEntryId) },
-    )
+    val viewModel =
+        hiltViewModel<NewBodyMeasurementEntryViewModel, NewBodyMeasurementEntryViewModel.Factory>(
+            creationCallback = { factory ->
+                factory.create(bodyMeasurementId, bodyMeasurementEntryId)
+            }
+        )
     val entrySaved = viewModel.state.entrySaved.value
 
     BackHandler(onBack = onDismissRequest)
 
-    LaunchedEffect(entrySaved) {
-        if (entrySaved) onDismissRequest()
-    }
+    LaunchedEffect(entrySaved) { if (entrySaved) onDismissRequest() }
 
     NewBodyMeasurementEntryBottomSheetContent(
         state = viewModel.state,
@@ -87,35 +88,31 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
     val formattedDate = state.formattedDate.collectAsStateWithLifecycle().value
     val data = state.inputData.value
 
-    val timePickerState = rememberTimePickerState(
-        is24h = state.is24H.value,
-        hour = formattedDate.hour,
-        minute = formattedDate.minute,
-    )
+    val timePickerState =
+        rememberTimePickerState(
+            is24h = state.is24H.value,
+            hour = formattedDate.hour,
+            minute = formattedDate.minute,
+        )
 
-    val datePickerState = rememberDatePickerState(
-        time = formattedDate.localDateTime,
-    )
+    val datePickerState = rememberDatePickerState(time = formattedDate.localDateTime)
 
     TimePicker(state = timePickerState, onTimePicked = state::setTime)
 
     DatePicker(state = datePickerState, onTimePicked = state::setDate)
 
     Column(
-        modifier = modifier
-            .navigationBarsPadding()
-            .padding(vertical = dimens.padding.contentVertical),
+        modifier =
+            modifier.navigationBarsPadding().padding(vertical = dimens.padding.contentVertical)
     ) {
-        DialogTopBar(
-            title = state.name.value,
-            onCloseClick = onDismissRequest,
-        )
+        DialogTopBar(title = state.name.value, onCloseClick = onDismissRequest)
 
         Column(
-            modifier = modifier
-                .navigationBarsPadding()
-                .padding(horizontal = dimens.padding.contentHorizontal)
-                .padding(top = dimens.padding.itemVertical),
+            modifier =
+                modifier
+                    .navigationBarsPadding()
+                    .padding(horizontal = dimens.padding.contentHorizontal)
+                    .padding(top = dimens.padding.itemVertical),
             verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
         ) {
             if (data != null) {
@@ -129,10 +126,11 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
                 }
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(space = dimens.padding.itemHorizontal),
+                    horizontalArrangement =
+                        Arrangement.spacedBy(space = dimens.padding.itemHorizontal)
                 ) {
-                    val dateInteractionSource = remember { MutableInteractionSource() }
-                        .onClick(datePickerState::show)
+                    val dateInteractionSource =
+                        remember { MutableInteractionSource() }.onClick(datePickerState::show)
 
                     OutlinedTextField(
                         modifier = Modifier.weight(1f),
@@ -143,8 +141,9 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
                         interactionSource = dateInteractionSource,
                     )
 
-                    val timeInteractionSource = remember { MutableInteractionSource() }
-                        .onClick { timePickerState.isShowing = true }
+                    val timeInteractionSource =
+                        remember { MutableInteractionSource() }
+                            .onClick { timePickerState.isShowing = true }
 
                     OutlinedTextField(
                         modifier = Modifier.weight(1f),
@@ -184,19 +183,14 @@ private fun NumberInput(
         textFieldState = textFieldState,
         hint = stringResource(id = R.string.value),
         suffix = stringResource(id = unit.stringResourceId),
-        onMinusClick = { long ->
-            textFieldState.updateValueBy(-Increment.getBodyWeight(long))
-        },
-        onPlusClick = { long ->
-            textFieldState.updateValueBy(Increment.getBodyWeight(long))
-        },
-        keyboardActions = KeyboardActions(
-            onDone = { onSave() },
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Decimal,
-            imeAction = if (isLast) ImeAction.Done else ImeAction.Next,
-        ),
+        onMinusClick = { long -> textFieldState.updateValueBy(-Increment.getBodyWeight(long)) },
+        onPlusClick = { long -> textFieldState.updateValueBy(Increment.getBodyWeight(long)) },
+        keyboardActions = KeyboardActions(onDone = { onSave() }),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+                imeAction = if (isLast) ImeAction.Done else ImeAction.Next,
+            ),
     )
 }
 
@@ -206,9 +200,7 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
     LiftAppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Surface(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp).padding(top = 16.dp),
                 shape = BottomSheetShape,
                 shadowElevation = 8.dp,
             ) {
@@ -218,29 +210,35 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
                 val coroutineScope = rememberCoroutineScope()
 
                 NewBodyMeasurementEntryBottomSheetContent(
-                    state = remember {
-                        NewBodyMeasurementState(
-                            getFormattedDate = { formatter.getFormattedDate(it) },
-                            getBodyMeasurementWithLatestEntry = {
-                                BodyMeasurementWithLatestEntry(
-                                    0,
-                                    "Weight",
-                                    BodyMeasurementType.Weight,
-                                    BodyMeasurementEntry(
-                                        id = 0,
-                                        value = BodyMeasurementValue.SingleValue(85.0, MassUnit.Kilograms),
-                                        formattedDate = formatter.getFormattedDate(LocalDateTime.now()),
+                    state =
+                        remember {
+                            NewBodyMeasurementState(
+                                getFormattedDate = { formatter.getFormattedDate(it) },
+                                getBodyMeasurementWithLatestEntry = {
+                                    BodyMeasurementWithLatestEntry(
+                                        0,
+                                        "Weight",
+                                        BodyMeasurementType.Weight,
+                                        BodyMeasurementEntry(
+                                            id = 0,
+                                            value =
+                                                BodyMeasurementValue.SingleValue(
+                                                    85.0,
+                                                    MassUnit.Kilograms,
+                                                ),
+                                            formattedDate =
+                                                formatter.getFormattedDate(LocalDateTime.now()),
+                                        ),
                                     )
-                                )
-                            },
-                            getBodyMeasurementEntry = { null },
-                            upsertBodyMeasurementEntry = { _, _ -> },
-                            textFieldStateManager = textFieldStateManager,
-                            getUnitForBodyMeasurementType = { MassUnit.Kilograms },
-                            coroutineScope = coroutineScope,
-                            savedStateHandle = savedStateHandle,
-                        )
-                    },
+                                },
+                                getBodyMeasurementEntry = { null },
+                                upsertBodyMeasurementEntry = { _, _ -> },
+                                textFieldStateManager = textFieldStateManager,
+                                getUnitForBodyMeasurementType = { MassUnit.Kilograms },
+                                coroutineScope = coroutineScope,
+                                savedStateHandle = savedStateHandle,
+                            )
+                        },
                     onDismissRequest = {},
                 )
             }

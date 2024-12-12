@@ -7,9 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OneRepMaxViewModel @Inject constructor(
-    oneRepMaxStateFactory: OneRepMaxState.Factory,
-    savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+class OneRepMaxViewModel
+@Inject
+constructor(oneRepMaxStateFactory: OneRepMaxState.Factory, savedStateHandle: SavedStateHandle) :
+    ViewModel() {
     val state = oneRepMaxStateFactory.create(viewModelScope, savedStateHandle)
 }

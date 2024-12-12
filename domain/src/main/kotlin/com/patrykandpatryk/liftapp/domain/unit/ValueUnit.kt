@@ -4,9 +4,7 @@ import kotlinx.serialization.Transient
 
 interface ValueUnit : java.io.Serializable {
 
-    @Transient
-    val hasLeadingSpace: Boolean
+    @Transient val hasLeadingSpace: Boolean
 
-    @Transient
-    val isMetric: Boolean
+    @Transient val isMetric: Boolean
 }

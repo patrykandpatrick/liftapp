@@ -58,10 +58,11 @@ private fun RoutineListScreen(
     val routines by state.routines.collectAsStateWithLifecycle()
 
     Scaffold(
-        modifier = modifier
-            .fillMaxHeight()
-            .padding(padding)
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier =
+            modifier
+                .fillMaxHeight()
+                .padding(padding)
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = stringResource(id = R.string.action_new_routine),
@@ -78,20 +79,18 @@ private fun RoutineListScreen(
         contentWindowInsets = WindowInsets.statusBars,
     ) { internalPadding ->
         LazyVerticalStaggeredGrid(
-            modifier = Modifier
-                .padding(internalPadding),
-            columns = StaggeredGridCells.Adaptive(minSize = LocalDimens.current.routine.minCardWidth),
-            contentPadding = PaddingValues(
-                horizontal = dimensPadding.contentHorizontalSmall,
-                vertical = dimensPadding.contentVertical,
-            ),
+            modifier = Modifier.padding(internalPadding),
+            columns =
+                StaggeredGridCells.Adaptive(minSize = LocalDimens.current.routine.minCardWidth),
+            contentPadding =
+                PaddingValues(
+                    horizontal = dimensPadding.contentHorizontalSmall,
+                    vertical = dimensPadding.contentVertical,
+                ),
             verticalItemSpacing = dimensPadding.contentVerticalSmall,
             horizontalArrangement = Arrangement.spacedBy(dimensPadding.contentHorizontalSmall),
         ) {
-            items(
-                items = routines,
-                key = { it.id },
-            ) { routine ->
+            items(items = routines, key = { it.id }) { routine ->
                 RoutineCard(
                     title = routine.name,
                     exercises = routine.exercises,
@@ -109,34 +108,58 @@ fun RoutinesPreview() {
         RoutineListScreen(
             navigator = interfaceStub(),
             padding = PaddingValues(),
-            state = RoutineListViewModel(
-                RoutineListDataSource(
-                    flowOf(
-                        persistentListOf(
-                            RoutineItem(
-                                id = 0L,
-                                name = "Routine I",
-                                exercises = persistentListOf("First Exercise", "Second Exercise", "Third Exercise", "Fourth Exercise"),
-                            ),
-                            RoutineItem(
-                                id = 1L,
-                                name = "Routine II",
-                                exercises = persistentListOf("First Exercise", "Second Exercise", "Third Exercise", "Fourth Exercise"),
-                            ),
-                            RoutineItem(
-                                id = 2L,
-                                name = "Routine III",
-                                exercises = persistentListOf("First Exercise", "Second Exercise", "Third Exercise", "Fourth Exercise"),
-                            ),
-                            RoutineItem(
-                                id = 3L,
-                                name = "Routine IV",
-                                exercises = persistentListOf("First Exercise", "Second Exercise", "Third Exercise"),
-                            ),
+            state =
+                RoutineListViewModel(
+                    RoutineListDataSource(
+                        flowOf(
+                            persistentListOf(
+                                RoutineItem(
+                                    id = 0L,
+                                    name = "Routine I",
+                                    exercises =
+                                        persistentListOf(
+                                            "First Exercise",
+                                            "Second Exercise",
+                                            "Third Exercise",
+                                            "Fourth Exercise",
+                                        ),
+                                ),
+                                RoutineItem(
+                                    id = 1L,
+                                    name = "Routine II",
+                                    exercises =
+                                        persistentListOf(
+                                            "First Exercise",
+                                            "Second Exercise",
+                                            "Third Exercise",
+                                            "Fourth Exercise",
+                                        ),
+                                ),
+                                RoutineItem(
+                                    id = 2L,
+                                    name = "Routine III",
+                                    exercises =
+                                        persistentListOf(
+                                            "First Exercise",
+                                            "Second Exercise",
+                                            "Third Exercise",
+                                            "Fourth Exercise",
+                                        ),
+                                ),
+                                RoutineItem(
+                                    id = 3L,
+                                    name = "Routine IV",
+                                    exercises =
+                                        persistentListOf(
+                                            "First Exercise",
+                                            "Second Exercise",
+                                            "Third Exercise",
+                                        ),
+                                ),
+                            )
                         )
                     )
-                )
-            ),
+                ),
         )
     }
 }

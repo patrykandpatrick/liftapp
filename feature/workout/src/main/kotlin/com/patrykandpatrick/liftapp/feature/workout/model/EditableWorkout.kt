@@ -20,9 +20,7 @@ data class EditableWorkout(
 ) : Serializable {
 
     val firstIncompleteExerciseIndex: Int =
-        exercises
-            .indexOfFirst { it.firstIncompleteSetIndex != -1 }
-            .takeIf { it != -1 }
+        exercises.indexOfFirst { it.firstIncompleteSetIndex != -1 }.takeIf { it != -1 }
             ?: exercises.lastIndex
 
     @Stable
@@ -43,7 +41,6 @@ data class EditableWorkout(
             sets.indexOf(set) == firstIncompleteSetIndex
 
         @Stable
-        fun isSetEnabled(set: EditableExerciseSet): Boolean =
-            isSetActive(set) || set.isComplete
+        fun isSetEnabled(set: EditableExerciseSet): Boolean = isSetActive(set) || set.isComplete
     }
 }

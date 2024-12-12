@@ -34,9 +34,8 @@ fun BodyMeasurementListScreen(
     val items by viewModel.items.collectAsState()
 
     Scaffold(
-        modifier = modifier
-            .padding(padding)
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier =
+            modifier.padding(padding).nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(id = R.string.route_body)) },
@@ -46,11 +45,7 @@ fun BodyMeasurementListScreen(
         contentWindowInsets = WindowInsets.statusBars,
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
-            items(
-                items = items,
-                key = { item -> item.bodyMeasurementID },
-            ) { item ->
-
+            items(items = items, key = { item -> item.bodyMeasurementID }) { item ->
                 ListItem(
                     title = item.headline,
                     description = item.supportingText,

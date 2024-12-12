@@ -32,40 +32,48 @@ fun ExerciseListPicker(
     WheelPicker(
         highlight = {
             Box(
-                Modifier
-                    .graphicsLayer { alpha = backdropState.offsetFraction }
-                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+                Modifier.graphicsLayer { alpha = backdropState.offsetFraction }
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        RoundedCornerShape(8.dp),
+                    )
             )
         },
         state = wheelPickerState,
-        modifier = modifier
-            .graphicsLayer {
+        modifier =
+            modifier.graphicsLayer {
                 scaleX = lerp(1f, 0.9f, backdropState.offsetFraction)
                 scaleY = scaleX
-                translationY = lerp(-(size.height - wheelPickerState.maxItemHeight) / 2, 0f, backdropState.offsetFraction)
-            }
+                translationY =
+                    lerp(
+                        -(size.height - wheelPickerState.maxItemHeight) / 2,
+                        0f,
+                        backdropState.offsetFraction,
+                    )
+            },
     ) {
         workout.exercises.forEach { exercise ->
             val positionOffset = remember { mutableFloatStateOf(1f) }
             Text(
                 text = exercise.name.getDisplayName(),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .onPositionChange { offset, viewPortOffset ->
-                        positionOffset.floatValue = abs(offset)
-                    }
-                    .graphicsLayer {
-                        alpha = if (positionOffset.floatValue == 0f || !backdropState.isOpened) {
-                            1f
-                        } else {
-                            backdropState.offsetFraction
+                modifier =
+                    Modifier.onPositionChange { offset, viewPortOffset ->
+                            positionOffset.floatValue = abs(offset)
                         }
-                    }
-                    .fillMaxWidth()
-                    .padding(
-                        LocalDimens.current.padding.itemHorizontal,
-                        LocalDimens.current.padding.itemVertical,
-                    ),
+                        .graphicsLayer {
+                            alpha =
+                                if (positionOffset.floatValue == 0f || !backdropState.isOpened) {
+                                    1f
+                                } else {
+                                    backdropState.offsetFraction
+                                }
+                        }
+                        .fillMaxWidth()
+                        .padding(
+                            LocalDimens.current.padding.itemHorizontal,
+                            LocalDimens.current.padding.itemVertical,
+                        ),
             )
         }
     }

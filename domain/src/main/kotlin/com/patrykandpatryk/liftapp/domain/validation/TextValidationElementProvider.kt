@@ -8,8 +8,10 @@ abstract class TextValidationElementProvider<T>(
     val stringProvider: StringProvider,
     val formatter: Formatter,
 ) {
-    protected open val typeTextValidationElements = mutableSetOf<TextValidator.TextValidationElement<T>>()
-    protected open val stringTextValidationElements = mutableSetOf<TextValidator.TextValidationElement<String>>()
+    protected open val typeTextValidationElements =
+        mutableSetOf<TextValidator.TextValidationElement<T>>()
+    protected open val stringTextValidationElements =
+        mutableSetOf<TextValidator.TextValidationElement<String>>()
 
     fun addCondition(textValidationElement: TextValidator.TextValidationElement<T>) {
         typeTextValidationElements.add(textValidationElement)
@@ -35,11 +37,16 @@ fun TextValidationElementProvider<*>.validNumber() {
     addStringCondition(ValidNumberTextValidationElement(stringProvider, formatter))
 }
 
-fun <T : Number> TextValidationElementProvider<T>.valueInRange(min: Double? = null, max: Double? = null) {
+fun <T : Number> TextValidationElementProvider<T>.valueInRange(
+    min: Double? = null,
+    max: Double? = null,
+) {
     addCondition(ValueRangeTextValidationElement(stringProvider, formatter, min, max))
 }
 
-fun <T : Number> TextValidationElementProvider<T>.valueInRange(range: ClosedFloatingPointRange<Double>) {
+fun <T : Number> TextValidationElementProvider<T>.valueInRange(
+    range: ClosedFloatingPointRange<Double>
+) {
     valueInRange(range.start, range.endInclusive)
 }
 
@@ -58,10 +65,14 @@ fun <T : Number> TextValidationElementProvider<T>.validNumberHigherThanZero() {
     higherThanZero()
 }
 
-fun <T : Number> TextValidationElementProvider<T>.isMultiplyOf(vararg valueProviders: ValueProvider<Number>) {
+fun <T : Number> TextValidationElementProvider<T>.isMultiplyOf(
+    vararg valueProviders: ValueProvider<Number>
+) {
     addCondition(IsMultiplyOf(stringProvider, formatter, valueProviders))
 }
 
-fun <T : Number> TextValidationElementProvider<T>.isHigherOrEqualTo(vararg valueProvider: ValueProvider<Number>) {
+fun <T : Number> TextValidationElementProvider<T>.isHigherOrEqualTo(
+    vararg valueProvider: ValueProvider<Number>
+) {
     addCondition(IsHigherOrEqualTo(stringProvider, formatter, valueProvider))
 }

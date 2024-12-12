@@ -14,10 +14,7 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
 @Composable
-fun WheelPickerScope.WheelPickerItem(
-    value: String,
-    modifier: Modifier = Modifier,
-) {
+fun WheelPickerScope.WheelPickerItem(value: String, modifier: Modifier = Modifier) {
     val deselectedColor = MaterialTheme.colorScheme.onSurface
     val selectedColor = MaterialTheme.colorScheme.primary
 
@@ -28,15 +25,16 @@ fun WheelPickerScope.WheelPickerItem(
         text = value,
         style = MaterialTheme.typography.bodyLarge,
         color = textColor.value,
-        modifier = modifier
-            .padding(horizontal = 24.dp, vertical = 8.dp)
-            .onPositionChange { offset, viewPortOffset ->
-                positionOffset.floatValue = abs(viewPortOffset)
-                textColor.value = lerp(selectedColor, deselectedColor, abs(offset))
-            }
-            .graphicsLayer {
-                alpha = 0f + (1 - positionOffset.floatValue) //* .75f
-                scaleY = .5f + (1 - positionOffset.floatValue) * .5f
-            }
+        modifier =
+            modifier
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .onPositionChange { offset, viewPortOffset ->
+                    positionOffset.floatValue = abs(viewPortOffset)
+                    textColor.value = lerp(selectedColor, deselectedColor, abs(offset))
+                }
+                .graphicsLayer {
+                    alpha = 0f + (1 - positionOffset.floatValue) // * .75f
+                    scaleY = .5f + (1 - positionOffset.floatValue) * .5f
+                },
     )
 }

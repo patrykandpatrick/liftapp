@@ -48,10 +48,11 @@ fun InputFieldLayout(
     strokeWidth: Dp = 1.dp,
     labelStartMargin: Dp = LocalDimens.current.input.labelStartMargin,
     labelHorizontalPadding: Dp = LocalDimens.current.input.labelHorizontalPadding,
-    contentPadding: PaddingValues = PaddingValues(
-        horizontal = LocalDimens.current.padding.itemHorizontal,
-        vertical = LocalDimens.current.padding.itemVertical,
-    ),
+    contentPadding: PaddingValues =
+        PaddingValues(
+            horizontal = LocalDimens.current.padding.itemHorizontal,
+            vertical = LocalDimens.current.padding.itemVertical,
+        ),
     label: (@Composable RowScope.() -> Unit)? = null,
     isError: Boolean = false,
     enabled: Boolean = true,
@@ -61,24 +62,28 @@ fun InputFieldLayout(
     val layoutDirection = LocalLayoutDirection.current
     var labelWidth by remember { mutableIntStateOf(0) }
     var labelHeight by remember { mutableIntStateOf(0) }
-    val strokeColor by animateColorAsState(
-        targetValue = when {
-            isError -> colors.errorIndicatorColor
-            !enabled -> colors.disabledIndicatorColor
-            else -> colors.unfocusedIndicatorColor
-        },
-        label = "stroke color",
-        animationSpec = tween(InputFieldAnimationDuration),
-    )
-    val labelColor by animateColorAsState(
-        targetValue = when {
-            isError -> colors.errorLabelColor
-            !enabled -> colors.disabledLabelColor
-            else -> colors.unfocusedLabelColor
-        },
-        label = "label color",
-        animationSpec = tween(InputFieldAnimationDuration),
-    )
+    val strokeColor by
+        animateColorAsState(
+            targetValue =
+                when {
+                    isError -> colors.errorIndicatorColor
+                    !enabled -> colors.disabledIndicatorColor
+                    else -> colors.unfocusedIndicatorColor
+                },
+            label = "stroke color",
+            animationSpec = tween(InputFieldAnimationDuration),
+        )
+    val labelColor by
+        animateColorAsState(
+            targetValue =
+                when {
+                    isError -> colors.errorLabelColor
+                    !enabled -> colors.disabledLabelColor
+                    else -> colors.unfocusedLabelColor
+                },
+            label = "label color",
+            animationSpec = tween(InputFieldAnimationDuration),
+        )
     val path = remember { Path() }
 
     Layout(
@@ -93,42 +98,51 @@ fun InputFieldLayout(
                 }
             }
         },
-        measurePolicy = MeasurePolicy { measurables, constraints ->
-            val maxWidth = constraints.maxWidth - contentPadding.horizontal().roundToPx()
-            val coercedConstraints = constraints.copy(
-                minWidth = constraints.minWidth.coerceAtMost(maxWidth),
-                maxWidth = maxWidth,
-            )
-            val contentPlaceable = measurables[0].measure(coercedConstraints)
-            val labelPlaceable = measurables.getOrNull(1)?.measure(coercedConstraints)
-            labelWidth = labelPlaceable?.width ?: 0
-            labelHeight = labelPlaceable?.height ?: 0
+        measurePolicy =
+            MeasurePolicy { measurables, constraints ->
+                val maxWidth = constraints.maxWidth - contentPadding.horizontal().roundToPx()
+                val coercedConstraints =
+                    constraints.copy(
+                        minWidth = constraints.minWidth.coerceAtMost(maxWidth),
+                        maxWidth = maxWidth,
+                    )
+                val contentPlaceable = measurables[0].measure(coercedConstraints)
+                val labelPlaceable = measurables.getOrNull(1)?.measure(coercedConstraints)
+                labelWidth = labelPlaceable?.width ?: 0
+                labelHeight = labelPlaceable?.height ?: 0
 
-            layout(
-                width = maxOf(
-                    labelWidth + labelHorizontalPadding.roundToPx() + labelStartMargin.roundToPx(),
-                    contentPlaceable.width
-                ) + contentPadding.horizontal().roundToPx(),
-                height = contentPlaceable.height + labelHeight * 2 + contentPadding.vertical().roundToPx(),
-            ) {
-                contentPlaceable.placeRelative(
-                    x = contentPadding.calculateStartPadding(layoutDirection).roundToPx(),
-                    y = labelHeight + contentPadding.calculateTopPadding().roundToPx(),
-                )
+                layout(
+                    width =
+                        maxOf(
+                            labelWidth +
+                                labelHorizontalPadding.roundToPx() +
+                                labelStartMargin.roundToPx(),
+                            contentPlaceable.width,
+                        ) + contentPadding.horizontal().roundToPx(),
+                    height =
+                        contentPlaceable.height +
+                            labelHeight * 2 +
+                            contentPadding.vertical().roundToPx(),
+                ) {
+                    contentPlaceable.placeRelative(
+                        x = contentPadding.calculateStartPadding(layoutDirection).roundToPx(),
+                        y = labelHeight + contentPadding.calculateTopPadding().roundToPx(),
+                    )
 
-                labelPlaceable?.apply {
-                    placeRelative((labelStartMargin + labelHorizontalPadding).roundToPx(), 0)
+                    labelPlaceable?.apply {
+                        placeRelative((labelStartMargin + labelHorizontalPadding).roundToPx(), 0)
+                    }
                 }
-            }
-        },
-        modifier = modifier
-            .drawWithCache {
+            },
+        modifier =
+            modifier.drawWithCache {
                 onDrawBehind {
                     path.rewind()
-                    val cornerSize = cornerSize.toPx(
-                        shapeSize = Size(size.width, size.height - labelHeight),
-                        density = this,
-                    )
+                    val cornerSize =
+                        cornerSize.toPx(
+                            shapeSize = Size(size.width, size.height - labelHeight),
+                            density = this,
+                        )
                     var x = labelStartMargin.toPx() + labelHorizontalPadding.toPx() * 2 + labelWidth
                     var y = 0f
                     path.moveTo(x, y)
@@ -156,19 +170,14 @@ fun InputFieldLayout(
                     drawPath(
                         path = path,
                         color = strokeColor,
-                        style = Stroke(width = strokeWidth.toPx())
+                        style = Stroke(width = strokeWidth.toPx()),
                     )
                 }
             },
     )
 }
 
-private fun Path.addCorner(
-    x: Float,
-    y: Float,
-    cornerSize: Float,
-    startAngle: Float,
-) {
+private fun Path.addCorner(x: Float, y: Float, cornerSize: Float, startAngle: Float) {
     addArc(
         oval = Rect(x - cornerSize, y - cornerSize, x + cornerSize, y + cornerSize),
         startAngleDegrees = startAngle,
@@ -182,9 +191,7 @@ private fun InputFieldLayoutPreview() {
     LiftAppTheme {
         Surface {
             InputFieldLayout(
-                label = {
-                    Text(text = "Label")
-                },
+                label = { Text(text = "Label") },
                 content = {
                     Text(
                         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",

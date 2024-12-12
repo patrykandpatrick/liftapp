@@ -26,18 +26,19 @@ object TestStringProvider : StringProvider {
 
     override val errorMustBeHigherThanZero: String = "The value must be higher than zero."
 
-    override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String = when (unit) {
-        MassUnit.Kilograms -> "kg"
-        MassUnit.Pounds -> "lb"
-        LongDistanceUnit.Kilometer -> "km"
-        LongDistanceUnit.Mile -> "mi"
-        MediumDistanceUnit.Meter -> "m"
-        MediumDistanceUnit.Foot -> "ft"
-        ShortDistanceUnit.Centimeter -> "cm"
-        ShortDistanceUnit.Inch -> "in"
-        PercentageUnit -> "%"
-        else -> getTypeErrorMessage(unit = unit)
-    }.let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
+    override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
+        when (unit) {
+            MassUnit.Kilograms -> "kg"
+            MassUnit.Pounds -> "lb"
+            LongDistanceUnit.Kilometer -> "km"
+            LongDistanceUnit.Mile -> "mi"
+            MediumDistanceUnit.Meter -> "m"
+            MediumDistanceUnit.Foot -> "ft"
+            ShortDistanceUnit.Centimeter -> "cm"
+            ShortDistanceUnit.Inch -> "in"
+            PercentageUnit -> "%"
+            else -> getTypeErrorMessage(unit = unit)
+        }.let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
 
     override fun quoted(value: String): String = "”%s“".format(value)
 
@@ -61,7 +62,8 @@ object TestStringProvider : StringProvider {
 
     override fun fieldMustBeHigherThanZero(): String = "This field must be higher than zero."
 
-    override fun fieldMustBeHigherOrEqualTo(value: String): String = "The value must be higher, or equal to %s.".format(value)
+    override fun fieldMustBeHigherOrEqualTo(value: String): String =
+        "The value must be higher, or equal to %s.".format(value)
 
     override fun fieldTooShort(actual: Int, minLength: Int): String =
         "This field must be at least %d characters long.".format(minLength)
@@ -77,5 +79,6 @@ object TestStringProvider : StringProvider {
 
     override fun valueNotValidNumber(): String = "This field must be a valid number."
 
-    override fun doesNotEqual(formula: String, actual: String): String = "$formula does not equal $actual"
+    override fun doesNotEqual(formula: String, actual: String): String =
+        "$formula does not equal $actual"
 }

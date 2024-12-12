@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.feature.main.navigation.HomeNavigator
@@ -12,8 +11,11 @@ import com.patrykandpatryk.liftapp.feature.main.navigation.HomeNavigator
 @Immutable
 class AppHomeNavigator(private val navController: NavController) : HomeNavigator {
     override fun onExercisesPicked(exerciseIDs: List<Long>) {
-        val previousRoute: String = requireNotNull(navController.previousBackStackEntry?.destination?.route)
-        navController.getBackStackEntry(previousRoute).savedStateHandle[Constants.Keys.PICKED_EXERCISE_IDS] = exerciseIDs
+        val previousRoute: String =
+            requireNotNull(navController.previousBackStackEntry?.destination?.route)
+        navController
+            .getBackStackEntry(previousRoute)
+            .savedStateHandle[Constants.Keys.PICKED_EXERCISE_IDS] = exerciseIDs
         navController.popBackStack()
     }
 

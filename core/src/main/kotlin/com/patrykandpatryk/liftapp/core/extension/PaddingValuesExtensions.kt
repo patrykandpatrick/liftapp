@@ -13,15 +13,14 @@ import androidx.compose.ui.unit.LayoutDirection
 
 @Composable
 @ReadOnlyComposable
-fun PaddingValues.calculateStartPadding(): Dp =
-    calculateStartPadding(LocalLayoutDirection.current)
+fun PaddingValues.calculateStartPadding(): Dp = calculateStartPadding(LocalLayoutDirection.current)
 
 @Composable
 @ReadOnlyComposable
-fun PaddingValues.calculateEndPadding(): Dp =
-    calculateEndPadding(LocalLayoutDirection.current)
+fun PaddingValues.calculateEndPadding(): Dp = calculateEndPadding(LocalLayoutDirection.current)
 
-fun PaddingValues.horizontal(): Dp = calculateStartPadding(LayoutDirection.Ltr) + calculateEndPadding(LayoutDirection.Ltr)
+fun PaddingValues.horizontal(): Dp =
+    calculateStartPadding(LayoutDirection.Ltr) + calculateEndPadding(LayoutDirection.Ltr)
 
 fun PaddingValues.vertical(): Dp = calculateTopPadding() + calculateBottomPadding()
 

@@ -48,32 +48,34 @@ fun SearchBar(
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    val clearFocusAndValue = {
-        focusManager.clearFocus()
-        if (value.isNotEmpty()) onValueChange("")
-    }.also { BackHandler(enabled = focused, onBack = it) }
+    val clearFocusAndValue =
+        {
+                focusManager.clearFocus()
+                if (value.isNotEmpty()) onValueChange("")
+            }
+            .also { BackHandler(enabled = focused, onBack = it) }
 
     Surface(
         tonalElevation = tonalElevation,
         shape = CircleShape,
         modifier = modifier.height(MaterialTheme.dimens.height.searchBar),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxSize(),
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .clip(shape = CircleShape)
-                    .clickable { if (focused) clearFocusAndValue() else focusRequester.requestFocus() }
-                    .fillMaxHeight()
-                    .aspectRatio(ratio = 1f),
+                modifier =
+                    Modifier.clip(shape = CircleShape)
+                        .clickable {
+                            if (focused) clearFocusAndValue() else focusRequester.requestFocus()
+                        }
+                        .fillMaxHeight()
+                        .aspectRatio(ratio = 1f),
             ) {
                 Crossfade(targetState = focused) { targetState ->
-
                     Icon(
-                        imageVector = if (targetState) Icons.AutoMirrored.Filled.ArrowBack else Icons.Default.Search,
+                        imageVector =
+                            if (targetState) Icons.AutoMirrored.Filled.ArrowBack
+                            else Icons.Default.Search,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
@@ -92,10 +94,10 @@ fun SearchBar(
                     value = value,
                     onValueChange = onValueChange,
                     textStyle = MaterialTheme.typography.bodyLarge.withColor { onSurface },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester = focusRequester)
-                        .onFocusChanged { focusState -> focused = focusState.isFocused },
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .focusRequester(focusRequester = focusRequester)
+                            .onFocusChanged { focusState -> focused = focusState.isFocused },
                 )
             }
         }

@@ -53,14 +53,13 @@ import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNav
 import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
 
 @Composable
-fun NewExercise(
-    exerciseID: Long,
-    navigator: NewExerciseNavigator,
-    modifier: Modifier = Modifier,
-) {
-    val viewModel: NewExerciseViewModel = hiltViewModel(
-        creationCallback = { factory: NewExerciseViewModel.Factory -> factory.create(exerciseID) },
-    )
+fun NewExercise(exerciseID: Long, navigator: NewExerciseNavigator, modifier: Modifier = Modifier) {
+    val viewModel: NewExerciseViewModel =
+        hiltViewModel(
+            creationCallback = { factory: NewExerciseViewModel.Factory ->
+                factory.create(exerciseID)
+            }
+        )
 
     val snackbarHostState = remember { SnackbarHostState() }
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
@@ -95,9 +94,10 @@ private fun NewExercise(
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier = modifier
-            .thenIf(isLandscape) { navigationBarsPadding() }
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier =
+            modifier
+                .thenIf(isLandscape) { navigationBarsPadding() }
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = stringResource(id = R.string.title_new_exercise),
@@ -107,9 +107,8 @@ private fun NewExercise(
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                modifier = Modifier
-                    .consumeWindowInsets(insets = WindowInsets.navigationBars)
-                    .imePadding(),
+                modifier =
+                    Modifier.consumeWindowInsets(insets = WindowInsets.navigationBars).imePadding(),
                 text = stringResource(id = R.string.action_save),
                 icon = painterResource(id = R.drawable.ic_save),
                 onClick = onSave,
@@ -119,14 +118,14 @@ private fun NewExercise(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(paddingValues)
-                .padding(
-                    horizontal = MaterialTheme.dimens.padding.contentHorizontal,
-                    vertical = MaterialTheme.dimens.padding.contentVertical,
-                ),
+            modifier =
+                Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(paddingValues)
+                    .padding(
+                        horizontal = MaterialTheme.dimens.padding.contentHorizontal,
+                        vertical = MaterialTheme.dimens.padding.contentVertical,
+                    ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.verticalItemSpacing),
         ) {
             Content(
@@ -166,16 +165,21 @@ private fun Content(
             label = { Text(text = stringResource(id = R.string.generic_name)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions {
-                keyboardController?.hide()
-                focusManager.clearFocus(force = true)
-            },
+            keyboardActions =
+                KeyboardActions {
+                    keyboardController?.hide()
+                    focusManager.clearFocus(force = true)
+                },
             isError = state.showNameError,
         )
 
         SupportingText(
             visible = state.showNameError,
-            text = stringResource(id = R.string.error_x_empty, stringResource(id = R.string.generic_name)),
+            text =
+                stringResource(
+                    id = R.string.error_x_empty,
+                    stringResource(id = R.string.generic_name),
+                ),
             isError = true,
         )
     }

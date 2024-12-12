@@ -33,20 +33,22 @@ fun IconButton(
     }
 
     Box(
-        modifier = modifier
-            .defaultMinSize(minWidth = minSize, minHeight = minSize)
-            .background(color = colors.containerColor(enabled).value)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = {}, // This is handled by `InteractionSource#onRepeatedLongPress`.
-                enabled = enabled,
-                role = Role.Button,
-                interactionSource = interactionSource,
-                indication = ripple(
-                    bounded = false,
-                    radius = LocalDimens.current.iconButton.rippleRadius,
+        modifier =
+            modifier
+                .defaultMinSize(minWidth = minSize, minHeight = minSize)
+                .background(color = colors.containerColor(enabled).value)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = {}, // This is handled by `InteractionSource#onRepeatedLongPress`.
+                    enabled = enabled,
+                    role = Role.Button,
+                    interactionSource = interactionSource,
+                    indication =
+                        ripple(
+                            bounded = false,
+                            radius = LocalDimens.current.iconButton.rippleRadius,
+                        ),
                 ),
-            ),
         contentAlignment = Alignment.Center,
     ) {
         val contentColor = colors.contentColor(enabled).value

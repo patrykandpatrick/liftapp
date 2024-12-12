@@ -19,13 +19,14 @@ data class Exercise(
         mainMuscles: List<Muscle> = this.mainMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,
-    ): Update = Update(
-        id = id,
-        name = name,
-        mainMuscles = mainMuscles,
-        secondaryMuscles = secondaryMuscles,
-        tertiaryMuscles = tertiaryMuscles,
-    )
+    ): Update =
+        Update(
+            id = id,
+            name = name,
+            mainMuscles = mainMuscles,
+            secondaryMuscles = secondaryMuscles,
+            tertiaryMuscles = tertiaryMuscles,
+        )
 
     data class Insert(
         val name: Name,

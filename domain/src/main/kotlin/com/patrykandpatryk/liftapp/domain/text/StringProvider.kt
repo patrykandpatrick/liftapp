@@ -19,10 +19,7 @@ interface StringProvider {
 
     val errorMustBeHigherThanZero: String
 
-    fun getDisplayUnit(
-        unit: ValueUnit,
-        respectLeadingSpaceSetting: Boolean = true,
-    ): String
+    fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean = true): String
 
     fun quoted(value: String): String
 

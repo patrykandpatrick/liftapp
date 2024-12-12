@@ -8,15 +8,8 @@ import com.patrykandpatryk.liftapp.feature.routine.ui.Exercises
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-internal fun tabs(navigator: RoutineNavigator): ImmutableList<Tab> = persistentListOf(
-    Tab(
-        nameRes = R.string.tab_exercises,
-        content = { Exercises(navigator) },
-    ),
-    Tab(
-        nameRes = R.string.tab_details,
-        content = {
-            Details()
-        },
-    ),
-)
+internal fun tabs(navigator: RoutineNavigator): ImmutableList<Tab> =
+    persistentListOf(
+        Tab(nameRes = R.string.tab_exercises, content = { Exercises(navigator) }),
+        Tab(nameRes = R.string.tab_details, content = { Details() }),
+    )

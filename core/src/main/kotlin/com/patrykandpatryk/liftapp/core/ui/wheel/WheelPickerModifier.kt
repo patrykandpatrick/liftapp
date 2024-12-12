@@ -7,25 +7,20 @@ import androidx.compose.ui.unit.Density
 
 interface WheelPickerScope {
     fun Modifier.onPositionChange(
-        onOffsetChange: ((offset: Float, viewPortOffset: Float) -> Unit)?,
+        onOffsetChange: ((offset: Float, viewPortOffset: Float) -> Unit)?
     ) = this
 }
 
 internal class WheelPickerScopeImpl : WheelPickerScope {
     override fun Modifier.onPositionChange(
-        onOffsetChange: ((offset: Float, viewPortOffset: Float) -> Unit)?,
-    ): Modifier = this.then(
-        ListPickerItemSpecElement(
-            onPositionChange = onOffsetChange,
-        )
-    )
+        onOffsetChange: ((offset: Float, viewPortOffset: Float) -> Unit)?
+    ): Modifier = this.then(ListPickerItemSpecElement(onPositionChange = onOffsetChange))
 }
 
 internal data class ListPickerItemSpecElement(
-    private val onPositionChange: ((offset: Float, viewPortOffset: Float) -> Unit)?,
+    private val onPositionChange: ((offset: Float, viewPortOffset: Float) -> Unit)?
 ) : ModifierNodeElement<ListPickerItemSpecNode>() {
-    override fun create(): ListPickerItemSpecNode =
-        ListPickerItemSpecNode(onPositionChange)
+    override fun create(): ListPickerItemSpecNode = ListPickerItemSpecNode(onPositionChange)
 
     override fun update(node: ListPickerItemSpecNode) {
         node.onPositionChange = onPositionChange
@@ -33,7 +28,7 @@ internal data class ListPickerItemSpecElement(
 }
 
 internal class ListPickerItemSpecNode(
-    var onPositionChange: ((offset: Float, viewPortOffset: Float) -> Unit)?,
+    var onPositionChange: ((offset: Float, viewPortOffset: Float) -> Unit)?
 ) : Modifier.Node(), ParentDataModifierNode {
     override fun Density.modifyParentData(parentData: Any?): Any {
         return this@ListPickerItemSpecNode

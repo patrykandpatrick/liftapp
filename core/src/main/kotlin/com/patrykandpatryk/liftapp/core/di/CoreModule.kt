@@ -14,39 +14,31 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.io.File
+import java.text.Collator
+import java.text.DecimalFormat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
-import java.io.File
-import java.text.Collator
-import java.text.DecimalFormat
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal interface CoreModule {
 
-    @Binds
-    fun bindStringProvider(provider: StringProviderImpl): StringProvider
+    @Binds fun bindStringProvider(provider: StringProviderImpl): StringProvider
 
-    @Binds
-    fun bindIsDarkModeReceiver(useCase: IsDarkModeHandler): IsDarkModeReceiver
+    @Binds fun bindIsDarkModeReceiver(useCase: IsDarkModeHandler): IsDarkModeReceiver
 
-    @Binds
-    fun bindIsDarkModePublisher(useCase: IsDarkModeHandler): IsDarkModePublisher
+    @Binds fun bindIsDarkModePublisher(useCase: IsDarkModeHandler): IsDarkModePublisher
 
     companion object {
 
-        @Provides
-        fun provideCollator(): Collator = Collator.getInstance()
+        @Provides fun provideCollator(): Collator = Collator.getInstance()
 
-        @Provides
-        @Decimal
-        fun provideDecimalFormat(): DecimalFormat = DecimalFormat("#.##")
+        @Provides @Decimal fun provideDecimalFormat(): DecimalFormat = DecimalFormat("#.##")
 
-        @Provides
-        @Integer
-        fun provideIntegerFormat(): DecimalFormat = DecimalFormat("#")
+        @Provides @Integer fun provideIntegerFormat(): DecimalFormat = DecimalFormat("#")
 
         @Provides
         fun provideCoroutineExceptionHandler(): CoroutineExceptionHandler =
@@ -62,14 +54,10 @@ internal interface CoreModule {
         ): CoroutineScope = CoroutineScope(coroutineDispatcher + coroutineExceptionHandler)
 
         @Provides
-        fun provideContext(application: Application): Context =
-            application.applicationContext
+        fun provideContext(application: Application): Context = application.applicationContext
 
-        @Provides
-        fun provideResources(context: Context): Resources =
-            context.resources
+        @Provides fun provideResources(context: Context): Resources = context.resources
 
-        @Provides
-        fun provideFilesDir(context: Context): File = context.filesDir
+        @Provides fun provideFilesDir(context: Context): File = context.filesDir
     }
 }

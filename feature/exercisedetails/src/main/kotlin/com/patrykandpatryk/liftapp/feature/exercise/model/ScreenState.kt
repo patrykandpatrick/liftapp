@@ -1,9 +1,9 @@
 package com.patrykandpatryk.liftapp.feature.exercise.model
 
 import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import kotlinx.parcelize.Parcelize
-import androidx.compose.runtime.Immutable
 
 sealed class ScreenState {
 
@@ -20,16 +20,15 @@ sealed class ScreenState {
         showDeleteDialog: Boolean = this.showDeleteDialog,
         imagePath: String? = this.imagePath,
         muscles: List<MuscleModel> = this.muscles,
-    ): Populated = Populated(
-        name = name,
-        showDeleteDialog = showDeleteDialog,
-        imagePath = imagePath,
-        muscles = muscles,
-    )
+    ): Populated =
+        Populated(
+            name = name,
+            showDeleteDialog = showDeleteDialog,
+            imagePath = imagePath,
+            muscles = muscles,
+        )
 
-    @Parcelize
-    @Immutable
-    object Loading : ScreenState(), Parcelable
+    @Parcelize @Immutable object Loading : ScreenState(), Parcelable
 
     @Parcelize
     @Immutable

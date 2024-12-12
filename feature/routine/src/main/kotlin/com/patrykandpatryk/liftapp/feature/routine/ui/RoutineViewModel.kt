@@ -34,7 +34,9 @@ import timber.log.Timber
 private const val SCREEN_STATE_KEY = "screenState"
 
 @HiltViewModel(assistedFactory = RoutineViewModel.Factory::class)
-class RoutineViewModel @AssistedInject constructor(
+class RoutineViewModel
+@AssistedInject
+constructor(
     @Assisted private val routineId: Long,
     private val logger: UiLogger,
     isDarkModeReceiver: IsDarkModeReceiver,
@@ -48,38 +50,34 @@ class RoutineViewModel @AssistedInject constructor(
 
     private val eventChannel = Channel<Event>()
 
-    override val state: StateFlow<ScreenState> = savedStateHandle
-        .getStateFlow(SCREEN_STATE_KEY, ScreenState.Loading)
+    override val state: StateFlow<ScreenState> =
+        savedStateHandle.getStateFlow(SCREEN_STATE_KEY, ScreenState.Loading)
 
     override val events: Flow<Event> = eventChannel.receiveAsFlow()
 
     init {
-        combine(
-            getRoutine(routineId),
-            isDarkModeReceiver(),
-        ) { routine, isDarkMode ->
-            if (routine == null) {
-                Timber.e("Routine with id $routineId not found, or deleted.")
-                eventChannel.send(Event.RoutineNotFound)
-            } else {
-                updateState(routine = routine, isDarkMode = isDarkMode)
+        combine(getRoutine(routineId), isDarkModeReceiver()) { routine, isDarkMode ->
+                if (routine == null) {
+                    Timber.e("Routine with id $routineId not found, or deleted.")
+                    eventChannel.send(Event.RoutineNotFound)
+                } else {
+                    updateState(routine = routine, isDarkMode = isDarkMode)
+                }
             }
-        }.launchIn(viewModelScope)
+            .launchIn(viewModelScope)
     }
 
-    private fun updateState(
-        routine: RoutineWithExercises,
-        isDarkMode: Boolean,
-    ) {
+    private fun updateState(routine: RoutineWithExercises, isDarkMode: Boolean) {
         updateScreenState {
             mutate(
                 name = routine.name,
                 exercises = routine.exercises,
-                muscles = MuscleModel.create(
-                    primaryMuscles = routine.primaryMuscles,
-                    secondaryMuscles = routine.secondaryMuscles,
-                    tertiaryMuscles = routine.tertiaryMuscles,
-                ),
+                muscles =
+                    MuscleModel.create(
+                        primaryMuscles = routine.primaryMuscles,
+                        secondaryMuscles = routine.secondaryMuscles,
+                        tertiaryMuscles = routine.tertiaryMuscles,
+                    ),
             )
         }
 
@@ -100,12 +98,13 @@ class RoutineViewModel @AssistedInject constructor(
         viewModelScope.launch {
             updateScreenState {
                 mutate(
-                    imagePath = muscleImageProvider.getMuscleImagePath(
-                        primaryMuscles,
-                        secondaryMuscles,
-                        tertiaryMuscles,
-                        isDark = isDarkMode,
-                    ),
+                    imagePath =
+                        muscleImageProvider.getMuscleImagePath(
+                            primaryMuscles,
+                            secondaryMuscles,
+                            tertiaryMuscles,
+                            isDark = isDarkMode,
+                        )
                 )
             }
         }
@@ -127,24 +126,17 @@ class RoutineViewModel @AssistedInject constructor(
             val exercises = ArrayList(state.value.exercises)
             val exercise = exercises.removeAt(reorder.from)
             exercises.add(reorder.to, exercise)
-            reorderExercisesUseCase(
-                routineId = routineId,
-                exercises = exercises,
-            )
+            reorderExercisesUseCase(routineId = routineId, exercises = exercises)
         }
     }
 
     private fun handleEdit() {
-        viewModelScope.launch {
-            eventChannel.send(Event.EditRoutine)
-        }
+        viewModelScope.launch { eventChannel.send(Event.EditRoutine) }
     }
 
     private fun deleteRoutine() {
         handleDeleteDialogVisibility(visible = false)
-        viewModelScope.launch {
-            deleteRoutine(routineId)
-        }
+        viewModelScope.launch { deleteRoutine(routineId) }
     }
 
     private fun deleteExercise(exerciseId: Long) {

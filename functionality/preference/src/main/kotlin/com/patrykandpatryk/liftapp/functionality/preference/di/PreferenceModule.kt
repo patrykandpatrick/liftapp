@@ -29,7 +29,7 @@ interface PreferenceModule {
         @Singleton
         fun provideDataStore(application: Application): DataStore<Preferences> =
             PreferenceDataStoreFactory.create(
-                produceFile = { application.preferencesDataStoreFile(PREFERENCES_NAME) },
+                produceFile = { application.preferencesDataStoreFile(PREFERENCES_NAME) }
             )
     }
 }

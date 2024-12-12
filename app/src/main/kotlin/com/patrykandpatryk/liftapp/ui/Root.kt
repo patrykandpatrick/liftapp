@@ -53,10 +53,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 @Composable
-fun Root(
-    modifier: Modifier = Modifier,
-    darkTheme: Boolean,
-) {
+fun Root(modifier: Modifier = Modifier, darkTheme: Boolean) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
     val mainNavigator = rememberMainNavigator(navController)
@@ -92,9 +89,7 @@ fun Root(
 }
 
 fun NavGraphBuilder.addHome(homeNavigator: HomeNavigator) {
-    composable<Routes.Home> {
-        HomeScreen(homeNavigator)
-    }
+    composable<Routes.Home> { HomeScreen(homeNavigator) }
 }
 
 fun NavGraphBuilder.addRoutine(mainNavigator: MainNavigator) {
@@ -139,7 +134,9 @@ fun NavGraphBuilder.addNewExercise(navigator: NewExerciseNavigator) {
     }
 }
 
-fun NavGraphBuilder.addBodyMeasurementDetailDestination(navigator: BodyMeasurementDetailsNavigator) {
+fun NavGraphBuilder.addBodyMeasurementDetailDestination(
+    navigator: BodyMeasurementDetailsNavigator
+) {
     composable<Routes.BodyMeasurement.Details> {
         val args = it.toRoute<Routes.BodyMeasurement.Details>()
         BodyMeasurementDetailScreen(args.bodyMeasurementID, navigator)
@@ -158,42 +155,35 @@ fun NavGraphBuilder.addNewBodyMeasurementDestination(onDismissRequest: () -> Uni
 }
 
 fun NavGraphBuilder.addAbout() {
-    composable<Routes.About> {
-        About()
-    }
+    composable<Routes.About> { About() }
 }
 
 fun NavGraphBuilder.addSettings(navigator: SettingsNavigator) {
-    composable<Routes.Settings> {
-        Settings(navigator)
-    }
+    composable<Routes.Settings> { Settings(navigator) }
 }
 
 fun NavGraphBuilder.addOneRepMax(navigator: OneRepMaxNavigator) {
-    composable<Routes.OneRepMax> {
-        OneRepMaxScreen(navigator)
-    }
+    composable<Routes.OneRepMax> { OneRepMaxScreen(navigator) }
 }
 
 fun NavGraphBuilder.addWorkout(navigator: WorkoutNavigator) {
-    composable<WorkoutRouteData> { backStackEntry ->
-        WorkoutScreen(navigator = navigator)
-    }
+    composable<WorkoutRouteData> { backStackEntry -> WorkoutScreen(navigator = navigator) }
 }
 
 inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
     typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    noinline content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+    noinline content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) {
     addDestination(
         BottomSheetNavDestinationBuilder(
-            provider[BottomSheetNavigator::class],
-            T::class,
-            typeMap,
-            deepLinks,
-            content,
-        ).build()
+                provider[BottomSheetNavigator::class],
+                T::class,
+                typeMap,
+                deepLinks,
+                content,
+            )
+            .build()
     )
 }
 
@@ -202,12 +192,10 @@ class BottomSheetNavDestinationBuilder(
     route: KClass<*>,
     typeMap: Map<KType, @JvmSuppressWildcards NavType<*>>,
     deepLinks: List<NavDeepLink>,
-    private val content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
+    private val content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit,
 ) : NavDestinationBuilder<BottomSheetNavigator.Destination>(bottomSheetNavigator, route, typeMap) {
     init {
-        deepLinks.fastForEach { deepLink ->
-            deepLink(deepLink)
-        }
+        deepLinks.fastForEach { deepLink -> deepLink(deepLink) }
     }
 
     override fun instantiateDestination(): BottomSheetNavigator.Destination =

@@ -73,11 +73,7 @@ fun TopAppBarWithTabs(
             },
         )
 
-        SecondaryTabRow(
-            modifier = Modifier,
-            selectedTabIndex = selectedTabIndex,
-            tabs = tabs,
-        )
+        SecondaryTabRow(modifier = Modifier, selectedTabIndex = selectedTabIndex, tabs = tabs)
     }
 }
 
@@ -101,7 +97,6 @@ fun TopAppBarWithTabs(
             val tabDimens = LocalDimens.current.tab
 
             tabs.forEachIndexed { index, tabItem ->
-
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { onTabSelected(index) },
@@ -111,11 +106,14 @@ fun TopAppBarWithTabs(
                     Column(modifier = Modifier.padding(vertical = tabDimens.verticalPadding)) {
                         if (tabItem.icon != null) {
                             Icon(
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(
-                                        bottom = if (tabItem.text != null) tabDimens.iconToTextPadding else 0.dp,
-                                    ),
+                                modifier =
+                                    Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(
+                                            bottom =
+                                                if (tabItem.text != null)
+                                                    tabDimens.iconToTextPadding
+                                                else 0.dp
+                                        ),
                                 painter = tabItem.icon,
                                 contentDescription = null,
                             )
@@ -134,24 +132,16 @@ fun TopAppBarWithTabs(
     )
 }
 
-@Immutable
-data class TabItem(
-    val text: String? = null,
-    val icon: Painter? = null,
-)
+@Immutable data class TabItem(val text: String? = null, val icon: Painter? = null)
 
 @Composable
-fun DialogTopBar(
-    title: String,
-    onCloseClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun DialogTopBar(title: String, onCloseClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
         Text(
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically)
-                .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
+            modifier =
+                Modifier.weight(1f)
+                    .align(Alignment.CenterVertically)
+                    .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
             text = title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
@@ -159,8 +149,7 @@ fun DialogTopBar(
         )
 
         IconButton(
-            modifier = Modifier
-                .padding(end = LocalDimens.current.padding.contentHorizontalSmall),
+            modifier = Modifier.padding(end = LocalDimens.current.padding.contentHorizontalSmall),
             onClick = onCloseClick,
         ) {
             Icon(
@@ -193,10 +182,7 @@ fun PreviewTopAppBarWithTextTabs() {
             title = "Title",
             selectedTabIndex = 0,
             onTabSelected = {},
-            tabs = listOf(
-                TabItem(text = "First"),
-                TabItem(text = "Second"),
-            ),
+            tabs = listOf(TabItem(text = "First"), TabItem(text = "Second")),
         )
     }
 }
@@ -209,10 +195,11 @@ fun PreviewTopAppBarWithIconTabs() {
             title = "Title",
             selectedTabIndex = 0,
             onTabSelected = {},
-            tabs = listOf(
-                TabItem(icon = painterResource(id = R.drawable.ic_time)),
-                TabItem(icon = painterResource(id = R.drawable.ic_workout)),
-            ),
+            tabs =
+                listOf(
+                    TabItem(icon = painterResource(id = R.drawable.ic_time)),
+                    TabItem(icon = painterResource(id = R.drawable.ic_workout)),
+                ),
         )
     }
 }
@@ -225,16 +212,11 @@ fun PreviewTopAppBarWithTextIconTabs() {
             title = "Title",
             selectedTabIndex = 0,
             onTabSelected = {},
-            tabs = listOf(
-                TabItem(
-                    text = "First",
-                    icon = painterResource(id = R.drawable.ic_time),
+            tabs =
+                listOf(
+                    TabItem(text = "First", icon = painterResource(id = R.drawable.ic_time)),
+                    TabItem(text = "Second", icon = painterResource(id = R.drawable.ic_workout)),
                 ),
-                TabItem(
-                    text = "Second",
-                    icon = painterResource(id = R.drawable.ic_workout),
-                ),
-            ),
         )
     }
 }
@@ -242,10 +224,5 @@ fun PreviewTopAppBarWithTextIconTabs() {
 @MultiDevicePreview
 @Composable
 fun PreviewDialogTopBar() {
-    Surface {
-        DialogTopBar(
-            title = "Title",
-            onCloseClick = {},
-        )
-    }
+    Surface { DialogTopBar(title = "Title", onCloseClick = {}) }
 }

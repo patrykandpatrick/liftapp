@@ -33,7 +33,9 @@ import kotlinx.coroutines.launch
 private const val STATE_KEY = "screen_state"
 
 @HiltViewModel(assistedFactory = NewExerciseViewModel.Factory::class)
-class NewExerciseViewModel @AssistedInject constructor(
+class NewExerciseViewModel
+@AssistedInject
+constructor(
     @Assisted private val exerciseId: Long,
     private val logger: UiLogger,
     private val getExercise: GetExerciseUseCase,
@@ -48,20 +50,17 @@ class NewExerciseViewModel @AssistedInject constructor(
         if (exerciseId != ID_NOT_SET) loadExerciseState(exerciseId)
     }
 
-    internal var state: NewExerciseState by saveable(STATE_KEY) {
-        mutableStateOf(NewExerciseState.Invalid())
-    }
+    internal var state: NewExerciseState by
+        saveable(STATE_KEY) { mutableStateOf(NewExerciseState.Invalid()) }
 
     fun updateName(name: String) {
-        val validatableName: Validatable<Name> = if (name.isBlank()) {
-            Name.Raw(name).toInvalid()
-        } else {
-            Name.Raw(name).toValid()
-        }
-        state = state.copyState(
-            name = validatableName,
-            displayName = name,
-        )
+        val validatableName: Validatable<Name> =
+            if (name.isBlank()) {
+                Name.Raw(name).toInvalid()
+            } else {
+                Name.Raw(name).toValid()
+            }
+        state = state.copyState(name = validatableName, displayName = name)
     }
 
     fun updateExerciseType(type: ExerciseType) {
@@ -70,11 +69,12 @@ class NewExerciseViewModel @AssistedInject constructor(
 
     fun updateMainMuscles(muscle: Muscle) {
         val updatedMuscle = state.mainMuscles.value.toggle(muscle)
-        val mainMusclesValidatable = if (updatedMuscle.isEmpty()) {
-            updatedMuscle.toInvalid()
-        } else {
-            updatedMuscle.toValid()
-        }
+        val mainMusclesValidatable =
+            if (updatedMuscle.isEmpty()) {
+                updatedMuscle.toInvalid()
+            } else {
+                updatedMuscle.toValid()
+            }
         state = state.copyState(mainMuscles = mainMusclesValidatable)
     }
 

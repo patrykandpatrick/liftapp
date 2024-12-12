@@ -15,7 +15,8 @@ import kotlinx.coroutines.flow.flowOf
 
 object PreviewResource {
     val stringProvider: StringProvider
-        @Composable get() {
+        @Composable
+        get() {
             val context = LocalContext.current
             return remember { StringProviderImpl(context) }
         }
@@ -27,23 +28,24 @@ object PreviewResource {
     }
 
     @Composable
-    fun textFieldStateManager(savedStateHandle: SavedStateHandle = SavedStateHandle()): TextFieldStateManager {
+    fun textFieldStateManager(
+        savedStateHandle: SavedStateHandle = SavedStateHandle()
+    ): TextFieldStateManager {
         val stringProvider = stringProvider
         val formatter = formatter()
         return remember { TextFieldStateManager(stringProvider, formatter, savedStateHandle) }
     }
 
     @Composable
-    fun <T> preference(value: T): Preference<T> =
-        remember {
-            object : Preference<T> {
-                val flow = MutableStateFlow(value)
+    fun <T> preference(value: T): Preference<T> = remember {
+        object : Preference<T> {
+            val flow = MutableStateFlow(value)
 
-                override fun get(): Flow<T> = flow
+            override fun get(): Flow<T> = flow
 
-                override suspend fun set(value: T) {
-                    flow.value = value
-                }
+            override suspend fun set(value: T) {
+                flow.value = value
             }
         }
+    }
 }

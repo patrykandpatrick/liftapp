@@ -23,56 +23,59 @@ private fun Modifier.sinDivider(
     color: Color,
     topBackgroundColor: Color = Color.Transparent,
     bottomBackgroundColor: Color = Color.Transparent,
-) = then(
-    Modifier.composed {
-        val dimens = LocalDimens.current
-        val separator = dimens.divider
-        val path = remember { Path() }
-        val topPath = remember(topBackgroundColor == Color.Transparent) {
-            if (topBackgroundColor == Color.Transparent) null else Path()
-        }
-        val bottomPath = remember(bottomBackgroundColor == Color.Transparent) {
-            if (bottomBackgroundColor == Color.Transparent) null else Path()
-        }
+) =
+    then(
+        Modifier.composed {
+            val dimens = LocalDimens.current
+            val separator = dimens.divider
+            val path = remember { Path() }
+            val topPath =
+                remember(topBackgroundColor == Color.Transparent) {
+                    if (topBackgroundColor == Color.Transparent) null else Path()
+                }
+            val bottomPath =
+                remember(bottomBackgroundColor == Color.Transparent) {
+                    if (bottomBackgroundColor == Color.Transparent) null else Path()
+                }
 
-        drawWithCache {
-            onDrawBehind {
-                for (x in 0 until size.width.roundToInt()) {
-                    val y = sin(x.toFloat() / separator.sinPeriodLength.toPx()) *
-                            (separator.sinHeight.toPx() / 2 - 2) +
-                            size.height -
-                            separator.sinHeight.toPx() / 2
-                    if (x == 0) {
-                        path.moveTo(0f, y)
-                    } else {
-                        path.lineTo(x.toFloat(), y)
+            drawWithCache {
+                onDrawBehind {
+                    for (x in 0 until size.width.roundToInt()) {
+                        val y =
+                            sin(x.toFloat() / separator.sinPeriodLength.toPx()) *
+                                (separator.sinHeight.toPx() / 2 - 2) + size.height -
+                                separator.sinHeight.toPx() / 2
+                        if (x == 0) {
+                            path.moveTo(0f, y)
+                        } else {
+                            path.lineTo(x.toFloat(), y)
+                        }
                     }
-                }
-                drawPath(path, color, style = Stroke(dimens.strokeWidth.toPx()))
+                    drawPath(path, color, style = Stroke(dimens.strokeWidth.toPx()))
 
-                topPath?.apply {
-                    addPath(path)
-                    lineTo(size.width, 0f)
-                    lineTo(0f, 0f)
-                    close()
-                    drawPath(this, topBackgroundColor)
-                    rewind()
-                }
+                    topPath?.apply {
+                        addPath(path)
+                        lineTo(size.width, 0f)
+                        lineTo(0f, 0f)
+                        close()
+                        drawPath(this, topBackgroundColor)
+                        rewind()
+                    }
 
-                bottomPath?.apply {
-                    addPath(path)
-                    lineTo(size.width, size.height)
-                    lineTo(0f, size.height)
-                    close()
-                    drawPath(this, bottomBackgroundColor)
-                    rewind()
-                }
+                    bottomPath?.apply {
+                        addPath(path)
+                        lineTo(size.width, size.height)
+                        lineTo(0f, size.height)
+                        close()
+                        drawPath(this, bottomBackgroundColor)
+                        rewind()
+                    }
 
-                path.rewind()
+                    path.rewind()
+                }
             }
         }
-    }
-)
+    )
 
 @Composable
 fun SinHorizontalDivider(
@@ -82,19 +85,16 @@ fun SinHorizontalDivider(
     bottomBackgroundColor: Color = Color.Transparent,
 ) {
     Spacer(
-        modifier = modifier
-            .height(LocalDimens.current.divider.sinHeight)
-            .fillMaxWidth()
-            .sinDivider(color, topBackgroundColor, bottomBackgroundColor),
+        modifier =
+            modifier
+                .height(LocalDimens.current.divider.sinHeight)
+                .fillMaxWidth()
+                .sinDivider(color, topBackgroundColor, bottomBackgroundColor)
     )
 }
 
 @LightAndDarkThemePreview
 @Composable
 fun SinHorizontalDividerPreview() {
-    LiftAppTheme {
-        Surface {
-            SinHorizontalDivider()
-        }
-    }
+    LiftAppTheme { Surface { SinHorizontalDivider() } }
 }

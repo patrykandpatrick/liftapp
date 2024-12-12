@@ -43,8 +43,9 @@ class OneRepMaxState(
 
     private val repsValue = MutableStateFlow(0)
 
-    private val oneRepMaxValue = combine(massValue, repsValue, ::calculateOneRepMax)
-        .stateIn(coroutineScope, SharingStarted.Eagerly, 0f)
+    private val oneRepMaxValue =
+        combine(massValue, repsValue, ::calculateOneRepMax)
+            .stateIn(coroutineScope, SharingStarted.Eagerly, 0f)
 
     private var historyUpdateJob: Job? = null
 
@@ -52,16 +53,18 @@ class OneRepMaxState(
 
     val reps: State<String> = _reps
 
-    val massUnit: StateFlow<MassUnit> = getMassUnit()
-        .stateIn(coroutineScope, SharingStarted.Lazily, MassUnit.Kilograms)
+    val massUnit: StateFlow<MassUnit> =
+        getMassUnit().stateIn(coroutineScope, SharingStarted.Lazily, MassUnit.Kilograms)
 
-    val oneRepMax: StateFlow<String> = combine(oneRepMaxValue, massUnit, formatWeight)
-        .stateIn(coroutineScope, SharingStarted.Eagerly, "")
+    val oneRepMax: StateFlow<String> =
+        combine(oneRepMaxValue, massUnit, formatWeight)
+            .stateIn(coroutineScope, SharingStarted.Eagerly, "")
 
-    val history: StateFlow<ImmutableList<HistoryEntryModel>> = savedStateHandle
-        .getStateFlow<List<HistoryEntryModel>>(HISTORY_KEY, emptyList())
-        .map { it.toImmutableList() }
-        .stateIn(coroutineScope, SharingStarted.Eagerly, persistentListOf())
+    val history: StateFlow<ImmutableList<HistoryEntryModel>> =
+        savedStateHandle
+            .getStateFlow<List<HistoryEntryModel>>(HISTORY_KEY, emptyList())
+            .map { it.toImmutableList() }
+            .stateIn(coroutineScope, SharingStarted.Eagerly, persistentListOf())
 
     @AssistedInject
     constructor(
@@ -78,20 +81,22 @@ class OneRepMaxState(
 
     fun updateReps(reps: String) {
         val trimmedReps = reps.take(3)
-        repsValue.value = when {
-            trimmedReps.isEmpty() -> 0
-            else -> trimmedReps.toIntOrNull()
-        } ?: return
+        repsValue.value =
+            when {
+                trimmedReps.isEmpty() -> 0
+                else -> trimmedReps.toIntOrNull()
+            } ?: return
 
         _reps.value = trimmedReps
         addToHistory()
     }
 
     fun updateMass(mass: String) {
-        massValue.value = when {
-            mass.isEmpty() -> 0f
-            else -> mass.smartToFloatOrNull() ?: return
-        }
+        massValue.value =
+            when {
+                mass.isEmpty() -> 0f
+                else -> mass.smartToFloatOrNull() ?: return
+            }
 
         _mass.value = mass
         addToHistory()
@@ -104,27 +109,32 @@ class OneRepMaxState(
     private fun addToHistory() {
         historyUpdateJob?.cancel()
         if (oneRepMaxValue.value == 0f) return
-        val historyEntry = HistoryEntryModel(
-            reps = repsValue.value,
-            mass = formatWeight(massValue.value, massUnit.value),
-            oneRepMax = oneRepMax.value,
-        )
+        val historyEntry =
+            HistoryEntryModel(
+                reps = repsValue.value,
+                mass = formatWeight(massValue.value, massUnit.value),
+                oneRepMax = oneRepMax.value,
+            )
 
-        historyUpdateJob = coroutineScope.launch {
-            delay(HISTORY_UPDATE_DELAY)
-            if (history.value.firstOrNull() == historyEntry) return@launch
-            savedStateHandle.update<List<HistoryEntryModel>>(HISTORY_KEY) { history ->
-                buildList {
-                    history?.also(::addAll)
-                    add(historyEntry)
+        historyUpdateJob =
+            coroutineScope.launch {
+                delay(HISTORY_UPDATE_DELAY)
+                if (history.value.firstOrNull() == historyEntry) return@launch
+                savedStateHandle.update<List<HistoryEntryModel>>(HISTORY_KEY) { history ->
+                    buildList {
+                        history?.also(::addAll)
+                        add(historyEntry)
+                    }
                 }
             }
-        }
     }
 
     @AssistedFactory
     interface Factory {
-        fun create(coroutineScope: CoroutineScope, savedStateHandle: SavedStateHandle): OneRepMaxState
+        fun create(
+            coroutineScope: CoroutineScope,
+            savedStateHandle: SavedStateHandle,
+        ): OneRepMaxState
     }
 
     companion object {
@@ -132,13 +142,11 @@ class OneRepMaxState(
         private const val EPLEY_REP_COUNT_DIVISOR = 30f
         private const val HISTORY_UPDATE_DELAY = 1000L
 
-        fun calculateOneRepMax(
-            mass: Float,
-            reps: Int,
-        ) = when {
-            reps == 0 || mass == 0f -> 0f
-            reps == 1 -> mass
-            else -> mass * (1f + reps.toFloat() / EPLEY_REP_COUNT_DIVISOR)
-        }
+        fun calculateOneRepMax(mass: Float, reps: Int) =
+            when {
+                reps == 0 || mass == 0f -> 0f
+                reps == 1 -> mass
+                else -> mass * (1f + reps.toFloat() / EPLEY_REP_COUNT_DIVISOR)
+            }
     }
 }

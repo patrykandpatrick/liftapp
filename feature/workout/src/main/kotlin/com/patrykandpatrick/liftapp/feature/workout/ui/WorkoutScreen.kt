@@ -50,11 +50,11 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
+import java.time.LocalDateTime
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun WorkoutScreen(
@@ -76,40 +76,45 @@ fun WorkoutScreen(
         modifier = modifier,
     ) { paddingValues ->
         if (workout != null) {
-            val pagerState = rememberPagerState(initialPage = workout.firstIncompleteExerciseIndex) { workout.exercises.size }
-            val wheelPickerState = rememberWheelPickerState(initialSelectedIndex = workout.firstIncompleteExerciseIndex)
+            val pagerState =
+                rememberPagerState(initialPage = workout.firstIncompleteExerciseIndex) {
+                    workout.exercises.size
+                }
+            val wheelPickerState =
+                rememberWheelPickerState(
+                    initialSelectedIndex = workout.firstIncompleteExerciseIndex
+                )
             val backdropState = rememberBackdropState()
             Backdrop(
-                backContent = {
-                    ExerciseListPicker(workout, wheelPickerState, backdropState)
-                },
-                backPeekHeight = with(LocalDensity.current) { wheelPickerState.maxItemHeight.toDp() },
+                backContent = { ExerciseListPicker(workout, wheelPickerState, backdropState) },
+                backPeekHeight =
+                    with(LocalDensity.current) { wheelPickerState.maxItemHeight.toDp() },
                 contentPeekHeight = 200.dp,
                 state = backdropState,
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .imePadding()
+                modifier = Modifier.padding(paddingValues).imePadding(),
             ) {
-                Column(
-                    modifier = Modifier
-                        .nestedScroll(backdropState.nestedScrollConnection),
-                ) {
-                    SinHorizontalDivider(bottomBackgroundColor = MaterialTheme.colorScheme.background)
+                Column(modifier = Modifier.nestedScroll(backdropState.nestedScrollConnection)) {
+                    SinHorizontalDivider(
+                        bottomBackgroundColor = MaterialTheme.colorScheme.background
+                    )
 
                     ScrollSyncEffect(wheelPickerState, pagerState)
 
                     LaunchedEffect(workout.firstIncompleteExerciseIndex) {
                         delay(Constants.Workout.EXERCISE_CHANGE_DELAY)
-                        launch { pagerState.animateScrollToPage(workout.firstIncompleteExerciseIndex) }
-                        launch { wheelPickerState.animateScrollTo(workout.firstIncompleteExerciseIndex) }
+                        launch {
+                            pagerState.animateScrollToPage(workout.firstIncompleteExerciseIndex)
+                        }
+                        launch {
+                            wheelPickerState.animateScrollTo(workout.firstIncompleteExerciseIndex)
+                        }
                     }
 
                     HorizontalPager(
                         state = pagerState,
                         key = { workout.exercises[it].id },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
+                        modifier =
+                            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
                     ) { page ->
                         Page(
                             exercise = workout.exercises[page],
@@ -134,11 +139,7 @@ private fun Page(
     onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
+    Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         GoalHeader(
             goal = exercise.goal,
             onAddSetClick = { onAddSetClick(exercise) },
@@ -162,63 +163,92 @@ private fun Page(
 private fun WorkoutScreenPreview() {
     LiftAppTheme {
         val savedStateHandle = remember { SavedStateHandle() }
-        val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle = savedStateHandle)
+        val textFieldStateManager =
+            PreviewResource.textFieldStateManager(savedStateHandle = savedStateHandle)
 
         WorkoutScreen(
             navigator = interfaceStub(),
-            viewModel = WorkoutViewModel(
-                getEditableWorkoutUseCase = GetEditableWorkoutUseCase(
-                    contract = { _, _ ->
-                        flowOf(
-                            Workout(
-                                id = 1,
-                                name = "Push",
-                                date = LocalDateTime.now(),
-                                duration = 45.minutes,
-                                notes = "",
-                                exercises = listOf(
-                                    Workout.Exercise(
+            viewModel =
+                WorkoutViewModel(
+                    getEditableWorkoutUseCase =
+                        GetEditableWorkoutUseCase(
+                            contract = { _, _ ->
+                                flowOf(
+                                    Workout(
                                         id = 1,
-                                        name = Name.Raw("Bench Press"),
-                                        exerciseType = ExerciseType.Weight,
-                                        mainMuscles = listOf(Muscle.Chest),
-                                        secondaryMuscles = listOf(Muscle.Triceps),
-                                        tertiaryMuscles = emptyList(),
-                                        goal = Goal.Default,
-                                        sets = listOf(
-                                            ExerciseSet.Weight(100.0, 10, MassUnit.Kilograms),
-                                            ExerciseSet.Weight(0.0, 0, MassUnit.Kilograms),
-                                            ExerciseSet.Weight(0.0, 0, MassUnit.Kilograms),
-                                        ),
-                                    ),
-                                    Workout.Exercise(
-                                        id = 2,
-                                        name = Name.Raw("Squat"),
-                                        exerciseType = ExerciseType.Weight,
-                                        mainMuscles = listOf(Muscle.Quadriceps),
-                                        secondaryMuscles = listOf(Muscle.Glutes),
-                                        tertiaryMuscles = emptyList(),
-                                        goal = Goal.Default,
-                                        sets = listOf(
-                                            ExerciseSet.Weight(0.0, 0, MassUnit.Kilograms),
-                                            ExerciseSet.Weight(0.0, 0, MassUnit.Kilograms),
-                                            ExerciseSet.Weight(0.0, 0, MassUnit.Kilograms),
-                                        ),
-                                    ),
+                                        name = "Push",
+                                        date = LocalDateTime.now(),
+                                        duration = 45.minutes,
+                                        notes = "",
+                                        exercises =
+                                            listOf(
+                                                Workout.Exercise(
+                                                    id = 1,
+                                                    name = Name.Raw("Bench Press"),
+                                                    exerciseType = ExerciseType.Weight,
+                                                    mainMuscles = listOf(Muscle.Chest),
+                                                    secondaryMuscles = listOf(Muscle.Triceps),
+                                                    tertiaryMuscles = emptyList(),
+                                                    goal = Goal.Default,
+                                                    sets =
+                                                        listOf(
+                                                            ExerciseSet.Weight(
+                                                                100.0,
+                                                                10,
+                                                                MassUnit.Kilograms,
+                                                            ),
+                                                            ExerciseSet.Weight(
+                                                                0.0,
+                                                                0,
+                                                                MassUnit.Kilograms,
+                                                            ),
+                                                            ExerciseSet.Weight(
+                                                                0.0,
+                                                                0,
+                                                                MassUnit.Kilograms,
+                                                            ),
+                                                        ),
+                                                ),
+                                                Workout.Exercise(
+                                                    id = 2,
+                                                    name = Name.Raw("Squat"),
+                                                    exerciseType = ExerciseType.Weight,
+                                                    mainMuscles = listOf(Muscle.Quadriceps),
+                                                    secondaryMuscles = listOf(Muscle.Glutes),
+                                                    tertiaryMuscles = emptyList(),
+                                                    goal = Goal.Default,
+                                                    sets =
+                                                        listOf(
+                                                            ExerciseSet.Weight(
+                                                                0.0,
+                                                                0,
+                                                                MassUnit.Kilograms,
+                                                            ),
+                                                            ExerciseSet.Weight(
+                                                                0.0,
+                                                                0,
+                                                                MassUnit.Kilograms,
+                                                            ),
+                                                            ExerciseSet.Weight(
+                                                                0.0,
+                                                                0,
+                                                                MassUnit.Kilograms,
+                                                            ),
+                                                        ),
+                                                ),
+                                            ),
+                                    )
                                 )
-                            )
-                        )
-                    },
-                    textFieldStateManager = textFieldStateManager,
-                    formatter = PreviewResource.formatter(),
-                    workoutRouteData = WorkoutRouteData(),
-                    savedStateHandle = savedStateHandle,
+                            },
+                            textFieldStateManager = textFieldStateManager,
+                            formatter = PreviewResource.formatter(),
+                            workoutRouteData = WorkoutRouteData(),
+                            savedStateHandle = savedStateHandle,
+                        ),
+                    upsertGoalSets = UpsertGoalSetsUseCase { _, _, _, _, _, _ -> },
+                    upsertExerciseSet = UpsertExerciseSetUseCase { _, _, _, _ -> },
+                    coroutineScope = rememberCoroutineScope(),
                 ),
-                upsertGoalSets = UpsertGoalSetsUseCase { _, _, _, _, _, _ -> },
-                upsertExerciseSet = UpsertExerciseSetUseCase { _, _, _, _ -> },
-                coroutineScope = rememberCoroutineScope(),
-            )
         )
     }
 }
-

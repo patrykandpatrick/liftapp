@@ -40,15 +40,15 @@ import com.patrykandpatryk.liftapp.domain.date.isValid
 import com.patrykandpatryk.liftapp.domain.date.month
 import com.patrykandpatryk.liftapp.domain.date.safeParseToCalendar
 import com.patrykandpatryk.liftapp.domain.date.year
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun DatePicker(
@@ -59,33 +59,32 @@ fun DatePicker(
 ) {
     CompositionLocalProvider(LocalDimens provides DialogDimens) {
         if (state.isShowing) {
-            Dialog(
-                onDismissRequest = { state.isShowing = false },
-                properties = properties,
-            ) {
+            Dialog(onDismissRequest = { state.isShowing = false }, properties = properties) {
                 Surface(
-                    modifier = modifier
-                        .widthIn(
-                            min = LocalDimens.current.dialog.minWidth,
-                            max = LocalDimens.current.dialog.maxWidth,
-                        )
-                        .width(IntrinsicSize.Min)
-                        .padding(all = LocalDimens.current.dialog.paddingLarge),
+                    modifier =
+                        modifier
+                            .widthIn(
+                                min = LocalDimens.current.dialog.minWidth,
+                                max = LocalDimens.current.dialog.maxWidth,
+                            )
+                            .width(IntrinsicSize.Min)
+                            .padding(all = LocalDimens.current.dialog.paddingLarge),
                     color = MaterialTheme.colorScheme.surface,
                     tonalElevation = LocalDimens.current.dialog.tonalElevation,
                     shape = MaterialTheme.shapes.extraLarge,
                 ) {
                     DatePickerContent(
-                        modifier = Modifier.padding(
-                            horizontal = LocalDimens.current.padding.contentHorizontal,
-                            vertical = LocalDimens.current.padding.contentVertical,
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                horizontal = LocalDimens.current.padding.contentHorizontal,
+                                vertical = LocalDimens.current.padding.contentVertical,
+                            ),
                         state = state,
                         onPositiveButtonClick = onClick@{
-                            val calendar = state.resolvedDate ?: return@onClick
-                            onTimePicked(calendar.year, calendar.month + 1, calendar.day)
-                            state.hide()
-                        },
+                                val calendar = state.resolvedDate ?: return@onClick
+                                onTimePicked(calendar.year, calendar.month + 1, calendar.day)
+                                state.hide()
+                            },
                     )
                 }
             }
@@ -119,24 +118,19 @@ private fun DatePickerContent(
         OutlinedTextField(
             value = state.input,
             onValueChange = state::updateInput,
-            label = {
-                Text(text = stringResource(id = R.string.picker_date_input_title))
-            },
-            placeholder = {
-                Text(text = stringResource(id = R.string.picker_date_example))
-            },
+            label = { Text(text = stringResource(id = R.string.picker_date_input_title)) },
+            placeholder = { Text(text = stringResource(id = R.string.picker_date_example)) },
             isError = state.hasError,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
 
         SupportingText(
-            text = stringResource(
-                id = R.string.picker_date_input_error,
-                stringResource(id = R.string.picker_date_example),
-                state.sampleDate,
-            ),
+            text =
+                stringResource(
+                    id = R.string.picker_date_input_error,
+                    stringResource(id = R.string.picker_date_example),
+                    state.sampleDate,
+                ),
             isError = state.hasError,
             visible = state.hasError,
         )
@@ -194,7 +188,8 @@ class DatePickerState(
 
     var isShowing: Boolean by mutableStateOf(isShowing)
 
-    var input: String by mutableStateOf(time?.format(DateTimeFormatter.ofPattern(exampleDatePattern)).orEmpty())
+    var input: String by
+        mutableStateOf(time?.format(DateTimeFormatter.ofPattern(exampleDatePattern)).orEmpty())
 
     fun show() {
         isShowing = true
@@ -212,10 +207,11 @@ class DatePickerState(
         val hasError = input.isNotBlank() && inputDateFormat.isValid(input).not()
 
         if (hasError) {
-            delayJob = scope.launch {
-                delay(errorDelay)
-                _hasError.value = true
-            }
+            delayJob =
+                scope.launch {
+                    delay(errorDelay)
+                    _hasError.value = true
+                }
         }
     }
 }
@@ -253,10 +249,7 @@ fun rememberDatePickerState(
 fun DatePickerPreview() {
     LiftAppTheme {
         DatePicker(
-            state = rememberDatePickerState(
-                time = LocalDateTime.now(),
-                isShowing = true,
-            ),
+            state = rememberDatePickerState(time = LocalDateTime.now(), isShowing = true),
             onTimePicked = { _, _, _ -> },
         )
     }

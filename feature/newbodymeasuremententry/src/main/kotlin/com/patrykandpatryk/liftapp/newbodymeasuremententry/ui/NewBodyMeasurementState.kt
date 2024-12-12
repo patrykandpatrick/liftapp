@@ -25,13 +25,13 @@ import com.patrykandpatryk.liftapp.domain.validation.valueInRange
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import java.time.LocalDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 private const val LocalDateTimeKey = "LocalDateTime"
 
@@ -40,7 +40,8 @@ class NewBodyMeasurementState(
     private val getFormattedDate: suspend (LocalDateTime) -> FormattedDate,
     private val getBodyMeasurementWithLatestEntry: suspend () -> BodyMeasurementWithLatestEntry,
     private val getBodyMeasurementEntry: suspend () -> BodyMeasurementEntry?,
-    private val upsertBodyMeasurementEntry: suspend (value: BodyMeasurementValue, time: LocalDateTime) -> Unit,
+    private val upsertBodyMeasurementEntry:
+        suspend (value: BodyMeasurementValue, time: LocalDateTime) -> Unit,
     private val getUnitForBodyMeasurementType: suspend (BodyMeasurementType) -> ValueUnit,
     private val textFieldStateManager: TextFieldStateManager,
     private val coroutineScope: CoroutineScope,
@@ -62,9 +63,10 @@ class NewBodyMeasurementState(
 
     val is24H: State<Boolean> = _is24H
 
-    val formattedDate: StateFlow<FormattedDate> = dateTime
-        .map { getFormattedDate(it) }
-        .stateIn(coroutineScope, SharingStarted.Lazily, FormattedDate.Empty)
+    val formattedDate: StateFlow<FormattedDate> =
+        dateTime
+            .map { getFormattedDate(it) }
+            .stateIn(coroutineScope, SharingStarted.Lazily, FormattedDate.Empty)
 
     val entrySaved: State<Boolean> = _entrySaved
 
@@ -74,7 +76,8 @@ class NewBodyMeasurementState(
         @Assisted entryId: Long?,
         @Assisted coroutineScope: CoroutineScope,
         getFormattedDateUseCase: GetFormattedDateUseCase,
-        getBodyMeasurementWithLatestEntryUseCaseFactory: GetBodyMeasurementWithLatestEntryUseCase.Factory,
+        getBodyMeasurementWithLatestEntryUseCaseFactory:
+            GetBodyMeasurementWithLatestEntryUseCase.Factory,
         getBodyMeasurementEntryUseCaseFactory: GetBodyMeasurementEntryUseCase.Factory,
         upsertBodyMeasurementUseCaseFactory: UpsertBodyMeasurementUseCase.Factory,
         textFieldStateManager: TextFieldStateManager,
@@ -83,7 +86,10 @@ class NewBodyMeasurementState(
     ) : this(
         getFormattedDateUseCase::invoke,
         getBodyMeasurementWithLatestEntryUseCaseFactory.create(id)::invoke,
-        { if (entryId != null) getBodyMeasurementEntryUseCaseFactory.create(entryId).invoke() else null },
+        {
+            if (entryId != null) getBodyMeasurementEntryUseCaseFactory.create(entryId).invoke()
+            else null
+        },
         upsertBodyMeasurementUseCaseFactory.create(id, entryId)::invoke,
         getUnitForBodyMeasurementType::invoke,
         textFieldStateManager,
@@ -113,38 +119,45 @@ class NewBodyMeasurementState(
         bodyMeasurement: BodyMeasurementWithLatestEntry,
         bodyMeasurementEntry: BodyMeasurementEntry?,
     ): InputData {
-        val unit = bodyMeasurementEntry?.value?.unit ?: getUnitForBodyMeasurementType(bodyMeasurement.type)
+        val unit =
+            bodyMeasurementEntry?.value?.unit ?: getUnitForBodyMeasurementType(bodyMeasurement.type)
         val allowedValueRange = bodyMeasurement.type.getValueRange(unit)
         val inputValue = bodyMeasurementEntry?.value ?: bodyMeasurement.latestEntry?.value
 
         return if (bodyMeasurement.type == BodyMeasurementType.LengthTwoSides) {
             val doubleValue = inputValue as? BodyMeasurementValue.DoubleValue
             InputData.DoubleValue(
-                leftTextFieldState = textFieldStateManager.doubleTextField(
-                    initialValue = doubleValue?.left.toStringOrEmpty(),
-                    validators = {
-                        nonEmpty()
-                        valueInRange(allowedValueRange)
-                    }
-                ),
-                rightTextFieldState = textFieldStateManager.doubleTextField(
-                    initialValue = doubleValue?.right.toStringOrEmpty(),
-                    validators = {
-                        nonEmpty()
-                        valueInRange(allowedValueRange)
-                    }
-                ),
-                unit = unit
+                leftTextFieldState =
+                    textFieldStateManager.doubleTextField(
+                        initialValue = doubleValue?.left.toStringOrEmpty(),
+                        validators = {
+                            nonEmpty()
+                            valueInRange(allowedValueRange)
+                        },
+                    ),
+                rightTextFieldState =
+                    textFieldStateManager.doubleTextField(
+                        initialValue = doubleValue?.right.toStringOrEmpty(),
+                        validators = {
+                            nonEmpty()
+                            valueInRange(allowedValueRange)
+                        },
+                    ),
+                unit = unit,
             )
         } else {
             InputData.SingleValue(
-                textFieldState = textFieldStateManager.doubleTextField(
-                    initialValue = (inputValue as? BodyMeasurementValue.SingleValue)?.value.toStringOrEmpty(),
-                    validators = {
-                        nonEmpty()
-                        valueInRange(allowedValueRange)
-                    }
-                ),
+                textFieldState =
+                    textFieldStateManager.doubleTextField(
+                        initialValue =
+                            (inputValue as? BodyMeasurementValue.SingleValue)
+                                ?.value
+                                .toStringOrEmpty(),
+                        validators = {
+                            nonEmpty()
+                            valueInRange(allowedValueRange)
+                        },
+                    ),
                 unit = unit,
             )
         }
@@ -155,7 +168,9 @@ class NewBodyMeasurementState(
     }
 
     fun setDate(year: Int, month: Int, day: Int) {
-        updateLocalDateTime { dateTime -> dateTime.withYear(year).withMonth(month).withDayOfMonth(day) }
+        updateLocalDateTime { dateTime ->
+            dateTime.withYear(year).withMonth(month).withDayOfMonth(day)
+        }
     }
 
     private fun updateLocalDateTime(update: (dateTime: LocalDateTime) -> LocalDateTime) {
@@ -232,11 +247,17 @@ class NewBodyMeasurementState(
 
     @AssistedFactory
     interface Factory {
-        fun create(id: Long, entryId: Long?, coroutineScope: CoroutineScope): NewBodyMeasurementState
+        fun create(
+            id: Long,
+            entryId: Long?,
+            coroutineScope: CoroutineScope,
+        ): NewBodyMeasurementState
     }
 }
 
-inline fun NewBodyMeasurementState.InputData.forEachTextField(action: (textFieldState: TextFieldState<Double>, isLast: Boolean) -> Unit) {
+inline fun NewBodyMeasurementState.InputData.forEachTextField(
+    action: (textFieldState: TextFieldState<Double>, isLast: Boolean) -> Unit
+) {
     when (this) {
         is NewBodyMeasurementState.InputData.DoubleValue -> {
             action(leftTextFieldState, false)

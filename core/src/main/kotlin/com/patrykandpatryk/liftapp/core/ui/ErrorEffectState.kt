@@ -58,8 +58,7 @@ class ErrorEffectState {
     }
 }
 
-@Composable
-fun rememberErrorEffectState(): ErrorEffectState = remember { ErrorEffectState() }
+@Composable fun rememberErrorEffectState(): ErrorEffectState = remember { ErrorEffectState() }
 
 fun Modifier.animateJump(errorEffectState: ErrorEffectState, enabled: Boolean = true): Modifier =
     composed {
@@ -70,16 +69,15 @@ fun Modifier.animateJump(errorEffectState: ErrorEffectState, enabled: Boolean = 
             playAnimation = {
                 scale.animateTo(
                     targetValue = 1f,
-                    animationSpec = keyframes {
-                        1.05f at 100 using EaseIn
-                        .95f at 200 using EaseOut
-                        1f at 300 using EaseIn
-                    },
+                    animationSpec =
+                        keyframes {
+                            1.05f at 100 using EaseIn
+                            .95f at 200 using EaseOut
+                            1f at 300 using EaseIn
+                        },
                 )
             },
-            snapToEnd = {
-                scale.snapTo(1f)
-            },
+            snapToEnd = { scale.snapTo(1f) },
         )
 
         graphicsLayer {

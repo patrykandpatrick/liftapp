@@ -27,8 +27,8 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import kotlinx.coroutines.launch
 import kotlin.time.Duration
+import kotlinx.coroutines.launch
 
 @Composable
 fun WheelPickerDurationInputField(
@@ -49,10 +49,7 @@ fun WheelPickerDurationInputField(
         onValueChange = {},
         readOnly = true,
         label = { Text(text = label) },
-        modifier = modifier
-            .onFocusEvent { focusState ->
-                isFocused.value = focusState.hasFocus
-            }
+        modifier = modifier.onFocusEvent { focusState -> isFocused.value = focusState.hasFocus },
     )
 
     if (isFocused.value) {
@@ -87,17 +84,17 @@ private fun TimeBottomSheetContent(
     modifier: Modifier = Modifier,
 ) {
 
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .navigationBarsPadding()
-            .padding(
-                horizontal = LocalDimens.current.padding.contentHorizontal,
-                vertical = LocalDimens.current.padding.contentVertical,
-            )
-            .padding(top = LocalDimens.current.padding.contentVerticalSmall),
+        modifier =
+            modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .navigationBarsPadding()
+                .padding(
+                    horizontal = LocalDimens.current.padding.contentHorizontal,
+                    vertical = LocalDimens.current.padding.contentVertical,
+                )
+                .padding(top = LocalDimens.current.padding.contentVerticalSmall),
     ) {
         Text(
             text = label,
@@ -120,10 +117,7 @@ private fun TimeBottomSheetContent(
 
         Spacer(Modifier.height(LocalDimens.current.verticalItemSpacing))
 
-        Button(
-            onClick = onDismissRequest,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
+        Button(onClick = onDismissRequest, modifier = Modifier.fillMaxWidth()) {
             Text(text = stringResource(R.string.action_done))
         }
     }

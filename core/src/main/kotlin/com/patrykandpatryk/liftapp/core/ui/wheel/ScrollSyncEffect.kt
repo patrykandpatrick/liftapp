@@ -15,35 +15,47 @@ private object ScrollType {
     const val PAGER = "Pager"
 }
 
-private val Float.index: Int get() = if (this - toInt() >= 0.5f) toInt() + 1 else toInt()
+private val Float.index: Int
+    get() = if (this - toInt() >= 0.5f) toInt() + 1 else toInt()
 
-private val Float.offset: Float get() = this - index
+private val Float.offset: Float
+    get() = this - index
 
 @Composable
 fun ScrollSyncEffect(wheelPickerState: WheelPickerState, pagerState: PagerState) {
     LaunchedEffect(pagerState, wheelPickerState) {
         merge(
-            wheelPickerState.interactionSource.interactions.map { ScrollType.WHEEL },
-            pagerState.interactionSource.interactions.map { ScrollType.PAGER },
-        ).flatMapLatest { scrollType ->
-            when (scrollType) {
-                ScrollType.WHEEL -> {
-                    snapshotFlow { wheelPickerState.coercedCurrentItemWithOffset}
-                        .onEach { indexWithFraction ->
-                            pagerState.scrollToPage(indexWithFraction.index, indexWithFraction.offset)
-                        }
-                }
+                wheelPickerState.interactionSource.interactions.map { ScrollType.WHEEL },
+                pagerState.interactionSource.interactions.map { ScrollType.PAGER },
+            )
+            .flatMapLatest { scrollType ->
+                when (scrollType) {
+                    ScrollType.WHEEL -> {
+                        snapshotFlow { wheelPickerState.coercedCurrentItemWithOffset }
+                            .onEach { indexWithFraction ->
+                                pagerState.scrollToPage(
+                                    indexWithFraction.index,
+                                    indexWithFraction.offset,
+                                )
+                            }
+                    }
 
-                ScrollType.PAGER -> {
-                    snapshotFlow { pagerState.currentPage + pagerState.currentPageOffsetFraction }
-                        .onEach { indexWithFraction ->
-                            wheelPickerState.scrollTo(indexWithFraction.index, indexWithFraction.offset)
-                        }
-                }
+                    ScrollType.PAGER -> {
+                        snapshotFlow {
+                                pagerState.currentPage + pagerState.currentPageOffsetFraction
+                            }
+                            .onEach { indexWithFraction ->
+                                wheelPickerState.scrollTo(
+                                    indexWithFraction.index,
+                                    indexWithFraction.offset,
+                                )
+                            }
+                    }
 
-                else -> error("Unknown scroll type: $scrollType")
+                    else -> error("Unknown scroll type: $scrollType")
+                }
             }
-        }.collect()
+            .collect()
     }
 }
 

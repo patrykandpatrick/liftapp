@@ -25,7 +25,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = ExerciseViewModel.Factory::class)
-class ExerciseViewModel @AssistedInject constructor(
+class ExerciseViewModel
+@AssistedInject
+constructor(
     @Assisted val pickingMode: Boolean,
     @Assisted val disabledExerciseIDs: List<Long>?,
     getExercisesItems: GetExercisesItemsUseCase,
@@ -38,8 +40,9 @@ class ExerciseViewModel @AssistedInject constructor(
 
     private val checkedExerciseIds: MutableSet<Long> = HashSet()
 
-    val exercises = getExercisesItems(query = query, groupBy = groupBy)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val exercises =
+        getExercisesItems(query = query, groupBy = groupBy)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     override val state: MutableStateFlow<ScreenState> =
         MutableStateFlow(ScreenState(pickingMode = pickingMode))
@@ -50,30 +53,26 @@ class ExerciseViewModel @AssistedInject constructor(
         getExercisesItems(query = query, groupBy = groupBy)
             .flowOn(dispatcher)
             .onEach { exercises ->
-                state.update { state ->
-                    state.copy(exercises = exercises.updateState())
-                }
-            }.launchIn(viewModelScope)
+                state.update { state -> state.copy(exercises = exercises.updateState()) }
+            }
+            .launchIn(viewModelScope)
     }
 
-    override fun handleIntent(intent: Intent) = when (intent) {
-        is Intent.SetQuery -> setQuery(intent.query)
-        is Intent.SetGroupBy -> setGroupBy(intent.groupBy)
-        is Intent.SetExerciseChecked -> setExerciseChecked(intent.exerciseId, intent.checked)
-        is Intent.FinishPickingExercises -> finishPickingExercises()
-    }
+    override fun handleIntent(intent: Intent) =
+        when (intent) {
+            is Intent.SetQuery -> setQuery(intent.query)
+            is Intent.SetGroupBy -> setGroupBy(intent.groupBy)
+            is Intent.SetExerciseChecked -> setExerciseChecked(intent.exerciseId, intent.checked)
+            is Intent.FinishPickingExercises -> finishPickingExercises()
+        }
 
     private fun setQuery(query: String) {
-        state.update { state ->
-            state.copy(query = query)
-        }
+        state.update { state -> state.copy(query = query) }
         this.query.value = query
     }
 
     private fun setGroupBy(groupBy: GroupBy) {
-        state.update { state ->
-            state.copy(groupBy = groupBy)
-        }
+        state.update { state -> state.copy(groupBy = groupBy) }
         this.groupBy.value = groupBy
     }
 
@@ -93,18 +92,17 @@ class ExerciseViewModel @AssistedInject constructor(
         }
     }
 
-    private fun List<ExercisesItem>.updateState(): List<ExercisesItem> =
-        map { exerciseItem ->
-            if (exerciseItem is ExercisesItem.Exercise) {
-                val enabled = disabledExerciseIDs?.contains(exerciseItem.id)?.not() ?: true
-                exerciseItem.copy(
-                    checked = enabled && checkedExerciseIds.contains(exerciseItem.id),
-                    enabled = enabled,
-                )
-            } else {
-                exerciseItem
-            }
+    private fun List<ExercisesItem>.updateState(): List<ExercisesItem> = map { exerciseItem ->
+        if (exerciseItem is ExercisesItem.Exercise) {
+            val enabled = disabledExerciseIDs?.contains(exerciseItem.id)?.not() ?: true
+            exerciseItem.copy(
+                checked = enabled && checkedExerciseIds.contains(exerciseItem.id),
+                enabled = enabled,
+            )
+        } else {
+            exerciseItem
         }
+    }
 
     private fun finishPickingExercises() {
         viewModelScope.launch(dispatcher) {

@@ -6,31 +6,34 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLat
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.FormatBodyMeasurementValueToStringUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementsWithLatestEntriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
-import javax.inject.Inject
 
 @HiltViewModel
-class BodyMeasurementListViewModel @Inject constructor(
+class BodyMeasurementListViewModel
+@Inject
+constructor(
     getBodyMeasurementsWithLatestEntries: GetBodyMeasurementsWithLatestEntriesUseCase,
     exceptionHandler: CoroutineExceptionHandler,
     private val formatBodyMeasurementValueToString: FormatBodyMeasurementValueToStringUseCase,
 ) : ViewModel() {
 
-    val items = getBodyMeasurementsWithLatestEntries()
-        .map { bodyMeasurementsWithLatestEntries ->
-            bodyMeasurementsWithLatestEntries.map { bodyMeasurementWithLatestEntry ->
-                bodyMeasurementWithLatestEntry.toBodyMeasurementListItem()
+    val items =
+        getBodyMeasurementsWithLatestEntries()
+            .map { bodyMeasurementsWithLatestEntries ->
+                bodyMeasurementsWithLatestEntries.map { bodyMeasurementWithLatestEntry ->
+                    bodyMeasurementWithLatestEntry.toBodyMeasurementListItem()
+                }
             }
-        }
-        .stateIn(
-            scope = viewModelScope + exceptionHandler,
-            started = SharingStarted.Eagerly,
-            initialValue = emptyList(),
-        )
+            .stateIn(
+                scope = viewModelScope + exceptionHandler,
+                started = SharingStarted.Eagerly,
+                initialValue = emptyList(),
+            )
 
     private suspend fun BodyMeasurementWithLatestEntry.toBodyMeasurementListItem() =
         BodyMeasurementListItem(

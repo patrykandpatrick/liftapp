@@ -46,9 +46,12 @@ fun BodyMeasurementDetailScreen(
     navigator: BodyMeasurementDetailsNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: BodyMeasurementDetailViewModel = hiltViewModel(
-        creationCallback = { factory: BodyMeasurementDetailViewModel.Factory -> factory.create(bodyMeasurementID) },
-    )
+    val viewModel: BodyMeasurementDetailViewModel =
+        hiltViewModel(
+            creationCallback = { factory: BodyMeasurementDetailViewModel.Factory ->
+                factory.create(bodyMeasurementID)
+            }
+        )
 
     val state by viewModel.state.collectAsState()
 
@@ -84,51 +87,61 @@ private fun BodyMeasurementDetailScreen(
             ExtendedFloatingActionButton(
                 modifier = Modifier.navigationBarsPadding(),
                 text = { Text(text = stringResource(id = R.string.action_new_entry)) },
-                icon = { Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null) },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_add),
+                        contentDescription = null,
+                    )
+                },
                 onClick = { navigator.newBodyMeasurement(state.bodyMeasurementID) },
             )
         },
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues),
+            modifier = Modifier.padding(paddingValues),
             contentPadding = Companion.navigationBars.toPaddingValues(),
         ) {
             item {
                 Chart(
-                    modifier = Modifier.padding(
-                        top = LocalDimens.current.padding.itemVertical,
-                        bottom = LocalDimens.current.padding.itemVertical,
-                        start = LocalDimens.current.padding.contentHorizontal,
-                    ),
-                    chart = lineChart(
-                        axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f),
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            top = LocalDimens.current.padding.itemVertical,
+                            bottom = LocalDimens.current.padding.itemVertical,
+                            start = LocalDimens.current.padding.contentHorizontal,
+                        ),
+                    chart =
+                        lineChart(
+                            axisValuesOverrider =
+                                AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f)
+                        ),
                     chartModelProducer = modelProducer,
-                    startAxis = rememberStartAxis(
-                        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) },
-                    ),
+                    startAxis =
+                        rememberStartAxis(
+                            itemPlacer =
+                                remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }
+                        ),
                     bottomAxis = rememberBottomAxis(),
-                    chartScrollSpec = rememberChartScrollSpec(
-                        initialScroll = InitialScroll.End,
-                        autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,
-                    ),
+                    chartScrollSpec =
+                        rememberChartScrollSpec(
+                            initialScroll = InitialScroll.End,
+                            autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,
+                        ),
                 )
             }
 
             item {
                 Text(
-                    modifier = Modifier.padding(
-                        vertical = LocalDimens.current.padding.itemVertical,
-                        horizontal = LocalDimens.current.padding.contentHorizontal,
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            vertical = LocalDimens.current.padding.itemVertical,
+                            horizontal = LocalDimens.current.padding.contentHorizontal,
+                        ),
                     text = stringResource(id = R.string.generic_journal),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
 
             items(items = state.entries, key = { it.id }) { entry ->
-
                 ListItemWithOptions(
                     mainContent = {
                         ListItem(
@@ -137,18 +150,21 @@ private fun BodyMeasurementDetailScreen(
                             description = { Text(entry.date) },
                         )
                     },
-                    optionItems = listOf(
-                        OptionItem(
-                            iconPainter = painterResource(id = R.drawable.ic_edit),
-                            label = stringResource(id = R.string.action_edit),
-                            onClick = { navigator.newBodyMeasurement(state.bodyMeasurementID, entry.id) },
+                    optionItems =
+                        listOf(
+                            OptionItem(
+                                iconPainter = painterResource(id = R.drawable.ic_edit),
+                                label = stringResource(id = R.string.action_edit),
+                                onClick = {
+                                    navigator.newBodyMeasurement(state.bodyMeasurementID, entry.id)
+                                },
+                            ),
+                            OptionItem(
+                                iconPainter = painterResource(id = R.drawable.ic_delete),
+                                label = stringResource(id = R.string.action_delete),
+                                onClick = { onIntent(Intent.DeleteBodyMeasurementEntry(entry.id)) },
+                            ),
                         ),
-                        OptionItem(
-                            iconPainter = painterResource(id = R.drawable.ic_delete),
-                            label = stringResource(id = R.string.action_delete),
-                            onClick = { onIntent(Intent.DeleteBodyMeasurementEntry(entry.id)) },
-                        ),
-                    ),
                     isExpanded = entry.isExpanded,
                     setExpanded = { onIntent(Intent.ExpandItem(id = entry.id)) },
                 )

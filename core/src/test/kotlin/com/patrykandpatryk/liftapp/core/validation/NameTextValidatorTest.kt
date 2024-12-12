@@ -7,27 +7,29 @@ import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
 import com.patrykandpatryk.liftapp.domain.validation.requireLength
 import com.patrykandpatryk.liftapp.testing.TestStringProvider
-import kotlinx.coroutines.flow.flowOf
-import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.flow.flowOf
+import org.junit.Test
 
 private const val BASE_NAME = "A name"
 
 class NameTextValidatorTest {
     private val stringProvider = TestStringProvider
-    private val textFieldStateManager = TextFieldStateManager(
-        stringProvider,
-        Formatter(stringProvider, flowOf(false)),
-        SavedStateHandle(),
-    )
-    private val textField = textFieldStateManager.stringTextField(
-        validators = {
-            nonEmpty()
-            requireLength(maxLength = Constants.Input.NAME_MAX_CHARS)
-        }
-    )
+    private val textFieldStateManager =
+        TextFieldStateManager(
+            stringProvider,
+            Formatter(stringProvider, flowOf(false)),
+            SavedStateHandle(),
+        )
+    private val textField =
+        textFieldStateManager.stringTextField(
+            validators = {
+                nonEmpty()
+                requireLength(maxLength = Constants.Input.NAME_MAX_CHARS)
+            }
+        )
 
     @Test
     fun `Given na me is not empty and not too long the name is valid`() {
@@ -58,16 +60,13 @@ class NameTextValidatorTest {
 
     @Test
     fun `Given name is too long the name is invalid`() {
-        val tooLongName = buildString {
-            repeat(Constants.Input.NAME_MAX_CHARS + 1) {
-                append("a")
-            }
-        }
+        val tooLongName = buildString { repeat(Constants.Input.NAME_MAX_CHARS + 1) { append("a") } }
 
         textField.updateText(tooLongName)
         assertTrue(textField.hasError)
         assertEquals(
-            expected = stringProvider.fieldTooLong(tooLongName.length, Constants.Input.NAME_MAX_CHARS),
+            expected =
+                stringProvider.fieldTooLong(tooLongName.length, Constants.Input.NAME_MAX_CHARS),
             actual = textField.errorMessage,
         )
     }

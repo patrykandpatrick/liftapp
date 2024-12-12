@@ -15,24 +15,20 @@ import kotlinx.coroutines.flow.map
 @SuppressLint("ComposableNaming")
 @Composable
 @NonRestartableComposable
-fun InteractionSource.onRepeatedLongPress(
-    repeatLongClicks: Boolean,
-    action: () -> Unit,
-) {
+fun InteractionSource.onRepeatedLongPress(repeatLongClicks: Boolean, action: () -> Unit) {
     val actionState = rememberUpdatedState(newValue = action)
     val longPressDelay = LocalViewConfiguration.current.longPressTimeoutMillis
 
     LaunchedEffect(key1 = this) {
-        interactions.map { interaction ->
-            interaction is PressInteraction.Press
-        }.collectLatest { isPressed ->
+        interactions
+            .map { interaction -> interaction is PressInteraction.Press }
+            .collectLatest { isPressed ->
+                while (isPressed) {
+                    delay(longPressDelay)
+                    actionState.value()
 
-            while (isPressed) {
-                delay(longPressDelay)
-                actionState.value()
-
-                if (repeatLongClicks.not()) break
+                    if (repeatLongClicks.not()) break
+                }
             }
-        }
     }
 }

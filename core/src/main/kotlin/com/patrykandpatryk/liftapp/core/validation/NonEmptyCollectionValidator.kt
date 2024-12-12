@@ -8,9 +8,9 @@ import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import javax.inject.Inject
 
-class NonEmptyCollectionValidator<T, C : Collection<T>> @Inject constructor(
-    private val stringProvider: StringProvider,
-) : Validator<C> {
+class NonEmptyCollectionValidator<T, C : Collection<T>>
+@Inject
+constructor(private val stringProvider: StringProvider) : Validator<C> {
 
     override fun validate(value: C): Validatable<C> =
         if (value.isEmpty()) {

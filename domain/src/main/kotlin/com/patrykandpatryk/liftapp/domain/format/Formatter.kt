@@ -5,8 +5,6 @@ import com.patrykandpatryk.liftapp.domain.Constants.Format.INTEGER_PATTERN
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.ParseException
@@ -16,11 +14,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
-class Formatter(
-    private val stringProvider: StringProvider,
-    private val is24H: Flow<Boolean>,
-) {
+class Formatter(private val stringProvider: StringProvider, private val is24H: Flow<Boolean>) {
     @Inject
     constructor(
         stringProvider: StringProvider,
@@ -42,15 +39,17 @@ class Formatter(
     private suspend fun formatDate(localDateTime: LocalDateTime, dateFormat: DateFormat): String =
         localDateTime.format(DateTimeFormatter.ofPattern(dateFormat.getPattern()))
 
-    private suspend fun DateFormat.getPattern(): String = when (this) {
-        DateFormat.MinutesSeconds -> MINUTES_SECONDS
-        DateFormat.HoursMinutes -> if (is24H()) HOURS_MINUTES_24H else HOURS_MINUTES_12H
-        DateFormat.HoursMinutesSeconds -> if (is24H()) HOURS_MINUTES_SECONDS_24H else HOURS_MINUTES_SECONDS_12H
-        DateFormat.DateShort -> stringProvider.dateFormatShort
-        DateFormat.DateLong -> stringProvider.dateFormatLong
-        DateFormat.DateFull -> stringProvider.dateFormatFull
-        DateFormat.DateEdit -> stringProvider.dateFormatEdit
-    }
+    private suspend fun DateFormat.getPattern(): String =
+        when (this) {
+            DateFormat.MinutesSeconds -> MINUTES_SECONDS
+            DateFormat.HoursMinutes -> if (is24H()) HOURS_MINUTES_24H else HOURS_MINUTES_12H
+            DateFormat.HoursMinutesSeconds ->
+                if (is24H()) HOURS_MINUTES_SECONDS_24H else HOURS_MINUTES_SECONDS_12H
+            DateFormat.DateShort -> stringProvider.dateFormatShort
+            DateFormat.DateLong -> stringProvider.dateFormatLong
+            DateFormat.DateFull -> stringProvider.dateFormatFull
+            DateFormat.DateEdit -> stringProvider.dateFormatEdit
+        }
 
     suspend fun getFormattedDate(localDateTime: LocalDateTime): FormattedDate =
         FormattedDate(
@@ -62,7 +61,8 @@ class Formatter(
         )
 
     suspend fun getFormattedDuration(duration: Duration, dateFormat: DateFormat): String =
-        SimpleDateFormat(dateFormat.getPattern(), Locale.getDefault()).format(duration.inWholeMilliseconds)
+        SimpleDateFormat(dateFormat.getPattern(), Locale.getDefault())
+            .format(duration.inWholeMilliseconds)
 
     suspend fun is24H(): Boolean = is24H.first()
 
@@ -72,16 +72,17 @@ class Formatter(
         separator: String = " | ",
         prefix: String? = null,
         postfix: String? = null,
-    ): String = numbers.joinToString(
-        separator = separator,
-        prefix = prefix.orEmpty(),
-        postfix = postfix.orEmpty(),
-    ) { number ->
-        when (format) {
-            NumberFormat.Decimal -> decimalInputFormat.format(number)
-            NumberFormat.Integer -> integerOutputFormat.format(number)
+    ): String =
+        numbers.joinToString(
+            separator = separator,
+            prefix = prefix.orEmpty(),
+            postfix = postfix.orEmpty(),
+        ) { number ->
+            when (format) {
+                NumberFormat.Decimal -> decimalInputFormat.format(number)
+                NumberFormat.Integer -> integerOutputFormat.format(number)
+            }
         }
-    }
 
     fun formatWeight(weight: Float, massUnit: MassUnit): String =
         "${formatNumber(weight, format = NumberFormat.Decimal)}${stringProvider.getDisplayUnit(massUnit)}"

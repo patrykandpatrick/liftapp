@@ -9,13 +9,13 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @ProvidedTypeConverter
-class LocalDateTimeConverters @Inject constructor(
-    @DatabaseDateFormat private val dateFormat: SimpleDateFormat,
-) {
+class LocalDateTimeConverters
+@Inject
+constructor(@DatabaseDateFormat private val dateFormat: SimpleDateFormat) {
 
     @TypeConverter
-    fun toString(localDateTime: LocalDateTime): String = localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    fun toString(localDateTime: LocalDateTime): String =
+        localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
-    @TypeConverter
-    fun toDate(string: String) = LocalDateTime.parse(string)
+    @TypeConverter fun toDate(string: String) = LocalDateTime.parse(string)
 }

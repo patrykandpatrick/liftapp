@@ -74,9 +74,12 @@ fun ExerciseListScreen(
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(),
 ) {
-    val viewModel: ExerciseViewModel = hiltViewModel(
-        creationCallback = { factory: ExerciseViewModel.Factory -> factory.create(pickingMode, disabledExerciseIDs) }
-    )
+    val viewModel: ExerciseViewModel =
+        hiltViewModel(
+            creationCallback = { factory: ExerciseViewModel.Factory ->
+                factory.create(pickingMode, disabledExerciseIDs)
+            }
+        )
     val state by viewModel.state.collectAsState()
 
     viewModel.events.collectInComposable { event ->
@@ -114,8 +117,8 @@ private fun ExerciseListScreen(
                     text = stringResource(id = R.string.action_new_exercise),
                     icon = painterResource(id = R.drawable.ic_add),
                     onClick = { navigator.newExercise() },
-                    modifier = Modifier
-                        .thenIf(padding.calculateBottomPadding() == 0.dp) {
+                    modifier =
+                        Modifier.thenIf(padding.calculateBottomPadding() == 0.dp) {
                             padding(WindowInsets.navigationBars.asPaddingValues())
                         },
                 )
@@ -131,27 +134,27 @@ private fun ExerciseListScreen(
         },
         bottomBar = {
             if (state.pickingMode) {
-                BottomBar(
-                    navigator = navigator,
-                    onIntent = onIntent,
-                )
+                BottomBar(navigator = navigator, onIntent = onIntent)
             }
         },
         contentWindowInsets = WindowInsets.statusBars,
     ) { internalPadding ->
-
         LazyColumn(
-            modifier = Modifier
-                .thenIf(state.pickingMode) { nestedScroll(topAppBarScrollBehavior.nestedScrollConnection) },
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = PaddingValues(
-                top = internalPadding.calculateTopPadding(),
-                bottom = if (padding.calculateBottomPadding() == 0.dp) {
-                    WindowInsets.navigationBars.getBottom()
-                } else {
-                    0.dp
+            modifier =
+                Modifier.thenIf(state.pickingMode) {
+                    nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
                 },
-            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding =
+                PaddingValues(
+                    top = internalPadding.calculateTopPadding(),
+                    bottom =
+                        if (padding.calculateBottomPadding() == 0.dp) {
+                            WindowInsets.navigationBars.getBottom()
+                        } else {
+                            0.dp
+                        },
+                ),
         ) {
             if (state.query.isEmpty()) {
                 item {
@@ -162,12 +165,7 @@ private fun ExerciseListScreen(
                 }
             }
 
-            items(
-                items = state.exercises,
-                key = { it.key },
-                contentType = { it::class },
-            ) { item ->
-
+            items(items = state.exercises, key = { it.key }, contentType = { it::class }) { item ->
                 when (item) {
                     is ExercisesItem.Exercise -> {
                         ExerciseItem(
@@ -181,12 +179,14 @@ private fun ExerciseListScreen(
                     is ExercisesItem.Header -> {
                         ListSectionTitle(
                             title = item.title,
-                            modifier = Modifier
-                                .animateItem()
-                                .padding(
-                                    start = MaterialTheme.dimens.list.itemIconBackgroundSize +
-                                            ListItemDefaults.paddingValues.calculateStartPadding(),
-                                ),
+                            modifier =
+                                Modifier.animateItem()
+                                    .padding(
+                                        start =
+                                            MaterialTheme.dimens.list.itemIconBackgroundSize +
+                                                ListItemDefaults.paddingValues
+                                                    .calculateStartPadding()
+                                    ),
                         )
                     }
                 }
@@ -207,13 +207,13 @@ private fun LazyItemScope.ExerciseItem(
             title = item.name,
             description = item.muscles,
             iconPainter = painterResource(id = item.iconRes),
-            modifier = Modifier
-                .padding(horizontal = MaterialTheme.dimens.list.checkedItemHorizontalPadding)
-                .animateItem(),
+            modifier =
+                Modifier.padding(
+                        horizontal = MaterialTheme.dimens.list.checkedItemHorizontalPadding
+                    )
+                    .animateItem(),
             checked = item.checked,
-            onCheckedChange = { checked ->
-                onIntent(Intent.SetExerciseChecked(item.id, checked))
-            },
+            onCheckedChange = { checked -> onIntent(Intent.SetExerciseChecked(item.id, checked)) },
             enabled = item.enabled,
         )
     } else {
@@ -221,9 +221,7 @@ private fun LazyItemScope.ExerciseItem(
             title = item.name,
             description = item.muscles,
             iconPainter = painterResource(id = item.iconRes),
-            modifier = Modifier
-                .animateItem()
-                .clickable { navigator.exerciseDetails(item.id) },
+            modifier = Modifier.animateItem().clickable { navigator.exerciseDetails(item.id) },
             enabled = item.enabled,
             titleHighlightPosition = item.nameHighlightPosition,
         )
@@ -242,7 +240,8 @@ private fun TopBar(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(id = R.string.title_x_selected, state.selectedItemCount),
+                        text =
+                            stringResource(id = R.string.title_x_selected, state.selectedItemCount),
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Start,
                     )
@@ -262,34 +261,23 @@ private fun TopBar(
             SearchBar(
                 value = state.query,
                 onValueChange = { onIntent(Intent.SetQuery(it)) },
-                modifier = Modifier
-                    .padding(
-                        all = MaterialTheme.dimens.padding.contentHorizontal,
-                    ),
+                modifier = Modifier.padding(all = MaterialTheme.dimens.padding.contentHorizontal),
             )
         }
     } else {
         SearchBar(
             value = state.query,
             onValueChange = { onIntent(Intent.SetQuery(it)) },
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
+            modifier =
+                Modifier.statusBarsPadding()
+                    .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
         )
     }
 }
 
 @Composable
-private fun BottomBar(
-    navigator: ExerciseListNavigator,
-    onIntent: (Intent) -> Unit,
-) {
-    BottomAppBar(
-        contentPadding = PaddingValues(
-            start = 4.dp,
-            end = 16.dp,
-        ),
-    ) {
+private fun BottomBar(navigator: ExerciseListNavigator, onIntent: (Intent) -> Unit) {
+    BottomAppBar(contentPadding = PaddingValues(start = 4.dp, end = 16.dp)) {
         IconButton(onClick = { navigator.newExercise() }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_add),
@@ -310,11 +298,11 @@ private fun BottomBar(
 }
 
 @Composable
-private fun Controls(
-    groupBy: GroupBy,
-    onGroupBySelection: (GroupBy) -> Unit,
-) {
-    Column(modifier = Modifier.padding(vertical = MaterialTheme.dimens.padding.exercisesControlsVertical)) {
+private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
+    Column(
+        modifier =
+            Modifier.padding(vertical = MaterialTheme.dimens.padding.exercisesControlsVertical)
+    ) {
         Text(
             text = stringResource(id = R.string.generic_group_by),
             style = MaterialTheme.typography.bodyMedium,
@@ -324,9 +312,9 @@ private fun Controls(
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
-            modifier = Modifier
-                .horizontalScroll(state = rememberScrollState())
-                .padding(horizontal = MaterialTheme.dimens.padding.contentHorizontal),
+            modifier =
+                Modifier.horizontalScroll(state = rememberScrollState())
+                    .padding(horizontal = MaterialTheme.dimens.padding.contentHorizontal),
         ) {
             GroupBy.entries.forEach {
                 val selected = groupBy == it

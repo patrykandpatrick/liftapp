@@ -24,15 +24,21 @@ abstract class TextFieldState<T : Any>(
 ) : ValueProvider<T> {
     var textFieldValue by mutableStateOf(TextFieldValue(initialText))
         protected set
+
     protected val _errorMessage = mutableStateOf<String?>(null)
 
-    override val value: T get() = toValue(text) ?: defaultValue
+    override val value: T
+        get() = toValue(text) ?: defaultValue
+
     abstract val defaultValue: T
-    val text: String get() = textFieldValue.text
+    val text: String
+        get() = textFieldValue.text
+
     val errorMessage: String? by _errorMessage
     val hasError by derivedStateOf { _errorMessage.value != null }
 
-    val isValid: Boolean get() = validationResult is ValidationResult.Valid
+    val isValid: Boolean
+        get() = validationResult is ValidationResult.Valid
 
     private val validationResult
         get() = textValidator?.validate(value, text) ?: ValidationResult.Valid(value)
@@ -52,10 +58,7 @@ abstract class TextFieldState<T : Any>(
     fun updateValue(value: T) {
         val text = toText(value)
         updateText(
-            textFieldValue = textFieldValue.copy(
-                text = text,
-                selection = TextRange(text.length)
-            ),
+            textFieldValue = textFieldValue.copy(text = text, selection = TextRange(text.length)),
             fromUser = false,
         )
     }
@@ -72,10 +75,12 @@ abstract class TextFieldState<T : Any>(
     }
 
     fun updateErrorMessages() {
-        _errorMessage.value = if (enabled(this)) validationResult.errorMessages()?.first()?.toString() else null
+        _errorMessage.value =
+            if (enabled(this)) validationResult.errorMessages()?.first()?.toString() else null
     }
 
-    fun <T> getCondition(validatorClass: Class<T>): T? = textValidator?.getTextValidatorElement(validatorClass)
+    fun <T> getCondition(validatorClass: Class<T>): T? =
+        textValidator?.getTextValidatorElement(validatorClass)
 }
 
 @Stable
@@ -86,7 +91,15 @@ class StringTextFieldState(
     onValueChange: (String) -> Unit = {},
     veto: (String) -> Boolean = { false },
     enabled: TextFieldState<String>.() -> Boolean = { true },
-) : TextFieldState<String>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
+) :
+    TextFieldState<String>(
+        initialValue,
+        textValidator,
+        onTextChange,
+        onValueChange,
+        veto,
+        enabled,
+    ) {
     override val defaultValue: String = ""
 
     override fun toValue(text: String): String = text
@@ -135,7 +148,15 @@ class DoubleTextFieldState(
     onValueChange: (Double) -> Unit = {},
     veto: (Double) -> Boolean = { false },
     enabled: TextFieldState<Double>.() -> Boolean = { true },
-) : TextFieldState<Double>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
+) :
+    TextFieldState<Double>(
+        initialValue,
+        textValidator,
+        onTextChange,
+        onValueChange,
+        veto,
+        enabled,
+    ) {
     override val defaultValue: Double = 0.0
 
     override fun toValue(text: String): Double? = formatter.toDoubleOrNull(text.ifBlank { "0" })
@@ -143,7 +164,8 @@ class DoubleTextFieldState(
     override fun toText(value: Double): String = formatter.toInputDecimalNumber(value)
 }
 
-inline fun <reified R> TextFieldState<*>.getCondition(): R? = textValidator?.getTextValidatorElement(R::class.java)
+inline fun <reified R> TextFieldState<*>.getCondition(): R? =
+    textValidator?.getTextValidatorElement(R::class.java)
 
 fun TextFieldState<Double>.updateValueBy(value: Double) {
     updateValue(this.value + value)

@@ -9,9 +9,9 @@ import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.functionality.musclebitmap.provider.ResourceBitmapProvider
 import javax.inject.Inject
 
-class MuscleBitmapGeneratorImpl @Inject constructor(
-    private val resourceBitmapProvider: ResourceBitmapProvider,
-) : MuscleBitmapGenerator {
+class MuscleBitmapGeneratorImpl
+@Inject
+constructor(private val resourceBitmapProvider: ResourceBitmapProvider) : MuscleBitmapGenerator {
 
     private val borderPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -35,11 +35,12 @@ class MuscleBitmapGeneratorImpl @Inject constructor(
         val frontBitmapWidth = frontBitmap.width * 2
         val rearBitmapStartOffset = (frontBitmapWidth + config.bitmapMargin).toFloat()
 
-        val wholeBitmap = Bitmap.createBitmap(
-            frontBitmapWidth * 2 + config.bitmapMargin,
-            frontBitmap.height,
-            frontBitmap.config ?: Bitmap.Config.ARGB_8888,
-        )
+        val wholeBitmap =
+            Bitmap.createBitmap(
+                frontBitmapWidth * 2 + config.bitmapMargin,
+                frontBitmap.height,
+                frontBitmap.config ?: Bitmap.Config.ARGB_8888,
+            )
 
         wholeBitmap.prepareToDraw()
         val canvas = Canvas(wholeBitmap)
@@ -56,11 +57,7 @@ class MuscleBitmapGeneratorImpl @Inject constructor(
             canvas.drawBitmapOnBothSides(muscle, primaryPaint, rearBitmapStartOffset)
         }
 
-        canvas.drawBitmapOnBothSides(
-            bitmap = frontBitmap,
-            paint = borderPaint,
-            left = 0f,
-        )
+        canvas.drawBitmapOnBothSides(bitmap = frontBitmap, paint = borderPaint, left = 0f)
 
         canvas.drawBitmapOnBothSides(
             bitmap = rearBitmap,
@@ -99,11 +96,7 @@ class MuscleBitmapGeneratorImpl @Inject constructor(
         }
     }
 
-    private fun Canvas.drawBitmapOnBothSides(
-        bitmap: Bitmap,
-        paint: Paint,
-        left: Float,
-    ) {
+    private fun Canvas.drawBitmapOnBothSides(bitmap: Bitmap, paint: Paint, left: Float) {
         drawBitmap(bitmap, left, 0f, paint)
 
         val checkpoint = save()
@@ -117,33 +110,33 @@ class MuscleBitmapGeneratorImpl @Inject constructor(
 }
 
 internal val Muscle.isFrontMuscle: Boolean
-    get() = when (this) {
-        Muscle.Abs,
-        Muscle.Abductors,
-        Muscle.Adductors,
-        Muscle.Biceps,
-        Muscle.Chest,
-        Muscle.Forearms,
-        Muscle.Quadriceps,
-        Muscle.Shoulders,
-        -> true
+    get() =
+        when (this) {
+            Muscle.Abs,
+            Muscle.Abductors,
+            Muscle.Adductors,
+            Muscle.Biceps,
+            Muscle.Chest,
+            Muscle.Forearms,
+            Muscle.Quadriceps,
+            Muscle.Shoulders -> true
 
-        else -> false
-    }
+            else -> false
+        }
 
 internal val Muscle.isRearMuscle: Boolean
-    get() = when (this) {
-        Muscle.Adductors,
-        Muscle.Calves,
-        Muscle.Forearms,
-        Muscle.Glutes,
-        Muscle.Hamstrings,
-        Muscle.Lats,
-        Muscle.LowerBack,
-        Muscle.Traps,
-        Muscle.Shoulders,
-        Muscle.Triceps,
-        -> true
+    get() =
+        when (this) {
+            Muscle.Adductors,
+            Muscle.Calves,
+            Muscle.Forearms,
+            Muscle.Glutes,
+            Muscle.Hamstrings,
+            Muscle.Lats,
+            Muscle.LowerBack,
+            Muscle.Traps,
+            Muscle.Shoulders,
+            Muscle.Triceps -> true
 
-        else -> false
-    }
+            else -> false
+        }

@@ -17,50 +17,55 @@ class TestPreferenceRepository : PreferenceRepository {
 
     override val massUnit: Preference<MassUnit> = preference(MassUnit.Kilograms)
 
-    override val longDistanceUnit: Preference<LongDistanceUnit> = preference(LongDistanceUnit.Kilometer)
+    override val longDistanceUnit: Preference<LongDistanceUnit> =
+        preference(LongDistanceUnit.Kilometer)
 
-    override val mediumDistanceUnit: Flow<MediumDistanceUnit> = longDistanceUnit.get()
-        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingMediumDistanceUnit() }
+    override val mediumDistanceUnit: Flow<MediumDistanceUnit> =
+        longDistanceUnit.get().map { longDistanceUnit ->
+            longDistanceUnit.getCorrespondingMediumDistanceUnit()
+        }
 
-    override val shortDistanceUnit: Flow<ShortDistanceUnit> = longDistanceUnit.get()
-        .map { longDistanceUnit -> longDistanceUnit.getCorrespondingShortDistanceUnit() }
+    override val shortDistanceUnit: Flow<ShortDistanceUnit> =
+        longDistanceUnit.get().map { longDistanceUnit ->
+            longDistanceUnit.getCorrespondingShortDistanceUnit()
+        }
 
     override val hourFormat: Preference<HourFormat> = preference(HourFormat.H24)
 
-    override val is24H: Flow<Boolean> = hourFormat.get()
-        .map { hourFormat ->
+    override val is24H: Flow<Boolean> =
+        hourFormat.get().map { hourFormat ->
             when (hourFormat) {
                 HourFormat.H12 -> false
                 HourFormat.Auto,
-                HourFormat.H24,
-                -> true
+                HourFormat.H24 -> true
             }
         }
 
     override val goalInfoVisible: Preference<Boolean> = preference(true)
 
-    override val allPreferences: Flow<AllPreferences> = combine(
-        massUnit.get(),
-        longDistanceUnit.get(),
-        hourFormat.get(),
-    ) { massUnit, longDistanceUnit, hourFormat ->
-        AllPreferences(
-            massUnit = massUnit,
-            longDistanceUnit = longDistanceUnit,
-            mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
-            shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
-            hourFormat = hourFormat,
-        )
-    }
-
-    private fun <T> preference(defaultValue: T): Preference<T> = object : Preference<T> {
-
-        private val impl = MutableStateFlow(defaultValue)
-
-        override fun get(): Flow<T> = impl
-
-        override suspend fun set(value: T) {
-            impl.value = value
+    override val allPreferences: Flow<AllPreferences> =
+        combine(massUnit.get(), longDistanceUnit.get(), hourFormat.get()) {
+            massUnit,
+            longDistanceUnit,
+            hourFormat ->
+            AllPreferences(
+                massUnit = massUnit,
+                longDistanceUnit = longDistanceUnit,
+                mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
+                shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
+                hourFormat = hourFormat,
+            )
         }
-    }
+
+    private fun <T> preference(defaultValue: T): Preference<T> =
+        object : Preference<T> {
+
+            private val impl = MutableStateFlow(defaultValue)
+
+            override fun get(): Flow<T> = impl
+
+            override suspend fun set(value: T) {
+                impl.value = value
+            }
+        }
 }

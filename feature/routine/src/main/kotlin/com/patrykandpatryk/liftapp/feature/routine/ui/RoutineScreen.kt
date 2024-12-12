@@ -38,14 +38,11 @@ import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import kotlinx.coroutines.launch
 
 @Composable
-fun RoutineScreen(
-    routineId: Long,
-    navigator: RoutineNavigator,
-    modifier: Modifier = Modifier,
-) {
-    val viewModel: RoutineViewModel = hiltViewModel(
-        creationCallback = { factory: RoutineViewModel.Factory -> factory.create(routineId) },
-    )
+fun RoutineScreen(routineId: Long, navigator: RoutineNavigator, modifier: Modifier = Modifier) {
+    val viewModel: RoutineViewModel =
+        hiltViewModel(
+            creationCallback = { factory: RoutineViewModel.Factory -> factory.create(routineId) }
+        )
 
     val state by viewModel.state.collectAsState()
 
@@ -95,9 +92,7 @@ private fun RoutineScreen(
                 title = state.name,
                 onBackClick = navigator::back,
                 selectedTabIndex = pagerState.currentPage,
-                onTabSelected = { index ->
-                    scope.launch { pagerState.animateScrollToPage(index) }
-                },
+                onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
                 tabs = tabs.tabItems,
             )
         },
@@ -122,19 +117,15 @@ private fun RoutineScreen(
                 ExtendedFloatingActionButton(
                     text = stringResource(R.string.action_work_out),
                     icon = painterResource(R.drawable.ic_workout),
-                    onClick = { navigator.newWorkout()},
+                    onClick = { navigator.newWorkout() },
                     elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                 )
             }
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-
         HorizontalPager(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             state = pagerState,
             contentPadding = paddingValues,
         ) { index ->
@@ -153,7 +144,9 @@ private fun DeleteRoutineDialog(
     if (isVisible) {
         AlertDialog(
             onDismissRequest = onDismissRequest,
-            title = { Text(text = stringResource(id = R.string.generic_delete_something, routineName)) },
+            title = {
+                Text(text = stringResource(id = R.string.generic_delete_something, routineName))
+            },
             text = { Text(text = stringResource(id = R.string.routine_delete_message)) },
             dismissButton = {
                 TextButton(onClick = onDismissRequest) {

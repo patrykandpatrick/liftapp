@@ -5,5 +5,6 @@ import androidx.compose.runtime.Stable
 @Stable
 interface RoutineListNavigator {
     fun newRoutine()
+
     fun routine(routineID: Long)
 }

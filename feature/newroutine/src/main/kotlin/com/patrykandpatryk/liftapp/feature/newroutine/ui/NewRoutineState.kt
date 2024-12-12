@@ -42,7 +42,8 @@ class NewRoutineState(
     private val savedStateHandle: SavedStateHandle,
     private val getRoutine: suspend () -> RoutineWithExercises?,
     private val upsertRoutine: suspend (id: Long, name: String, exerciseIds: List<Long>) -> Unit,
-    private val getExerciseItems: suspend (exerciseIds: List<Long>) -> Flow<List<RoutineExerciseItem>>,
+    private val getExerciseItems:
+        suspend (exerciseIds: List<Long>) -> Flow<List<RoutineExerciseItem>>,
     private val textFieldStateManager: TextFieldStateManager,
     private val validateExercises: Validator<List<RoutineExerciseItem>>,
     private val coroutineScope: CoroutineScope,
@@ -55,16 +56,22 @@ class NewRoutineState(
 
     private val _showErrors: MutableState<Boolean> = mutableStateOf(false)
 
-    val name: TextFieldState<String> = textFieldStateManager
-        .stringTextField(validators = { nonEmpty() })
+    val name: TextFieldState<String> =
+        textFieldStateManager.stringTextField(validators = { nonEmpty() })
 
-    val exercises: StateFlow<Validatable<List<RoutineExerciseItem>>> = savedStateHandle
-        .getStateFlow(PICKED_EXERCISES_KEY, emptyList<Long>())
-        .flatMapLatest(getExerciseItems)
-        .map(validateExercises::invoke)
-        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000), validateExercises(emptyList()))
+    val exercises: StateFlow<Validatable<List<RoutineExerciseItem>>> =
+        savedStateHandle
+            .getStateFlow(PICKED_EXERCISES_KEY, emptyList<Long>())
+            .flatMapLatest(getExerciseItems)
+            .map(validateExercises::invoke)
+            .stateIn(
+                coroutineScope,
+                SharingStarted.WhileSubscribed(5_000),
+                validateExercises(emptyList()),
+            )
 
-    val exerciseIds: List<Long> get() = exercises.value.value.map { it.id }
+    val exerciseIds: List<Long>
+        get() = exercises.value.value.map { it.id }
 
     val isEdit: Boolean = routineID != ID_NOT_SET
 
@@ -85,7 +92,8 @@ class NewRoutineState(
         upsertRoutine: UpsertRoutineUseCase,
         getExerciseItems: GetRoutineExerciseItemsUseCase,
         textFieldStateManager: TextFieldStateManager,
-        validateExercises: NonEmptyCollectionValidator<RoutineExerciseItem, List<RoutineExerciseItem>>,
+        validateExercises:
+            NonEmptyCollectionValidator<RoutineExerciseItem, List<RoutineExerciseItem>>,
     ) : this(
         routineID = routineID,
         savedStateHandle = savedStateHandle,
@@ -101,7 +109,8 @@ class NewRoutineState(
         if (hasSavedState.not() && routineID != ID_NOT_SET) {
             loadUpdateState()
         }
-        savedStateHandle.getStateFlow<List<Long>?>(Constants.Keys.PICKED_EXERCISE_IDS, null)
+        savedStateHandle
+            .getStateFlow<List<Long>?>(Constants.Keys.PICKED_EXERCISE_IDS, null)
             .onEach { ids -> if (ids != null) addPickedExercises(ids) }
             .launchIn(coroutineScope)
     }
@@ -120,17 +129,12 @@ class NewRoutineState(
 
     fun addPickedExercises(exerciseIds: List<Long>) {
         savedStateHandle.update(PICKED_EXERCISES_KEY) { ids: List<Long>? ->
-            ids
-                ?.plus(exerciseIds)
-                ?.distinct()
-                ?: exerciseIds
+            ids?.plus(exerciseIds)?.distinct() ?: exerciseIds
         }
     }
 
     fun removePickedExercise(exerciseId: Long) {
-        savedStateHandle.update(PICKED_EXERCISES_KEY) { ids: List<Long>? ->
-            ids?.minus(exerciseId)
-        }
+        savedStateHandle.update(PICKED_EXERCISES_KEY) { ids: List<Long>? -> ids?.minus(exerciseId) }
     }
 
     fun save() {

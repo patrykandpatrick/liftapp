@@ -53,7 +53,8 @@ fun TimePicker(
     val hourState = rememberWheelPickerState(initialSelectedIndex = hour ?: 0)
     val minuteState = rememberWheelPickerState(initialSelectedIndex = minute ?: 0)
     val secondState = rememberWheelPickerState(initialSelectedIndex = second ?: 0)
-    val timeOfDayState = rememberWheelPickerState(initialSelectedIndex = timeOfDays.indexOf(timeOfDay))
+    val timeOfDayState =
+        rememberWheelPickerState(initialSelectedIndex = timeOfDays.indexOf(timeOfDay))
     val onTimeChangeState = rememberUpdatedState(onTimeChange)
 
     val onItemSelected = remember {
@@ -61,11 +62,14 @@ fun TimePicker(
             hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
             onTimeChangeState.value(
                 calculateDuration(
-                    hour = hours[hourState.currentItem - if (is24h || timeOfDay == TimeOfDay.AM) 0 else 12],
+                    hour =
+                        hours[
+                            hourState.currentItem -
+                                if (is24h || timeOfDay == TimeOfDay.AM) 0 else 12],
                     minute = minutes[minuteState.currentItem],
                     second = seconds[secondState.currentItem],
                     is24h = is24h,
-                    timeOfDay = timeOfDays[timeOfDayState.currentItem]
+                    timeOfDay = timeOfDays[timeOfDayState.currentItem],
                 )
             )
         }
@@ -73,19 +77,19 @@ fun TimePicker(
 
     Box(modifier = modifier) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(8.dp),
-                )
-                .background(
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .4f),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(16.dp)
-                .align(Alignment.Center)
+            modifier =
+                Modifier.fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(8.dp),
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .4f),
+                        shape = RoundedCornerShape(8.dp),
+                    )
+                    .padding(16.dp)
+                    .align(Alignment.Center)
         )
 
         Row(
@@ -94,13 +98,8 @@ fun TimePicker(
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (hour != null) {
-                WheelPicker(
-                    state = hourState,
-                    onItemSelected = onItemSelected,
-                ) {
-                    hours.forEach { value ->
-                        WheelPickerItem(timeFormat.format(value))
-                    }
+                WheelPicker(state = hourState, onItemSelected = onItemSelected) {
+                    hours.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
                 }
             }
 
@@ -113,13 +112,8 @@ fun TimePicker(
             }
 
             if (minute != null) {
-                WheelPicker(
-                    state = minuteState,
-                    onItemSelected = onItemSelected,
-                ) {
-                    minutes.forEach { value ->
-                        WheelPickerItem(timeFormat.format(value))
-                    }
+                WheelPicker(state = minuteState, onItemSelected = onItemSelected) {
+                    minutes.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
                 }
             }
 
@@ -132,26 +126,19 @@ fun TimePicker(
             }
 
             if (second != null) {
-                WheelPicker(
-                    state = secondState,
-                    onItemSelected = onItemSelected,
-                ) {
-                    seconds.forEach { index ->
-                        WheelPickerItem(timeFormat.format(index))
-                    }
+                WheelPicker(state = secondState, onItemSelected = onItemSelected) {
+                    seconds.forEach { index -> WheelPickerItem(timeFormat.format(index)) }
                 }
             }
 
             if (hour != null && !is24h) {
-                WheelPicker(
-                    state = timeOfDayState,
-                    onItemSelected = onItemSelected,
-                ) {
+                WheelPicker(state = timeOfDayState, onItemSelected = onItemSelected) {
                     TimeOfDay.entries.forEach { timeOfDay ->
-                        val text = when (timeOfDay) {
-                            TimeOfDay.AM -> stringResource(R.string.picker_time_am)
-                            TimeOfDay.PM -> stringResource(R.string.picker_time_pm)
-                        }
+                        val text =
+                            when (timeOfDay) {
+                                TimeOfDay.AM -> stringResource(R.string.picker_time_am)
+                                TimeOfDay.PM -> stringResource(R.string.picker_time_pm)
+                            }
                         WheelPickerItem(value = text)
                     }
                 }
@@ -193,7 +180,6 @@ private fun TimePickerPreview(is24h: Boolean) {
                         onTimeChange = { duration.value = it },
                     )
                 }
-
             }
         }
     }

@@ -20,24 +20,19 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 
 object BottomAppBar {
     @Composable
-    fun Save(
-        onClick: () -> Unit,
-        modifier: Modifier = Modifier,
-    ) {
+    fun Save(onClick: () -> Unit, modifier: Modifier = Modifier) {
         Box(
-            modifier = modifier
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(
-                    horizontal = LocalDimens.current.padding.contentHorizontal,
-                    vertical = LocalDimens.current.padding.itemVertical,
-                ),
+            modifier =
+                modifier
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(
+                        horizontal = LocalDimens.current.padding.contentHorizontal,
+                        vertical = LocalDimens.current.padding.itemVertical,
+                    )
         ) {
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onClick,
-            ) {
+            Button(modifier = Modifier.fillMaxWidth(), onClick = onClick) {
                 Icon(painterResource(id = R.drawable.ic_save), null)
                 Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
                 Text(stringResource(id = R.string.action_save))

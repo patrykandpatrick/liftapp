@@ -24,17 +24,16 @@ sealed class ScreenState {
         imagePath: String? = this.imagePath,
         exercises: List<RoutineExerciseItem> = this.exercises,
         muscles: List<MuscleModel> = this.muscles,
-    ): Populated = Populated(
-        name = name,
-        showDeleteDialog = showDeleteDialog,
-        imagePath = imagePath,
-        exercises = exercises,
-        muscles = muscles,
-    )
+    ): Populated =
+        Populated(
+            name = name,
+            showDeleteDialog = showDeleteDialog,
+            imagePath = imagePath,
+            exercises = exercises,
+            muscles = muscles,
+        )
 
-    @Parcelize
-    @Immutable
-    object Loading : ScreenState(), Parcelable
+    @Parcelize @Immutable object Loading : ScreenState(), Parcelable
 
     @Parcelize
     @Immutable

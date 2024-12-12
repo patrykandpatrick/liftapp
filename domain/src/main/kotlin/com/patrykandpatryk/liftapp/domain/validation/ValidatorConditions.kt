@@ -6,14 +6,17 @@ import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.value.ValueProvider
 
-data class NonEmptyTextValidationElement(val stringProvider: StringProvider) : TextValidator.TextValidationElement<String> {
-    override fun validate(value: String): TextValidator.TextValidationElement.Result = if (value.isBlank()) {
-        TextValidator.TextValidationElement.Result.Invalid(stringProvider.fieldCannotBeEmpty())
-    } else {
-        TextValidator.TextValidationElement.Result.Valid
-    }
+data class NonEmptyTextValidationElement(val stringProvider: StringProvider) :
+    TextValidator.TextValidationElement<String> {
+    override fun validate(value: String): TextValidator.TextValidationElement.Result =
+        if (value.isBlank()) {
+            TextValidator.TextValidationElement.Result.Invalid(stringProvider.fieldCannotBeEmpty())
+        } else {
+            TextValidator.TextValidationElement.Result.Valid
+        }
 
-    override fun validateString(value: String): TextValidator.TextValidationElement.Result = validate(value)
+    override fun validateString(value: String): TextValidator.TextValidationElement.Result =
+        validate(value)
 }
 
 data class RequiredLengthTextValidationElement(
@@ -43,7 +46,8 @@ data class RequiredLengthTextValidationElement(
         }
     }
 
-    override fun validateString(value: String): TextValidator.TextValidationElement.Result = validate(value)
+    override fun validateString(value: String): TextValidator.TextValidationElement.Result =
+        validate(value)
 }
 
 data class ValueRangeTextValidationElement(
@@ -59,9 +63,7 @@ data class ValueRangeTextValidationElement(
             minValue != null && value.toDouble() <= minValue -> {
                 TextValidator.TextValidationElement.Result.Invalid(
                     stringProvider.valueTooSmall(
-                        formatter.formatNumber(
-                            minValue, format = Formatter.NumberFormat.Decimal
-                        )
+                        formatter.formatNumber(minValue, format = Formatter.NumberFormat.Decimal)
                     )
                 )
             }
@@ -69,9 +71,7 @@ data class ValueRangeTextValidationElement(
             maxValue != null && value.toDouble() >= maxValue -> {
                 TextValidator.TextValidationElement.Result.Invalid(
                     stringProvider.valueTooBig(
-                        formatter.formatNumber(
-                            maxValue, format = Formatter.NumberFormat.Decimal
-                        )
+                        formatter.formatNumber(maxValue, format = Formatter.NumberFormat.Decimal)
                     )
                 )
             }
@@ -97,7 +97,8 @@ data class ValidNumberTextValidationElement(
             TextValidator.TextValidationElement.Result.Invalid(stringProvider.valueNotValidNumber())
         }
 
-    override fun validateString(value: String): TextValidator.TextValidationElement.Result = validate(value)
+    override fun validateString(value: String): TextValidator.TextValidationElement.Result =
+        validate(value)
 }
 
 class IsMultiplyOf(
@@ -106,14 +107,17 @@ class IsMultiplyOf(
     private val fields: Array<out ValueProvider<Number>>,
 ) : TextValidator.TextValidationElement<Number> {
     override fun validate(value: Number): TextValidator.TextValidationElement.Result {
-        var expectedValue = fields.fold(1.0) { acc, valueProvider -> acc * valueProvider.value.toDouble() }
+        var expectedValue =
+            fields.fold(1.0) { acc, valueProvider -> acc * valueProvider.value.toDouble() }
         expectedValue = formatter.round(expectedValue)
         return if (formatter.round(value.toDouble()) == expectedValue) {
             TextValidator.TextValidationElement.Result.Valid
         } else {
             TextValidator.TextValidationElement.Result.Invalid(
                 stringProvider.doesNotEqual(
-                    fields.joinToString(separator = " × ") { formatter.formatNumber(it.value, format = Formatter.NumberFormat.Decimal) },
+                    fields.joinToString(separator = " × ") {
+                        formatter.formatNumber(it.value, format = Formatter.NumberFormat.Decimal)
+                    },
                     formatter.formatNumber(value, format = Formatter.NumberFormat.Decimal),
                 )
             )
@@ -130,7 +134,8 @@ class IsHigherOrEqualTo(
     private val fields: Array<out ValueProvider<Number>>,
 ) : TextValidator.TextValidationElement<Number> {
     override fun validate(value: Number): TextValidator.TextValidationElement.Result {
-        val expectedValue = fields.fold(0.0) { acc, valueProvider -> acc + valueProvider.value.toDouble() }
+        val expectedValue =
+            fields.fold(0.0) { acc, valueProvider -> acc + valueProvider.value.toDouble() }
         return if (value.toDouble() >= expectedValue) {
             TextValidator.TextValidationElement.Result.Valid
         } else {
@@ -145,4 +150,3 @@ class IsHigherOrEqualTo(
     override fun validateString(value: String): TextValidator.TextValidationElement.Result =
         validate(value.toDoubleOrZero())
 }
-

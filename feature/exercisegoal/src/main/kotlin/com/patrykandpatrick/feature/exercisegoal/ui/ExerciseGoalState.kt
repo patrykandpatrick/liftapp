@@ -17,6 +17,8 @@ import com.patrykandpatryk.liftapp.domain.validation.valueInRange
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +29,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 class ExerciseGoalState(
@@ -45,43 +45,54 @@ class ExerciseGoalState(
 
     val goalSaved: StateFlow<Boolean> = _goalSaved
 
-    val goalInfoVisible: StateFlow<Boolean?> = goalInfoVisiblePreference.get()
-        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), null)
+    val goalInfoVisible: StateFlow<Boolean?> =
+        goalInfoVisiblePreference
+            .get()
+            .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), null)
 
-    val exerciseName: StateFlow<String> = exercise
-        .filterNotNull()
-        .map { it.displayName }
-        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), "")
+    val exerciseName: StateFlow<String> =
+        exercise
+            .filterNotNull()
+            .map { it.displayName }
+            .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), "")
 
-    val minReps = textFieldStateManager.intTextField(
-        validators = {
-            validNumberHigherThanZero()
-            valueInRange(Goal.RepRange)
-        }
-    )
+    val minReps =
+        textFieldStateManager.intTextField(
+            validators = {
+                validNumberHigherThanZero()
+                valueInRange(Goal.RepRange)
+            }
+        )
 
-    val maxReps = textFieldStateManager.intTextField(
-        validators = {
-            validNumberHigherThanZero()
-            valueInRange(Goal.RepRange)
-            isHigherOrEqualTo(minReps)
-        }
-    )
+    val maxReps =
+        textFieldStateManager.intTextField(
+            validators = {
+                validNumberHigherThanZero()
+                valueInRange(Goal.RepRange)
+                isHigherOrEqualTo(minReps)
+            }
+        )
 
-    val sets = textFieldStateManager.intTextField(
-        validators = {
-            validNumberHigherThanZero()
-            valueInRange(Goal.SetRange)
-        }
-    )
+    val sets =
+        textFieldStateManager.intTextField(
+            validators = {
+                validNumberHigherThanZero()
+                valueInRange(Goal.SetRange)
+            }
+        )
 
-    val restTime: StateFlow<Duration> = savedStateHandle.getStateFlow(REST_TIME_KEY, 0L)
-        .map { time -> time.milliseconds }
-        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), Duration.ZERO)
+    val restTime: StateFlow<Duration> =
+        savedStateHandle
+            .getStateFlow(REST_TIME_KEY, 0L)
+            .map { time -> time.milliseconds }
+            .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), Duration.ZERO)
 
-    val formattedRestTime: StateFlow<String> = restTime
-        .map { restTime -> if (restTime.inWholeMilliseconds == 0L) "" else getFormattedDuration(restTime) }
-        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), "")
+    val formattedRestTime: StateFlow<String> =
+        restTime
+            .map { restTime ->
+                if (restTime.inWholeMilliseconds == 0L) "" else getFormattedDuration(restTime)
+            }
+            .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), "")
 
     @AssistedInject
     constructor(
@@ -99,7 +110,9 @@ class ExerciseGoalState(
         exercise = getExercise(exerciseID),
         goal = getGoal(routineID, exerciseID),
         saveGoal = { saveGoal(routineID, exerciseID, it) },
-        getFormattedDuration = { formatter.getFormattedDuration(it, Formatter.DateFormat.MinutesSeconds) },
+        getFormattedDuration = {
+            formatter.getFormattedDuration(it, Formatter.DateFormat.MinutesSeconds)
+        },
         savedStateHandle = savedStateHandle,
         textFieldStateManager = textFieldStateManager,
         goalInfoVisiblePreference = preferenceRepository.goalInfoVisible,

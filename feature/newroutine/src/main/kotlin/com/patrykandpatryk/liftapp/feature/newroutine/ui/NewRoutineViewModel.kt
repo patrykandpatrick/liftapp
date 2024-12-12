@@ -8,7 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 
 @HiltViewModel(assistedFactory = NewRoutineViewModel.Factory::class)
-class NewRoutineViewModel @AssistedInject constructor(
+class NewRoutineViewModel
+@AssistedInject
+constructor(
     @Assisted routineID: Long,
     stateFactory: NewRoutineState.Factory,
     viewModelScope: CoroutineScope,

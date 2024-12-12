@@ -8,13 +8,14 @@ import javax.inject.Inject
 
 class ExerciseToStateMapper @Inject constructor() : Mapper<Exercise, NewExerciseState> {
 
-    override suspend fun map(input: Exercise): NewExerciseState = NewExerciseState.Valid(
-        id = input.id,
-        name = input.name.toValid(),
-        displayName = input.displayName,
-        type = input.exerciseType,
-        mainMuscles = input.mainMuscles.toValid(),
-        secondaryMuscles = input.secondaryMuscles,
-        tertiaryMuscles = input.tertiaryMuscles,
-    )
+    override suspend fun map(input: Exercise): NewExerciseState =
+        NewExerciseState.Valid(
+            id = input.id,
+            name = input.name.toValid(),
+            displayName = input.displayName,
+            type = input.exerciseType,
+            mainMuscles = input.mainMuscles.toValid(),
+            secondaryMuscles = input.secondaryMuscles,
+            tertiaryMuscles = input.tertiaryMuscles,
+        )
 }
