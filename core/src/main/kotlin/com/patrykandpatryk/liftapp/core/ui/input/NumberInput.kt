@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -47,6 +49,8 @@ fun NumberInput(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isError: Boolean = false,
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
+
     OutlinedTextField(
         modifier = modifier
             .height(IntrinsicSize.Max)
@@ -66,7 +70,10 @@ fun NumberInput(
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    onLongClick = { onMinusClick(true) },
+                    onLongClick = {
+                        onMinusClick(true)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    },
                     onClick = { onMinusClick(false) },
                     repeatLongClicks = true,
                 ) {
@@ -112,7 +119,10 @@ fun NumberInput(
 
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    onLongClick = { onPlusClick(true) },
+                    onLongClick = {
+                        onPlusClick(true)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    },
                     onClick = { onPlusClick(false) },
                     repeatLongClicks = true,
                 ) {
