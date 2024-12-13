@@ -10,67 +10,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import com.patrykandpatryk.liftapp.core.graphics.addSinLine
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import kotlin.math.roundToInt
-import kotlin.math.sin
 
-private fun Modifier.sinDivider(
-    color: Color,
-    topBackgroundColor: Color = Color.Transparent,
-    bottomBackgroundColor: Color = Color.Transparent,
-) =
+private fun Modifier.sinDivider(color: Color) =
     then(
         Modifier.composed {
             val dimens = LocalDimens.current
             val separator = dimens.divider
             val path = remember { Path() }
-            val topPath =
-                remember(topBackgroundColor == Color.Transparent) {
-                    if (topBackgroundColor == Color.Transparent) null else Path()
-                }
-            val bottomPath =
-                remember(bottomBackgroundColor == Color.Transparent) {
-                    if (bottomBackgroundColor == Color.Transparent) null else Path()
-                }
 
             drawWithCache {
                 onDrawBehind {
-                    for (x in 0 until size.width.roundToInt()) {
-                        val y =
-                            sin(x.toFloat() / separator.sinPeriodLength.toPx()) *
-                                (separator.sinHeight.toPx() / 2 - 2) + size.height -
-                                separator.sinHeight.toPx() / 2
-                        if (x == 0) {
-                            path.moveTo(0f, y)
-                        } else {
-                            path.lineTo(x.toFloat(), y)
-                        }
-                    }
-                    drawPath(path, color, style = Stroke(dimens.strokeWidth.toPx()))
-
-                    topPath?.apply {
-                        addPath(path)
-                        lineTo(size.width, 0f)
-                        lineTo(0f, 0f)
-                        close()
-                        drawPath(this, topBackgroundColor)
-                        rewind()
-                    }
-
-                    bottomPath?.apply {
-                        addPath(path)
-                        lineTo(size.width, size.height)
-                        lineTo(0f, size.height)
-                        close()
-                        drawPath(this, bottomBackgroundColor)
-                        rewind()
-                    }
-
+                    val strokeWidth = dimens.strokeWidth.roundToPx()
+                    path.addSinLine(
+                        start = -strokeWidth / 2,
+                        end = size.width.roundToInt() + strokeWidth / 2,
+                        sinPeriodLength = separator.sinPeriodLength.roundToPx(),
+                        sinHeight = size.height.roundToInt() - dimens.strokeWidth.roundToPx(),
+                    )
+                    path.translate(Offset(0f, strokeWidth / 2f))
+                    drawPath(path, color, style = Stroke(strokeWidth.toFloat()))
                     path.rewind()
                 }
             }
@@ -81,15 +48,10 @@ private fun Modifier.sinDivider(
 fun SinHorizontalDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline,
-    topBackgroundColor: Color = Color.Transparent,
-    bottomBackgroundColor: Color = Color.Transparent,
 ) {
     Spacer(
         modifier =
-            modifier
-                .height(LocalDimens.current.divider.sinHeight)
-                .fillMaxWidth()
-                .sinDivider(color, topBackgroundColor, bottomBackgroundColor)
+            modifier.height(LocalDimens.current.divider.sinHeight).fillMaxWidth().sinDivider(color)
     )
 }
 

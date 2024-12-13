@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -18,7 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -33,6 +36,7 @@ import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
+import com.patrykandpatryk.liftapp.core.graphics.rememberTopSinShape
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.ui.AppBars
@@ -93,11 +97,10 @@ fun WorkoutScreen(
                 state = backdropState,
                 modifier = Modifier.padding(paddingValues).imePadding(),
             ) {
-                Column(modifier = Modifier.nestedScroll(backdropState.nestedScrollConnection)) {
-                    SinHorizontalDivider(
-                        bottomBackgroundColor = MaterialTheme.colorScheme.background
-                    )
-
+                Box(
+                    contentAlignment = Alignment.TopCenter,
+                    modifier = Modifier.nestedScroll(backdropState.nestedScrollConnection),
+                ) {
                     ScrollSyncEffect(wheelPickerState, pagerState)
 
                     LaunchedEffect(workout.firstIncompleteExerciseIndex) {
@@ -114,7 +117,9 @@ fun WorkoutScreen(
                         state = pagerState,
                         key = { workout.exercises[it].id },
                         modifier =
-                            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+                            Modifier.fillMaxSize()
+                                .clip(rememberTopSinShape())
+                                .background(MaterialTheme.colorScheme.background),
                     ) { page ->
                         Page(
                             exercise = workout.exercises[page],
@@ -123,6 +128,8 @@ fun WorkoutScreen(
                             onSaveSet = viewModel::saveSet,
                         )
                     }
+
+                    SinHorizontalDivider()
                 }
             }
         }
