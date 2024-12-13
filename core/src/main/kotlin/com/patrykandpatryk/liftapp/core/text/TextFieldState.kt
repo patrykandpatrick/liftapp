@@ -118,7 +118,7 @@ class IntTextFieldState(
 ) : TextFieldState<Int>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
     override val defaultValue: Int = 0
 
-    override fun toValue(text: String): Int? = text.ifBlank { "0" }.toIntOrNull()
+    override fun toValue(text: String) = if (text.isNotBlank()) text.toIntOrNull() else 0
 
     override fun toText(value: Int): String = value.toString()
 }
@@ -134,7 +134,7 @@ class LongTextFieldState(
 ) : TextFieldState<Long>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
     override val defaultValue: Long = 0
 
-    override fun toValue(text: String): Long? = text.ifBlank { "0" }.toLongOrNull()
+    override fun toValue(text: String) = if (text.isNotBlank()) text.toLongOrNull() else 0L
 
     override fun toText(value: Long): String = value.toString()
 }
@@ -159,7 +159,8 @@ class DoubleTextFieldState(
     ) {
     override val defaultValue: Double = 0.0
 
-    override fun toValue(text: String): Double? = formatter.toDoubleOrNull(text.ifBlank { "0" })
+    override fun toValue(text: String) =
+        if (text.isNotBlank()) formatter.toDoubleOrNull(text) else 0.0
 
     override fun toText(value: Double): String = formatter.toInputDecimalNumber(value)
 }
