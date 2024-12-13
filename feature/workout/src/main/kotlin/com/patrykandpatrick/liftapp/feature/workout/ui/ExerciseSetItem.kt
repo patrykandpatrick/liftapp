@@ -2,12 +2,8 @@ package com.patrykandpatrick.liftapp.feature.workout.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -33,12 +29,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.animation.visibilityChangeSpring
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.Alpha
@@ -78,7 +72,7 @@ internal fun SetItem(
                     val rotation =
                         animateFloatAsState(
                             targetValue = if (expanded) 180f else 0f,
-                            animationSpec = visibilityChangeSpring(),
+                            animationSpec = tween(),
                             label = "Expand rotation",
                         )
                     Icon(
@@ -99,12 +93,6 @@ internal fun SetItem(
 
         AnimatedVisibility(
             visible = expanded,
-            enter =
-                fadeIn(visibilityChangeSpring()) +
-                    expandVertically(visibilityChangeSpring(IntSize.VisibilityThreshold)),
-            exit =
-                fadeOut(visibilityChangeSpring()) +
-                    shrinkVertically(visibilityChangeSpring(IntSize.VisibilityThreshold)),
             modifier = Modifier.padding(start = 72.dp, end = 16.dp),
         ) {
             Column(

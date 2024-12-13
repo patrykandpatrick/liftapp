@@ -120,7 +120,6 @@ fun WorkoutScreen(
                             exercise = workout.exercises[page],
                             onAddSetClick = viewModel::increaseSetCount,
                             onRemoveSetClick = viewModel::decreaseSetCount,
-                            onClick = { _, _, _ -> /* TODO */ },
                             onSaveSet = viewModel::saveSet,
                         )
                     }
@@ -135,7 +134,6 @@ private fun Page(
     exercise: EditableWorkout.Exercise,
     onAddSetClick: (EditableWorkout.Exercise) -> Unit,
     onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
-    onClick: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
     onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
