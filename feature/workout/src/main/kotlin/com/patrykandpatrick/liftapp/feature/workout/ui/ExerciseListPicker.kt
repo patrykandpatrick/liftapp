@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,7 +31,6 @@ import com.patrykandpatryk.liftapp.core.ui.BackdropState
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPicker
 import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerState
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
@@ -69,22 +67,14 @@ fun ExerciseListPicker(
         val density = LocalDensity.current.density
 
         workout.exercises.forEachIndexed { index, exercise ->
-            val positionOffset = remember { mutableFloatStateOf(1f) }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement =
                     Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
                 modifier =
-                    Modifier.onPositionChange { offset, viewPortOffset ->
-                            positionOffset.floatValue = abs(offset)
-                        }
-                        .graphicsLayer {
-                            alpha =
-                                if (positionOffset.floatValue == 0f || !backdropState.isOpened) {
-                                    1f
-                                } else {
-                                    backdropState.offsetFraction
-                                }
+                    Modifier.graphicsLayer {
+                            if (index == wheelPickerState.currentItem) return@graphicsLayer
+                            alpha = backdropState.offsetFraction
                         }
                         .fillMaxWidth()
                         .padding(

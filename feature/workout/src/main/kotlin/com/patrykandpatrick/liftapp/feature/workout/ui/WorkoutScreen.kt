@@ -22,7 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -97,10 +96,7 @@ fun WorkoutScreen(
                 state = backdropState,
                 modifier = Modifier.padding(paddingValues).imePadding(),
             ) {
-                Box(
-                    contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier.nestedScroll(backdropState.nestedScrollConnection),
-                ) {
+                Box(contentAlignment = Alignment.TopCenter) {
                     ScrollSyncEffect(wheelPickerState, pagerState)
 
                     LaunchedEffect(workout.firstIncompleteExerciseIndex) {

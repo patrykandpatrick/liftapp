@@ -27,10 +27,8 @@ private const val KEY_GOAL_INFO_VISIBLE = "goal_info_visible"
 
 class PreferenceRepositoryImpl
 @Inject
-constructor(
-    override val preferencesDataStore: DataStore<Preferences>,
-    private val application: Application,
-) : PreferenceRepository, PreferenceManager {
+constructor(override val dataStore: DataStore<Preferences>, private val application: Application) :
+    PreferenceRepository, PreferenceManager {
 
     override val massUnit = enumPreference(KEY_MASS_UNIT, MassUnit.Kilograms)
 
@@ -62,15 +60,15 @@ constructor(
             }
 
     override val allPreferences =
-        preferencesDataStore.data.map { preferences ->
-            val longDistanceUnit = longDistanceUnit.getFromPreferences(preferences = preferences)
+        dataStore.data.map { preferences ->
+            val longDistanceUnit = longDistanceUnit.get(preferences)
 
             AllPreferences(
-                massUnit = massUnit.getFromPreferences(preferences = preferences),
+                massUnit = massUnit.get(preferences),
                 longDistanceUnit = longDistanceUnit,
                 mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
                 shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
-                hourFormat = hourFormat.getFromPreferences(preferences = preferences),
+                hourFormat = hourFormat.get(preferences),
             )
         }
 }
@@ -78,7 +76,7 @@ constructor(
 private inline fun <reified E : Enum<E>> PreferenceManager.enumPreference(
     key: String,
     defaultValue: E,
-): PreferenceImpl<String, E> =
+): PreferenceImpl<E, String> =
     preference(
         stringPreferencesKey(key),
         defaultValue = defaultValue,

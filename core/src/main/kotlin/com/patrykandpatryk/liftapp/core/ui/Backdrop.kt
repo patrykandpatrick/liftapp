@@ -1,10 +1,13 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.splineBasedDecay
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -16,56 +19,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
-import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 enum class BackdropValue {
-    Opened,
+    Open,
     Closed,
 }
 
 @Immutable
-data class BackdropState(
-    val initialState: BackdropValue = BackdropValue.Closed,
-    private val density: Density,
-) {
-    internal val anchoredDraggableState =
-        AnchoredDraggableState<BackdropValue>(
-            initialValue = BackdropValue.Closed,
-            positionalThreshold = { distance -> distance / 2 },
-            velocityThreshold = { with(density) { 200.dp.toPx() } },
-            snapAnimationSpec = spring(),
-            decayAnimationSpec = splineBasedDecay(density),
-        )
+data class BackdropState(val initialValue: BackdropValue) {
+    internal val anchoredDraggableState = AnchoredDraggableState(initialValue)
 
-    val nestedScrollConnection: NestedScrollConnection =
-        BackdropNestedScrollConnection(anchoredDraggableState)
-
-    val isOpened: Boolean by derivedStateOf {
-        anchoredDraggableState.currentValue == BackdropValue.Opened
-    }
-
-    val offset: Float by derivedStateOf {
-        anchoredDraggableState.offset - anchoredDraggableState.anchors.minAnchor()
+    internal val isNotClosed: Boolean by derivedStateOf {
+        anchoredDraggableState.offset !=
+            anchoredDraggableState.anchors.positionOf(BackdropValue.Closed)
     }
 
     val offsetFraction: Float by derivedStateOf {
-        offset /
-            (anchoredDraggableState.anchors.maxAnchor() -
-                anchoredDraggableState.anchors.minAnchor())
+        (anchoredDraggableState.offset -
+            anchoredDraggableState.anchors.positionOf(BackdropValue.Closed)) /
+            (anchoredDraggableState.anchors.positionOf(BackdropValue.Open) -
+                anchoredDraggableState.anchors.positionOf(BackdropValue.Closed))
     }
 }
 
 @Composable
-fun rememberBackdropState(initialState: BackdropValue = BackdropValue.Closed): BackdropState {
-    val density = LocalDensity.current
-    return remember(initialState, density) { BackdropState(initialState, density) }
-}
+fun rememberBackdropState(initialState: BackdropValue = BackdropValue.Closed) =
+    remember(initialState) { BackdropState(initialState) }
 
 @Composable
 fun Backdrop(
@@ -76,10 +60,17 @@ fun Backdrop(
     state: BackdropState = rememberBackdropState(),
     content: @Composable () -> Unit,
 ) {
+    val flingBehavior =
+        AnchoredDraggableDefaults.flingBehavior(
+            state = state.anchoredDraggableState,
+            animationSpec = tween(easing = LinearOutSlowInEasing),
+        )
+    val scrollConnection =
+        remember(state, flingBehavior) { BackdropNestedScrollConnection(state, flingBehavior) }
     Layout(
         content = {
             Box { backContent() }
-            Box { content() }
+            Box(Modifier.nestedScroll(scrollConnection)) { content() }
         },
         measurePolicy = { measurables, constraints ->
             val backdrop = measurables[0].measure(constraints)
@@ -96,8 +87,8 @@ fun Backdrop(
 
             state.anchoredDraggableState.updateAnchors(
                 DraggableAnchors {
+                    BackdropValue.Open at backdropOpenLength
                     BackdropValue.Closed at backPeekHeight.toPx()
-                    BackdropValue.Opened at backdropOpenLength
                 }
             )
             layout(constraints.maxWidth, constraints.maxHeight) {
@@ -105,25 +96,29 @@ fun Backdrop(
                 front.place(0, state.anchoredDraggableState.offset.roundToInt())
             }
         },
-        modifier = modifier.anchoredDraggable(state.anchoredDraggableState, Orientation.Vertical),
+        modifier =
+            modifier.anchoredDraggable(
+                state = state.anchoredDraggableState,
+                orientation = Orientation.Vertical,
+                flingBehavior = flingBehavior,
+            ),
     )
 }
 
 private class BackdropNestedScrollConnection(
-    private val anchoredDraggableState: AnchoredDraggableState<BackdropValue>
+    private val state: BackdropState,
+    private val flingBehavior: FlingBehavior,
 ) : NestedScrollConnection {
-    var blockDrag: Boolean? = null
-    var blockScroll: Boolean? = null
+    var lastUpwardScrollSource: NestedScrollSource? = null
+    val scrollScope =
+        object : ScrollScope {
+            override fun scrollBy(pixels: Float) =
+                state.anchoredDraggableState.dispatchRawDelta(pixels)
+        }
 
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset =
-        if (
-            blockScroll == true ||
-                available.y < 0 &&
-                    anchoredDraggableState.offset != anchoredDraggableState.anchors.minAnchor()
-        ) {
-            blockScroll = true
-            anchoredDraggableState.dispatchRawDelta(available.y)
-            available
+    override fun onPreScroll(available: Offset, source: NestedScrollSource) =
+        if (available.y < 0 && state.isNotClosed) {
+            Offset(0f, state.anchoredDraggableState.dispatchRawDelta(available.y))
         } else {
             Offset.Zero
         }
@@ -133,43 +128,32 @@ private class BackdropNestedScrollConnection(
         available: Offset,
         source: NestedScrollSource,
     ): Offset {
-        if (blockDrag == null) blockDrag = available.y == 0f
-        return when {
-            available.y > 0 -> {
-                val consumedY =
-                    if (blockDrag == true) {
-                        0f
-                    } else {
-                        anchoredDraggableState.dispatchRawDelta(available.y)
-                    }
-                Offset(available.x, consumedY)
-            }
-
-            blockScroll == true -> Offset(0f, available.y)
-            else -> Offset.Zero
+        if (available.y <= 0) return Offset.Zero
+        lastUpwardScrollSource = source
+        return if (source == NestedScrollSource.UserInput) {
+            Offset(0f, state.anchoredDraggableState.dispatchRawDelta(available.y))
+        } else {
+            Offset.Zero
         }
     }
 
-    override suspend fun onPreFling(available: Velocity): Velocity =
-        if (
-            available.y < 0 &&
-                anchoredDraggableState.offset != anchoredDraggableState.anchors.minAnchor()
-        ) {
-            anchoredDraggableState.settle(available.y / 4)
+    override suspend fun onPreFling(available: Velocity) =
+        if (available.y < 0 && state.isNotClosed) {
+            with(flingBehavior) { scrollScope.performFling(available.y) }
             Velocity(0f, available.y)
         } else {
-            val consumedVelocityY =
-                when {
-                    available.y > 0f && blockDrag == true -> 0f
-                    blockScroll == true -> available.y
-                    else -> anchoredDraggableState.settle(available.y)
-                }
-            Velocity(0f, consumedVelocityY)
+            Velocity.Zero
         }
 
-    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        blockDrag = null
-        blockScroll = null
-        return Velocity(0f, anchoredDraggableState.settle(available.y))
-    }
+    override suspend fun onPostFling(consumed: Velocity, available: Velocity) =
+        if (
+            available.y >= 0 &&
+                lastUpwardScrollSource != null &&
+                lastUpwardScrollSource == NestedScrollSource.UserInput
+        ) {
+            with(flingBehavior) { scrollScope.performFling(available.y) }
+            Velocity(0f, available.y)
+        } else {
+            Velocity.Zero
+        }
 }

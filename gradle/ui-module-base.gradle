@@ -33,9 +33,7 @@ kotlin {
 
 dependencies {
     implementation project(":domain")
-
-    debugImplementation libs.compose.ui.test.manifest
-
+    implementation platform(libs.compose.bom)
     implementation libs.bundles.hilt
     implementation libs.bundles.ui
     implementation libs.activity
@@ -43,10 +41,12 @@ dependencies {
     implementation libs.lifecycle.runtime
     implementation libs.timber
     implementation libs.viewmodel
-    debugImplementation libs.compose.ui.tooling
 
-    ksp libs.hilt.compiler
+    debugImplementation libs.compose.ui.test.manifest
+    debugImplementation libs.compose.ui.tooling
 
     testImplementation project(":domain-testing")
     testImplementation libs.bundles.testing
+
+    ksp libs.hilt.compiler
 }

@@ -305,7 +305,7 @@ fun rememberTimePickerState(
     minute: Int,
     is24h: Boolean = true,
 ) =
-    remember(keys = arrayOf(is24h, hour, minute)) {
+    remember(is24h, hour, minute) {
         TimePickerState(isShowing = isShowing, hour = hour, minute = minute, is24h = is24h)
     }
 

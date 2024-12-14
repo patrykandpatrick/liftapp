@@ -12,6 +12,7 @@ import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.update
 
 object PreviewResource {
     val stringProvider: StringProvider
@@ -45,6 +46,10 @@ object PreviewResource {
 
             override suspend fun set(value: T) {
                 flow.value = value
+            }
+
+            override suspend fun update(function: (T) -> T) {
+                flow.update(function)
             }
         }
     }

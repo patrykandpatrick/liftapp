@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 class TestPreferenceRepository : PreferenceRepository {
 
@@ -66,6 +67,10 @@ class TestPreferenceRepository : PreferenceRepository {
 
             override suspend fun set(value: T) {
                 impl.value = value
+            }
+
+            override suspend fun update(function: (T) -> T) {
+                impl.update(function)
             }
         }
 }

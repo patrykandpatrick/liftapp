@@ -1,8 +1,6 @@
 package com.patrykandpatryk.liftapp.core.ui.swipe
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -30,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.zIndex
@@ -47,20 +44,7 @@ fun SwipeContainer(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
 ) {
-    val dimens = LocalDimens.current
-    val density = LocalDensity.current
-    val velocityThreshold = with(density) { dimens.swipe.velocityThreshold.toPx() }
-
-    val anchoredDraggableState = remember {
-        AnchoredDraggableState(
-            initialValue = SwipeContainerState.Idle,
-            positionalThreshold = { dimens.swipe.fractionalThreshold * it },
-            velocityThreshold = { velocityThreshold },
-            snapAnimationSpec = spring(),
-            decayAnimationSpec = splineBasedDecay(density),
-        )
-    }
-
+    val anchoredDraggableState = remember { AnchoredDraggableState(SwipeContainerState.Idle) }
     val swipeOffset = anchoredDraggableState.offset.takeIf { it.isFinite() }.orZero
     var containerWidth by remember { mutableFloatStateOf(1f) }
     val swipeProgress = swipeOffset / containerWidth
