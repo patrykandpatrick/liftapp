@@ -44,7 +44,10 @@
     <string name="exercise_set_format_reps">%1$s %2$s</string>
     <!-- Example: 100 kg × 10 reps -->
     <string name="exercise_set_format_weight">%1$s %2$s × %3$s %4$s</string>
+    <!-- Example: 5 m 24 s ꞏ 2.21 km ꞏ 334 kcal -->
     <string name="exercise_set_format_cardio">%1$s ꞏ %2$s ꞏ %3$s</string>
+    <!-- Example: 3 of 4 sets -->
+    <string name="workout_exercise_list_set_format">&lt;b-surface>%1$d&lt;/b-surface> of &lt;b-surface>%2$d&lt;/b-surface> %3$s</string>
 
     <string name="muscle_abductors">Abductors</string>
     <string name="muscle_abs">Abs</string>

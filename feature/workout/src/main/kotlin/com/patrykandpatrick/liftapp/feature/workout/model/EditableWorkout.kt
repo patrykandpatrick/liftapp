@@ -36,6 +36,8 @@ data class EditableWorkout(
     ) : Serializable {
         val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isComplete }
 
+        val completedSetCount: Int = sets.count { it.isComplete }
+
         @Stable
         fun isSetActive(set: EditableExerciseSet): Boolean =
             sets.indexOf(set) == firstIncompleteSetIndex
