@@ -28,7 +28,7 @@ constructor(
 ) : ViewModel(coroutineScope) {
 
     val workout: StateFlow<EditableWorkout?> =
-        getEditableWorkoutUseCase().stateIn(coroutineScope, SharingStarted.WhileSubscribed(), null)
+        getEditableWorkoutUseCase().stateIn(coroutineScope, SharingStarted.Lazily, null)
 
     fun increaseSetCount(exercise: EditableWorkout.Exercise) {
         viewModelScope.launch { upsertGoalSets(getWorkout().id, exercise, 1) }
