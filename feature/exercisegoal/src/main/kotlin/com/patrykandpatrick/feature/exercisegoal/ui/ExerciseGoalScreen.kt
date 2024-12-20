@@ -31,11 +31,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.feature.exercisegoal.model.GetExerciseNameUseCase
+import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
+import com.patrykandpatrick.feature.exercisegoal.model.SaveGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
+import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
+import com.patrykandpatryk.liftapp.core.model.getDisplayName
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
@@ -46,10 +51,8 @@ import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerDurationInputField
-import com.patrykandpatryk.liftapp.domain.exercise.Exercise
-import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
-import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.goal.SaveGoalContract
 import com.patrykandpatryk.liftapp.domain.model.Name
 import kotlin.time.Duration
 import kotlinx.coroutines.Dispatchers
@@ -59,35 +62,19 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun ExerciseGoalScreen(
     navigator: ExerciseGoalNavigator,
-    routineID: Long,
-    exerciseID: Long,
     modifier: Modifier = Modifier,
+    viewModel: ExerciseGoalViewModel = hiltViewModel(),
 ) {
-    val viewModel =
-        hiltViewModel<ExerciseGoalViewModel, ExerciseGoalViewModel.Factory>(
-            creationCallback = { factory -> factory.create(routineID, exerciseID) }
-        )
+    LaunchedEffect(viewModel) { viewModel.goalSaved.collect { if (it) navigator.back() } }
 
-    val state = viewModel.state
-
-    ExerciseGoalScreen(navigator = navigator, state = state, modifier = modifier)
-
-    LaunchedEffect(state) { state.goalSaved.collect { if (it) navigator.back() } }
-}
-
-@Composable
-private fun ExerciseGoalScreen(
-    navigator: ExerciseGoalNavigator,
-    state: ExerciseGoalState,
-    modifier: Modifier = Modifier,
-) {
     val dimens = LocalDimens.current
-    val infoVisible = state.goalInfoVisible.collectAsStateWithLifecycle()
+    val infoVisible = viewModel.goalInfoVisible.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            val exerciseName = state.exerciseName.collectAsStateWithLifecycle().value
+            val exerciseName =
+                viewModel.exerciseName.collectAsStateWithLifecycle().value.getDisplayName()
             CenterAlignedTopAppBar(
                 title = { Text(text = exerciseName) },
                 navigationIcon = {
@@ -99,7 +86,7 @@ private fun ExerciseGoalScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = state::toggleGoalInfoVisible) {
+                    IconButton(onClick = viewModel::toggleGoalInfoVisible) {
                         Icon(
                             imageVector = Icons.TwoTone.Info,
                             contentDescription = stringResource(id = R.string.action_info),
@@ -108,7 +95,7 @@ private fun ExerciseGoalScreen(
                 },
             )
         },
-        bottomBar = { BottomAppBar.Save(onClick = state::save) },
+        bottomBar = { BottomAppBar.Save(onClick = viewModel::save) },
     ) { paddingValues ->
         LazyVerticalGrid(
             modifier =
@@ -132,13 +119,13 @@ private fun ExerciseGoalScreen(
             infoVisible.value?.also { infoVisible ->
                 content(
                     infoVisible = infoVisible,
-                    toggleInfoVisible = state::toggleGoalInfoVisible,
-                    minReps = state.minReps,
-                    maxReps = state.maxReps,
-                    sets = state.sets,
-                    formattedRestTime = state.formattedRestTime,
-                    restTime = state.restTime,
-                    setRestTime = state::setRestTime,
+                    toggleInfoVisible = viewModel::toggleGoalInfoVisible,
+                    minReps = viewModel.minReps,
+                    maxReps = viewModel.maxReps,
+                    sets = viewModel.sets,
+                    formattedRestTime = viewModel.formattedRestTime,
+                    restTime = viewModel.restTime,
+                    setRestTime = viewModel::setRestTime,
                 )
             }
         }
@@ -216,33 +203,24 @@ private fun ExerciseGoalPreview() {
         val coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined }
         val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
         val preference = PreviewResource.preference(true)
+        val routeData = ExerciseGoalRouteData(0, 0)
+        val saveGoalContract: SaveGoalContract = interfaceStub()
 
         ExerciseGoalScreen(
             navigator = interfaceStub(),
-            state =
+            viewModel =
                 remember {
-                    ExerciseGoalState(
-                        exercise =
-                            flowOf(
-                                Exercise(
-                                    id = 1L,
-                                    displayName = "Bench Press",
-                                    name = Name.Raw("Bench Press"),
-                                    exerciseType = ExerciseType.Weight,
-                                    mainMuscles = emptyList(),
-                                    secondaryMuscles = emptyList(),
-                                    tertiaryMuscles = emptyList(),
-                                )
-                            ),
-                        goal = flowOf(Goal.Default),
-                        saveGoal = {},
-                        getFormattedDuration = {
-                            formatter.getFormattedDuration(it, Formatter.DateFormat.MinutesSeconds)
-                        },
+                    ExerciseGoalViewModel(
+                        getExerciseNameUseCase =
+                            GetExerciseNameUseCase({ flowOf(Name.Raw("Bench Press")) }, routeData),
+                        getGoalUseCase =
+                            GetGoalUseCase({ _, _ -> flowOf(Goal.Default) }, routeData),
+                        saveGoalUseCase = SaveGoalUseCase(saveGoalContract, routeData),
+                        formatter = formatter,
                         coroutineScope = coroutineScope,
                         savedStateHandle = savedStateHandle,
                         textFieldStateManager = textFieldStateManager,
-                        goalInfoVisiblePreference = preference,
+                        infoVisiblePreference = preference,
                     )
                 },
         )

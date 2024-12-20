@@ -11,16 +11,11 @@ object Routes {
 
         @Serializable class Details internal constructor(val routineID: Long)
 
-        @Serializable
-        class ExerciseGoal internal constructor(val routineID: Long, val exerciseID: Long)
-
         fun details(routineID: Long) = Details(routineID)
 
         fun new() = Create()
 
         fun edit(routineID: Long) = Create(routineID)
-
-        fun exerciseGoal(routineID: Long, exerciseID: Long) = ExerciseGoal(routineID, exerciseID)
     }
 
     object Exercise {

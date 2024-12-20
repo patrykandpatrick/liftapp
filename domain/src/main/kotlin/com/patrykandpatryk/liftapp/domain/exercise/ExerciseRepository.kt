@@ -3,7 +3,7 @@ package com.patrykandpatryk.liftapp.domain.exercise
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import kotlinx.coroutines.flow.Flow
 
-interface ExerciseRepository {
+interface ExerciseRepository : GetExerciseNameContract {
 
     fun getAllExercises(): Flow<List<Exercise>>
 

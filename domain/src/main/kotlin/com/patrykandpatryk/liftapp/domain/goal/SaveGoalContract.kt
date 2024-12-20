@@ -1,5 +1,5 @@
 package com.patrykandpatryk.liftapp.domain.goal
 
-interface GoalRepository : GetExerciseGoalContract {
+fun interface SaveGoalContract {
     suspend fun saveGoal(routineID: Long, exerciseID: Long, goal: Goal)
 }

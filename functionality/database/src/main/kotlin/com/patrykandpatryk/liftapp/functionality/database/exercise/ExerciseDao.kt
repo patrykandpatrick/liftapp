@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
+import com.patrykandpatryk.liftapp.domain.model.Name
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,6 +19,9 @@ interface ExerciseDao {
 
     @Query("SELECT * FROM exercise WHERE exercise_id = :id")
     fun getExercise(id: Long): Flow<ExerciseEntity?>
+
+    @Query("SELECT exercise_name FROM exercise WHERE exercise_id = :id")
+    fun getExerciseName(id: Long): Flow<Name?>
 
     @Insert suspend fun insert(exercise: ExerciseEntity): Long
 

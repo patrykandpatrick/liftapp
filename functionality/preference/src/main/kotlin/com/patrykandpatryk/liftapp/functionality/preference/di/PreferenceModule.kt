@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.patrykandpatrick.opto.domain.Preference
+import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.functionality.preference.repository.PreferenceRepositoryImpl
 import dagger.Binds
@@ -31,5 +33,11 @@ interface PreferenceModule {
             PreferenceDataStoreFactory.create(
                 produceFile = { application.preferencesDataStoreFile(PREFERENCES_NAME) }
             )
+
+        @Provides
+        @PreferenceQualifier.GoalInfoVisible
+        fun provideGoalInfoVisiblePreference(
+            repository: PreferenceRepository
+        ): Preference<Boolean> = repository.goalInfoVisible
     }
 }

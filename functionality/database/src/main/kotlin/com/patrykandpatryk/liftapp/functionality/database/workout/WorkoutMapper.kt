@@ -156,6 +156,7 @@ constructor(
 
 fun WorkoutGoalEntity.toDomain(): Goal =
     Goal(
+        id = id,
         minReps = minReps,
         maxReps = maxReps,
         sets = sets,

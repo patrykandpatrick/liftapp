@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
+import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.Routes
@@ -86,7 +87,7 @@ class MainNavigator(private val navController: NavController) :
             }
 
             override fun exerciseGoal(exerciseID: Long) {
-                navController.navigate(Routes.Routine.exerciseGoal(routineID, exerciseID))
+                navController.navigate(ExerciseGoalRouteData(routineID, exerciseID))
             }
 
             override fun newWorkout() {
