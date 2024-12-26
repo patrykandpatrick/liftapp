@@ -170,6 +170,9 @@
     <string name="time_hours_short">h</string>
     <string name="time_minutes_short">m</string>
     <string name="time_seconds_short">s</string>
+    <string name="time_hours_medium">hr</string>
+    <string name="time_minutes_medium">min</string>
+    <string name="time_seconds_medium">sec</string>
 
     <string name="content_description_add_set">Add set</string>
     <string name="content_description_remove_set">Remove set</string>

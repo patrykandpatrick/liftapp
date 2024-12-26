@@ -23,7 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import kotlin.time.Duration
@@ -35,6 +37,7 @@ import kotlin.time.Duration.Companion.seconds
 fun DurationPicker(
     duration: Duration,
     onDurationChange: (Duration) -> Unit,
+    includeHours: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
@@ -84,22 +87,24 @@ fun DurationPicker(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            WheelPicker(state = hourState, onItemSelected = onItemSelected, itemExtent = 1) {
-                allHours.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
-            }
+            if (includeHours) {
+                WheelPicker(state = hourState, onItemSelected = onItemSelected, itemExtent = 1) {
+                    allHours.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
+                }
 
-            Text(
-                text = ":",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.offset(y = (-1).dp),
-            )
+                Text(
+                    text = stringResource(R.string.time_hours_medium),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.offset(y = (-1).dp),
+                )
+            }
 
             WheelPicker(state = minuteState, onItemSelected = onItemSelected, itemExtent = 1) {
                 allMinutes.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
             }
 
             Text(
-                text = ":",
+                text = stringResource(R.string.time_minutes_medium),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.offset(y = (-1).dp),
             )
@@ -107,6 +112,13 @@ fun DurationPicker(
             WheelPicker(state = secondState, onItemSelected = onItemSelected, itemExtent = 1) {
                 allSeconds.forEach { index -> WheelPickerItem(timeFormat.format(index)) }
             }
+
+            Text(
+                text = stringResource(R.string.time_seconds_medium),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.offset(y = (-1).dp),
+            )
         }
     }
 }
