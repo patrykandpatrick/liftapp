@@ -141,7 +141,7 @@ fun NumberInput(
 }
 
 @Composable
-fun <T : Any> NumberInput(
+fun <T : Number> NumberInput(
     textFieldState: TextFieldState<T>,
     onPlusClick: (isLong: Boolean) -> Unit,
     onMinusClick: (isLong: Boolean) -> Unit,

@@ -3,8 +3,8 @@ package com.patrykandpatryk.liftapp.functionality.database.exercise
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
+import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
-import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.functionality.database.appendSQLOrderByCase
 import javax.inject.Inject
@@ -31,8 +31,11 @@ constructor(
             .map { entity -> entity?.let(exerciseMapper::toDomain) }
             .flowOn(dispatcher)
 
-    override fun getExerciseName(id: Long): Flow<Name?> =
-        exerciseDao.getExerciseName(id).flowOn(dispatcher)
+    override fun getExerciseNameAndType(id: Long): Flow<ExerciseNameAndType?> =
+        exerciseDao
+            .getExerciseNameAndType(id)
+            .map { dto -> dto?.let(exerciseMapper::toDomain) }
+            .flowOn(dispatcher)
 
     override fun getRoutineExerciseItems(
         exerciseIds: List<Long>,

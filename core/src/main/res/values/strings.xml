@@ -25,6 +25,9 @@
     <string name="goal_max_reps">Reps (max)</string>
     <string name="goal_sets">Sets</string>
     <string name="goal_rest_time">Rest time</string>
+    <string name="goal_distance">Distance</string>
+    <string name="goal_duration">Duration</string>
+    <string name="goal_calories">Calories</string>
     <string name="and_in_a_list">&amp;</string>
     <string name="list_remove">Remove</string>
     <string name="energy_unit_kcal">kcal</string>

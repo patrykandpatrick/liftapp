@@ -31,8 +31,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patrykandpatrick.feature.exercisegoal.model.GetExerciseNameUseCase
+import com.patrykandpatrick.feature.exercisegoal.model.GetExerciseNameAndTypeUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
+import com.patrykandpatrick.feature.exercisegoal.model.GoalInput
 import com.patrykandpatrick.feature.exercisegoal.model.SaveGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
@@ -43,20 +44,23 @@ import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.model.getDisplayName
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
-import com.patrykandpatryk.liftapp.core.text.TextFieldState
+import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.Info
 import com.patrykandpatryk.liftapp.core.ui.InfoDefaults
-import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
+import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerDurationInputField
+import com.patrykandpatryk.liftapp.core.ui.wheel.DurationPicker
+import com.patrykandpatryk.liftapp.domain.Constants.Input.Increment
+import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType
+import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.goal.SaveGoalContract
 import com.patrykandpatryk.liftapp.domain.model.Name
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -65,18 +69,16 @@ fun ExerciseGoalScreen(
     modifier: Modifier = Modifier,
     viewModel: ExerciseGoalViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(viewModel) { viewModel.goalSaved.collect { if (it) navigator.back() } }
-
+    val state = viewModel.state.collectAsStateWithLifecycle().value
     val dimens = LocalDimens.current
-    val infoVisible = viewModel.goalInfoVisible.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state) { if (state?.goalSaved == true) navigator.back() }
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            val exerciseName =
-                viewModel.exerciseName.collectAsStateWithLifecycle().value.getDisplayName()
             CenterAlignedTopAppBar(
-                title = { Text(text = exerciseName) },
+                title = { Text(text = state?.exerciseName?.getDisplayName().orEmpty()) },
                 navigationIcon = {
                     IconButton(onClick = navigator::back) {
                         Icon(
@@ -86,7 +88,9 @@ fun ExerciseGoalScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = viewModel::toggleGoalInfoVisible) {
+                    IconButton(
+                        onClick = { viewModel.setGoalInfoVisible(state?.goalInfoVisible != true) }
+                    ) {
                         Icon(
                             imageVector = Icons.TwoTone.Info,
                             contentDescription = stringResource(id = R.string.action_info),
@@ -95,7 +99,11 @@ fun ExerciseGoalScreen(
                 },
             )
         },
-        bottomBar = { BottomAppBar.Save(onClick = viewModel::save) },
+        bottomBar = {
+            if (state != null) {
+                BottomAppBar.Save(onClick = { viewModel.save(state) })
+            }
+        },
     ) { paddingValues ->
         LazyVerticalGrid(
             modifier =
@@ -116,16 +124,11 @@ fun ExerciseGoalScreen(
             verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
             horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
         ) {
-            infoVisible.value?.also { infoVisible ->
+            if (state != null) {
                 content(
-                    infoVisible = infoVisible,
-                    toggleInfoVisible = viewModel::toggleGoalInfoVisible,
-                    minReps = viewModel.minReps,
-                    maxReps = viewModel.maxReps,
-                    sets = viewModel.sets,
-                    formattedRestTime = viewModel.formattedRestTime,
-                    restTime = viewModel.restTime,
-                    setRestTime = viewModel::setRestTime,
+                    infoVisible = state.goalInfoVisible,
+                    toggleInfoVisible = { viewModel.setGoalInfoVisible(false) },
+                    goalInput = state.input,
                 )
             }
         }
@@ -135,12 +138,7 @@ fun ExerciseGoalScreen(
 private fun LazyGridScope.content(
     infoVisible: Boolean,
     toggleInfoVisible: () -> Unit,
-    minReps: TextFieldState<Int>,
-    maxReps: TextFieldState<Int>,
-    sets: TextFieldState<Int>,
-    formattedRestTime: StateFlow<String>,
-    restTime: StateFlow<Duration>,
-    setRestTime: (Duration) -> Unit,
+    goalInput: GoalInput,
 ) {
     if (infoVisible) {
         item(key = "info", span = { GridItemSpan(maxLineSpan) }) {
@@ -153,44 +151,65 @@ private fun LazyGridScope.content(
         }
     }
 
-    item(key = "min_reps") {
-        OutlinedTextField(
-            textFieldState = minReps,
-            label = { Text(stringResource(id = R.string.goal_min_reps)) },
-            singleLine = true,
-            keyboardOptions = keyboardOptions,
-            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
-        )
+    if (goalInput.minReps != null) {
+        item(key = "min_reps") {
+            NumberInput(
+                textFieldState = goalInput.minReps.state,
+                hint = stringResource(id = R.string.goal_min_reps),
+                onPlusClick = { long ->
+                    goalInput.minReps.state.updateValueBy(Increment.getReps(long))
+                },
+                onMinusClick = { long ->
+                    goalInput.minReps.state.updateValueBy(-Increment.getReps(long))
+                },
+                keyboardOptions = keyboardOptions,
+                modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+            )
+        }
     }
 
-    item(key = "max_reps") {
-        OutlinedTextField(
-            textFieldState = maxReps,
-            label = { Text(stringResource(id = R.string.goal_max_reps)) },
-            singleLine = true,
-            keyboardOptions = keyboardOptions,
-            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
-        )
+    if (goalInput.maxReps != null) {
+        item(key = "max_reps") {
+            NumberInput(
+                textFieldState = goalInput.maxReps.state,
+                hint = stringResource(id = R.string.goal_max_reps),
+                onPlusClick = { long ->
+                    goalInput.maxReps.state.updateValueBy(Increment.getReps(long))
+                },
+                onMinusClick = { long ->
+                    goalInput.maxReps.state.updateValueBy(-Increment.getReps(long))
+                },
+                keyboardOptions = keyboardOptions,
+                modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+            )
+        }
     }
 
-    item(key = "sets") {
-        OutlinedTextField(
-            textFieldState = sets,
-            label = { Text(stringResource(id = R.string.goal_sets)) },
-            singleLine = true,
-            keyboardOptions = keyboardOptions,
-            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
-        )
+    if (goalInput.sets != null) {
+        item(key = "sets") {
+            NumberInput(
+                textFieldState = goalInput.sets.state,
+                hint = stringResource(id = R.string.goal_sets),
+                onPlusClick = { long -> goalInput.sets.state.updateValueBy(1) },
+                onMinusClick = { long -> goalInput.sets.state.updateValueBy(-1) },
+                keyboardOptions = keyboardOptions,
+                modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+            )
+        }
     }
 
     item(key = "rest_time") {
-        WheelPickerDurationInputField(
-            text = formattedRestTime.collectAsStateWithLifecycle().value,
-            duration = restTime.collectAsStateWithLifecycle().value,
-            onTimeChange = setRestTime,
-            label = stringResource(id = R.string.goal_rest_time),
+        InputFieldLayout(
+            isError = goalInput.restTime.state.hasError,
+            label = { Text(text = stringResource(R.string.exercise_set_input_duration)) },
             modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
-        )
+        ) {
+            DurationPicker(
+                duration = goalInput.restTime.state.value.milliseconds,
+                onDurationChange = { goalInput.restTime.state.updateValue(it.inWholeMilliseconds) },
+                includeHours = false,
+            )
+        }
     }
 }
 
@@ -199,7 +218,6 @@ private fun LazyGridScope.content(
 private fun ExerciseGoalPreview() {
     LiftAppTheme {
         val savedStateHandle = remember { SavedStateHandle() }
-        val formatter = PreviewResource.formatter()
         val coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined }
         val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
         val preference = PreviewResource.preference(true)
@@ -211,14 +229,22 @@ private fun ExerciseGoalPreview() {
             viewModel =
                 remember {
                     ExerciseGoalViewModel(
-                        getExerciseNameUseCase =
-                            GetExerciseNameUseCase({ flowOf(Name.Raw("Bench Press")) }, routeData),
+                        getExerciseNameAndTypeUseCase =
+                            GetExerciseNameAndTypeUseCase(
+                                {
+                                    flowOf(
+                                        ExerciseNameAndType(
+                                            Name.Raw("Bench Press"),
+                                            ExerciseType.Weight,
+                                        )
+                                    )
+                                },
+                                routeData,
+                            ),
                         getGoalUseCase =
                             GetGoalUseCase({ _, _ -> flowOf(Goal.Default) }, routeData),
                         saveGoalUseCase = SaveGoalUseCase(saveGoalContract, routeData),
-                        formatter = formatter,
                         coroutineScope = coroutineScope,
-                        savedStateHandle = savedStateHandle,
                         textFieldStateManager = textFieldStateManager,
                         infoVisiblePreference = preference,
                     )

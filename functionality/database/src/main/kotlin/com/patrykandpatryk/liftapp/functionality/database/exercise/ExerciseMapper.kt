@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.functionality.database.exercise
 
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
+import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType
 import com.patrykandpatryk.liftapp.domain.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
@@ -21,6 +22,9 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
         )
 
     fun toDomain(exercises: List<ExerciseEntity>): List<Exercise> = exercises.map(::toDomain)
+
+    fun toDomain(dto: ExerciseNameAndTypeDto): ExerciseNameAndType =
+        ExerciseNameAndType(name = dto.name, type = dto.type)
 
     fun exerciseEntityToRoutineExerciseItem(
         exercises: List<ExerciseEntity>
