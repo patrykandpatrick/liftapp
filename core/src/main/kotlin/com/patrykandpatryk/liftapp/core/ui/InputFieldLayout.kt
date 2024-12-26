@@ -51,7 +51,7 @@ fun InputFieldLayout(
     contentPadding: PaddingValues =
         PaddingValues(
             horizontal = LocalDimens.current.padding.itemHorizontal,
-            vertical = LocalDimens.current.padding.itemVertical,
+            vertical = LocalDimens.current.padding.itemVerticalSmall,
         ),
     label: (@Composable RowScope.() -> Unit)? = null,
     isError: Boolean = false,
@@ -103,22 +103,24 @@ fun InputFieldLayout(
                 val maxWidth = constraints.maxWidth - contentPadding.horizontal().roundToPx()
                 val coercedConstraints =
                     constraints.copy(
-                        minWidth = constraints.minWidth.coerceAtMost(maxWidth),
+                        minWidth =
+                            (constraints.minWidth + contentPadding.horizontal().roundToPx())
+                                .coerceAtMost(maxWidth),
                         maxWidth = maxWidth,
                     )
                 val contentPlaceable = measurables[0].measure(coercedConstraints)
-                val labelPlaceable = measurables.getOrNull(1)?.measure(coercedConstraints)
+                val labelPlaceable =
+                    measurables.getOrNull(1)?.measure(constraints.copy(minWidth = 0))
                 labelWidth = labelPlaceable?.width ?: 0
                 labelHeight = labelPlaceable?.height ?: 0
 
                 layout(
                     width =
-                        maxOf(
-                            labelWidth +
+                        (labelWidth +
                                 labelHorizontalPadding.roundToPx() +
-                                labelStartMargin.roundToPx(),
-                            contentPlaceable.width,
-                        ) + contentPadding.horizontal().roundToPx(),
+                                labelStartMargin.roundToPx())
+                            .coerceAtLeast(contentPlaceable.width)
+                            .coerceAtMost(maxWidth) + contentPadding.horizontal().roundToPx(),
                     height =
                         contentPlaceable.height +
                             labelHeight * 2 +
