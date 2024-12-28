@@ -14,13 +14,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.graphics.addSinLine
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import kotlin.math.roundToInt
 
-private fun Modifier.sinDivider(color: Color) =
+private fun Modifier.sinDivider(color: Color, horizontalExtent: Dp) =
     then(
         Modifier.composed {
             val dimens = LocalDimens.current
@@ -31,8 +33,11 @@ private fun Modifier.sinDivider(color: Color) =
                 onDrawBehind {
                     val strokeWidth = dimens.strokeWidth.roundToPx()
                     path.addSinLine(
-                        start = -strokeWidth / 2,
-                        end = size.width.roundToInt() + strokeWidth / 2,
+                        start = -strokeWidth / 2 - horizontalExtent.roundToPx(),
+                        end =
+                            size.width.roundToInt() +
+                                strokeWidth / 2 +
+                                horizontalExtent.roundToPx(),
                         sinPeriodLength = separator.sinPeriodLength.roundToPx(),
                         sinHeight = size.height.roundToInt() - dimens.strokeWidth.roundToPx(),
                     )
@@ -48,10 +53,14 @@ private fun Modifier.sinDivider(color: Color) =
 fun SinHorizontalDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline,
+    horizontalExtent: Dp = 0.dp,
 ) {
     Spacer(
         modifier =
-            modifier.height(LocalDimens.current.divider.sinHeight).fillMaxWidth().sinDivider(color)
+            modifier
+                .height(LocalDimens.current.divider.sinHeight)
+                .fillMaxWidth()
+                .sinDivider(color, horizontalExtent)
     )
 }
 
