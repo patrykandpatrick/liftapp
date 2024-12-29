@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "242747f64fddc167af50c9b279fde897",
+    "identityHash": "7c29298451a5d738304e13c5514df925",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -292,7 +292,7 @@
       },
       {
         "tableName": "goal",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`goal_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `goal_routine_id` INTEGER NOT NULL, `goal_exercise_id` INTEGER NOT NULL, `goal_min_reps` INTEGER NOT NULL, `goal_max_reps` INTEGER NOT NULL, `goal_sets` INTEGER NOT NULL, `goal_break_duration` INTEGER NOT NULL, FOREIGN KEY(`goal_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, FOREIGN KEY(`goal_exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`goal_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `goal_routine_id` INTEGER NOT NULL, `goal_exercise_id` INTEGER NOT NULL, `goal_min_reps` INTEGER NOT NULL, `goal_max_reps` INTEGER NOT NULL, `goal_sets` INTEGER NOT NULL, `goal_rest_time` INTEGER NOT NULL, `goal_duration_millis` INTEGER NOT NULL, `goal_distance` REAL NOT NULL, `goal_distance_unit` TEXT NOT NULL, `goal_calories` REAL NOT NULL, FOREIGN KEY(`goal_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, FOREIGN KEY(`goal_exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
         "fields": [
           {
             "fieldPath": "id",
@@ -331,9 +331,33 @@
             "notNull": true
           },
           {
-            "fieldPath": "breakDurationMillis",
-            "columnName": "goal_break_duration",
+            "fieldPath": "restTimeMillis",
+            "columnName": "goal_rest_time",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationMillis",
+            "columnName": "goal_duration_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distance",
+            "columnName": "goal_distance",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceUnit",
+            "columnName": "goal_distance_unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calories",
+            "columnName": "goal_calories",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -534,7 +558,7 @@
       },
       {
         "tableName": "workout_goal",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_goal_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_goal_workout_id` INTEGER NOT NULL, `workout_goal_exercise_id` INTEGER NOT NULL, `workout_goal_min_reps` INTEGER NOT NULL, `workout_goal_max_reps` INTEGER NOT NULL, `workout_goal_sets` INTEGER NOT NULL, `workout_goal_break_duration` INTEGER NOT NULL, FOREIGN KEY(`workout_goal_workout_id`) REFERENCES `workout`(`workout_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, FOREIGN KEY(`workout_goal_exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_goal_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_goal_workout_id` INTEGER NOT NULL, `workout_goal_exercise_id` INTEGER NOT NULL, `workout_goal_min_reps` INTEGER NOT NULL, `workout_goal_max_reps` INTEGER NOT NULL, `workout_goal_sets` INTEGER NOT NULL, `workout_goal_rest_time` INTEGER NOT NULL, `workout_goal_duration_millis` INTEGER NOT NULL, `workout_goal_distance` REAL NOT NULL, `workout_goal_distance_unit` TEXT NOT NULL, `workout_goal_calories` REAL NOT NULL, FOREIGN KEY(`workout_goal_workout_id`) REFERENCES `workout`(`workout_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, FOREIGN KEY(`workout_goal_exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
         "fields": [
           {
             "fieldPath": "id",
@@ -573,9 +597,33 @@
             "notNull": true
           },
           {
-            "fieldPath": "breakDurationMillis",
-            "columnName": "workout_goal_break_duration",
+            "fieldPath": "restTimeMillis",
+            "columnName": "workout_goal_rest_time",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationMillis",
+            "columnName": "workout_goal_duration_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distance",
+            "columnName": "workout_goal_distance",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceUnit",
+            "columnName": "workout_goal_distance_unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calories",
+            "columnName": "workout_goal_calories",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -765,7 +813,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '242747f64fddc167af50c9b279fde897')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c29298451a5d738304e13c5514df925')"
     ]
   }
 }

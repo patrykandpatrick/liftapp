@@ -93,6 +93,8 @@ class MarkupProcessor(private val config: Config) {
         Italic("i"),
         Small("small");
 
+        fun wrap(content: String): String = "<$tag>$content</$tag>"
+
         companion object {
             fun forTag(tag: String): Type =
                 checkNotNull(Type.entries.find { it.tag == tag }) { "No Type found for tag: $tag" }

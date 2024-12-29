@@ -16,12 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -31,6 +33,7 @@ import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.gestures.onItemYRange
 import com.patrykandpatryk.liftapp.core.gestures.rememberItemRanges
 import com.patrykandpatryk.liftapp.core.gestures.reorderable
+import com.patrykandpatryk.liftapp.core.model.getPrettyStringLong
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeContainer
@@ -91,9 +94,9 @@ fun LazyItemScope.ListItem(
     onGoalClick: (exerciseID: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val lastDragDelta = remember { mutableStateOf(0f) }
+    val lastDragDelta = remember { mutableFloatStateOf(0f) }
     var isDragging by remember { mutableStateOf(false) }
-    var yOffset by remember(index) { mutableStateOf(0f + lastDragDelta.value) }
+    var yOffset by remember(index) { mutableFloatStateOf(0f + lastDragDelta.floatValue) }
 
     val dragElevation = MaterialTheme.dimens.elevation.dragElevation
     val swipeElevation = MaterialTheme.dimens.swipe.swipeElevation
@@ -112,7 +115,15 @@ fun LazyItemScope.ListItem(
                 title = { Text(exercise.name) },
                 modifier =
                     modifier.shadow(swipeShadow).background(MaterialTheme.colorScheme.surface),
-                description = { Text(exercise.prettyGoal + "\n" + exercise.muscles) },
+                description = {
+                    Text(
+                        buildAnnotatedString {
+                            append(exercise.goal.getPrettyStringLong(exercise.type))
+                            append("\n")
+                            append(exercise.muscles)
+                        }
+                    )
+                },
                 actions = {
                     IconButton(onClick = { onGoalClick(exercise.id) }) {
                         Icon(
@@ -132,7 +143,7 @@ fun LazyItemScope.ListItem(
                                     onIsDragging = { isDragging = it },
                                     onDelta = { delta ->
                                         yOffset += delta
-                                        lastDragDelta.value = delta
+                                        lastDragDelta.floatValue = delta
                                     },
                                     onItemReordered = { from, to ->
                                         onIntent(Intent.Reorder(from = from, to = to))

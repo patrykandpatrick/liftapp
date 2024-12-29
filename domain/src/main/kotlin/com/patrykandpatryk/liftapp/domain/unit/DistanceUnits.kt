@@ -20,6 +20,12 @@ enum class LongDistanceUnit(val kilometerConversion: Double, val mileConversion:
 
     fun toMiles(value: Double): Double = value * mileConversion
 
+    fun convert(value: Double, to: LongDistanceUnit): Double =
+        when (to) {
+            Kilometer -> toKilometers(value)
+            Mile -> toMiles(value)
+        }
+
     fun getCorrespondingMediumDistanceUnit(): MediumDistanceUnit =
         when (this) {
             Kilometer -> MediumDistanceUnit.Meter

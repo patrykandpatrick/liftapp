@@ -12,7 +12,11 @@ fun GoalEntity.toDomain(): Goal =
         minReps = minReps,
         maxReps = maxReps,
         sets = sets,
-        breakDuration = breakDurationMillis.milliseconds,
+        restTime = restTimeMillis.milliseconds,
+        duration = durationMillis.milliseconds,
+        distance = distance,
+        distanceUnit = distanceUnit,
+        calories = calories,
     )
 
 fun Goal.toEntity(routineID: Long, exerciseID: Long): GoalEntity =
@@ -23,5 +27,9 @@ fun Goal.toEntity(routineID: Long, exerciseID: Long): GoalEntity =
         minReps = minReps,
         maxReps = maxReps,
         sets = sets,
-        breakDurationMillis = breakDuration.inWholeMilliseconds,
+        restTimeMillis = restTime.inWholeMilliseconds,
+        durationMillis = duration.inWholeMilliseconds,
+        distance = distance,
+        distanceUnit = distanceUnit,
+        calories = calories,
     )

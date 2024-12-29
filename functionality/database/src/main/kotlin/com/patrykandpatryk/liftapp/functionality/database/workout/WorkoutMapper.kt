@@ -160,5 +160,9 @@ fun WorkoutGoalEntity.toDomain(): Goal =
         minReps = minReps,
         maxReps = maxReps,
         sets = sets,
-        breakDuration = breakDurationMillis.milliseconds,
+        restTime = restTimeMillis.milliseconds,
+        duration = durationMillis.milliseconds,
+        distance = distance,
+        distanceUnit = distanceUnit,
+        calories = calories,
     )

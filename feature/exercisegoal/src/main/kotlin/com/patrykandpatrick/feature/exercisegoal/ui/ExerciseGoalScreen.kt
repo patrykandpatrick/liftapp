@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -24,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,6 +42,7 @@ import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigato
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
+import com.patrykandpatryk.liftapp.core.extension.prettyString
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.model.getDisplayName
@@ -49,6 +53,7 @@ import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.Info
 import com.patrykandpatryk.liftapp.core.ui.InfoDefaults
 import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
+import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -59,6 +64,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.goal.SaveGoalContract
 import com.patrykandpatryk.liftapp.domain.model.Name
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
@@ -142,67 +148,111 @@ private fun LazyGridScope.content(
 ) {
     if (infoVisible) {
         item(key = "info", span = { GridItemSpan(maxLineSpan) }) {
-            Info(
-                stringResource(id = R.string.goal_info),
-                Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
-            ) {
+            Info(stringResource(id = R.string.goal_info), itemModifier) {
                 InfoDefaults.DismissButton(toggleInfoVisible)
             }
         }
     }
 
-    if (goalInput.minReps != null) {
+    goalInput.minReps?.also { input ->
         item(key = "min_reps") {
             NumberInput(
-                textFieldState = goalInput.minReps.state,
+                textFieldState = input.state,
                 hint = stringResource(id = R.string.goal_min_reps),
-                onPlusClick = { long ->
-                    goalInput.minReps.state.updateValueBy(Increment.getReps(long))
-                },
-                onMinusClick = { long ->
-                    goalInput.minReps.state.updateValueBy(-Increment.getReps(long))
-                },
-                keyboardOptions = keyboardOptions,
-                modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+                onPlusClick = { long -> input.state.updateValueBy(Increment.getReps(long)) },
+                onMinusClick = { long -> input.state.updateValueBy(-Increment.getReps(long)) },
+                keyboardOptions = getKeyboardOptions(goalInput.isLastInput(input)),
+                keyboardActions = keyboardActions,
+                modifier = itemModifier,
             )
         }
     }
 
-    if (goalInput.maxReps != null) {
+    goalInput.maxReps?.also { input ->
         item(key = "max_reps") {
             NumberInput(
-                textFieldState = goalInput.maxReps.state,
+                textFieldState = input.state,
                 hint = stringResource(id = R.string.goal_max_reps),
-                onPlusClick = { long ->
-                    goalInput.maxReps.state.updateValueBy(Increment.getReps(long))
-                },
-                onMinusClick = { long ->
-                    goalInput.maxReps.state.updateValueBy(-Increment.getReps(long))
-                },
-                keyboardOptions = keyboardOptions,
-                modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+                onPlusClick = { long -> input.state.updateValueBy(Increment.getReps(long)) },
+                onMinusClick = { long -> input.state.updateValueBy(-Increment.getReps(long)) },
+                keyboardOptions = getKeyboardOptions(goalInput.isLastInput(input)),
+                keyboardActions = keyboardActions,
+                modifier = itemModifier,
             )
         }
     }
 
-    if (goalInput.sets != null) {
+    goalInput.sets?.also { input ->
         item(key = "sets") {
             NumberInput(
-                textFieldState = goalInput.sets.state,
+                textFieldState = input.state,
                 hint = stringResource(id = R.string.goal_sets),
-                onPlusClick = { long -> goalInput.sets.state.updateValueBy(1) },
-                onMinusClick = { long -> goalInput.sets.state.updateValueBy(-1) },
-                keyboardOptions = keyboardOptions,
-                modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+                onPlusClick = { long -> input.state.updateValueBy(1) },
+                onMinusClick = { long -> input.state.updateValueBy(-1) },
+                keyboardOptions = getKeyboardOptions(goalInput.isLastInput(input)),
+                keyboardActions = keyboardActions,
+                modifier = itemModifier,
             )
         }
+    }
+
+    goalInput.duration?.also { input ->
+        item(key = "duration") {
+            InputFieldLayout(
+                isError = input.state.hasError,
+                label = { Text(text = stringResource(R.string.exercise_set_input_duration)) },
+                modifier = itemModifier,
+            ) {
+                DurationPicker(
+                    duration = input.state.value.milliseconds,
+                    onDurationChange = { input.state.updateValue(it.inWholeMilliseconds) },
+                    includeHours = true,
+                )
+            }
+        }
+    }
+
+    goalInput.distance?.also { input ->
+        item(key = "distance") {
+            NumberInput(
+                textFieldState = input.state,
+                hint = stringResource(id = R.string.goal_distance),
+                onPlusClick = { long -> input.state.updateValueBy(Increment.getDistance(long)) },
+                onMinusClick = { long -> input.state.updateValueBy(-Increment.getDistance(long)) },
+                suffix = input.unit.prettyString(),
+                keyboardOptions = getKeyboardOptions(goalInput.isLastInput(input)),
+                keyboardActions = keyboardActions,
+                modifier = itemModifier,
+            )
+        }
+    }
+
+    goalInput.calories?.also { input ->
+        item(key = "calories") {
+            NumberInput(
+                textFieldState = input.state,
+                hint = stringResource(id = R.string.goal_calories),
+                onPlusClick = { long -> input.state.updateValueBy(Increment.getCalories(long)) },
+                onMinusClick = { long -> input.state.updateValueBy(-Increment.getCalories(long)) },
+                keyboardOptions = getKeyboardOptions(goalInput.isLastInput(input)),
+                keyboardActions = keyboardActions,
+                modifier = itemModifier,
+            )
+        }
+    }
+
+    item(key = "divider", span = { GridItemSpan(maxLineSpan) }) {
+        SinHorizontalDivider(
+            horizontalExtent = LocalDimens.current.padding.contentHorizontal,
+            modifier = itemModifier,
+        )
     }
 
     item(key = "rest_time") {
         InputFieldLayout(
             isError = goalInput.restTime.state.hasError,
-            label = { Text(text = stringResource(R.string.exercise_set_input_duration)) },
-            modifier = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() },
+            label = { Text(text = stringResource(R.string.exercise_set_input_rest_time)) },
+            modifier = itemModifier,
         ) {
             DurationPicker(
                 duration = goalInput.restTime.state.value.milliseconds,
@@ -220,7 +270,8 @@ private fun ExerciseGoalPreview() {
         val savedStateHandle = remember { SavedStateHandle() }
         val coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined }
         val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
-        val preference = PreviewResource.preference(true)
+        val infoPreference = PreviewResource.preference(true)
+        val unitPreference = PreviewResource.preference(LongDistanceUnit.Kilometer)
         val routeData = ExerciseGoalRouteData(0, 0)
         val saveGoalContract: SaveGoalContract = interfaceStub()
 
@@ -246,12 +297,28 @@ private fun ExerciseGoalPreview() {
                         saveGoalUseCase = SaveGoalUseCase(saveGoalContract, routeData),
                         coroutineScope = coroutineScope,
                         textFieldStateManager = textFieldStateManager,
-                        infoVisiblePreference = preference,
+                        infoVisiblePreference = infoPreference,
+                        longDistanceUnitPreference = unitPreference,
                     )
                 },
         )
     }
 }
 
-private val keyboardOptions: KeyboardOptions
-    get() = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
+private val LazyGridItemScope.itemModifier: Modifier
+    @Composable get() = Modifier.thenIf(!LocalInspectionMode.current) { Modifier.animateItem() }
+
+private fun getKeyboardOptions(isLast: Boolean): KeyboardOptions =
+    KeyboardOptions(
+        keyboardType = KeyboardType.Number,
+        imeAction = if (isLast) ImeAction.Done else ImeAction.Next,
+    )
+
+val keyboardActions: KeyboardActions
+    @Composable
+    get() {
+        val focusManager = LocalFocusManager.current
+        return remember(focusManager) {
+            KeyboardActions(onDone = { focusManager.clearFocus(true) })
+        }
+    }

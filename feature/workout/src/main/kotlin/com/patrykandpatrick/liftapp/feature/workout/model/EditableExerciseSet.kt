@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.core.extension.prettyString
 import com.patrykandpatryk.liftapp.core.text.DoubleTextFieldState
 import com.patrykandpatryk.liftapp.core.text.IntTextFieldState
 import com.patrykandpatryk.liftapp.core.text.LongTextFieldState
+import com.patrykandpatryk.liftapp.core.time.getShortFormattedTime
 import com.patrykandpatryk.liftapp.domain.Constants.Format.DECIMAL_PATTERN
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -125,12 +126,12 @@ fun EditableExerciseSet.prettyString(): String =
                 val decimalFormat = remember { DecimalFormat(DECIMAL_PATTERN) }
                 stringResource(
                     R.string.exercise_set_format_cardio,
-                    getShortDurationString(duration),
+                    duration.getShortFormattedTime(),
                     "${decimalFormat.format(distance)} ${distanceUnit.prettyString()}",
                     "${decimalFormat.format(kcal)} ${stringResource(R.string.energy_unit_kcal)}",
                 )
             }
-            is EditableExerciseSet.Time -> getShortDurationString(duration)
+            is EditableExerciseSet.Time -> duration.getShortFormattedTime()
         }
     } else {
         stringResource(R.string.exercise_set_not_completed)
@@ -138,21 +139,3 @@ fun EditableExerciseSet.prettyString(): String =
 
 @Composable
 private fun getRepsString(reps: Int): String = pluralStringResource(R.plurals.rep_count, reps)
-
-@Composable
-private fun getShortDurationString(duration: Duration): String =
-    duration.toComponents { hours, minutes, seconds, _ ->
-        buildString {
-            if (hours > 0) {
-                append("$hours ${stringResource(R.string.time_hours_short)}")
-            }
-            if (minutes > 0) {
-                if (!isEmpty()) append(" ")
-                append("$minutes ${stringResource(R.string.time_minutes_short)}")
-            }
-            if (seconds > 0) {
-                if (!isEmpty()) append(" ")
-                append("$seconds ${stringResource(R.string.time_seconds_short)}")
-            }
-        }
-    }

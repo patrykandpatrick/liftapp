@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
 
 @Entity(
@@ -33,5 +34,9 @@ data class WorkoutGoalEntity(
     @ColumnInfo(name = "workout_goal_min_reps") val minReps: Int,
     @ColumnInfo(name = "workout_goal_max_reps") val maxReps: Int,
     @ColumnInfo(name = "workout_goal_sets") val sets: Int,
-    @ColumnInfo(name = "workout_goal_break_duration") val breakDurationMillis: Long,
+    @ColumnInfo(name = "workout_goal_rest_time") val restTimeMillis: Long,
+    @ColumnInfo(name = "workout_goal_duration_millis") val durationMillis: Long,
+    @ColumnInfo(name = "workout_goal_distance") val distance: Double,
+    @ColumnInfo(name = "workout_goal_distance_unit") val distanceUnit: LongDistanceUnit,
+    @ColumnInfo(name = "workout_goal_calories") val calories: Double,
 )

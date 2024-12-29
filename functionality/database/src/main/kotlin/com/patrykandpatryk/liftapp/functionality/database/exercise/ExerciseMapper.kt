@@ -40,7 +40,6 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
                     ),
                 type = exercise.exerciseType,
                 goal = exercise.goal,
-                prettyGoal = stringProvider.toPrettyString(exercise.goal),
             )
         }
 
@@ -60,7 +59,6 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
                     ),
                 type = exercise.exerciseType,
                 goal = goal,
-                prettyGoal = stringProvider.toPrettyString(goal),
             )
         }
 }

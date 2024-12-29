@@ -143,6 +143,7 @@ private fun Page(
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         GoalHeader(
             goal = exercise.goal,
+            exerciseType = exercise.exerciseType,
             onAddSetClick = { onAddSetClick(exercise) },
             onRemoveSetClick = { onRemoveSetClick(exercise) },
         )
@@ -246,8 +247,8 @@ private fun WorkoutScreenPreview() {
                             workoutRouteData = WorkoutRouteData(),
                             savedStateHandle = savedStateHandle,
                         ),
-                    upsertGoalSets = UpsertGoalSetsUseCase { _, _, _, _, _, _ -> },
-                    upsertExerciseSet = UpsertExerciseSetUseCase { _, _, _, _ -> },
+                    upsertGoalSets = UpsertGoalSetsUseCase(interfaceStub()),
+                    upsertExerciseSet = UpsertExerciseSetUseCase(interfaceStub()),
                     coroutineScope = rememberCoroutineScope(),
                 ),
         )

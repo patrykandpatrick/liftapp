@@ -60,7 +60,7 @@ data class ValueRangeTextValidationElement(
         val minValue = minValue
         val maxValue = maxValue
         return when {
-            minValue != null && value.toDouble() <= minValue -> {
+            minValue != null && value.toDouble() < minValue -> {
                 TextValidator.TextValidationElement.Result.Invalid(
                     stringProvider.valueTooSmall(
                         formatter.formatNumber(minValue, format = Formatter.NumberFormat.Decimal)
@@ -68,7 +68,7 @@ data class ValueRangeTextValidationElement(
                 )
             }
 
-            maxValue != null && value.toDouble() >= maxValue -> {
+            maxValue != null && value.toDouble() > maxValue -> {
                 TextValidator.TextValidationElement.Result.Invalid(
                     stringProvider.valueTooBig(
                         formatter.formatNumber(maxValue, format = Formatter.NumberFormat.Decimal)

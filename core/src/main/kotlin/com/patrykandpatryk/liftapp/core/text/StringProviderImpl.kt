@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import com.patrykandpatryk.liftapp.core.R.string
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.resource.stringRes
-import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
@@ -51,9 +50,6 @@ class StringProviderImpl @Inject constructor(private val context: Context) : Str
     override fun getErrorCannotBeEmpty(name: String): String = string(string.error_x_empty, name)
 
     override fun getMuscleName(muscle: Muscle): String = string(muscle.stringRes)
-
-    override fun toPrettyString(goal: Goal): String =
-        string(string.goal_format_short, goal.minReps, goal.maxReps, goal.sets)
 
     override fun getResolvedName(name: Name): String =
         when (name) {

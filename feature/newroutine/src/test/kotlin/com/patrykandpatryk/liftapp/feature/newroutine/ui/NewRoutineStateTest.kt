@@ -157,16 +157,14 @@ class NewRoutineStateTest {
                         "name1",
                         "description1",
                         ExerciseType.Weight,
-                        Goal.Default,
-                        "",
+                        Goal.default,
                     ),
                     RoutineExerciseItem(
                         2L,
                         "name2",
                         "description2",
                         ExerciseType.Reps,
-                        Goal.Default,
-                        "",
+                        Goal.default,
                     ),
                 )
                 .associateBy { it.id }

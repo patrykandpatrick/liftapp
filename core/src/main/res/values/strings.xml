@@ -33,9 +33,11 @@
     <string name="energy_unit_kcal">kcal</string>
 
     <string name="multiply_character" translatable="false">×</string>
-    <string name="goal_format_short">%1$s–%2$s × %3$s</string>
-    <string name="goal_format_long">%1$s–%2$s %3$s × %4$s %5$s</string>
-    <string name="goal_format_long_single_rep">%1$s %2$s × %3$s %4$s</string>
+    <string name="goal_format_time_separator">in</string>
+    <string name="goal_format_calories_separator" translatable="false">ꞏ</string>
+    <string name="goal_time_format"><![CDATA[<b-surface>%1$s</b-surface>]]></string>
+    <string name="goal_reps_format_long"><![CDATA[<b-surface>%1$s–%2$s</b-surface> %3$s × <b-surface>%4$s</b-surface> %5$s]]></string>
+    <string name="goal_reps_format_long_single_rep"><![CDATA[<b-surface>%1$s</b-surface> %2$s × <b-surface>%3$s</b-surface> %4$s]]></string>
 
     <string name="exercise_set_set_index">Set %d</string>
     <string name="exercise_set_not_completed">Not completed</string>
@@ -81,6 +83,7 @@
     <string name="exercise_set_input_weight">Weight</string>
     <string name="exercise_set_input_body_weight">Body weight</string>
     <string name="exercise_set_input_reps">Reps</string>
+    <string name="exercise_set_input_rest_time">Rest time</string>
     <string name="exercise_set_input_duration">Duration</string>
     <string name="exercise_set_input_distance">Distance</string>
     <string name="exercise_set_input_calories">Calories</string>
@@ -161,8 +164,8 @@
     <string name="error_field_cannot_be_empty">This field cannot be empty.</string>
     <string name="error_field_too_short">The value must have at least %s characters (%s/%s).</string>
     <string name="error_field_too_long">The value must have at most %s characters (%s/%s).</string>
-    <string name="error_value_too_small">The value must be more than %s.</string>
-    <string name="error_value_too_big">The value must be less than %s.</string>
+    <string name="error_value_too_small">The value must be more than, or equal to %s.</string>
+    <string name="error_value_too_big">The value must be less than, or equal to %s.</string>
     <string name="error_value_not_valid_number">The value is not a valid number.</string>
     <string name="error_does_not_equal">%1$s does not equal %2$s</string>
 

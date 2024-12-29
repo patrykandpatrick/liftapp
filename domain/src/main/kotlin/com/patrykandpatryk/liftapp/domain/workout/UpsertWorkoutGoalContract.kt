@@ -1,5 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.workout
 
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
+
 fun interface UpsertWorkoutGoalContract {
     suspend fun upsertWorkoutGoal(
         workoutID: Long,
@@ -7,6 +9,10 @@ fun interface UpsertWorkoutGoalContract {
         minReps: Int,
         maxReps: Int,
         sets: Int,
-        breakDurationMillis: Long,
+        restTimeMillis: Long,
+        durationMillis: Long,
+        distance: Double,
+        distanceUnit: LongDistanceUnit,
+        calories: Double,
     )
 }

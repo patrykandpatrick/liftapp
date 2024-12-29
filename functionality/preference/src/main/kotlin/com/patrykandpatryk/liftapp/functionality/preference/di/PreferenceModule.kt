@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.functionality.preference.repository.PreferenceRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -39,5 +40,11 @@ interface PreferenceModule {
         fun provideGoalInfoVisiblePreference(
             repository: PreferenceRepository
         ): Preference<Boolean> = repository.goalInfoVisible
+
+        @Provides
+        @PreferenceQualifier.LongDistanceUnit
+        fun provideLongDistanceUnitPreference(
+            repository: PreferenceRepository
+        ): Preference<LongDistanceUnit> = repository.longDistanceUnit
     }
 }

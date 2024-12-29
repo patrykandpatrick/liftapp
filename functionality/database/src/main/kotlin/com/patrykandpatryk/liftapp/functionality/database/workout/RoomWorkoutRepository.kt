@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.functionality.database.workout
 
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import com.patrykandpatryk.liftapp.domain.workout.WorkoutRepository
@@ -99,7 +100,11 @@ constructor(
         minReps: Int,
         maxReps: Int,
         sets: Int,
-        breakDurationMillis: Long,
+        restTimeMillis: Long,
+        durationMillis: Long,
+        distance: Double,
+        distanceUnit: LongDistanceUnit,
+        calories: Double,
     ) {
         workoutDao.upsertWorkoutGoal(
             workoutID,
@@ -107,7 +112,11 @@ constructor(
             minReps,
             maxReps,
             sets,
-            breakDurationMillis,
+            restTimeMillis,
+            durationMillis,
+            distance,
+            distanceUnit,
+            calories,
         )
     }
 

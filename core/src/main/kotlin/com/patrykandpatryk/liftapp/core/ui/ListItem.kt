@@ -161,7 +161,7 @@ fun ListItem(
         Column(modifier = Modifier.weight(1f)) {
             CompositionLocalProvider(
                 LocalTextStyle provides MaterialTheme.typography.titleMedium,
-                LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
+                LocalContentColor provides MaterialTheme.colorScheme.onSurface,
                 content = title,
             )
 

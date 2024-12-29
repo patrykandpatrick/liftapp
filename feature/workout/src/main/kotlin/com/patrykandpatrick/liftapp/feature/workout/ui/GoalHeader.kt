@@ -30,12 +30,14 @@ import com.patrykandpatryk.liftapp.core.ui.VerticalDivider
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
+import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun GoalHeader(
     goal: Goal,
+    exerciseType: ExerciseType,
     onAddSetClick: () -> Unit,
     onRemoveSetClick: () -> Unit,
     modifier: Modifier = Modifier.Companion,
@@ -51,7 +53,7 @@ internal fun GoalHeader(
                 .fillMaxWidth(),
     ) {
         Text(
-            text = goal.getPrettyStringLong(),
+            text = goal.getPrettyStringLong(exerciseType),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -108,8 +110,8 @@ internal fun GoalHeader(
 private fun GoalHeaderPreview() {
     LiftAppTheme {
         Column(modifier = Modifier.Companion.background(MaterialTheme.colorScheme.surface)) {
-            GoalHeader(Goal.Companion.Default, {}, {})
-            GoalHeader(Goal(1, 1, 1, 0.seconds), {}, {})
+            GoalHeader(Goal.Default, ExerciseType.Weight, {}, {})
+            GoalHeader(Goal.Default.copy(1, 1, 1, 0.seconds), ExerciseType.Weight, {}, {})
         }
     }
 }

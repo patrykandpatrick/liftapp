@@ -44,8 +44,10 @@ interface WorkoutDao {
         value =
             "INSERT INTO workout_goal (" +
                 "workout_goal_workout_id, workout_goal_exercise_id, workout_goal_min_reps, workout_goal_max_reps, " +
-                "workout_goal_sets, workout_goal_break_duration" +
-                ") SELECT :workoutID, goal_exercise_id, goal_min_reps, goal_max_reps, goal_sets, goal_break_duration " +
+                "workout_goal_sets, workout_goal_rest_time, workout_goal_duration_millis, workout_goal_distance, " +
+                "workout_goal_distance_unit, workout_goal_calories" +
+                ") SELECT :workoutID, goal_exercise_id, goal_min_reps, goal_max_reps, goal_sets, goal_rest_time, " +
+                "goal_duration_millis, goal_distance, goal_distance_unit, goal_calories " +
                 "FROM goal WHERE goal_routine_id = :routineID"
     )
     suspend fun copyRoutineGoalsToWorkoutGoals(routineID: Long, workoutID: Long)
@@ -54,14 +56,16 @@ interface WorkoutDao {
         value =
             "INSERT OR REPLACE INTO workout_goal (" +
                 "workout_goal_id, workout_goal_workout_id, workout_goal_exercise_id, workout_goal_min_reps, " +
-                "workout_goal_max_reps, workout_goal_sets, workout_goal_break_duration" +
-                ") SELECT (SELECT COALESCE((SELECT id FROM workout_goal LEFT JOIN " +
+                "workout_goal_max_reps, workout_goal_sets, workout_goal_rest_time, workout_goal_duration_millis, " +
+                "workout_goal_distance, workout_goal_distance_unit, workout_goal_calories" +
+                ") SELECT (SELECT COALESCE((SELECT id FROM workout_goal INNER JOIN " +
                 "(SELECT g.workout_goal_id as id, g.workout_goal_workout_id as workoutID, " +
                 "g.workout_goal_exercise_id as exerciseID FROM workout_goal as g " +
                 "WHERE workout_goal_workout_id = :workoutID AND workout_goal_exercise_id = :exerciseID) " +
                 "on workout_goal_id = id " +
                 "WHERE workout_goal_workout_id = :workoutID AND workout_goal_exercise_id = :exerciseID" +
-                "), NULL)), :workoutID, :exerciseID, :minReps, :maxReps, :sets, :breakDurationMillis"
+                "), NULL)), :workoutID, :exerciseID, :minReps, :maxReps, :sets, :restTimeMillis, :durationMillis, " +
+                ":distance, :distanceUnit, :calories"
     )
     suspend fun upsertWorkoutGoal(
         workoutID: Long,
@@ -69,7 +73,11 @@ interface WorkoutDao {
         minReps: Int,
         maxReps: Int,
         sets: Int,
-        breakDurationMillis: Long,
+        restTimeMillis: Long,
+        durationMillis: Long,
+        distance: Double,
+        distanceUnit: LongDistanceUnit,
+        calories: Double,
     )
 
     @Query(
@@ -78,7 +86,7 @@ interface WorkoutDao {
                 "exercise_set_id, exercise_set_workout_id, exercise_set_exercise_id, exercise_set_weight, " +
                 "exercise_set_weight_unit, exercise_set_reps, exercise_set_time, exercise_set_distance," +
                 "exercise_set_distance_unit, exercise_set_kcal, workout_exercise_set_index) " +
-                "SELECT (SELECT COALESCE((SELECT id FROM exercise_set LEFT JOIN " +
+                "SELECT (SELECT COALESCE((SELECT id FROM exercise_set INNER JOIN " +
                 "(SELECT e.exercise_set_id as id, e.exercise_set_workout_id as workoutID, " +
                 "e.exercise_set_exercise_id as exerciseID FROM exercise_set as e " +
                 "WHERE exercise_set_workout_id = :workoutID AND exercise_set_exercise_id = :exerciseID AND " +

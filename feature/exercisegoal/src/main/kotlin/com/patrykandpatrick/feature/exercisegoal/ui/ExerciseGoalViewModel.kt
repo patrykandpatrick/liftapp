@@ -12,6 +12,7 @@ import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 @Stable
@@ -34,21 +34,24 @@ constructor(
     private val saveGoalUseCase: SaveGoalUseCase,
     private val textFieldStateManager: TextFieldStateManager,
     @PreferenceQualifier.GoalInfoVisible private val infoVisiblePreference: Preference<Boolean>,
+    @PreferenceQualifier.LongDistanceUnit
+    private val longDistanceUnitPreference: Preference<LongDistanceUnit>,
 ) : ViewModel(coroutineScope) {
     private val goalSaved = MutableStateFlow(false)
 
     val state =
         combine(
                 getExerciseNameAndTypeUseCase(),
-                getGoalUseCase().take(1),
+                getGoalUseCase(),
                 infoVisiblePreference.get(),
+                longDistanceUnitPreference.get(),
                 goalSaved,
-            ) { exercise, goal, infoVisible, goalSaved ->
+            ) { exercise, goal, infoVisible, distanceUnit, goalSaved ->
                 exercise?.let { (name, type) ->
                     State(
                         goalID = goal.id,
                         exerciseName = name,
-                        input = GoalInput.create(textFieldStateManager, goal, type),
+                        input = GoalInput.create(textFieldStateManager, goal, type, distanceUnit),
                         goalInfoVisible = infoVisible,
                         goalSaved = goalSaved,
                     )
@@ -70,7 +73,11 @@ constructor(
                     minReps = input.minReps?.state?.value ?: 0,
                     maxReps = input.maxReps?.state?.value ?: 0,
                     sets = input.sets?.state?.value ?: 0,
-                    breakDuration = input.restTime.state.value.milliseconds,
+                    restTime = input.restTime.state.value.milliseconds,
+                    duration = input.duration?.state?.value?.milliseconds ?: 0.milliseconds,
+                    distance = input.distance?.state?.value ?: 0.0,
+                    distanceUnit = input.distance?.unit ?: LongDistanceUnit.Kilometer,
+                    calories = input.calories?.state?.value ?: 0.0,
                 )
             )
             goalSaved.value = true
