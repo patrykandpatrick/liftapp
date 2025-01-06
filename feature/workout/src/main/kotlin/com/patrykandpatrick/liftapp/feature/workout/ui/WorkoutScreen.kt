@@ -1,10 +1,21 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -14,9 +25,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -27,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.liftapp.feature.workout.RestTimerService
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseCase
@@ -34,6 +46,7 @@ import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCa
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
+import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.graphics.rememberTopSinShape
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
@@ -41,6 +54,7 @@ import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.ui.AppBars
 import com.patrykandpatryk.liftapp.core.ui.Backdrop
 import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
+import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.rememberBackdropState
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.wheel.ScrollSyncEffect
@@ -56,8 +70,16 @@ import com.patrykandpatryk.liftapp.domain.workout.Workout
 import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+
+private const val TIMER_BOUND_ANIMATION_DURATION = 120
+private const val TIMER_ENTER_ANIMATION_DURATION = 220
+private const val TIMER_EXIT_ANIMATION_DURATION = 120
+private const val TIMER_ANIMATION_SCALE = .92f
 
 @Composable
 fun WorkoutScreen(
@@ -65,17 +87,20 @@ fun WorkoutScreen(
     modifier: Modifier = Modifier,
     viewModel: WorkoutViewModel = hiltViewModel(),
 ) {
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val workout = viewModel.workout.collectAsStateWithLifecycle().value
+    val restTimerService =
+        rememberRestTimerServiceController().restTimerService.collectAsStateWithLifecycle(null)
+
+    RestTimerEffect(viewModel, restTimerService)
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = workout?.name.orEmpty()) },
-                scrollBehavior = topAppBarScrollBehavior,
                 navigationIcon = { AppBars.BackArrow(onClick = navigator::back) },
             )
         },
+        bottomBar = { restTimerService.value?.also { BottomBar(it) } },
         modifier = modifier,
     ) { paddingValues ->
         if (workout != null) {
@@ -127,6 +152,68 @@ fun WorkoutScreen(
 
                     SinHorizontalDivider()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RestTimerEffect(
+    viewModel: WorkoutViewModel,
+    restTimerService: State<RestTimerService?>,
+) {
+    LaunchedEffect(viewModel, restTimerService) {
+        viewModel.workout
+            .filterNotNull()
+            .distinctUntilChanged { old, new -> new.completedSetCount <= old.completedSetCount }
+            .drop(1)
+            .collect { workout ->
+                if (workout.nextExerciseSet != null) {
+                    restTimerService.value?.startTimer(workout.nextExerciseSet.restTime, workout.id)
+                }
+            }
+    }
+}
+
+@Composable
+private fun BottomBar(restTimerService: RestTimerService) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding(),
+    ) {
+        val timer = restTimerService.timer.collectAsStateWithLifecycle(null).value
+
+        AnimatedContent(
+            targetState = timer,
+            modifier = Modifier.fillMaxWidth(),
+            transitionSpec = {
+                (fadeIn(tween(TIMER_ENTER_ANIMATION_DURATION, TIMER_BOUND_ANIMATION_DURATION)) +
+                        scaleIn(
+                            tween(TIMER_ENTER_ANIMATION_DURATION, TIMER_BOUND_ANIMATION_DURATION),
+                            TIMER_ANIMATION_SCALE,
+                        ))
+                    .togetherWith(
+                        fadeOut(tween(TIMER_EXIT_ANIMATION_DURATION)) +
+                            scaleOut(tween(TIMER_EXIT_ANIMATION_DURATION), TIMER_ANIMATION_SCALE)
+                    )
+                    .using(SizeTransform(false) { _, _ -> tween(TIMER_BOUND_ANIMATION_DURATION) })
+            },
+            contentAlignment = Alignment.Center,
+            label = "Rest timer",
+            contentKey = { it?.isFinished },
+        ) { state ->
+            if (state != null && !state.isFinished) {
+                RestTimer(
+                    remainingDuration = state.remainingDuration,
+                    isPaused = state.isPaused,
+                    onToggleIsPaused = restTimerService::toggleTimer,
+                    onCancel = restTimerService::cancelTimer,
+                    modifier =
+                        Modifier.padding(
+                            LocalDimens.current.padding.itemHorizontal,
+                            LocalDimens.current.padding.itemVertical,
+                        ),
+                )
             }
         }
     }

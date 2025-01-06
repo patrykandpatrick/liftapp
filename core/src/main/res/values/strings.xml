@@ -182,4 +182,16 @@
 
     <string name="content_description_add_set">Add set</string>
     <string name="content_description_remove_set">Remove set</string>
+
+    <!-- Rest timer -->
+    <string name="rest_timer_notification_channel_name">Rest Timer</string>
+    <string name="rest_timer_finished_notification_channel_name">End of rest</string>
+    <string name="rest_timer_notification_body">Rest timer</string>
+    <string name="rest_timer_finished_notification_body">End of rest</string>
+    <string name="rest_timer_action_cancel">Cancel</string>
+    <string name="rest_timer_action_resume">Resume</string>
+    <string name="rest_timer_action_pause">Pause</string>
+    <string name="rest_timer_action_dismiss">Dismiss</string>
+    <string name="rest_timer_action_add_seconds">+%d s</string>
+    <string name="rest_timer_counter_title">Rest</string>
 </resources>

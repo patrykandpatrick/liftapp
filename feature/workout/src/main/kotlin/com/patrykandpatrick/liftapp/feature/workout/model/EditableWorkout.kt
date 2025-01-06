@@ -23,6 +23,11 @@ data class EditableWorkout(
         exercises.indexOfFirst { it.firstIncompleteSetIndex != -1 }.takeIf { it != -1 }
             ?: exercises.lastIndex
 
+    val nextExerciseSet: NextExerciseSet? =
+        getNextExerciseSet(exercises, firstIncompleteExerciseIndex)
+
+    val completedSetCount: Int = exercises.sumOf { it.completedSetCount }
+
     @Stable
     data class Exercise(
         val id: Long,
@@ -44,5 +49,20 @@ data class EditableWorkout(
 
         @Stable
         fun isSetEnabled(set: EditableExerciseSet): Boolean = isSetActive(set) || set.isComplete
+    }
+
+    data class NextExerciseSet(val exercise: Exercise, val setIndex: Int) {
+        val set = exercise.sets[setIndex]
+
+        val restTime: Duration = exercise.goal.restTime
+    }
+
+    companion object {
+        private fun getNextExerciseSet(exercises: List<Exercise>, index: Int): NextExerciseSet? {
+            val exercise = exercises.getOrNull(index) ?: return null
+            val setIndex = exercise.firstIncompleteSetIndex
+            if (setIndex == -1) return null
+            return NextExerciseSet(exercise, setIndex)
+        }
     }
 }

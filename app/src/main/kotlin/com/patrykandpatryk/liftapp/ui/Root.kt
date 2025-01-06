@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
@@ -25,6 +26,7 @@ import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
@@ -165,7 +167,11 @@ fun NavGraphBuilder.addOneRepMax(navigator: OneRepMaxNavigator) {
 }
 
 fun NavGraphBuilder.addWorkout(navigator: WorkoutNavigator) {
-    composable<WorkoutRouteData> { backStackEntry -> WorkoutScreen(navigator = navigator) }
+    composable<WorkoutRouteData>(
+        deepLinks = listOf(navDeepLink { uriPattern = DeepLink.WorkoutRoute.uri })
+    ) { backStackEntry ->
+        WorkoutScreen(navigator = navigator)
+    }
 }
 
 inline fun <reified T : Any> NavGraphBuilder.bottomSheet(
