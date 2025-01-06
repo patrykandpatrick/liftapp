@@ -1,9 +1,11 @@
 package com.patrykandpatryk.liftapp.core.time
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatryk.liftapp.core.R
+import java.text.SimpleDateFormat
 import kotlin.time.Duration
 
 @Stable
@@ -23,3 +25,8 @@ fun Duration.getShortFormattedTime(): String = toComponents { hours, minutes, se
         }
     }
 }
+
+@SuppressLint("SimpleDateFormat") private val formatter = SimpleDateFormat("m:ss")
+
+val Duration.formattedRemainingTime: String
+    get() = formatter.format(inWholeMilliseconds)

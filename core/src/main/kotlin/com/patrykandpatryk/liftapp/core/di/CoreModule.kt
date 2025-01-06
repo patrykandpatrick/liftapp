@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.core.di
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
+import androidx.core.app.NotificationManagerCompat
 import com.patrykandpatryk.liftapp.core.android.IsDarkModeHandler
 import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModePublisher
@@ -59,5 +60,9 @@ internal interface CoreModule {
         @Provides fun provideResources(context: Context): Resources = context.resources
 
         @Provides fun provideFilesDir(context: Context): File = context.filesDir
+
+        @Provides
+        fun provideNotificationManager(context: Context): NotificationManagerCompat =
+            NotificationManagerCompat.from(context)
     }
 }
