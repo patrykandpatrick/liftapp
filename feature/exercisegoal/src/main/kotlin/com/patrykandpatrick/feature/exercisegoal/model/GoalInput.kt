@@ -80,7 +80,7 @@ data class GoalInput(
                     .intTextField(
                         validators = {
                             validNumber()
-                            valueInRange(Goal.RepRange)
+                            valueInRange(Goal.repRange)
                         }
                     )
                     .apply { updateValue(goal.minReps) }
@@ -96,7 +96,7 @@ data class GoalInput(
                     .intTextField(
                         validators = {
                             validNumber()
-                            valueInRange(Goal.RepRange)
+                            valueInRange(Goal.repRange)
                             isHigherOrEqualTo(minReps.state)
                         }
                     )
@@ -112,7 +112,7 @@ data class GoalInput(
                     .intTextField(
                         validators = {
                             validNumber()
-                            valueInRange(Goal.SetRange)
+                            valueInRange(Goal.setRange)
                         }
                     )
                     .apply { updateValue(goal.sets) }

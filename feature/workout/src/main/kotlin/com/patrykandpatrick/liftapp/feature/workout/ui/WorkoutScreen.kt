@@ -61,7 +61,6 @@ import com.patrykandpatryk.liftapp.core.ui.wheel.ScrollSyncEffect
 import com.patrykandpatryk.liftapp.core.ui.wheel.rememberWheelPickerState
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
-import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -278,7 +277,7 @@ private fun WorkoutScreenPreview() {
                                                     mainMuscles = listOf(Muscle.Chest),
                                                     secondaryMuscles = listOf(Muscle.Triceps),
                                                     tertiaryMuscles = emptyList(),
-                                                    goal = Goal.Default,
+                                                    goal = Workout.Goal.default,
                                                     sets =
                                                         listOf(
                                                             ExerciseSet.Weight(
@@ -305,7 +304,7 @@ private fun WorkoutScreenPreview() {
                                                     mainMuscles = listOf(Muscle.Quadriceps),
                                                     secondaryMuscles = listOf(Muscle.Glutes),
                                                     tertiaryMuscles = emptyList(),
-                                                    goal = Goal.Default,
+                                                    goal = Workout.Goal.default,
                                                     sets =
                                                         listOf(
                                                             ExerciseSet.Weight(

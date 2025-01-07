@@ -23,7 +23,7 @@ constructor(
                 val goal =
                     goalDao.getGoal(routineID, exerciseID)?.toDomain()
                         ?: goalDao.getDefaultGoal(exerciseID)?.goal
-                        ?: Goal.Companion.Default
+                        ?: Goal.Companion.default
                 emit(goal)
             }
             .flowOn(dispatcher)

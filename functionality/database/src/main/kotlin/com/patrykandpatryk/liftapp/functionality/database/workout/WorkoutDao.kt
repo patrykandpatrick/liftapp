@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -52,33 +53,7 @@ interface WorkoutDao {
     )
     suspend fun copyRoutineGoalsToWorkoutGoals(routineID: Long, workoutID: Long)
 
-    @Query(
-        value =
-            "INSERT OR REPLACE INTO workout_goal (" +
-                "workout_goal_id, workout_goal_workout_id, workout_goal_exercise_id, workout_goal_min_reps, " +
-                "workout_goal_max_reps, workout_goal_sets, workout_goal_rest_time, workout_goal_duration_millis, " +
-                "workout_goal_distance, workout_goal_distance_unit, workout_goal_calories" +
-                ") SELECT (SELECT COALESCE((SELECT id FROM workout_goal INNER JOIN " +
-                "(SELECT g.workout_goal_id as id, g.workout_goal_workout_id as workoutID, " +
-                "g.workout_goal_exercise_id as exerciseID FROM workout_goal as g " +
-                "WHERE workout_goal_workout_id = :workoutID AND workout_goal_exercise_id = :exerciseID) " +
-                "on workout_goal_id = id " +
-                "WHERE workout_goal_workout_id = :workoutID AND workout_goal_exercise_id = :exerciseID" +
-                "), NULL)), :workoutID, :exerciseID, :minReps, :maxReps, :sets, :restTimeMillis, :durationMillis, " +
-                ":distance, :distanceUnit, :calories"
-    )
-    suspend fun upsertWorkoutGoal(
-        workoutID: Long,
-        exerciseID: Long,
-        minReps: Int,
-        maxReps: Int,
-        sets: Int,
-        restTimeMillis: Long,
-        durationMillis: Long,
-        distance: Double,
-        distanceUnit: LongDistanceUnit,
-        calories: Double,
-    )
+    @Upsert suspend fun upsertWorkoutGoal(goal: WorkoutGoalEntity)
 
     @Query(
         value =

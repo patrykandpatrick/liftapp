@@ -1,7 +1,6 @@
 package com.patrykandpatryk.liftapp.functionality.database.workout
 
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
-import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import com.patrykandpatryk.liftapp.domain.workout.WorkoutRepository
@@ -94,29 +93,21 @@ constructor(
         workoutDao.insertWorkoutWithExercises(workoutWithExercises)
     }
 
-    override suspend fun upsertWorkoutGoal(
-        workoutID: Long,
-        exerciseID: Long,
-        minReps: Int,
-        maxReps: Int,
-        sets: Int,
-        restTimeMillis: Long,
-        durationMillis: Long,
-        distance: Double,
-        distanceUnit: LongDistanceUnit,
-        calories: Double,
-    ) {
+    override suspend fun upsertWorkoutGoal(workoutID: Long, exerciseID: Long, goal: Workout.Goal) {
         workoutDao.upsertWorkoutGoal(
-            workoutID,
-            exerciseID,
-            minReps,
-            maxReps,
-            sets,
-            restTimeMillis,
-            durationMillis,
-            distance,
-            distanceUnit,
-            calories,
+            WorkoutGoalEntity(
+                goal.id,
+                workoutID,
+                exerciseID,
+                goal.minReps,
+                goal.maxReps,
+                goal.sets,
+                goal.restTime.inWholeMilliseconds,
+                goal.duration.inWholeMilliseconds,
+                goal.distance,
+                goal.distanceUnit,
+                goal.calories,
+            )
         )
     }
 

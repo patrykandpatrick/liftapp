@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.functionality.database.workout
 
+import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
@@ -36,14 +37,16 @@ constructor(
             notes = workoutEntity.notes,
             exercises =
                 exercises.groupByExerciseAndGoal().map { (exerciseWithGoal, sets) ->
-                    val goal = exerciseWithGoal.second?.toDomain() ?: exerciseWithGoal.first.goal
+                    val goal =
+                        exerciseWithGoal.second?.toDomain()
+                            ?: exerciseWithGoal.first.goal.toWorkoutGoal()
                     toDomain(
                         exercise = exerciseWithGoal.first,
                         goal = goal,
                         sets =
                             toDomain(
                                 exerciseType = exerciseWithGoal.first.exerciseType,
-                                goal = goal,
+                                setCount = goal.sets,
                                 sets = sets,
                                 massUnit = massUnit,
                                 distanceUnit = distanceUnit,
@@ -71,7 +74,7 @@ constructor(
 
     private fun toDomain(
         exercise: ExerciseEntity,
-        goal: Goal,
+        goal: Workout.Goal,
         sets: List<ExerciseSet>,
     ): Workout.Exercise =
         Workout.Exercise(
@@ -87,13 +90,13 @@ constructor(
 
     private fun toDomain(
         exerciseType: ExerciseType,
-        goal: Goal,
+        setCount: Int,
         sets: Map<Int, ExerciseSetEntity>,
         massUnit: MassUnit,
         distanceUnit: LongDistanceUnit,
         bodyWeight: BodyMeasurementValue.SingleValue?,
     ): List<ExerciseSet> =
-        (0 until goal.sets).map { setIndex ->
+        (0 until setCount).map { setIndex ->
             val set = sets[setIndex]
             when (exerciseType) {
                 ExerciseType.Weight ->
@@ -154,14 +157,27 @@ constructor(
         ExerciseSet.Time((timeMillis ?: 0).milliseconds)
 }
 
-fun WorkoutGoalEntity.toDomain(): Goal =
-    Goal(
+fun WorkoutGoalEntity.toDomain(): Workout.Goal =
+    Workout.Goal(
         id = id,
         minReps = minReps,
         maxReps = maxReps,
         sets = sets,
         restTime = restTimeMillis.milliseconds,
         duration = durationMillis.milliseconds,
+        distance = distance,
+        distanceUnit = distanceUnit,
+        calories = calories,
+    )
+
+fun Goal.toWorkoutGoal(): Workout.Goal =
+    Workout.Goal(
+        id = ID_NOT_SET,
+        minReps = minReps,
+        maxReps = maxReps,
+        sets = sets,
+        restTime = restTime,
+        duration = duration,
         distance = distance,
         distanceUnit = distanceUnit,
         calories = calories,

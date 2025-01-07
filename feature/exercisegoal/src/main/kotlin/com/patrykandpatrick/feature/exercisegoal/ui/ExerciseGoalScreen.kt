@@ -293,7 +293,7 @@ private fun ExerciseGoalPreview() {
                                 routeData,
                             ),
                         getGoalUseCase =
-                            GetGoalUseCase({ _, _ -> flowOf(Goal.Default) }, routeData),
+                            GetGoalUseCase({ _, _ -> flowOf(Goal.default) }, routeData),
                         saveGoalUseCase = SaveGoalUseCase(saveGoalContract, routeData),
                         coroutineScope = coroutineScope,
                         textFieldStateManager = textFieldStateManager,
