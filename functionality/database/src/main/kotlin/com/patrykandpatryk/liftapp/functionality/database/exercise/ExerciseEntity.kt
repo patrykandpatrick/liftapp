@@ -18,7 +18,7 @@ data class ExerciseEntity(
     @ColumnInfo(name = "exercise_secondary_muscles") val secondaryMuscles: List<Muscle>,
     @ColumnInfo(name = "exercise_tertiary_muscles") val tertiaryMuscles: List<Muscle>,
     @ColumnInfo(name = "exercise_goal")
-    val goal: Goal = Goal.Default, // TODO add custom goals for built-in exercises.
+    val goal: Goal = Goal.default, // TODO add custom goals for built-in exercises.
 ) {
 
     class Update(

@@ -14,6 +14,8 @@ import com.patrykandpatryk.liftapp.core.text.MarkupProcessor
 import com.patrykandpatryk.liftapp.core.time.getShortFormattedTime
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
+import kotlin.time.Duration
 
 private val decimalFormat = DecimalFormat("#.##")
 
@@ -24,15 +26,15 @@ fun Goal.getPrettyStringLong(exerciseType: ExerciseType): AnnotatedString {
         when (exerciseType) {
             ExerciseType.Weight,
             ExerciseType.Calisthenics,
-            ExerciseType.Reps -> getRepsPrettyString()
-            ExerciseType.Cardio -> getCardioPrettyString()
-            ExerciseType.Time -> getTimePrettyString()
+            ExerciseType.Reps -> getRepsPrettyString(minReps, maxReps, sets)
+            ExerciseType.Cardio -> getCardioPrettyString(distance, distanceUnit, duration, calories)
+            ExerciseType.Time -> getTimePrettyString(duration)
         }
     return LocalMarkupProcessor.current.toAnnotatedString(text)
 }
 
 @Composable
-private fun Goal.getRepsPrettyString(): String =
+fun getRepsPrettyString(minReps: Int, maxReps: Int, sets: Int): String =
     if (minReps == maxReps) {
         stringResource(
             string.goal_reps_format_long_single_rep,
@@ -53,7 +55,12 @@ private fun Goal.getRepsPrettyString(): String =
     }
 
 @Composable
-private fun Goal.getCardioPrettyString(): String = buildString {
+fun getCardioPrettyString(
+    distance: Double,
+    distanceUnit: LongDistanceUnit,
+    duration: Duration,
+    calories: Double,
+): String = buildString {
     if (distance > 0) {
         append(
             MarkupProcessor.Type.BoldSurfaceColor.wrap(
@@ -76,5 +83,5 @@ private fun Goal.getCardioPrettyString(): String = buildString {
 }
 
 @Composable
-private fun Goal.getTimePrettyString(): String =
+fun getTimePrettyString(duration: Duration): String =
     MarkupProcessor.Type.BoldSurfaceColor.wrap(duration.getShortFormattedTime())

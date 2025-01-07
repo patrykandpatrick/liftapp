@@ -16,27 +16,32 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.model.getPrettyStringLong
+import com.patrykandpatryk.liftapp.core.model.getCardioPrettyString
+import com.patrykandpatryk.liftapp.core.model.getRepsPrettyString
+import com.patrykandpatryk.liftapp.core.model.getTimePrettyString
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
+import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.VerticalDivider
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
-import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.workout.Workout
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun GoalHeader(
-    goal: Goal,
+    goal: Workout.Goal,
     exerciseType: ExerciseType,
     onAddSetClick: () -> Unit,
     onRemoveSetClick: () -> Unit,
@@ -105,13 +110,32 @@ internal fun GoalHeader(
     }
 }
 
+@Stable
+@Composable
+fun Workout.Goal.getPrettyStringLong(exerciseType: ExerciseType): AnnotatedString {
+    val text =
+        when (exerciseType) {
+            ExerciseType.Weight,
+            ExerciseType.Calisthenics,
+            ExerciseType.Reps -> getRepsPrettyString(minReps, maxReps, sets)
+            ExerciseType.Cardio -> getCardioPrettyString(distance, distanceUnit, duration, calories)
+            ExerciseType.Time -> getTimePrettyString(duration)
+        }
+    return LocalMarkupProcessor.current.toAnnotatedString(text)
+}
+
 @LightAndDarkThemePreview
 @Composable
 private fun GoalHeaderPreview() {
     LiftAppTheme {
         Column(modifier = Modifier.Companion.background(MaterialTheme.colorScheme.surface)) {
-            GoalHeader(Goal.Default, ExerciseType.Weight, {}, {})
-            GoalHeader(Goal.Default.copy(1, 1, 1, 0.seconds), ExerciseType.Weight, {}, {})
+            GoalHeader(Workout.Goal.default, ExerciseType.Weight, {}, {})
+            GoalHeader(
+                Workout.Goal.default.copy(minReps = 1, maxReps = 1, sets = 1, restTime = 0.seconds),
+                ExerciseType.Weight,
+                {},
+                {},
+            )
         }
     }
 }
