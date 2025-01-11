@@ -21,6 +21,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import kotlin.math.roundToInt
@@ -54,8 +55,8 @@ fun rememberBackdropState(initialState: BackdropValue = BackdropValue.Closed) =
 @Composable
 fun Backdrop(
     backContent: @Composable () -> Unit,
-    backPeekHeight: Dp,
-    contentPeekHeight: Dp,
+    backPeekHeight: Density.() -> Dp,
+    contentPeekHeight: Density.() -> Dp,
     modifier: Modifier = Modifier,
     state: BackdropState = rememberBackdropState(),
     content: @Composable () -> Unit,
@@ -74,7 +75,8 @@ fun Backdrop(
         },
         measurePolicy = { measurables, constraints ->
             val backdrop = measurables[0].measure(constraints)
-            val frontMaxHeight = constraints.maxHeight - backPeekHeight.roundToPx()
+            val backPeekHeight = backPeekHeight().roundToPx()
+            val frontMaxHeight = constraints.maxHeight - backPeekHeight
             val front =
                 measurables[1].measure(
                     constraints.copy(
@@ -83,12 +85,12 @@ fun Backdrop(
                     )
                 )
             val backdropOpenLength =
-                minOf(constraints.maxHeight - contentPeekHeight.toPx(), backdrop.height.toFloat())
+                minOf(constraints.maxHeight - contentPeekHeight().toPx(), backdrop.height.toFloat())
 
             state.anchoredDraggableState.updateAnchors(
                 DraggableAnchors {
                     BackdropValue.Open at backdropOpenLength
-                    BackdropValue.Closed at backPeekHeight.toPx()
+                    BackdropValue.Closed at backPeekHeight.toFloat()
                 }
             )
             layout(constraints.maxWidth, constraints.maxHeight) {
