@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
@@ -12,17 +13,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -47,6 +56,7 @@ import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
+import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.graphics.rememberTopSinShape
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
@@ -54,12 +64,12 @@ import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.ui.AppBars
 import com.patrykandpatryk.liftapp.core.ui.Backdrop
 import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
+import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisEnterTransition
+import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisExitTransition
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.rememberBackdropState
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.core.ui.wheel.ScrollSyncEffect
 import com.patrykandpatryk.liftapp.core.ui.wheel.rememberWheelPickerState
-import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
@@ -68,7 +78,6 @@ import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
@@ -89,6 +98,7 @@ fun WorkoutScreen(
     val workout = viewModel.workout.collectAsStateWithLifecycle().value
     val restTimerService =
         rememberRestTimerServiceController().restTimerService.collectAsStateWithLifecycle(null)
+    val page = viewModel.selectedPage.collectAsStateWithLifecycle().value
 
     RestTimerEffect(viewModel, restTimerService)
 
@@ -99,60 +109,75 @@ fun WorkoutScreen(
                 navigationIcon = { AppBars.BackArrow(onClick = navigator::back) },
             )
         },
-        bottomBar = { restTimerService.value?.also { BottomBar(it) } },
+        bottomBar = {
+            BottomBar(
+                onNextPageClick = { viewModel.onPageDelta(1) },
+                onPreviousPageClick = { viewModel.onPageDelta(-1) },
+            )
+        },
         modifier = modifier,
     ) { paddingValues ->
         if (workout != null) {
-            val pagerState =
-                rememberPagerState(initialPage = workout.firstIncompleteExerciseIndex) {
-                    workout.exercises.size
+            Content(
+                workout = workout,
+                page = page,
+                restTimerService = restTimerService.value,
+                onAddSetClick = viewModel::increaseSetCount,
+                onRemoveSetClick = viewModel::decreaseSetCount,
+                onSaveSet = viewModel::saveSet,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+    }
+}
+
+@Composable
+private fun Content(
+    workout: EditableWorkout,
+    page: Int,
+    restTimerService: RestTimerService?,
+    onAddSetClick: (EditableWorkout.Exercise) -> Unit,
+    onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
+    onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val wheelPickerState = rememberWheelPickerState(workout.firstIncompleteExerciseIndex)
+    val backdropState = rememberBackdropState()
+    LaunchedEffect(page) { launch { wheelPickerState.animateScrollTo(page) } }
+    Box(modifier = modifier) {
+        Backdrop(
+            backContent = { ExerciseListPicker(workout, wheelPickerState, backdropState) },
+            backPeekHeight = with(LocalDensity.current) { wheelPickerState.maxItemHeight.toDp() },
+            contentPeekHeight = 200.dp,
+            state = backdropState,
+            modifier = Modifier.imePadding(),
+        ) {
+            Box(contentAlignment = Alignment.TopCenter) {
+                AnimatedContent(
+                    targetState = page.coerceIn(0, workout.exercises.lastIndex),
+                    transitionSpec = {
+                        val forward = targetState > initialState
+                        sharedXAxisEnterTransition(forward) togetherWith
+                            sharedXAxisExitTransition(forward)
+                    },
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .clip(rememberTopSinShape())
+                            .background(MaterialTheme.colorScheme.background),
+                ) { page ->
+                    Page(
+                        exercise = workout.exercises[page],
+                        onAddSetClick = onAddSetClick,
+                        onRemoveSetClick = onRemoveSetClick,
+                        onSaveSet = onSaveSet,
+                    )
                 }
-            val wheelPickerState =
-                rememberWheelPickerState(
-                    initialSelectedIndex = workout.firstIncompleteExerciseIndex
-                )
-            val backdropState = rememberBackdropState()
-            Backdrop(
-                backContent = { ExerciseListPicker(workout, wheelPickerState, backdropState) },
-                backPeekHeight =
-                    with(LocalDensity.current) { wheelPickerState.maxItemHeight.toDp() },
-                contentPeekHeight = 200.dp,
-                state = backdropState,
-                modifier = Modifier.padding(paddingValues).imePadding(),
-            ) {
-                Box(contentAlignment = Alignment.TopCenter) {
-                    ScrollSyncEffect(wheelPickerState, pagerState)
 
-                    LaunchedEffect(workout.firstIncompleteExerciseIndex) {
-                        delay(Constants.Workout.EXERCISE_CHANGE_DELAY)
-                        launch {
-                            pagerState.animateScrollToPage(workout.firstIncompleteExerciseIndex)
-                        }
-                        launch {
-                            wheelPickerState.animateScrollTo(workout.firstIncompleteExerciseIndex)
-                        }
-                    }
-
-                    HorizontalPager(
-                        state = pagerState,
-                        key = { workout.exercises[it].id },
-                        modifier =
-                            Modifier.fillMaxSize()
-                                .clip(rememberTopSinShape())
-                                .background(MaterialTheme.colorScheme.background),
-                    ) { page ->
-                        Page(
-                            exercise = workout.exercises[page],
-                            onAddSetClick = viewModel::increaseSetCount,
-                            onRemoveSetClick = viewModel::decreaseSetCount,
-                            onSaveSet = viewModel::saveSet,
-                        )
-                    }
-
-                    SinHorizontalDivider()
-                }
+                SinHorizontalDivider()
             }
         }
+
+        restTimerService?.also { RestTimerContainer(it, Modifier.align(Alignment.BottomCenter)) }
     }
 }
 
@@ -175,45 +200,99 @@ private fun RestTimerEffect(
 }
 
 @Composable
-private fun BottomBar(restTimerService: RestTimerService) {
+private fun BottomBar(
+    onPreviousPageClick: () -> Unit,
+    onNextPageClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val padding = LocalDimens.current.padding
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxWidth().navigationBarsPadding(),
+        modifier =
+            modifier
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxWidth()
+                .navigationBarsPadding(),
     ) {
-        val timer = restTimerService.timer.collectAsStateWithLifecycle(null).value
+        Column {
+            HorizontalDivider()
 
-        AnimatedContent(
-            targetState = timer,
-            modifier = Modifier.fillMaxWidth(),
-            transitionSpec = {
-                (fadeIn(tween(TIMER_ENTER_ANIMATION_DURATION, TIMER_BOUND_ANIMATION_DURATION)) +
-                        scaleIn(
-                            tween(TIMER_ENTER_ANIMATION_DURATION, TIMER_BOUND_ANIMATION_DURATION),
-                            TIMER_ANIMATION_SCALE,
-                        ))
-                    .togetherWith(
-                        fadeOut(tween(TIMER_EXIT_ANIMATION_DURATION)) +
-                            scaleOut(tween(TIMER_EXIT_ANIMATION_DURATION), TIMER_ANIMATION_SCALE)
-                    )
-                    .using(SizeTransform(false) { _, _ -> tween(TIMER_BOUND_ANIMATION_DURATION) })
-            },
-            contentAlignment = Alignment.Center,
-            label = "Rest timer",
-            contentKey = { it?.isFinished },
-        ) { state ->
-            if (state != null && !state.isFinished) {
-                RestTimer(
-                    remainingDuration = state.remainingDuration,
-                    isPaused = state.isPaused,
-                    onToggleIsPaused = restTimerService::toggleTimer,
-                    onCancel = restTimerService::cancelTimer,
-                    modifier =
-                        Modifier.padding(
-                            LocalDimens.current.padding.itemHorizontal,
-                            LocalDimens.current.padding.itemVertical,
-                        ),
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement =
+                    Arrangement.spacedBy(padding.itemHorizontalSmall, Alignment.CenterHorizontally),
+                modifier = Modifier.fillMaxWidth().padding(vertical = padding.itemVertical),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    OutlinedButton(
+                        onClick = onPreviousPageClick,
+                        shape =
+                            MaterialTheme.shapes.small.copy(
+                                topEnd = CornerSize(4.dp),
+                                bottomEnd = CornerSize(4.dp),
+                            ),
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_arrow_back),
+                            contentDescription = null,
+                        )
+                    }
+                    Button(
+                        onClick = onNextPageClick,
+                        shape =
+                            MaterialTheme.shapes.small.copy(
+                                topStart = CornerSize(4.dp),
+                                bottomStart = CornerSize(4.dp),
+                            ),
+                    ) {
+                        Text(text = stringResource(R.string.action_next_exercise))
+                        Spacer(modifier = Modifier.width(padding.itemHorizontalSmall))
+                        Icon(
+                            painterResource(id = R.drawable.ic_arrow_forward),
+                            contentDescription = stringResource(R.string.action_previous_exercise),
+                        )
+                    }
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun RestTimerContainer(restTimerService: RestTimerService, modifier: Modifier = Modifier) {
+    val timer = restTimerService.timer.collectAsStateWithLifecycle(null).value
+
+    AnimatedContent(
+        targetState = timer,
+        modifier = modifier.fillMaxWidth(),
+        transitionSpec = {
+            (fadeIn(tween(TIMER_ENTER_ANIMATION_DURATION, TIMER_BOUND_ANIMATION_DURATION)) +
+                    scaleIn(
+                        tween(TIMER_ENTER_ANIMATION_DURATION, TIMER_BOUND_ANIMATION_DURATION),
+                        TIMER_ANIMATION_SCALE,
+                    ))
+                .togetherWith(
+                    fadeOut(tween(TIMER_EXIT_ANIMATION_DURATION)) +
+                        scaleOut(tween(TIMER_EXIT_ANIMATION_DURATION), TIMER_ANIMATION_SCALE)
+                )
+                .using(SizeTransform(false) { _, _ -> tween(TIMER_BOUND_ANIMATION_DURATION) })
+        },
+        contentAlignment = Alignment.Center,
+        label = "Rest timer",
+        contentKey = { it?.isFinished },
+    ) { state ->
+        if (state != null && !state.isFinished) {
+            RestTimer(
+                remainingDuration = state.remainingDuration,
+                isPaused = state.isPaused,
+                onToggleIsPaused = restTimerService::toggleTimer,
+                onCancel = restTimerService::cancelTimer,
+                modifier =
+                    Modifier.padding(
+                        LocalDimens.current.padding.itemHorizontal,
+                        LocalDimens.current.padding.itemVertical,
+                    ),
+            )
         }
     }
 }
@@ -246,6 +325,7 @@ private fun Page(
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @LightAndDarkThemePreview
 @Composable
 private fun WorkoutScreenPreview() {

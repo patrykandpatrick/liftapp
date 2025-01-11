@@ -120,6 +120,8 @@
     <string name="action_info">Additional information</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_work_out">Work out</string>
+    <string name="action_next_exercise">Next exercise</string>
+    <string name="action_previous_exercise">Previous exercise</string>
 
     <string name="title_new_exercise">New Exercise</string>
     <string name="title_new_routine">New Routine</string>
