@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.ModalBottomSheetLayout
@@ -27,6 +28,8 @@ import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
+import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisEnterTransition
+import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisExitTransition
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
@@ -71,7 +74,11 @@ fun Root(modifier: Modifier = Modifier, darkTheme: Boolean) {
             NavHost(
                 navController = navController,
                 startDestination = Routes.Home,
-                modifier = modifier,
+                modifier = modifier.background(MaterialTheme.colorScheme.background),
+                enterTransition = { sharedXAxisEnterTransition() },
+                exitTransition = { sharedXAxisExitTransition() },
+                popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
+                popExitTransition = { sharedXAxisExitTransition(forward = false) },
             ) {
                 addHome(homeNavigator)
                 addAbout()

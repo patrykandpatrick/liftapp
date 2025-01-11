@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.core.animation
+package com.patrykandpatryk.liftapp.core.ui.animation
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring

@@ -33,8 +33,8 @@ import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.ui.anim.EXIT_ANIM_DURATION
-import com.patrykandpatryk.liftapp.core.ui.anim.slideAndFadeIn
+import com.patrykandpatryk.liftapp.core.ui.animation.EXIT_ANIM_DURATION
+import com.patrykandpatryk.liftapp.core.ui.animation.slideAndFadeIn
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.ui.BodyMeasurementListScreen
 import com.patrykandpatryk.liftapp.feature.dashboard.ui.DashboardScreen
