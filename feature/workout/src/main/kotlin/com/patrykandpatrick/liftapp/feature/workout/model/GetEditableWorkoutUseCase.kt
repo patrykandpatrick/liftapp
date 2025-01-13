@@ -6,6 +6,7 @@ import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.validation.higherThanZero
 import com.patrykandpatryk.liftapp.domain.validation.validNumber
+import com.patrykandpatryk.liftapp.domain.validation.validNumberHigherThanZero
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutContract
 import com.patrykandpatryk.liftapp.domain.workout.Workout
@@ -70,20 +71,14 @@ constructor(
                             initialValue = formatDecimal(weight),
                             savedStateKey =
                                 getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
-                            validators = {
-                                validNumber()
-                                higherThanZero()
-                            },
+                            validators = { validNumberHigherThanZero() },
                         ),
                     repsInput =
                         textFieldStateManager.intTextField(
                             initialValue = formatInteger(reps),
                             savedStateKey =
                                 getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                            validators = {
-                                validNumber()
-                                higherThanZero()
-                            },
+                            validators = { validNumberHigherThanZero() },
                         ),
                     weightUnit = weightUnit,
                 )
@@ -112,10 +107,7 @@ constructor(
                             initialValue = formatInteger(reps),
                             savedStateKey =
                                 getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                            validators = {
-                                validNumber()
-                                higherThanZero()
-                            },
+                            validators = { validNumberHigherThanZero() },
                         ),
                     weightUnit = weightUnit,
                 )
@@ -128,10 +120,7 @@ constructor(
                             initialValue = formatInteger(reps),
                             savedStateKey =
                                 getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                            validators = {
-                                validNumber()
-                                higherThanZero()
-                            },
+                            validators = { validNumberHigherThanZero() },
                         ),
                 )
 
@@ -152,20 +141,14 @@ constructor(
                             initialValue = formatDecimal(distance),
                             savedStateKey =
                                 getTextFieldStateManagerKey(exerciseId, setIndex, "distance"),
-                            validators = {
-                                validNumber()
-                                higherThanZero()
-                            },
+                            validators = { validNumberHigherThanZero() },
                         ),
                     kcalInput =
                         textFieldStateManager.doubleTextField(
                             initialValue = formatDecimal(kcal),
                             savedStateKey =
                                 getTextFieldStateManagerKey(exerciseId, setIndex, "kcal"),
-                            validators = {
-                                validNumber()
-                                higherThanZero()
-                            },
+                            validators = { validNumberHigherThanZero() },
                         ),
                     distanceUnit = distanceUnit,
                 )

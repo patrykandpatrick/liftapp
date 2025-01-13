@@ -1,7 +1,6 @@
 package com.patrykandpatryk.liftapp.domain.validation
 
 import com.patrykandpatryk.liftapp.domain.extension.toDoubleOrZero
-import com.patrykandpatryk.liftapp.domain.extension.toIntOrZero
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.value.ValueProvider
@@ -50,6 +49,23 @@ data class RequiredLengthTextValidationElement(
         validate(value)
 }
 
+data class HigherThanZeroValidationElement(
+    val stringProvider: StringProvider,
+    val formatter: Formatter,
+) : TextValidator.TextValidationElement<Number> {
+    override fun validate(value: Number): TextValidator.TextValidationElement.Result =
+        if (value.toDouble() > 0) {
+            TextValidator.TextValidationElement.Result.Valid
+        } else {
+            TextValidator.TextValidationElement.Result.Invalid(
+                stringProvider.fieldMustBeHigherThanZero()
+            )
+        }
+
+    override fun validateString(value: String): TextValidator.TextValidationElement.Result =
+        validate(value.toDoubleOrZero())
+}
+
 data class ValueRangeTextValidationElement(
     private val stringProvider: StringProvider,
     private val formatter: Formatter,
@@ -83,7 +99,7 @@ data class ValueRangeTextValidationElement(
     }
 
     override fun validateString(value: String): TextValidator.TextValidationElement.Result =
-        validate(value.toIntOrZero())
+        validate(value.toDoubleOrZero())
 }
 
 data class ValidNumberTextValidationElement(

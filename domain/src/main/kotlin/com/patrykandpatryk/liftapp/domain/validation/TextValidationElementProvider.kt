@@ -52,11 +52,7 @@ fun <T : Number> TextValidationElementProvider<T>.valueInRange(
 
 fun <T : Number> TextValidationElementProvider<T>.higherThanZero() {
     addCondition(
-        ValueRangeTextValidationElement(
-            minValue = 0.0,
-            stringProvider = stringProvider,
-            formatter = formatter,
-        )
+        HigherThanZeroValidationElement(stringProvider = stringProvider, formatter = formatter)
     )
 }
 
