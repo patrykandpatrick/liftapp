@@ -4,12 +4,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatryk.liftapp.core.R
@@ -90,6 +95,8 @@ private fun WeightInput(
         hint = stringResource(R.string.exercise_set_input_weight),
         suffix = unit.prettyString(),
         modifier = modifier,
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
     )
 }
 
@@ -106,17 +113,23 @@ private fun BodyWeightInput(
         hint = stringResource(R.string.exercise_set_input_body_weight),
         suffix = unit.prettyString(),
         modifier = modifier,
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
     )
 }
 
 @Composable
 private fun RepsInput(textFieldState: IntTextFieldState, modifier: Modifier = Modifier) {
+    val focusManager = LocalFocusManager.current
     NumberInput(
         textFieldState = textFieldState,
         onPlusClick = { long -> textFieldState.updateValueBy(Increment.getReps(long)) },
         onMinusClick = { long -> textFieldState.updateValueBy(-Increment.getReps(long)) },
         hint = stringResource(R.string.exercise_set_input_reps),
         modifier = modifier,
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
     )
 }
 
@@ -153,11 +166,14 @@ private fun DistanceInput(
         hint = stringResource(R.string.exercise_set_input_distance),
         suffix = unit.prettyString(),
         modifier = modifier,
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
     )
 }
 
 @Composable
 private fun CaloriesInput(textFieldState: DoubleTextFieldState, modifier: Modifier = Modifier) {
+    val focusManager = LocalFocusManager.current
     NumberInput(
         textFieldState = textFieldState,
         onPlusClick = { long -> textFieldState.updateValueBy(Increment.getCalories(long)) },
@@ -165,6 +181,9 @@ private fun CaloriesInput(textFieldState: DoubleTextFieldState, modifier: Modifi
         hint = stringResource(R.string.exercise_set_input_calories),
         suffix = stringResource(R.string.energy_unit_kcal),
         modifier = modifier,
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
     )
 }
 

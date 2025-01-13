@@ -27,3 +27,11 @@ fun PaddingValues.vertical(): Dp = calculateTopPadding() + calculateBottomPaddin
 @Composable
 @ReadOnlyComposable
 fun WindowInsets.getBottom(): Dp = asPaddingValues().calculateBottomPadding()
+
+@Composable
+fun PaddingValues.copy(
+    start: Dp = calculateStartPadding(),
+    top: Dp = calculateTopPadding(),
+    end: Dp = calculateEndPadding(),
+    bottom: Dp = calculateBottomPadding(),
+): PaddingValues = PaddingValues(start = start, top = top, end = end, bottom = bottom)

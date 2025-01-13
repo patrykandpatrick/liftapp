@@ -1,5 +1,7 @@
 package com.patrykandpatryk.liftapp.core.ui.animation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseIn
@@ -11,6 +13,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.IntOffset
 
 const val ENTER_ANIM_DURATION = 300
@@ -55,3 +58,9 @@ fun sharedXAxisExitTransition(
     slideOut(animationSpec = tween(SLIDE_DURATION, easing = EaseInOut)) {
         IntOffset(x = (it.width / slideWidthDivider).toInt() * if (forward) -1 else 1, y = 0)
     } + fadeOut(animationSpec = tween(durationMillis = SLIDE_FADE_DURATION, easing = EaseOut))
+
+fun <S : Comparable<S>> sharedXAxisTransition():
+    AnimatedContentTransitionScope<S>.() -> ContentTransform = {
+    val forward = targetState > initialState
+    sharedXAxisEnterTransition(forward) togetherWith sharedXAxisExitTransition(forward)
+}

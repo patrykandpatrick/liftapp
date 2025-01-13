@@ -18,7 +18,7 @@ import java.text.DecimalFormat
 import kotlin.time.Duration
 
 sealed class EditableExerciseSet : Serializable {
-    abstract val isComplete: Boolean
+    abstract val isCompleted: Boolean
 
     abstract val isInputValid: Boolean
 
@@ -29,7 +29,7 @@ sealed class EditableExerciseSet : Serializable {
         val repsInput: IntTextFieldState,
         val weightUnit: MassUnit,
     ) : EditableExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = weight > 0 && reps > 0
 
         override val isInputValid: Boolean
@@ -45,7 +45,7 @@ sealed class EditableExerciseSet : Serializable {
         val repsInput: IntTextFieldState,
         val weightUnit: MassUnit,
     ) : EditableExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = weight > 0 && reps > 0
 
         override val isInputValid: Boolean
@@ -53,7 +53,7 @@ sealed class EditableExerciseSet : Serializable {
     }
 
     data class Reps(val reps: Int, val repsInput: IntTextFieldState) : EditableExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = reps > 0
 
         override val isInputValid: Boolean
@@ -69,7 +69,7 @@ sealed class EditableExerciseSet : Serializable {
         val kcalInput: DoubleTextFieldState,
         val distanceUnit: LongDistanceUnit,
     ) : EditableExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = duration.inWholeSeconds > 0 && distance > 0
 
         override val isInputValid: Boolean
@@ -78,7 +78,7 @@ sealed class EditableExerciseSet : Serializable {
 
     data class Time(val duration: Duration, val timeInput: LongTextFieldState) :
         EditableExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = duration.inWholeSeconds > 0
 
         override val isInputValid: Boolean
@@ -88,12 +88,13 @@ sealed class EditableExerciseSet : Serializable {
 
 @Composable
 fun EditableExerciseSet.prettyString(): String =
-    if (isComplete) {
+    if (isCompleted) {
+        val decimalFormat = remember { DecimalFormat(DECIMAL_PATTERN) }
         when (this) {
             is EditableExerciseSet.Weight ->
                 stringResource(
                     R.string.exercise_set_format_weight,
-                    weight,
+                    decimalFormat.format(weight),
                     weightUnit.prettyString(),
                     reps,
                     getRepsString(reps),
@@ -103,8 +104,8 @@ fun EditableExerciseSet.prettyString(): String =
                 if (weight > 0) {
                     stringResource(
                         R.string.exercise_set_format_calisthenics_with_weight,
-                        bodyWeight,
-                        weight,
+                        decimalFormat.format(bodyWeight),
+                        decimalFormat.format(weight),
                         weightUnit.prettyString(),
                         reps,
                         getRepsString(reps),
@@ -112,7 +113,7 @@ fun EditableExerciseSet.prettyString(): String =
                 } else {
                     stringResource(
                         R.string.exercise_set_format_calisthenics,
-                        weight,
+                        decimalFormat.format(weight),
                         weightUnit.prettyString(),
                         reps,
                         getRepsString(reps),
@@ -123,7 +124,6 @@ fun EditableExerciseSet.prettyString(): String =
                 stringResource(R.string.exercise_set_format_reps, reps, getRepsString(reps))
 
             is EditableExerciseSet.Cardio -> {
-                val decimalFormat = remember { DecimalFormat(DECIMAL_PATTERN) }
                 stringResource(
                     R.string.exercise_set_format_cardio,
                     duration.getShortFormattedTime(),

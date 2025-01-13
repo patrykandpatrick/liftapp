@@ -39,16 +39,12 @@ data class EditableWorkout(
         val goal: Workout.Goal,
         val sets: List<EditableExerciseSet>,
     ) : Serializable {
-        val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isComplete }
+        val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isCompleted }
 
-        val completedSetCount: Int = sets.count { it.isComplete }
+        val firstIncompleteOrLastSetIndex: Int =
+            firstIncompleteSetIndex.let { if (it == -1) sets.lastIndex else it }
 
-        @Stable
-        fun isSetActive(set: EditableExerciseSet): Boolean =
-            sets.indexOf(set) == firstIncompleteSetIndex
-
-        @Stable
-        fun isSetEnabled(set: EditableExerciseSet): Boolean = isSetActive(set) || set.isComplete
+        val completedSetCount: Int = sets.count { it.isCompleted }
     }
 
     data class NextExerciseSet(val exercise: Exercise, val setIndex: Int) {

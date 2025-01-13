@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -25,12 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.model.getDisplayName
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.BackdropState
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPicker
 import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerState
+import com.patrykandpatryk.liftapp.domain.math.subFraction
 import kotlin.math.roundToInt
 
 @Composable
@@ -104,6 +107,9 @@ fun ExerciseListPicker(
                     modifier = Modifier.weight(1f),
                 )
 
+                val setsTextWidth = remember(exercise.sets) { mutableIntStateOf(0) }
+                val density = LocalDensity.current.density
+
                 Text(
                     text =
                         LocalMarkupProcessor.current.toAnnotatedString(
@@ -116,6 +122,21 @@ fun ExerciseListPicker(
                         ),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    modifier =
+                        Modifier.thenIf(setsTextWidth.intValue > 0) {
+                                width(
+                                    ((setsTextWidth.intValue / density).dp *
+                                        backdropState.offsetFraction.subFraction(0f, .5f))
+                                )
+                            }
+                            .onGloballyPositioned {
+                                if (setsTextWidth.intValue == 0)
+                                    setsTextWidth.intValue = it.size.width
+                            }
+                            .graphicsLayer {
+                                alpha = backdropState.offsetFraction.subFraction(.5f, 1f)
+                            },
                 )
             }
         }

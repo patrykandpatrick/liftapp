@@ -40,6 +40,7 @@
     <string name="goal_reps_format_long_single_rep"><![CDATA[<b-surface>%1$s</b-surface> %2$s × <b-surface>%3$s</b-surface> %4$s]]></string>
 
     <string name="exercise_set_set_index">Set %d</string>
+    <string name="workout_exercise_set_info"><![CDATA[<b-surface>Set %d</b-surface> ꞏ %s]]></string>
     <string name="exercise_set_not_completed">Not completed</string>
     <!-- Example: 80 kg × 10 reps -->
     <string name="exercise_set_format_calisthenics">%1$s %2$s × %3$s %4$s</string>
@@ -122,6 +123,8 @@
     <string name="action_work_out">Work out</string>
     <string name="action_next_exercise">Next exercise</string>
     <string name="action_previous_exercise">Previous exercise</string>
+    <string name="action_add_set">Add set</string>
+    <string name="action_remove_set">Remove set</string>
 
     <string name="title_new_exercise">New Exercise</string>
     <string name="title_new_routine">New Routine</string>
@@ -182,7 +185,6 @@
     <string name="time_minutes_medium">min</string>
     <string name="time_seconds_medium">sec</string>
 
-    <string name="content_description_add_set">Add set</string>
     <string name="content_description_remove_set">Remove set</string>
 
     <!-- Rest timer -->

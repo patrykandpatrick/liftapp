@@ -27,6 +27,7 @@ data class Dimens(
     val searchBar: SearchBar = SearchBar(),
     val strokeWidth: Dp = 1.dp,
     val swipe: Swipe = Swipe(),
+    val stepper: Stepper = Stepper(),
     val tab: Tab = Tab(),
     val toolbar: Toolbar = Toolbar(),
     val verticalItemSpacing: Dp = 16.dp,
@@ -109,7 +110,12 @@ data class Dimens(
 
     @Immutable data class SearchBar(val tonalElevation: Dp = 3.dp)
 
-    @Immutable data class Button(val iconPadding: Dp = 8.dp)
+    @Immutable
+    data class Button(
+        val iconPadding: Dp = 8.dp,
+        val horizontalPadding: Dp = 12.dp,
+        val verticalPadding: Dp = 8.dp,
+    )
 
     @Immutable data class Elevation(val dragElevation: Dp = 2.dp)
 
@@ -118,6 +124,18 @@ data class Dimens(
         val fractionalThreshold: Float = .4f,
         val backgroundVisibilityThreshold: Dp = 56.dp,
         val swipeElevation: Dp = 2.dp,
+    )
+
+    @Immutable
+    data class Stepper(
+        val stepSize: Dp = 48.dp,
+        val stepBorderWidth: Dp = 2.dp,
+        val stepBorderPadding: Dp = 6.dp,
+        val stepIconSize: Dp = 20.dp,
+        val stepLabelPadding: Dp = 8.dp,
+        val connectorWidth: Dp = 20.dp,
+        val connectorHeight: Dp = 2.dp,
+        val spacing: Dp = 4.dp,
     )
 
     @Immutable data class Divider(val sinPeriodLength: Dp = 3.dp, val sinHeight: Dp = 6.dp)

@@ -269,6 +269,11 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
         initialScrollCalculated = true
     }
 
+    suspend fun getTargetScrollItem(): Int {
+        scrollJob?.join()
+        return currentItem
+    }
+
     private fun setScroll(value: Float): Float {
         val currentScroll = currentScroll
         val delta = value - currentScroll

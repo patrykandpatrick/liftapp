@@ -62,6 +62,10 @@ constructor(
         }
     }
 
+    fun selectPage(page: Int) {
+        viewModelScope.launch { customPage.emit(page) }
+    }
+
     fun increaseSetCount(exercise: EditableWorkout.Exercise) {
         viewModelScope.launch { upsertGoalSets(getWorkout().id, exercise, 1) }
     }

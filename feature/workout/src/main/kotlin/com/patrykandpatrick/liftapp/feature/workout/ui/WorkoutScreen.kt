@@ -10,13 +10,18 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -35,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -52,19 +58,22 @@ import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
+import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.extension.copy
+import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.graphics.rememberTopSinShape
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
+import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.AppBars
 import com.patrykandpatryk.liftapp.core.ui.Backdrop
 import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
-import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisEnterTransition
-import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisExitTransition
+import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisTransition
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.rememberBackdropState
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
@@ -79,6 +88,7 @@ import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -120,11 +130,23 @@ fun WorkoutScreen(
             Content(
                 workout = workout,
                 page = page,
+                setPage = viewModel::selectPage,
                 restTimerService = restTimerService.value,
                 onAddSetClick = viewModel::increaseSetCount,
                 onRemoveSetClick = viewModel::decreaseSetCount,
                 onSaveSet = viewModel::saveSet,
-                modifier = Modifier.padding(paddingValues),
+                modifier =
+                    Modifier.padding(
+                        paddingValues.copy(
+                            bottom =
+                                if (
+                                    WindowInsets.ime.getBottom() >
+                                        paddingValues.calculateBottomPadding()
+                                )
+                                    0.dp
+                                else paddingValues.calculateBottomPadding()
+                        )
+                    ),
             )
         }
     }
@@ -134,6 +156,7 @@ fun WorkoutScreen(
 private fun Content(
     workout: EditableWorkout,
     page: Int,
+    setPage: (Int) -> Unit,
     restTimerService: RestTimerService?,
     onAddSetClick: (EditableWorkout.Exercise) -> Unit,
     onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
@@ -143,6 +166,11 @@ private fun Content(
     val wheelPickerState = rememberWheelPickerState(workout.firstIncompleteExerciseIndex)
     val backdropState = rememberBackdropState()
     LaunchedEffect(page) { launch { wheelPickerState.animateScrollTo(page) } }
+    LaunchedEffect(wheelPickerState) {
+        wheelPickerState.interactionSource.interactions
+            .filter { it is DragInteraction.Stop || it is PressInteraction.Release }
+            .collect { setPage(wheelPickerState.getTargetScrollItem()) }
+    }
     Box(modifier = modifier) {
         Backdrop(
             backContent = { ExerciseListPicker(workout, wheelPickerState, backdropState) },
@@ -154,15 +182,12 @@ private fun Content(
             Box(contentAlignment = Alignment.TopCenter) {
                 AnimatedContent(
                     targetState = page.coerceIn(0, workout.exercises.lastIndex),
-                    transitionSpec = {
-                        val forward = targetState > initialState
-                        sharedXAxisEnterTransition(forward) togetherWith
-                            sharedXAxisExitTransition(forward)
-                    },
+                    transitionSpec = sharedXAxisTransition(),
                     modifier =
                         Modifier.fillMaxSize()
                             .clip(rememberTopSinShape())
                             .background(MaterialTheme.colorScheme.background),
+                    label = "page",
                 ) { page ->
                     Page(
                         exercise = workout.exercises[page],
@@ -304,22 +329,73 @@ private fun Page(
     onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        GoalHeader(
-            goal = exercise.goal,
-            exerciseType = exercise.exerciseType,
+    Column(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = LocalDimens.current.padding.contentVertical)
+    ) {
+        val (selectedSet, onSelectSet) =
+            remember(exercise.firstIncompleteOrLastSetIndex) {
+                mutableIntStateOf(exercise.firstIncompleteOrLastSetIndex)
+            }
+
+        ExerciseSetStepper(
+            sets = exercise.sets,
+            selectedSet = selectedSet,
+            onSelectSet = onSelectSet,
             onAddSetClick = { onAddSetClick(exercise) },
+            contentPadding =
+                PaddingValues(
+                    horizontal = LocalDimens.current.padding.contentHorizontal,
+                    vertical = LocalDimens.current.padding.itemVertical,
+                ),
             onRemoveSetClick = { onRemoveSetClick(exercise) },
+            modifier = Modifier,
         )
 
-        exercise.sets.forEachIndexed { index, set ->
-            SetItem(
-                setIndex = index,
-                set = set,
-                isActive = exercise.isSetActive(set),
-                enabled = exercise.isSetEnabled(set),
-                onSave = { onSaveSet(exercise, set, index) },
-            )
+        AnimatedContent(
+            targetState = selectedSet,
+            transitionSpec = sharedXAxisTransition(),
+            modifier = Modifier.weight(1f),
+            label = "set",
+        ) { setIndex ->
+            Column(
+                verticalArrangement =
+                    Arrangement.spacedBy(LocalDimens.current.padding.itemVertical),
+                modifier =
+                    Modifier.fillMaxSize()
+                        .padding(
+                            horizontal = LocalDimens.current.padding.contentHorizontal,
+                            vertical = LocalDimens.current.padding.itemVertical,
+                        ),
+            ) {
+                val set = exercise.sets.getOrNull(setIndex) ?: return@Column
+
+                Text(
+                    text =
+                        LocalMarkupProcessor.current.toAnnotatedString(
+                            stringResource(
+                                R.string.workout_exercise_set_info,
+                                setIndex + 1,
+                                set.prettyString(),
+                            )
+                        ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+
+                SetEditorContent(set)
+
+                Button(
+                    onClick = { onSaveSet(exercise, set, setIndex) },
+                    enabled = set.isInputValid,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = stringResource(R.string.action_save))
+                }
+            }
         }
     }
 }
