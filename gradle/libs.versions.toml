@@ -23,7 +23,7 @@ viewmodel = "2.9.0-alpha08"
 timber = "5.0.1"
 vico = "1.16.0"
 
-androidPlugin = "8.7.3"
+androidPlugin = "8.8.0"
 kspPlugin = "2.1.0-1.0.29"
 
 [libraries]
