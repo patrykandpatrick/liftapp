@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -71,7 +72,7 @@ fun Backdrop(
     Layout(
         content = {
             Box { backContent() }
-            Box(Modifier.nestedScroll(scrollConnection)) { content() }
+            Box(Modifier.nestedScroll(scrollConnection).pointerInput(Unit) {}) { content() }
         },
         measurePolicy = { measurables, constraints ->
             val backdrop = measurables[0].measure(constraints)
