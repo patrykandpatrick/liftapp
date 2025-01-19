@@ -65,12 +65,15 @@ constructor(
             pages =
                 buildList {
                     exercises.forEach { add(WorkoutPage.Exercise(it, size)) }
-                    add(getSummaryPage(size))
+                    add(getSummaryPage(exercises, size))
                 },
         )
     }
 
-    private suspend fun Workout.getSummaryPage(index: Int): WorkoutPage.Summary {
+    private suspend fun Workout.getSummaryPage(
+        exercises: List<EditableWorkout.Exercise>,
+        index: Int,
+    ): WorkoutPage.Summary {
         val dateFormat = DateTimeFormatter.ofPattern(stringProvider.dateFormatFull)
         val timeFormat = formatter.getLocalTimeFormatter()
 
@@ -92,6 +95,7 @@ constructor(
                 ),
             notes = textFieldStateManager.stringTextField(notes),
             is24H = formatter.is24H(),
+            exercises = exercises,
             index = index,
         )
     }

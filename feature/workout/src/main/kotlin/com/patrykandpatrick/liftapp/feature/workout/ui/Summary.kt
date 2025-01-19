@@ -4,12 +4,15 @@ import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DatePicker
@@ -22,17 +25,28 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.liftapp.feature.workout.model.Action
+import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
+import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.model.getDisplayName
+import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
+import com.patrykandpatryk.liftapp.core.ui.ListItem
+import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.button.OnClick
 import com.patrykandpatryk.liftapp.core.ui.button.OnFocusChanged
@@ -51,16 +65,15 @@ internal fun Summary(
 ) {
     val dimens = LocalDimens.current
     LazyColumn(
-        contentPadding =
-            PaddingValues(dimens.padding.contentHorizontal, dimens.padding.contentVertical),
+        contentPadding = PaddingValues(vertical = dimens.padding.contentVertical),
         verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
         modifier = modifier,
     ) {
-        item {
+        item(contentType = "name") {
             Name(name = summary.name, onNameSelected = { onAction(Action.UpdateWorkoutName(it)) })
         }
 
-        item {
+        item(contentType = "date_time") {
             StartDateTime(
                 startDate = summary.startDate,
                 startTime = summary.startTime,
@@ -71,7 +84,7 @@ internal fun Summary(
             )
         }
 
-        item {
+        item(contentType = "date_time") {
             EndDateTime(
                 endDate = summary.endDate,
                 endTime = summary.endTime,
@@ -82,11 +95,23 @@ internal fun Summary(
             )
         }
 
-        item {
+        item(contentType = "notes") {
             Notes(
                 notes = summary.notes,
                 onNotesSelected = { onAction(Action.UpdateWorkoutNotes(it)) },
             )
+        }
+
+        item(contentType = "section_title") {
+            ListSectionTitle(stringResource(R.string.workout_summary_exercises))
+        }
+
+        itemsIndexed(
+            items = summary.exercises,
+            key = { _, it -> it.id },
+            contentType = { _, _ -> "exercise" },
+        ) { index, exercise ->
+            Exercise(index, exercise)
         }
     }
 }
@@ -107,7 +132,7 @@ private fun Name(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         interactionSource = interactionSource,
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
     )
 
     interactionSource.OnFocusChanged { isFocused -> if (!isFocused) onNameSelected(name) }
@@ -124,7 +149,7 @@ private fun StartDateTime(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
     ) {
         DateInput(
             date = startDate,
@@ -154,7 +179,7 @@ private fun EndDateTime(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
     ) {
         DateInput(
             date = endDate,
@@ -312,8 +337,64 @@ private fun Notes(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         interactionSource = interactionSource,
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
     )
 
     interactionSource.OnFocusChanged { isFocused -> if (!isFocused) onNotesSelected(notes) }
+}
+
+@Composable
+private fun Exercise(
+    index: Int,
+    exercise: EditableWorkout.Exercise,
+    modifier: Modifier = Modifier,
+) {
+    val dimens = LocalDimens.current
+    val density = LocalDensity.current.density
+    val titleHeight = remember { mutableIntStateOf(0) }
+    ListItem(
+        icon = {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier =
+                    Modifier.height((titleHeight.intValue / density).toInt().dp)
+                        .align(Alignment.Top),
+            ) {
+                Text(text = "${index + 1}", style = MaterialTheme.typography.titleSmall)
+            }
+        },
+        title = {
+            Text(
+                text = exercise.name.getDisplayName(),
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
+                modifier = Modifier.onGloballyPositioned { titleHeight.intValue = it.size.height },
+            )
+        },
+        description = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
+                modifier = Modifier.padding(top = 12.dp),
+            ) {
+                exercise.sets.forEachIndexed { setIndex, set ->
+                    Text(
+                        text =
+                            LocalMarkupProcessor.current.toAnnotatedString(
+                                stringResource(
+                                    R.string.workout_exercise_set_info,
+                                    setIndex + 1,
+                                    set.prettyString(),
+                                )
+                            ),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
+        },
+        modifier = modifier,
+        paddingValues =
+            PaddingValues(
+                horizontal = dimens.padding.itemHorizontal,
+                vertical = dimens.padding.itemVerticalSmall,
+            ),
+    )
 }

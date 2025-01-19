@@ -209,4 +209,5 @@
     <string name="workout_summary_edit_workout_end_time">End time</string>
     <string name="workout_summary_edit_workout_notes">Notes</string>
     <string name="workout_summary_edit_picker_confirm">Confirm</string>
+    <string name="workout_summary_exercises">Exercises</string>
 </resources>

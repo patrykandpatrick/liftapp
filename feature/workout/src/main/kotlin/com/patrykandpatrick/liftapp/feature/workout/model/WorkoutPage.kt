@@ -29,6 +29,7 @@ sealed class WorkoutPage : Comparable<WorkoutPage> {
         val endTime: TextFieldState<LocalTime>,
         val notes: TextFieldState<String>,
         val is24H: Boolean,
+        val exercises: List<EditableWorkout.Exercise>,
         override val index: Int,
     ) : WorkoutPage() {
         override val primaryAction: Action.Button = Action.FinishWorkout
