@@ -121,8 +121,6 @@
     <string name="action_info">Additional information</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_work_out">Work out</string>
-    <string name="action_next_exercise">Next exercise</string>
-    <string name="action_previous_exercise">Previous exercise</string>
     <string name="action_add_set">Add set</string>
     <string name="action_remove_set">Remove set</string>
 
@@ -198,4 +196,17 @@
     <string name="rest_timer_action_dismiss">Dismiss</string>
     <string name="rest_timer_action_add_seconds">+%d s</string>
     <string name="rest_timer_counter_title">Rest</string>
+
+    <!-- Workout -->
+    <string name="workout_action_next_exercise">Next exercise</string>
+    <string name="workout_action_previous_exercise">Previous exercise</string>
+    <string name="workout_summary_title">Summary</string>
+    <string name="workout_summary_action_finish_workout">Finish workout</string>
+    <string name="workout_summary_edit_workout_name">Workout name</string>
+    <string name="workout_summary_edit_workout_start_date">Start date</string>
+    <string name="workout_summary_edit_workout_start_time">Start time</string>
+    <string name="workout_summary_edit_workout_end_date">End date</string>
+    <string name="workout_summary_edit_workout_end_time">End time</string>
+    <string name="workout_summary_edit_workout_notes">Notes</string>
+    <string name="workout_summary_edit_picker_confirm">Confirm</string>
 </resources>

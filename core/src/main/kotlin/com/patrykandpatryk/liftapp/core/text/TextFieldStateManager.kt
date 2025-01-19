@@ -5,6 +5,9 @@ import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.validation.TextValidationElementProvider
 import com.patrykandpatryk.liftapp.domain.validation.TextValidator
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.LinkedList
 import javax.inject.Inject
 
@@ -106,6 +109,54 @@ constructor(
                 },
                 veto = veto,
                 formatter = formatter,
+                enabled = enabled,
+            )
+            .also { textFields.add(it) }
+
+    fun localDateField(
+        formatter: DateTimeFormatter,
+        initialValue: String = "",
+        validators: TextValidationElementProvider<LocalDate>.() -> Unit = {},
+        savedStateKey: String = generateSavedStateKey(),
+        onTextChange: (String) -> Unit = {},
+        onValueChange: (LocalDate) -> Unit = {},
+        veto: (LocalDate) -> Boolean = { false },
+        enabled: TextFieldState<LocalDate>.() -> Boolean = { true },
+    ): LocalDateTextFieldState =
+        LocalDateTextFieldState(
+                formatter = formatter,
+                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                textValidator = validator(validators),
+                onTextChange = {
+                    savedStateHandle[savedStateKey] = it
+                    onTextChange(it)
+                },
+                onValueChange = onValueChange,
+                veto = veto,
+                enabled = enabled,
+            )
+            .also { textFields.add(it) }
+
+    fun localTimeField(
+        formatter: DateTimeFormatter,
+        initialValue: String = "",
+        validators: TextValidationElementProvider<LocalTime>.() -> Unit = {},
+        savedStateKey: String = generateSavedStateKey(),
+        onTextChange: (String) -> Unit = {},
+        onValueChange: (LocalTime) -> Unit = {},
+        veto: (LocalTime) -> Boolean = { false },
+        enabled: TextFieldState<LocalTime>.() -> Boolean = { true },
+    ): LocalTimeTextFieldState =
+        LocalTimeTextFieldState(
+                formatter = formatter,
+                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                textValidator = validator(validators),
+                onTextChange = {
+                    savedStateHandle[savedStateKey] = it
+                    onTextChange(it)
+                },
+                onValueChange = onValueChange,
+                veto = veto,
                 enabled = enabled,
             )
             .also { textFields.add(it) }

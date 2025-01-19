@@ -34,7 +34,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,18 +45,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.feature.workout.RestTimerService
+import com.patrykandpatrick.liftapp.feature.workout.model.Action
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseCase
+import com.patrykandpatrick.liftapp.feature.workout.model.UpdateWorkoutUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
+import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
+import com.patrykandpatrick.liftapp.feature.workout.model.getPainter
+import com.patrykandpatrick.liftapp.feature.workout.model.getText
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
@@ -85,7 +89,6 @@ import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import java.time.LocalDateTime
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -107,34 +110,38 @@ fun WorkoutScreen(
     val workout = viewModel.workout.collectAsStateWithLifecycle().value
     val restTimerService =
         rememberRestTimerServiceController().restTimerService.collectAsStateWithLifecycle(null)
-    val page = viewModel.selectedPage.collectAsStateWithLifecycle().value
+    val selectedPage = viewModel.selectedPage.collectAsStateWithLifecycle().value
 
     RestTimerEffect(viewModel, restTimerService)
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = workout?.name.orEmpty()) },
+                title = {
+                    Text(
+                        text = workout?.name.orEmpty(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
                 navigationIcon = { AppBars.BackArrow(onClick = navigator::back) },
             )
         },
         bottomBar = {
-            BottomBar(
-                onNextPageClick = { viewModel.onPageDelta(1) },
-                onPreviousPageClick = { viewModel.onPageDelta(-1) },
-            )
+            workout?.pages?.get(selectedPage)?.also { page -> BottomBar(page, viewModel::onAction) }
         },
         modifier = modifier,
     ) { paddingValues ->
         if (workout != null) {
             Content(
                 workout = workout,
-                page = page,
+                page = selectedPage,
                 setPage = viewModel::selectPage,
                 restTimerService = restTimerService.value,
                 onAddSetClick = viewModel::increaseSetCount,
                 onRemoveSetClick = viewModel::decreaseSetCount,
                 onSaveSet = viewModel::saveSet,
+                onAction = viewModel::onAction,
                 modifier =
                     Modifier.padding(
                         paddingValues.copy(
@@ -142,9 +149,11 @@ fun WorkoutScreen(
                                 if (
                                     WindowInsets.ime.getBottom() >
                                         paddingValues.calculateBottomPadding()
-                                )
+                                ) {
                                     0.dp
-                                else paddingValues.calculateBottomPadding()
+                                } else {
+                                    paddingValues.calculateBottomPadding()
+                                }
                         )
                     ),
             )
@@ -161,6 +170,7 @@ private fun Content(
     onAddSetClick: (EditableWorkout.Exercise) -> Unit,
     onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
     onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val wheelPickerState = rememberWheelPickerState(workout.firstIncompleteExerciseIndex)
@@ -181,20 +191,25 @@ private fun Content(
         ) {
             Box(contentAlignment = Alignment.TopCenter) {
                 AnimatedContent(
-                    targetState = page.coerceIn(0, workout.exercises.lastIndex),
+                    targetState = workout.pages[page],
                     transitionSpec = sharedXAxisTransition(),
+                    contentKey = { it.index },
                     modifier =
                         Modifier.fillMaxSize()
                             .clip(rememberTopSinShape())
                             .background(MaterialTheme.colorScheme.background),
                     label = "page",
                 ) { page ->
-                    Page(
-                        exercise = workout.exercises[page],
-                        onAddSetClick = onAddSetClick,
-                        onRemoveSetClick = onRemoveSetClick,
-                        onSaveSet = onSaveSet,
-                    )
+                    when (page) {
+                        is WorkoutPage.Exercise ->
+                            Page(
+                                exercise = page.exercise,
+                                onAddSetClick = onAddSetClick,
+                                onRemoveSetClick = onRemoveSetClick,
+                                onSaveSet = onSaveSet,
+                            )
+                        is WorkoutPage.Summary -> Summary(page, onAction)
+                    }
                 }
 
                 SinHorizontalDivider()
@@ -225,8 +240,8 @@ private fun RestTimerEffect(
 
 @Composable
 private fun BottomBar(
-    onPreviousPageClick: () -> Unit,
-    onNextPageClick: () -> Unit,
+    page: WorkoutPage,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val padding = LocalDimens.current.padding
@@ -248,33 +263,28 @@ private fun BottomBar(
                 modifier = Modifier.fillMaxWidth().padding(vertical = padding.itemVertical),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    OutlinedButton(
-                        onClick = onPreviousPageClick,
+                    Button(
+                        onClick = { onAction(page.secondaryAction) },
                         shape =
                             MaterialTheme.shapes.small.copy(
                                 topEnd = CornerSize(4.dp),
                                 bottomEnd = CornerSize(4.dp),
                             ),
                     ) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_arrow_back),
-                            contentDescription = null,
-                        )
+                        Icon(page.secondaryAction.getPainter(), page.secondaryAction.getText())
                     }
                     Button(
-                        onClick = onNextPageClick,
+                        onClick = { onAction(page.primaryAction) },
                         shape =
                             MaterialTheme.shapes.small.copy(
                                 topStart = CornerSize(4.dp),
                                 bottomStart = CornerSize(4.dp),
                             ),
+                        modifier = Modifier,
                     ) {
-                        Text(text = stringResource(R.string.action_next_exercise))
-                        Spacer(modifier = Modifier.width(padding.itemHorizontalSmall))
-                        Icon(
-                            painterResource(id = R.drawable.ic_arrow_forward),
-                            contentDescription = stringResource(R.string.action_previous_exercise),
-                        )
+                        Text(page.primaryAction.getText())
+                        Spacer(Modifier.width(padding.itemHorizontalSmall))
+                        Icon(page.primaryAction.getPainter(), page.primaryAction.getText())
                     }
                 }
             }
@@ -420,8 +430,8 @@ private fun WorkoutScreenPreview() {
                                     Workout(
                                         id = 1,
                                         name = "Push",
-                                        date = LocalDateTime.now(),
-                                        duration = 45.minutes,
+                                        startDate = LocalDateTime.now(),
+                                        endDate = null,
                                         notes = "",
                                         exercises =
                                             listOf(
@@ -485,11 +495,13 @@ private fun WorkoutScreenPreview() {
                             },
                             textFieldStateManager = textFieldStateManager,
                             formatter = PreviewResource.formatter(),
+                            stringProvider = PreviewResource.stringProvider,
                             workoutRouteData = WorkoutRouteData(),
                             savedStateHandle = savedStateHandle,
                         ),
                     upsertGoalSets = UpsertGoalSetsUseCase(interfaceStub()),
                     upsertExerciseSet = UpsertExerciseSetUseCase(interfaceStub()),
+                    updateWorkoutUseCase = UpdateWorkoutUseCase(interfaceStub()),
                     coroutineScope = rememberCoroutineScope(),
                 ),
         )

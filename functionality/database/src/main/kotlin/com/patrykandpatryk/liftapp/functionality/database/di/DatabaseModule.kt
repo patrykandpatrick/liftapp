@@ -82,6 +82,8 @@ interface DatabaseModule {
 
         @Provides fun provideWorkoutDao(database: Database): WorkoutDao = database.workoutDao
 
+        @Provides fun provideInvalidationTracker(database: Database) = database.invalidationTracker
+
         @Provides
         @IntoSet
         fun provideExerciseStringResourceSerializer():

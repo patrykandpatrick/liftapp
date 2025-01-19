@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7c29298451a5d738304e13c5514df925",
+    "identityHash": "84689217ab6f0ad2c4aeaad15e0584cd",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -32,9 +32,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "body_measurement_entries",
@@ -195,8 +193,7 @@
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_exercise_main_muscles` ON `${TABLE_NAME}` (`exercise_main_muscles`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "routine",
@@ -220,9 +217,7 @@
           "columnNames": [
             "routine_id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "exercise_with_routine",
@@ -414,7 +409,7 @@
       },
       {
         "tableName": "workout",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_routine_id` INTEGER NOT NULL, `workout_name` TEXT NOT NULL, `workout_date` TEXT NOT NULL, `workout_duration` INTEGER NOT NULL, `workout_notes` TEXT NOT NULL, `workout_body_weight` TEXT, FOREIGN KEY(`workout_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_routine_id` INTEGER NOT NULL, `workout_name` TEXT NOT NULL, `workout_start_date` TEXT NOT NULL, `workout_end_date` TEXT, `workout_notes` TEXT NOT NULL, `workout_body_weight` TEXT, FOREIGN KEY(`workout_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -435,16 +430,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "date",
-            "columnName": "workout_date",
+            "fieldPath": "startDate",
+            "columnName": "workout_start_date",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "durationMillis",
-            "columnName": "workout_duration",
-            "affinity": "INTEGER",
-            "notNull": true
+            "fieldPath": "endDate",
+            "columnName": "workout_end_date",
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "notes",
@@ -455,8 +449,7 @@
           {
             "fieldPath": "bodyWeight",
             "columnName": "workout_body_weight",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -703,44 +696,37 @@
           {
             "fieldPath": "weight",
             "columnName": "exercise_set_weight",
-            "affinity": "REAL",
-            "notNull": false
+            "affinity": "REAL"
           },
           {
             "fieldPath": "weightUnit",
             "columnName": "exercise_set_weight_unit",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "reps",
             "columnName": "exercise_set_reps",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "timeMillis",
             "columnName": "exercise_set_time",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "distance",
             "columnName": "exercise_set_distance",
-            "affinity": "REAL",
-            "notNull": false
+            "affinity": "REAL"
           },
           {
             "fieldPath": "distanceUnit",
             "columnName": "exercise_set_distance_unit",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "kcal",
             "columnName": "exercise_set_kcal",
-            "affinity": "REAL",
-            "notNull": false
+            "affinity": "REAL"
           },
           {
             "fieldPath": "setIndex",
@@ -813,7 +799,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c29298451a5d738304e13c5514df925')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '84689217ab6f0ad2c4aeaad15e0584cd')"
     ]
   }
 }

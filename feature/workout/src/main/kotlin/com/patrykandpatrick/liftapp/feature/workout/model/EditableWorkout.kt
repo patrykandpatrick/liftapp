@@ -13,10 +13,11 @@ import kotlin.time.Duration
 data class EditableWorkout(
     val id: Long,
     val name: String,
-    val date: LocalDateTime,
-    val duration: Duration,
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime?,
     val notes: String,
     val exercises: List<Exercise>,
+    val pages: List<WorkoutPage>,
 ) : Serializable {
 
     val firstIncompleteExerciseIndex: Int =
@@ -27,6 +28,8 @@ data class EditableWorkout(
         getNextExerciseSet(exercises, firstIncompleteExerciseIndex)
 
     val completedSetCount: Int = exercises.sumOf { it.completedSetCount }
+
+    val summary: WorkoutPage.Summary = pages.last() as WorkoutPage.Summary
 
     @Stable
     data class Exercise(

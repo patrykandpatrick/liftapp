@@ -10,6 +10,7 @@ import java.text.DecimalFormatSymbols
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
@@ -100,6 +101,9 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: F
 
     fun round(value: Double): Double =
         decimalInputFormat.parse(decimalInputFormat.format(value)).toDouble()
+
+    suspend fun getLocalTimeFormatter(): DateTimeFormatter =
+        DateTimeFormatter.ofPattern(if (is24H()) HOURS_MINUTES_24H else HOURS_MINUTES_12H)
 
     enum class DateFormat {
         HoursMinutes,

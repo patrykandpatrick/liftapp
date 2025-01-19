@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.functionality.database.di
 
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutContract
+import com.patrykandpatryk.liftapp.domain.workout.UpdateWorkoutContract
 import com.patrykandpatryk.liftapp.domain.workout.UpsertExerciseSetContract
 import com.patrykandpatryk.liftapp.domain.workout.UpsertWorkoutGoalContract
 import com.patrykandpatryk.liftapp.functionality.database.workout.RoomWorkoutRepository
@@ -19,4 +20,6 @@ interface WorkoutModule {
 
     @Binds
     fun bindUpsertWorkoutGoalContract(repository: RoomWorkoutRepository): UpsertWorkoutGoalContract
+
+    @Binds fun bindUpdateWorkoutContract(repository: RoomWorkoutRepository): UpdateWorkoutContract
 }

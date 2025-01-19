@@ -32,8 +32,8 @@ constructor(
         return Workout(
             id = workoutEntity.id,
             name = workoutEntity.name,
-            date = workoutEntity.date,
-            duration = workoutEntity.durationMillis.milliseconds,
+            startDate = workoutEntity.startDate,
+            endDate = workoutEntity.endDate,
             notes = workoutEntity.notes,
             exercises =
                 exercises.groupByExerciseAndGoal().map { (exerciseWithGoal, sets) ->

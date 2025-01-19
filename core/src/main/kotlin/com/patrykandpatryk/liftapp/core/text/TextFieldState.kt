@@ -12,6 +12,9 @@ import com.patrykandpatryk.liftapp.domain.validation.TextValidator
 import com.patrykandpatryk.liftapp.domain.validation.ValidationResult
 import com.patrykandpatryk.liftapp.domain.validation.errorMessages
 import com.patrykandpatryk.liftapp.domain.value.ValueProvider
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Stable
 abstract class TextFieldState<T : Any>(
@@ -163,6 +166,56 @@ class DoubleTextFieldState(
         if (text.isNotBlank()) formatter.toDoubleOrNull(text) else 0.0
 
     override fun toText(value: Double): String = formatter.toInputDecimalNumber(value)
+}
+
+@Stable
+class LocalDateTextFieldState(
+    private val formatter: DateTimeFormatter,
+    initialValue: String = "",
+    textValidator: TextValidator<LocalDate>? = null,
+    onTextChange: (String) -> Unit = {},
+    onValueChange: (LocalDate) -> Unit = {},
+    veto: (LocalDate) -> Boolean = { false },
+    enabled: TextFieldState<LocalDate>.() -> Boolean = { true },
+) :
+    TextFieldState<LocalDate>(
+        initialValue,
+        textValidator,
+        onTextChange,
+        onValueChange,
+        veto,
+        enabled,
+    ) {
+    override val defaultValue: LocalDate = LocalDate.now()
+
+    override fun toValue(text: String) = LocalDate.parse(text, formatter)
+
+    override fun toText(value: LocalDate): String = formatter.format(value)
+}
+
+@Stable
+class LocalTimeTextFieldState(
+    private val formatter: DateTimeFormatter,
+    initialValue: String = "",
+    textValidator: TextValidator<LocalTime>? = null,
+    onTextChange: (String) -> Unit = {},
+    onValueChange: (LocalTime) -> Unit = {},
+    veto: (LocalTime) -> Boolean = { false },
+    enabled: TextFieldState<LocalTime>.() -> Boolean = { true },
+) :
+    TextFieldState<LocalTime>(
+        initialValue,
+        textValidator,
+        onTextChange,
+        onValueChange,
+        veto,
+        enabled,
+    ) {
+    override val defaultValue: LocalTime = LocalTime.now()
+
+    override fun toValue(text: String) = LocalTime.parse(text, formatter)
+
+    override fun toText(value: LocalTime): String = formatter.format(value)
 }
 
 inline fun <reified R> TextFieldState<*>.getCondition(): R? =

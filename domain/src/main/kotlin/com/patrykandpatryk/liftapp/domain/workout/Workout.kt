@@ -12,8 +12,8 @@ import kotlin.time.Duration.Companion.minutes
 data class Workout(
     val id: Long,
     val name: String,
-    val date: LocalDateTime,
-    val duration: Duration,
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime?,
     val notes: String,
     val exercises: List<Exercise>,
 ) : Serializable {

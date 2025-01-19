@@ -1,5 +1,7 @@
 package com.patrykandpatryk.liftapp.functionality.database.workout
 
+import androidx.room.InvalidationTracker
+import androidx.room.RoomRawQuery
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
@@ -27,6 +29,7 @@ class RoomWorkoutRepository
 constructor(
     private val workoutDao: WorkoutDao,
     private val workoutMapper: WorkoutMapper,
+    private val invalidationTracker: InvalidationTracker,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
     coroutineExceptionHandler: CoroutineExceptionHandler,
 ) : WorkoutRepository {
@@ -74,8 +77,8 @@ constructor(
                 WorkoutEntity(
                     name = routineName.await(),
                     routineID = routineID,
-                    date = LocalDateTime.now(),
-                    durationMillis = 0L,
+                    startDate = LocalDateTime.now(),
+                    endDate = null,
                     notes = "",
                     bodyWeight = bodyWeight.await(),
                 )
@@ -129,5 +132,25 @@ constructor(
             set.kcal,
             setIndex,
         )
+    }
+
+    override suspend fun updateWorkout(
+        workoutID: Long,
+        name: String?,
+        startDate: LocalDateTime?,
+        endDate: LocalDateTime?,
+        notes: String?,
+    ) {
+        val updatedColumns = buildList {
+            name?.also { add(WorkoutEntity.NAME to it) }
+            startDate?.also { add(WorkoutEntity.START_DATE to it) }
+            endDate?.also { add(WorkoutEntity.END_DATE to it) }
+            notes?.also { add(WorkoutEntity.NOTES to it) }
+        }
+        val query =
+            "UPDATE workout SET ${updatedColumns.joinToString { (column, value) -> "$column = '$value'" }} " +
+                "WHERE workout_id = $workoutID"
+        workoutDao.query(RoomRawQuery(query))
+        invalidationTracker.refreshAsync()
     }
 }

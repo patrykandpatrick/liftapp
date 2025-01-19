@@ -4,12 +4,16 @@ import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.format.Formatter
+import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.validation.higherThanZero
+import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
 import com.patrykandpatryk.liftapp.domain.validation.validNumber
 import com.patrykandpatryk.liftapp.domain.validation.validNumberHigherThanZero
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutContract
 import com.patrykandpatryk.liftapp.domain.workout.Workout
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -20,6 +24,7 @@ constructor(
     private val contract: GetWorkoutContract,
     private val textFieldStateManager: TextFieldStateManager,
     private val formatter: Formatter,
+    private val stringProvider: StringProvider,
     private val workoutRouteData: WorkoutRouteData,
     private val savedStateHandle: SavedStateHandle,
 ) {
@@ -34,29 +39,60 @@ constructor(
                 it.editable()
             }
 
-    private fun Workout.editable(): EditableWorkout {
+    private suspend fun Workout.editable(): EditableWorkout {
+        val exercises =
+            exercises.map { exercise ->
+                EditableWorkout.Exercise(
+                    id = exercise.id,
+                    name = exercise.name,
+                    exerciseType = exercise.exerciseType,
+                    mainMuscles = exercise.mainMuscles,
+                    secondaryMuscles = exercise.secondaryMuscles,
+                    tertiaryMuscles = exercise.tertiaryMuscles,
+                    goal = exercise.goal,
+                    sets =
+                        exercise.sets.mapIndexed { index, set -> set.editable(exercise.id, index) },
+                )
+            }
+
         return EditableWorkout(
             id = id,
             name = name,
-            date = date,
-            duration = duration,
+            startDate = startDate,
+            endDate = endDate,
             notes = notes,
-            exercises =
-                exercises.map { exercise ->
-                    EditableWorkout.Exercise(
-                        id = exercise.id,
-                        name = exercise.name,
-                        exerciseType = exercise.exerciseType,
-                        mainMuscles = exercise.mainMuscles,
-                        secondaryMuscles = exercise.secondaryMuscles,
-                        tertiaryMuscles = exercise.tertiaryMuscles,
-                        goal = exercise.goal,
-                        sets =
-                            exercise.sets.mapIndexed { index, set ->
-                                set.editable(exercise.id, index)
-                            },
-                    )
+            exercises = exercises,
+            pages =
+                buildList {
+                    exercises.forEach { add(WorkoutPage.Exercise(it, size)) }
+                    add(getSummaryPage(size))
                 },
+        )
+    }
+
+    private suspend fun Workout.getSummaryPage(index: Int): WorkoutPage.Summary {
+        val dateFormat = DateTimeFormatter.ofPattern(stringProvider.dateFormatFull)
+        val timeFormat = formatter.getLocalTimeFormatter()
+
+        return WorkoutPage.Summary(
+            name = textFieldStateManager.stringTextField(name, validators = { nonEmpty() }),
+            startDate =
+                textFieldStateManager.localDateField(dateFormat, dateFormat.format(startDate)),
+            startTime =
+                textFieldStateManager.localTimeField(timeFormat, timeFormat.format(startDate)),
+            endDate =
+                textFieldStateManager.localDateField(
+                    dateFormat,
+                    dateFormat.format(endDate ?: LocalDateTime.now()),
+                ),
+            endTime =
+                textFieldStateManager.localTimeField(
+                    timeFormat,
+                    timeFormat.format(endDate ?: LocalDateTime.now()),
+                ),
+            notes = textFieldStateManager.stringTextField(notes),
+            is24H = formatter.is24H(),
+            index = index,
         )
     }
 

@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.RoomRawQuery
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
@@ -88,4 +90,6 @@ interface WorkoutDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertWorkoutWithExercises(workoutWithExercises: List<WorkoutWithExerciseEntity>)
+
+    @RawQuery suspend fun query(query: RoomRawQuery): List<Long>
 }
