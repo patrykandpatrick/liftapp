@@ -13,15 +13,19 @@ import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.domain.Constants.Workout.EXERCISE_CHANGE_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -32,6 +36,7 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class WorkoutViewModel
@@ -74,10 +79,14 @@ constructor(
             )
             .stateIn(coroutineScope, SharingStarted.Lazily, 0)
 
+    private val _isWorkoutFinished = MutableStateFlow<Boolean>(false)
+
+    val isWorkoutFinished: StateFlow<Boolean> = _isWorkoutFinished.asStateFlow()
+
     fun onAction(action: Action) {
         when (action) {
             is Action.MovePageBy -> onPageDelta(action.delta)
-            is Action.FinishWorkout -> Unit // TODO
+            is Action.FinishWorkout -> finishWorkout()
             is Action.UpdateWorkoutName -> updateWorkoutName(action.name)
             is Action.UpdateWorkoutStartDateTime ->
                 updateWorkoutStartDateTime(action.date, action.time)
@@ -158,6 +167,18 @@ constructor(
         if (notes.hasError) return
         viewModelScope.launch {
             updateWorkoutUseCase(workoutID = getWorkout().id, notes = notes.value)
+        }
+    }
+
+    private fun finishWorkout() {
+        _isWorkoutFinished.value = true
+        viewModelScope.launch {
+            withContext(NonCancellable) {
+                val workout = getWorkout()
+                if (workout.endDate == null) {
+                    updateWorkoutUseCase(workoutID = workout.id, endDate = LocalDateTime.now())
+                }
+            }
         }
     }
 

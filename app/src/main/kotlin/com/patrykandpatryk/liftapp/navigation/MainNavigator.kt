@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
@@ -36,6 +37,16 @@ class MainNavigator(private val navController: NavController) :
     WorkoutNavigator {
     override fun back() {
         navController.popBackStack()
+    }
+
+    override fun home() {
+        navController.navigate(
+            Routes.Home,
+            navOptions {
+                popUpTo(Routes.Home) { inclusive = true }
+                launchSingleTop = true
+            },
+        )
     }
 
     override fun onExercisesPicked(exerciseIDs: List<Long>) {

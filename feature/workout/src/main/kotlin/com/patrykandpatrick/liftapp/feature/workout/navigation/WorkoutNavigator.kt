@@ -4,5 +4,7 @@ import androidx.compose.runtime.Stable
 
 @Stable
 interface WorkoutNavigator {
+    fun home()
+
     fun back()
 }

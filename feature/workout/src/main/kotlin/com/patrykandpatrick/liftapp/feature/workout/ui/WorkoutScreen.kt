@@ -114,6 +114,10 @@ fun WorkoutScreen(
 
     RestTimerEffect(viewModel, restTimerService)
 
+    LaunchedEffect(viewModel) {
+        viewModel.isWorkoutFinished.filter { it }.collect { navigator.home() }
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
