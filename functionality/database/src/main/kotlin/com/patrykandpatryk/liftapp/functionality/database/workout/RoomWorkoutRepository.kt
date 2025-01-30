@@ -4,8 +4,12 @@ import androidx.room.InvalidationTracker
 import androidx.room.RoomRawQuery
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
+import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutContract
+import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutsContract
+import com.patrykandpatryk.liftapp.domain.workout.UpdateWorkoutContract
+import com.patrykandpatryk.liftapp.domain.workout.UpsertExerciseSetContract
+import com.patrykandpatryk.liftapp.domain.workout.UpsertWorkoutGoalContract
 import com.patrykandpatryk.liftapp.domain.workout.Workout
-import com.patrykandpatryk.liftapp.domain.workout.WorkoutRepository
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,7 +36,12 @@ constructor(
     private val invalidationTracker: InvalidationTracker,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
     coroutineExceptionHandler: CoroutineExceptionHandler,
-) : WorkoutRepository {
+) :
+    GetWorkoutContract,
+    UpsertWorkoutGoalContract,
+    UpsertExerciseSetContract,
+    UpdateWorkoutContract,
+    GetWorkoutsContract {
     private val coroutineContext = dispatcher + coroutineExceptionHandler
 
     override fun getWorkout(routineID: Long, workoutID: Long?): Flow<Workout> =
@@ -147,10 +156,21 @@ constructor(
             endDate?.also { add(WorkoutEntity.END_DATE to it) }
             notes?.also { add(WorkoutEntity.NOTES to it) }
         }
+        if (updatedColumns.isEmpty()) error("No workout columns to update")
         val query =
             "UPDATE workout SET ${updatedColumns.joinToString { (column, value) -> "$column = '$value'" }} " +
                 "WHERE workout_id = $workoutID"
         workoutDao.query(RoomRawQuery(query))
         invalidationTracker.refreshAsync()
     }
+
+    override fun getWorkouts(type: GetWorkoutsContract.WorkoutType): Flow<List<Workout>> =
+        workoutDao
+            .getWorkouts(
+                WorkoutDao.getWorkoutsQuery(
+                    hasEndDate = type == GetWorkoutsContract.WorkoutType.PAST
+                )
+            )
+            .map(workoutMapper::toDomain)
+            .flowOn(coroutineContext)
 }

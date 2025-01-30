@@ -11,31 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.component.shape.composeShape
-import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
-import com.patrykandpatrick.vico.core.component.shape.cornered.CorneredShape
-import com.patrykandpatrick.vico.core.component.shape.cornered.CutCornerTreatment
-import com.patrykandpatrick.vico.core.component.shape.cornered.RoundedCornerTreatment
 import com.patrykandpatrick.vico.core.extension.forEachIndexedExtended
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
+import com.patrykandpatryk.liftapp.core.ui.RoutineCardShape
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-
-val RoutineCardShape: Shape =
-    CorneredShape(
-            topLeft = Corner.Absolute(16f, CutCornerTreatment),
-            topRight = Corner.Absolute(12f, RoundedCornerTreatment),
-            bottomLeft = Corner.Absolute(12f, RoundedCornerTreatment),
-            bottomRight = Corner.Absolute(12f, RoundedCornerTreatment),
-        )
-        .composeShape()
 
 @Composable
 fun RoutineCard(
@@ -63,14 +48,12 @@ fun RoutineCard(
             Text(
                 text =
                     buildAnnotatedString {
-                        pushStyle(ParagraphStyle(lineHeight = 24.sp))
                         exercises.forEachIndexedExtended { _, _, isLast, value ->
                             append("• $value")
                             if (!isLast) append("\n")
                         }
-                        pop()
                     },
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 24.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

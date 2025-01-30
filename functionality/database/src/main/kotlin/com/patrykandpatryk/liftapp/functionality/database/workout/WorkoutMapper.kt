@@ -57,6 +57,18 @@ constructor(
         )
     }
 
+    suspend fun toDomain(workout: List<WorkoutWithWorkoutExerciseDto>): List<Workout> =
+        workout
+            .groupBy { it.workout }
+            .map { (workout, model) ->
+                toDomain(
+                    workout,
+                    model.map { (_, exercise, goal, set) ->
+                        WorkoutExerciseDto(exercise, goal, set)
+                    },
+                )
+            }
+
     private fun List<WorkoutExerciseDto>.groupByExerciseAndGoal():
         Map<Pair<ExerciseEntity, WorkoutGoalEntity?>, MutableMap<Int, ExerciseSetEntity>> =
         fold(

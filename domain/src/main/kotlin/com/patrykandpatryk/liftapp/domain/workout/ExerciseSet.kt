@@ -7,7 +7,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 sealed class ExerciseSet : Serializable {
-    abstract val isComplete: Boolean
+    abstract val isCompleted: Boolean
     open val weight: Double? = null
     open val weightUnit: MassUnit? = null
     open val reps: Int? = null
@@ -21,7 +21,7 @@ sealed class ExerciseSet : Serializable {
         override val reps: Int,
         override val weightUnit: MassUnit,
     ) : ExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = weight > 0 && reps > 0
 
         companion object {
@@ -35,7 +35,7 @@ sealed class ExerciseSet : Serializable {
         override val reps: Int,
         override val weightUnit: MassUnit,
     ) : ExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = weight > 0 && reps > 0
 
         companion object {
@@ -45,7 +45,7 @@ sealed class ExerciseSet : Serializable {
     }
 
     data class Reps(override val reps: Int) : ExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = reps > 0
 
         companion object {
@@ -59,7 +59,7 @@ sealed class ExerciseSet : Serializable {
         override val kcal: Double,
         override val distanceUnit: LongDistanceUnit,
     ) : ExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = duration.inWholeSeconds > 0 && distance > 0
 
         companion object {
@@ -68,7 +68,7 @@ sealed class ExerciseSet : Serializable {
     }
 
     data class Time(override val duration: Duration) : ExerciseSet() {
-        override val isComplete: Boolean
+        override val isCompleted: Boolean
             get() = duration.inWholeSeconds > 0
 
         companion object {

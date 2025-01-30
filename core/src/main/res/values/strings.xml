@@ -185,6 +185,15 @@
 
     <string name="content_description_remove_set">Remove set</string>
 
+    <!-- Dashboard -->
+    <string name="dashboard_section_active_workout">Active Workout</string>
+    <string name="dashboard_section_active_workouts">Active Workouts</string>
+    <string name="dashboard_section_recent_workout">Recent Workout</string>
+    <string name="dashboard_section_recent_workouts">Recent Workouts</string>
+    <string name="dashboard_workout_date_pattern">E, d MMM</string>
+    <string name="dashboard_active_workout_date_title"><![CDATA[Started on <b-surface>%s</b-surface>]]></string>
+    <string name="dashboard_completed_workout_date_title"><![CDATA[Completed on <b-surface>%s</b-surface>]]></string>
+
     <!-- Rest timer -->
     <string name="rest_timer_notification_channel_name">Rest Timer</string>
     <string name="rest_timer_finished_notification_channel_name">End of rest</string>
