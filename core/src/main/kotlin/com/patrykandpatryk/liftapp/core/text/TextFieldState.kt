@@ -34,17 +34,23 @@ abstract class TextFieldState<T : Any>(
         get() = toValue(text) ?: defaultValue
 
     abstract val defaultValue: T
+
+    open val emptyTextReplacement: String = ""
+
     val text: String
         get() = textFieldValue.text
 
     val errorMessage: String? by _errorMessage
+
     val hasError by derivedStateOf { _errorMessage.value != null }
 
     val isValid: Boolean
         get() = validationResult is ValidationResult.Valid
 
     private val validationResult
-        get() = textValidator?.validate(value, text) ?: ValidationResult.Valid(value)
+        get() =
+            textValidator?.validate(value, text.ifEmpty { emptyTextReplacement })
+                ?: ValidationResult.Valid(value)
 
     abstract fun toValue(text: String): T?
 
@@ -84,6 +90,10 @@ abstract class TextFieldState<T : Any>(
 
     fun <T> getCondition(validatorClass: Class<T>): T? =
         textValidator?.getTextValidatorElement(validatorClass)
+
+    companion object {
+        internal const val MINUS_SIGN = "-"
+    }
 }
 
 @Stable
@@ -121,7 +131,10 @@ class IntTextFieldState(
 ) : TextFieldState<Int>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
     override val defaultValue: Int = 0
 
-    override fun toValue(text: String) = if (text.isNotBlank()) text.toIntOrNull() else 0
+    override val emptyTextReplacement: String = "0"
+
+    override fun toValue(text: String) =
+        if (text.isBlank() || text == MINUS_SIGN) 0 else text.toIntOrNull()
 
     override fun toText(value: Int): String = value.toString()
 }
@@ -137,7 +150,10 @@ class LongTextFieldState(
 ) : TextFieldState<Long>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
     override val defaultValue: Long = 0
 
-    override fun toValue(text: String) = if (text.isNotBlank()) text.toLongOrNull() else 0L
+    override val emptyTextReplacement: String = "0"
+
+    override fun toValue(text: String) =
+        if (text.isBlank() || text == MINUS_SIGN) 0L else text.toLongOrNull()
 
     override fun toText(value: Long): String = value.toString()
 }
@@ -162,8 +178,10 @@ class DoubleTextFieldState(
     ) {
     override val defaultValue: Double = 0.0
 
+    override val emptyTextReplacement: String = "0"
+
     override fun toValue(text: String) =
-        if (text.isNotBlank()) formatter.toDoubleOrNull(text) else 0.0
+        if (text.isBlank() || text == MINUS_SIGN) 0.0 else formatter.toDoubleOrNull(text)
 
     override fun toText(value: Double): String = formatter.toInputDecimalNumber(value)
 }
