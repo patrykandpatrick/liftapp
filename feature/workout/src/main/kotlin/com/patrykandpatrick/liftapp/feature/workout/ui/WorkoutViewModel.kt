@@ -11,6 +11,7 @@ import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCa
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.domain.Constants.Workout.EXERCISE_CHANGE_DELAY
+import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -182,7 +183,11 @@ constructor(
         }
     }
 
-    fun saveSet(exercise: EditableWorkout.Exercise, set: EditableExerciseSet, setIndex: Int) {
+    fun saveSet(
+        exercise: EditableWorkout.Exercise,
+        set: EditableExerciseSet<ExerciseSet>,
+        setIndex: Int,
+    ) {
         viewModelScope.launch { upsertExerciseSet(getWorkout().id, exercise.id, set, setIndex) }
     }
 }

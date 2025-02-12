@@ -11,13 +11,13 @@ constructor(private val contract: UpsertExerciseSetContract) {
     suspend operator fun invoke(
         workoutID: Long,
         exerciseID: Long,
-        set: EditableExerciseSet,
+        set: EditableExerciseSet<ExerciseSet>,
         setIndex: Int,
     ) {
         contract.upsertExerciseSet(workoutID, exerciseID, set.toDomain(), setIndex)
     }
 
-    private fun EditableExerciseSet.toDomain(): ExerciseSet =
+    private fun EditableExerciseSet<ExerciseSet>.toDomain(): ExerciseSet =
         when (this) {
             is EditableExerciseSet.Weight ->
                 ExerciseSet.Weight(
@@ -29,7 +29,7 @@ constructor(private val contract: UpsertExerciseSetContract) {
             is EditableExerciseSet.Calisthenics ->
                 ExerciseSet.Calisthenics(
                     weight = weightInput.value,
-                    bodyWeight = bodyWeightInput.value,
+                    bodyWeight = bodyWeight,
                     reps = repsInput.value,
                     weightUnit = weightUnit,
                 )

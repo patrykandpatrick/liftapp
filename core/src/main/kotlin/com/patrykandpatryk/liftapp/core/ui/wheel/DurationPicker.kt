@@ -64,8 +64,11 @@ fun DurationPicker(
             launch(NonCancellable) { secondState.animateScrollTo(seconds) }
     }
 
-    LaunchedEffect(hourState.targetItem, minuteState.targetItem, secondState.targetItem) {
+    LaunchedEffect(hourState.currentItem, minuteState.currentItem, secondState.currentItem) {
         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+
+    LaunchedEffect(hourState.targetItem, minuteState.targetItem, secondState.targetItem) {
         val newDuration =
             calculateDuration(
                 hour = allHours[hourState.targetItem],

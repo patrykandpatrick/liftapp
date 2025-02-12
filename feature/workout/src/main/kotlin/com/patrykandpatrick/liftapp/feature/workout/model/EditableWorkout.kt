@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
+import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import java.io.Serializable
 import java.time.LocalDateTime
@@ -40,7 +41,7 @@ data class EditableWorkout(
         val secondaryMuscles: List<Muscle>,
         val tertiaryMuscles: List<Muscle>,
         val goal: Workout.Goal,
-        val sets: List<EditableExerciseSet>,
+        val sets: List<EditableExerciseSet<ExerciseSet>>,
     ) : Serializable {
         val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isCompleted }
 

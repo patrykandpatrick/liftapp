@@ -16,7 +16,7 @@ sealed class ExerciseSet : Serializable {
     open val distanceUnit: LongDistanceUnit? = null
     open val kcal: Double? = null
 
-    data class Weight(
+    open class Weight(
         override val weight: Double,
         override val reps: Int,
         override val weightUnit: MassUnit,
@@ -27,33 +27,66 @@ sealed class ExerciseSet : Serializable {
         companion object {
             fun empty(massUnit: MassUnit) = Weight(0.0, 0, massUnit)
         }
+
+        override fun toString() = "Weight(weight=$weight, reps=$reps, weightUnit=$weightUnit)"
+
+        override fun equals(other: Any?) =
+            other is Weight &&
+                weight == other.weight &&
+                reps == other.reps &&
+                weightUnit == other.weightUnit
+
+        override fun hashCode() =
+            weight.hashCode() * 31 + reps.hashCode() * 31 + weightUnit.hashCode()
     }
 
-    data class Calisthenics(
+    open class Calisthenics(
         override val weight: Double,
-        val bodyWeight: Double,
+        open val bodyWeight: Double,
         override val reps: Int,
         override val weightUnit: MassUnit,
     ) : ExerciseSet() {
         override val isCompleted: Boolean
-            get() = weight > 0 && reps > 0
+            get() = reps > 0
 
         companion object {
             fun empty(bodyWeight: Double, massUnit: MassUnit) =
                 Calisthenics(0.0, bodyWeight, 0, massUnit)
         }
+
+        override fun toString() =
+            "Calisthenics(weight=$weight, bodyWeight=$bodyWeight, reps=$reps, weightUnit=$weightUnit)"
+
+        override fun equals(other: Any?) =
+            other is Calisthenics &&
+                weight == other.weight &&
+                bodyWeight == other.bodyWeight &&
+                reps == other.reps &&
+                weightUnit == other.weightUnit
+
+        override fun hashCode() =
+            weight.hashCode() * 31 +
+                bodyWeight.hashCode() * 31 +
+                reps.hashCode() * 31 +
+                weightUnit.hashCode()
     }
 
-    data class Reps(override val reps: Int) : ExerciseSet() {
+    open class Reps(override val reps: Int) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = reps > 0
 
         companion object {
             val empty = Reps(0)
         }
+
+        override fun toString() = "Reps(reps=$reps)"
+
+        override fun equals(other: Any?) = other is Reps && reps == other.reps
+
+        override fun hashCode() = reps.hashCode()
     }
 
-    data class Cardio(
+    open class Cardio(
         override val duration: Duration,
         override val distance: Double,
         override val kcal: Double,
@@ -65,14 +98,36 @@ sealed class ExerciseSet : Serializable {
         companion object {
             fun empty(distanceUnit: LongDistanceUnit) = Cardio(0.seconds, 0.0, 0.0, distanceUnit)
         }
+
+        override fun toString() =
+            "Cardio(duration=$duration, distance=$distance, kcal=$kcal, distanceUnit=$distanceUnit)"
+
+        override fun equals(other: Any?) =
+            other is Cardio &&
+                duration == other.duration &&
+                distance == other.distance &&
+                kcal == other.kcal &&
+                distanceUnit == other.distanceUnit
+
+        override fun hashCode() =
+            duration.hashCode() * 31 +
+                distance.hashCode() * 31 +
+                kcal.hashCode() * 31 +
+                distanceUnit.hashCode()
     }
 
-    data class Time(override val duration: Duration) : ExerciseSet() {
+    open class Time(override val duration: Duration) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = duration.inWholeSeconds > 0
 
         companion object {
             val empty = Time(0.seconds)
         }
+
+        override fun toString() = "Time(duration=$duration)"
+
+        override fun equals(other: Any?) = other is Time && duration == other.duration
+
+        override fun hashCode() = duration.hashCode()
     }
 }

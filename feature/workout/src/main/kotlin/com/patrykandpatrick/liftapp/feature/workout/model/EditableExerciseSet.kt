@@ -13,85 +13,128 @@ import com.patrykandpatryk.liftapp.core.time.getShortFormattedTime
 import com.patrykandpatryk.liftapp.domain.Constants.Format.DECIMAL_PATTERN
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import java.io.Serializable
 import java.text.DecimalFormat
 import kotlin.time.Duration
 
-sealed class EditableExerciseSet : Serializable {
-    abstract val isCompleted: Boolean
+sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
+    val isCompleted: Boolean
 
-    abstract val isInputValid: Boolean
+    val isInputValid: Boolean
+
+    val suggestions: List<SetSuggestion<T>>
+
+    fun applySet(set: T)
 
     data class Weight(
-        val weight: Double,
-        val reps: Int,
+        override val weight: Double,
+        override val reps: Int,
         val weightInput: DoubleTextFieldState,
         val repsInput: IntTextFieldState,
-        val weightUnit: MassUnit,
-    ) : EditableExerciseSet() {
-        override val isCompleted: Boolean
-            get() = weight > 0 && reps > 0
+        override val weightUnit: MassUnit,
+        override val suggestions: List<SetSuggestion<ExerciseSet.Weight>>,
+    ) : ExerciseSet.Weight(weight, reps, weightUnit), EditableExerciseSet<ExerciseSet.Weight> {
 
         override val isInputValid: Boolean
             get() = weightInput.isValid && repsInput.isValid
+
+        override fun applySet(set: ExerciseSet.Weight) {
+            weightInput.updateValue(set.weight)
+            repsInput.updateValue(set.reps)
+        }
     }
 
     data class Calisthenics(
-        val weight: Double,
-        val bodyWeight: Double,
-        val reps: Int,
+        override val weight: Double,
+        override val bodyWeight: Double,
+        override val reps: Int,
+        val formattedBodyWeight: String,
         val weightInput: DoubleTextFieldState,
-        val bodyWeightInput: DoubleTextFieldState,
         val repsInput: IntTextFieldState,
-        val weightUnit: MassUnit,
-    ) : EditableExerciseSet() {
-        override val isCompleted: Boolean
-            get() = weight > 0 && reps > 0
+        override val weightUnit: MassUnit,
+        override val suggestions: List<SetSuggestion<ExerciseSet.Calisthenics>>,
+    ) :
+        ExerciseSet.Calisthenics(weight, bodyWeight, reps, weightUnit),
+        EditableExerciseSet<ExerciseSet.Calisthenics> {
 
         override val isInputValid: Boolean
-            get() = weightInput.isValid && repsInput.isValid && bodyWeightInput.isValid
+            get() = weightInput.isValid && repsInput.isValid
+
+        override fun applySet(set: ExerciseSet.Calisthenics) {
+            weightInput.updateValue(set.weight)
+            repsInput.updateValue(set.reps)
+        }
     }
 
-    data class Reps(val reps: Int, val repsInput: IntTextFieldState) : EditableExerciseSet() {
-        override val isCompleted: Boolean
-            get() = reps > 0
+    data class Reps(
+        override val reps: Int,
+        val repsInput: IntTextFieldState,
+        override val suggestions: List<SetSuggestion<ExerciseSet.Reps>>,
+    ) : ExerciseSet.Reps(reps), EditableExerciseSet<ExerciseSet.Reps> {
 
         override val isInputValid: Boolean
             get() = repsInput.isValid
+
+        override fun applySet(set: ExerciseSet.Reps) {
+            repsInput.updateValue(set.reps)
+        }
     }
 
     data class Cardio(
-        val duration: Duration,
-        val distance: Double,
-        val kcal: Double,
+        override val duration: Duration,
+        override val distance: Double,
+        override val kcal: Double,
         val durationInput: LongTextFieldState,
         val distanceInput: DoubleTextFieldState,
         val kcalInput: DoubleTextFieldState,
-        val distanceUnit: LongDistanceUnit,
-    ) : EditableExerciseSet() {
-        override val isCompleted: Boolean
-            get() = duration.inWholeSeconds > 0 && distance > 0
+        override val distanceUnit: LongDistanceUnit,
+        override val suggestions: List<SetSuggestion<ExerciseSet.Cardio>>,
+    ) :
+        ExerciseSet.Cardio(duration, distance, kcal, distanceUnit),
+        EditableExerciseSet<ExerciseSet.Cardio> {
 
         override val isInputValid: Boolean
             get() = durationInput.isValid && distanceInput.isValid && kcalInput.isValid
+
+        override fun applySet(set: ExerciseSet.Cardio) {
+            durationInput.updateValue(set.duration.inWholeMilliseconds)
+            distanceInput.updateValue(set.distance)
+            kcalInput.updateValue(set.kcal)
+        }
     }
 
-    data class Time(val duration: Duration, val timeInput: LongTextFieldState) :
-        EditableExerciseSet() {
-        override val isCompleted: Boolean
-            get() = duration.inWholeSeconds > 0
+    data class Time(
+        override val duration: Duration,
+        val timeInput: LongTextFieldState,
+        override val suggestions: List<SetSuggestion<ExerciseSet.Time>>,
+    ) : ExerciseSet.Time(duration), EditableExerciseSet<ExerciseSet.Time> {
 
         override val isInputValid: Boolean
             get() = timeInput.isValid
+
+        override fun applySet(set: ExerciseSet.Time) {
+            timeInput.updateValue(set.duration.inWholeMilliseconds)
+        }
+    }
+
+    data class SetSuggestion<T : ExerciseSet>(val set: T, val type: Type) {
+        enum class Type {
+            PreviousSet,
+            PreviousWorkout,
+        }
     }
 }
 
 @Composable
-fun EditableExerciseSet.prettyString(): String =
+fun EditableExerciseSet<ExerciseSet>.prettyString(): String = (this as ExerciseSet).prettyString()
+
+@Composable
+fun ExerciseSet.prettyString(): String =
     if (isCompleted) {
         val decimalFormat = remember { DecimalFormat(DECIMAL_PATTERN) }
         when (this) {
-            is EditableExerciseSet.Weight ->
+            is ExerciseSet.Weight ->
                 stringResource(
                     R.string.exercise_set_format_weight,
                     decimalFormat.format(weight),
@@ -100,7 +143,7 @@ fun EditableExerciseSet.prettyString(): String =
                     getRepsString(reps),
                 )
 
-            is EditableExerciseSet.Calisthenics ->
+            is ExerciseSet.Calisthenics ->
                 if (weight > 0) {
                     stringResource(
                         R.string.exercise_set_format_calisthenics_with_weight,
@@ -120,10 +163,10 @@ fun EditableExerciseSet.prettyString(): String =
                     )
                 }
 
-            is EditableExerciseSet.Reps ->
+            is ExerciseSet.Reps ->
                 stringResource(R.string.exercise_set_format_reps, reps, getRepsString(reps))
 
-            is EditableExerciseSet.Cardio -> {
+            is ExerciseSet.Cardio -> {
                 stringResource(
                     R.string.exercise_set_format_cardio,
                     duration.getShortFormattedTime(),
@@ -131,7 +174,7 @@ fun EditableExerciseSet.prettyString(): String =
                     "${decimalFormat.format(kcal)} ${stringResource(R.string.energy_unit_kcal)}",
                 )
             }
-            is EditableExerciseSet.Time -> duration.getShortFormattedTime()
+            is ExerciseSet.Time -> duration.getShortFormattedTime()
         }
     } else {
         stringResource(R.string.exercise_set_not_completed)

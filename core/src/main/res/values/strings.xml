@@ -207,6 +207,7 @@
     <string name="rest_timer_counter_title">Rest</string>
 
     <!-- Workout -->
+    <string name="workout_calisthenics_set_body_weight"><![CDATA[Body weight <b-surface>%s</b-surface>]]></string>
     <string name="workout_action_next_exercise">Next exercise</string>
     <string name="workout_action_previous_exercise">Previous exercise</string>
     <string name="workout_summary_title">Summary</string>

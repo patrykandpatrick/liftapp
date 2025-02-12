@@ -51,7 +51,13 @@ constructor(
                     tertiaryMuscles = exercise.tertiaryMuscles,
                     goal = exercise.goal,
                     sets =
-                        exercise.sets.mapIndexed { index, set -> set.editable(exercise.id, index) },
+                        exercise.sets.mapIndexed { index, set ->
+                            set.editable(
+                                exerciseId = exercise.id,
+                                setIndex = index,
+                                previousSet = exercise.sets.getOrNull(index - 1),
+                            )
+                        },
                 )
             }
 
@@ -100,111 +106,181 @@ constructor(
         )
     }
 
-    private fun ExerciseSet.editable(exerciseId: Long, setIndex: Int): EditableExerciseSet =
+    @Suppress("UNCHECKED_CAST")
+    private fun ExerciseSet.editable(
+        exerciseId: Long,
+        setIndex: Int,
+        previousSet: ExerciseSet?,
+    ): EditableExerciseSet<ExerciseSet> =
         when (this) {
             is ExerciseSet.Weight ->
-                EditableExerciseSet.Weight(
-                    weight = weight,
-                    reps = reps,
-                    weightInput =
-                        textFieldStateManager.doubleTextField(
-                            initialValue = formatDecimal(weight),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
-                            validators = { validNumberHigherThanZero() },
-                        ),
-                    repsInput =
-                        textFieldStateManager.intTextField(
-                            initialValue = formatInteger(reps),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                            validators = { validNumberHigherThanZero() },
-                        ),
-                    weightUnit = weightUnit,
-                )
+                editable(exerciseId, setIndex, previousSet as? ExerciseSet.Weight)
 
             is ExerciseSet.Calisthenics ->
-                EditableExerciseSet.Calisthenics(
-                    weight = weight,
-                    bodyWeight = bodyWeight,
-                    reps = reps,
-                    weightInput =
-                        textFieldStateManager.doubleTextField(
-                            initialValue = formatDecimal(weight),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
-                            validators = { validNumber() },
-                        ),
-                    bodyWeightInput =
-                        textFieldStateManager.doubleTextField(
-                            initialValue = formatDecimal(bodyWeight),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "body_weight"),
-                            validators = { validNumber() },
-                        ),
-                    repsInput =
-                        textFieldStateManager.intTextField(
-                            initialValue = formatInteger(reps),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                            validators = { validNumberHigherThanZero() },
-                        ),
-                    weightUnit = weightUnit,
-                )
+                editable(exerciseId, setIndex, previousSet as? ExerciseSet.Calisthenics)
 
-            is ExerciseSet.Reps ->
-                EditableExerciseSet.Reps(
-                    reps = reps,
-                    repsInput =
-                        textFieldStateManager.intTextField(
-                            initialValue = formatInteger(reps),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                            validators = { validNumberHigherThanZero() },
-                        ),
-                )
+            is ExerciseSet.Reps -> editable(exerciseId, setIndex, previousSet as? ExerciseSet.Reps)
 
             is ExerciseSet.Cardio ->
-                EditableExerciseSet.Cardio(
-                    duration = duration,
-                    distance = distance,
-                    kcal = kcal,
-                    durationInput =
-                        textFieldStateManager.longTextField(
-                            initialValue = formatInteger(duration.inWholeMilliseconds),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
-                            validators = { higherThanZero() },
-                        ),
-                    distanceInput =
-                        textFieldStateManager.doubleTextField(
-                            initialValue = formatDecimal(distance),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "distance"),
-                            validators = { validNumberHigherThanZero() },
-                        ),
-                    kcalInput =
-                        textFieldStateManager.doubleTextField(
-                            initialValue = formatDecimal(kcal),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "kcal"),
-                            validators = { validNumberHigherThanZero() },
-                        ),
-                    distanceUnit = distanceUnit,
-                )
+                editable(exerciseId, setIndex, previousSet as? ExerciseSet.Cardio)
 
-            is ExerciseSet.Time ->
-                EditableExerciseSet.Time(
-                    duration = duration,
-                    timeInput =
-                        textFieldStateManager.longTextField(
-                            initialValue = formatInteger(duration.inWholeMilliseconds),
-                            savedStateKey =
-                                getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
-                            validators = { higherThanZero() },
-                        ),
-                )
+            is ExerciseSet.Time -> editable(exerciseId, setIndex, previousSet as? ExerciseSet.Time)
         }
+            as EditableExerciseSet<ExerciseSet>
+
+    private fun ExerciseSet.Weight.editable(
+        exerciseId: Long,
+        setIndex: Int,
+        previousSet: ExerciseSet.Weight?,
+    ): EditableExerciseSet.Weight =
+        EditableExerciseSet.Weight(
+            weight = weight,
+            reps = reps,
+            weightInput =
+                textFieldStateManager.doubleTextField(
+                    initialValue = formatDecimal(weight),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
+                    validators = { validNumberHigherThanZero() },
+                ),
+            repsInput =
+                textFieldStateManager.intTextField(
+                    initialValue = formatInteger(reps),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
+                    validators = { validNumberHigherThanZero() },
+                ),
+            weightUnit = weightUnit,
+            suggestions =
+                listOfNotNull(
+                    previousSet?.let { set ->
+                        EditableExerciseSet.SetSuggestion(
+                            set,
+                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                        )
+                    }
+                ),
+        )
+
+    private fun ExerciseSet.Calisthenics.editable(
+        exerciseId: Long,
+        setIndex: Int,
+        previousSet: ExerciseSet.Calisthenics?,
+    ): EditableExerciseSet.Calisthenics =
+        EditableExerciseSet.Calisthenics(
+            weight = weight,
+            bodyWeight = bodyWeight,
+            reps = reps,
+            formattedBodyWeight =
+                "${formatDecimal(bodyWeight)}${stringProvider.getDisplayUnit(weightUnit)}",
+            weightInput =
+                textFieldStateManager.doubleTextField(
+                    initialValue = formatDecimal(weight),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
+                    validators = { validNumber() },
+                ),
+            repsInput =
+                textFieldStateManager.intTextField(
+                    initialValue = formatInteger(reps),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
+                    validators = { validNumberHigherThanZero() },
+                ),
+            weightUnit = weightUnit,
+            suggestions =
+                listOfNotNull(
+                    previousSet?.let { set ->
+                        EditableExerciseSet.SetSuggestion(
+                            set,
+                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                        )
+                    }
+                ),
+        )
+
+    private fun ExerciseSet.Reps.editable(
+        exerciseId: Long,
+        setIndex: Int,
+        previousSet: ExerciseSet.Reps?,
+    ): EditableExerciseSet.Reps =
+        EditableExerciseSet.Reps(
+            reps = reps,
+            repsInput =
+                textFieldStateManager.intTextField(
+                    initialValue = formatInteger(reps),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
+                    validators = { validNumberHigherThanZero() },
+                ),
+            suggestions =
+                listOfNotNull(
+                    previousSet?.let { set ->
+                        EditableExerciseSet.SetSuggestion(
+                            set,
+                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                        )
+                    }
+                ),
+        )
+
+    private fun ExerciseSet.Cardio.editable(
+        exerciseId: Long,
+        setIndex: Int,
+        previousSet: ExerciseSet.Cardio?,
+    ): EditableExerciseSet.Cardio =
+        EditableExerciseSet.Cardio(
+            duration = duration,
+            distance = distance,
+            kcal = kcal,
+            durationInput =
+                textFieldStateManager.longTextField(
+                    initialValue = formatInteger(duration.inWholeMilliseconds),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
+                    validators = { higherThanZero() },
+                ),
+            distanceInput =
+                textFieldStateManager.doubleTextField(
+                    initialValue = formatDecimal(distance),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "distance"),
+                    validators = { validNumberHigherThanZero() },
+                ),
+            kcalInput =
+                textFieldStateManager.doubleTextField(
+                    initialValue = formatDecimal(kcal),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "kcal"),
+                    validators = { validNumberHigherThanZero() },
+                ),
+            distanceUnit = distanceUnit,
+            suggestions =
+                listOfNotNull(
+                    previousSet?.let { set ->
+                        EditableExerciseSet.SetSuggestion(
+                            set,
+                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                        )
+                    }
+                ),
+        )
+
+    private fun ExerciseSet.Time.editable(
+        exerciseId: Long,
+        setIndex: Int,
+        previousSet: ExerciseSet.Time?,
+    ): EditableExerciseSet.Time =
+        EditableExerciseSet.Time(
+            duration = duration,
+            timeInput =
+                textFieldStateManager.longTextField(
+                    initialValue = formatInteger(duration.inWholeMilliseconds),
+                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
+                    validators = { higherThanZero() },
+                ),
+            suggestions =
+                listOfNotNull(
+                    previousSet?.let { set ->
+                        EditableExerciseSet.SetSuggestion(
+                            set,
+                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                        )
+                    }
+                ),
+        )
 
     private fun formatDecimal(value: Double): String =
         if (value == 0.0) ""

@@ -43,10 +43,11 @@ import com.patrykandpatryk.liftapp.core.ui.StepperItem
 import com.patrykandpatryk.liftapp.core.ui.StepperItemLabel
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 
 @Composable
 fun ExerciseSetStepper(
-    sets: List<EditableExerciseSet>,
+    sets: List<EditableExerciseSet<ExerciseSet>>,
     selectedSet: Int,
     onSelectSet: (Int) -> Unit,
     onAddSetClick: () -> Unit,

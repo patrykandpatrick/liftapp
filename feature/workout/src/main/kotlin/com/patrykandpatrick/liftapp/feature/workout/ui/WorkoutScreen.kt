@@ -173,7 +173,7 @@ private fun Content(
     restTimerService: RestTimerService?,
     onAddSetClick: (EditableWorkout.Exercise) -> Unit,
     onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
-    onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
+    onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet<ExerciseSet>, Int) -> Unit,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -185,13 +185,13 @@ private fun Content(
             .filter { it is DragInteraction.Stop || it is PressInteraction.Release }
             .collect { setPage(wheelPickerState.getTargetScrollItem()) }
     }
-    Box(modifier = modifier) {
+    Box(modifier = modifier.imePadding()) {
         Backdrop(
             backContent = { ExerciseListPicker(workout, wheelPickerState, backdropState) },
             backPeekHeight = { wheelPickerState.maxItemHeight.toDp() },
             contentPeekHeight = { 200.dp },
             state = backdropState,
-            modifier = Modifier.imePadding(),
+            modifier = Modifier,
         ) {
             Box(contentAlignment = Alignment.TopCenter) {
                 AnimatedContent(
@@ -264,7 +264,7 @@ private fun BottomBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement =
                     Arrangement.spacedBy(padding.itemHorizontalSmall, Alignment.CenterHorizontally),
-                modifier = Modifier.fillMaxWidth().padding(vertical = padding.itemVertical),
+                modifier = Modifier.fillMaxWidth().padding(vertical = padding.itemVerticalSmall),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Button(
@@ -340,7 +340,7 @@ private fun Page(
     exercise: EditableWorkout.Exercise,
     onAddSetClick: (EditableWorkout.Exercise) -> Unit,
     onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
-    onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet, Int) -> Unit,
+    onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet<ExerciseSet>, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -372,7 +372,7 @@ private fun Page(
         AnimatedContent(
             targetState = selectedSet,
             transitionSpec = sharedXAxisTransition(),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier,
             label = "set",
         ) { setIndex ->
             Column(
