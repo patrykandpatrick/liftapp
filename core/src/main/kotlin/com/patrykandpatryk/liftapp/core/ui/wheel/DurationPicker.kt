@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -32,6 +33,8 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.launch
 
 @Composable
 fun DurationPicker(
@@ -52,17 +55,24 @@ fun DurationPicker(
     val secondState = rememberWheelPickerState(initialSelectedIndex = seconds)
     val onTimeChangeState = rememberUpdatedState(onDurationChange)
 
-    val onItemSelected = remember {
-        { _: Int ->
-            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-            onTimeChangeState.value(
-                calculateDuration(
-                    hour = allHours[hourState.currentItem],
-                    minute = allMinutes[minuteState.currentItem],
-                    second = allSeconds[secondState.currentItem],
-                )
+    LaunchedEffect(hours, minutes, seconds) {
+        if (hours != hourState.targetItem)
+            launch(NonCancellable) { hourState.animateScrollTo(hours) }
+        if (minutes != minuteState.targetItem)
+            launch(NonCancellable) { minuteState.animateScrollTo(minutes) }
+        if (seconds != secondState.targetItem)
+            launch(NonCancellable) { secondState.animateScrollTo(seconds) }
+    }
+
+    LaunchedEffect(hourState.targetItem, minuteState.targetItem, secondState.targetItem) {
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+        val newDuration =
+            calculateDuration(
+                hour = allHours[hourState.targetItem],
+                minute = allMinutes[minuteState.targetItem],
+                second = allSeconds[secondState.targetItem],
             )
-        }
+        if (newDuration != duration) onTimeChangeState.value(newDuration)
     }
 
     Box(modifier = modifier) {
@@ -88,7 +98,7 @@ fun DurationPicker(
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (includeHours) {
-                WheelPicker(state = hourState, onItemSelected = onItemSelected, itemExtent = 1) {
+                WheelPicker(state = hourState, itemExtent = 1) {
                     allHours.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
                 }
 
@@ -99,7 +109,7 @@ fun DurationPicker(
                 )
             }
 
-            WheelPicker(state = minuteState, onItemSelected = onItemSelected, itemExtent = 1) {
+            WheelPicker(state = minuteState, itemExtent = 1) {
                 allMinutes.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
             }
 
@@ -109,7 +119,7 @@ fun DurationPicker(
                 modifier = Modifier.offset(y = (-1).dp),
             )
 
-            WheelPicker(state = secondState, onItemSelected = onItemSelected, itemExtent = 1) {
+            WheelPicker(state = secondState, itemExtent = 1) {
                 allSeconds.forEach { index -> WheelPickerItem(timeFormat.format(index)) }
             }
 

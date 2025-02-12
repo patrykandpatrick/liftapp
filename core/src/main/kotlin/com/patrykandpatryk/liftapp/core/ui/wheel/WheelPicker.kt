@@ -28,14 +28,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -61,6 +59,7 @@ import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -72,7 +71,6 @@ fun WheelPicker(
     modifier: Modifier = Modifier,
     state: WheelPickerState = rememberWheelPickerState(),
     itemExtent: Int = 3,
-    onItemSelected: (Int) -> Unit = {},
     scrollAnimationSpec: AnimationSpec<Float> =
         spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow),
     highlight: @Composable () -> Unit = {},
@@ -80,18 +78,13 @@ fun WheelPicker(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scope = remember { WheelPickerScopeImpl() }
-    val onItemSelectedState = rememberUpdatedState(onItemSelected)
     state.scrollAnimationSpec = scrollAnimationSpec
 
     Layout(
         contents = listOf(highlight) + { items(scope) },
         measurePolicy =
             remember(state, itemExtent) {
-                WheelPickerMeasurePolicy(
-                    state = state,
-                    itemExtent = itemExtent,
-                    onItemSelected = onItemSelectedState,
-                )
+                WheelPickerMeasurePolicy(state = state, itemExtent = itemExtent)
             },
         modifier =
             modifier
@@ -145,7 +138,6 @@ fun WheelPicker(
 private class WheelPickerMeasurePolicy(
     private val state: WheelPickerState,
     private val itemExtent: Int,
-    private val onItemSelected: State<(Int) -> Unit>,
 ) : MultiContentMeasurePolicy {
     override fun MeasureScope.measure(
         measurables: List<List<Measurable>>,
@@ -195,8 +187,7 @@ private class WheelPickerMeasurePolicy(
                         itemY + maxItemHeight > centerLine &&
                         state.currentItem != index
                 ) {
-                    state.currentItem = index
-                    onItemSelected.value(index)
+                    state.updateCurrentItem(index)
                 }
 
                 if (state.currentItem == index) {
@@ -223,7 +214,10 @@ private class WheelPickerMeasurePolicy(
 
 class WheelPickerState(initialSelectedIndex: Int = 0) {
     var currentItem by mutableIntStateOf(initialSelectedIndex)
-        internal set
+        private set
+
+    var targetItem by mutableIntStateOf(initialSelectedIndex)
+        private set
 
     var currentItemOffset by mutableFloatStateOf(0f)
         internal set
@@ -259,6 +253,10 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
 
     var initialScrollCalculated = false
         private set
+
+    internal fun updateCurrentItem(index: Int) {
+        currentItem = index
+    }
 
     fun setScroll(value: Float, minScroll: Float, maxScroll: Float) {
         scrollJob?.cancel()
@@ -334,6 +332,7 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
         val remainder = targetValue % maxItemHeight
         val snapScrollValue =
             targetValue - remainder - if (abs(remainder) > maxItemHeight / 2) maxItemHeight else 0
+        targetItem = abs((targetValue - maxScroll) / maxItemHeight).roundToInt()
         animate(
             initialValue = currentScroll,
             targetValue = snapScrollValue,
@@ -344,8 +343,10 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
         }
     }
 
-    private fun getTargetScrollValue(index: Int, positionOffset: Float): Float =
-        maxScroll - maxItemHeight * (index + positionOffset).coerceIn(0f, itemCount - 1f)
+    private fun getAndUpdateTargetScrollValue(index: Int, positionOffset: Float): Float =
+        maxScroll -
+            maxItemHeight *
+                (index + positionOffset).coerceIn(0f, itemCount - 1f).also { targetItem = index }
 
     suspend fun scrollTo(
         index: Int,
@@ -356,7 +357,7 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
     }
 
     private fun performScrollTo(index: Int, positionOffset: Float) {
-        setScroll(getTargetScrollValue(index, positionOffset))
+        setScroll(getAndUpdateTargetScrollValue(index, positionOffset))
     }
 
     suspend fun animateScrollTo(
@@ -369,7 +370,7 @@ class WheelPickerState(initialSelectedIndex: Int = 0) {
     private suspend fun performAnimateScrollTo(index: Int) {
         animate(
             initialValue = currentScroll,
-            targetValue = getTargetScrollValue(index, 0f),
+            targetValue = getAndUpdateTargetScrollValue(index, 0f),
             animationSpec = scrollAnimationSpec,
         ) { value, _ ->
             setScroll(value)
