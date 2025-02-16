@@ -143,7 +143,8 @@ data class Dimens(
 
 val PortraitDimens = Dimens()
 
-val LandscapeDimens = Dimens(padding = Dimens.Padding(contentHorizontal = 56.dp))
+val LandscapeDimens =
+    Dimens(padding = Dimens.Padding(contentHorizontal = 56.dp, contentHorizontalSmall = 48.dp))
 
 val DialogDimens: Dimens
     @Composable

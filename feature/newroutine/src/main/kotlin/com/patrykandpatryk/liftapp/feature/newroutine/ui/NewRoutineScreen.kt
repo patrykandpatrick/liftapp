@@ -1,30 +1,29 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -104,6 +103,7 @@ private fun NewRoutineScreen(
     navigator: NewRoutineNavigator,
     modifier: Modifier = Modifier,
 ) {
+    val windowWidthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -125,163 +125,95 @@ private fun NewRoutineScreen(
                         )
                     }
                 },
+                actions = {
+                    if (windowWidthSizeClass != WindowWidthSizeClass.COMPACT) {
+                        TextButton(onClick = { onAction(Action.SaveRoutine(state)) }) {
+                            Icon(painterResource(id = R.drawable.ic_save), null)
+                            Spacer(
+                                modifier = Modifier.width(LocalDimens.current.button.iconPadding)
+                            )
+                            Text(text = stringResource(id = R.string.action_save))
+                        }
+                    }
+                },
             )
         },
-        bottomBar = { BottomAppBar.Save(onClick = { onAction(Action.SaveRoutine(state)) }) },
+        bottomBar = {
+            if (windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+                BottomAppBar.Save(onClick = { onAction(Action.SaveRoutine(state)) })
+            }
+        },
     ) { paddingValues ->
-        if (
-            currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass ==
-                WindowWidthSizeClass.COMPACT
-        ) {
-            NewRoutineCompactContent(
-                state = state,
-                onAction = onAction,
-                pickExercises = { navigator.pickExercises(state.exerciseIds) },
-                modifier = Modifier.padding(paddingValues),
-            )
-        } else {
-            NewRoutineContentLarge(
-                state = state,
-                onAction = onAction,
-                pickExercises = { navigator.pickExercises(state.exerciseIds) },
-                modifier = Modifier.padding(paddingValues),
-            )
+        LazyColumn(modifier = modifier.padding(paddingValues)) {
+            stickyHeader {
+                Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+                    OutlinedTextField(
+                        textFieldState = state.name,
+                        label = { Text(text = stringResource(id = R.string.generic_name)) },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions =
+                            KeyboardActions(onDone = { onAction(Action.SaveRoutine(state)) }),
+                        maxLines = LocalDimens.current.input.nameMaxLines,
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
+                    )
+
+                    ListSectionTitle(
+                        title = stringResource(R.string.title_exercises),
+                        trailingIcon = {
+                            TextButton(
+                                modifier =
+                                    Modifier.animateJump(
+                                        state.errorEffectState,
+                                        state.exercises.isInvalid,
+                                    ),
+                                onClick = { navigator.pickExercises(state.exerciseIds) },
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_add_circle),
+                                    contentDescription = null,
+                                )
+                                Spacer(
+                                    modifier =
+                                        Modifier.width(LocalDimens.current.button.iconPadding)
+                                )
+                                Text(text = stringResource(id = R.string.action_add_exercise))
+                            }
+                        },
+                        paddingValues =
+                            PaddingValues(
+                                vertical = LocalDimens.current.padding.itemVerticalSmall,
+                                horizontal = LocalDimens.current.padding.contentHorizontal,
+                            ),
+                    )
+                }
+            }
+
+            exercises(state = state, onAction = onAction)
         }
     }
 }
 
-@Composable
-private fun NewRoutineCompactContent(
-    state: NewRoutineState,
-    onAction: (Action) -> Unit,
-    pickExercises: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
-        modifier =
-            modifier.padding(
-                horizontal = LocalDimens.current.padding.contentHorizontal,
-                vertical = LocalDimens.current.padding.contentVertical,
-            ),
-    ) {
-        OutlinedTextField(
-            textFieldState = state.name,
-            label = { Text(text = stringResource(id = R.string.generic_name)) },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onAction(Action.SaveRoutine(state)) }),
-            maxLines = LocalDimens.current.input.nameMaxLines,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Exercises(state = state, onAction = onAction, pickExercises = pickExercises)
-    }
-}
-
-@Composable
-private fun NewRoutineContentLarge(
-    state: NewRoutineState,
-    onAction: (Action) -> Unit,
-    pickExercises: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        horizontalArrangement =
-            Arrangement.spacedBy(space = LocalDimens.current.padding.itemHorizontal),
-        modifier =
-            modifier.padding(
-                horizontal = LocalDimens.current.padding.contentHorizontal,
-                vertical = LocalDimens.current.padding.contentVertical,
-            ),
-    ) {
-        OutlinedTextField(
-            textFieldState = state.name,
-            label = { Text(text = stringResource(id = R.string.generic_name)) },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onAction(Action.SaveRoutine(state)) }),
-            maxLines = LocalDimens.current.input.nameMaxLines,
-            modifier = Modifier.weight(1f),
-        )
-
-        Exercises(
-            state = state,
-            onAction = onAction,
-            pickExercises = pickExercises,
-            modifier = Modifier.weight(1f).padding(top = 6.dp),
-        )
-    }
-}
-
-@Composable
-private fun Exercises(
-    state: NewRoutineState,
-    onAction: (Action) -> Unit,
-    pickExercises: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedCard(modifier = modifier) {
-        Column(
-            verticalArrangement =
-                Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
-            modifier =
-                Modifier.padding(top = 8.dp, bottom = LocalDimens.current.verticalItemSpacing),
-        ) {
-            ListSectionTitle(
-                title = stringResource(R.string.title_exercises),
-                paddingValues = PaddingValues(),
-                trailingIcon = {
-                    IconButton(onClick = { TODO() }) {
+private fun LazyListScope.exercises(state: NewRoutineState, onAction: (Action) -> Unit) {
+    if (state.exercises.isInvalid) {
+        item { EmptyState(state) }
+    } else {
+        items(items = state.exercises.value, key = { it.id }, contentType = { it::class }) { item ->
+            ListItem(
+                modifier = Modifier.animateItem(),
+                title = item.name,
+                description = item.muscles,
+                iconPainter = painterResource(id = item.type.iconRes),
+                actions = {
+                    IconButton(onClick = { onAction(Action.RemoveExercise(item.id)) }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_delete),
-                            contentDescription = null,
+                            painter = painterResource(id = R.drawable.ic_remove_circle),
+                            contentDescription = stringResource(id = R.string.list_remove),
                         )
                     }
                 },
-                modifier =
-                    Modifier.padding(start = LocalDimens.current.padding.itemHorizontal, end = 8.dp),
             )
-
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                if (state.exercises.isInvalid) {
-                    item { EmptyState(state, Modifier.fillParentMaxSize()) }
-                } else {
-                    items(
-                        items = state.exercises.value,
-                        key = { it.id },
-                        contentType = { it::class },
-                    ) { item ->
-                        ListItem(
-                            modifier = Modifier.animateItem(),
-                            title = item.name,
-                            description = item.muscles,
-                            iconPainter = painterResource(id = item.type.iconRes),
-                            actions = {
-                                IconButton(onClick = { onAction(Action.RemoveExercise(item.id)) }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_remove_circle),
-                                        contentDescription =
-                                            stringResource(id = R.string.list_remove),
-                                    )
-                                }
-                            },
-                        )
-                    }
-                }
-            }
-
-            Button(
-                colors = ButtonDefaults.filledTonalButtonColors(),
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .padding(top = LocalDimens.current.padding.itemVerticalSmall)
-                        .padding(horizontal = LocalDimens.current.padding.itemHorizontal)
-                        .animateJump(state.errorEffectState, state.exercises.isInvalid),
-                onClick = pickExercises,
-            ) {
-                Icon(painter = painterResource(id = R.drawable.ic_add), contentDescription = null)
-                Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
-                Text(text = stringResource(id = R.string.action_add_exercise))
-            }
         }
     }
 }
@@ -294,12 +226,12 @@ private fun EmptyState(state: NewRoutineState, modifier: Modifier = Modifier) {
     val showErrors = state.showErrors
     val color = animateColorAsState(if (showErrors) errorColor else normalColor, label = "color")
 
-    Column(verticalArrangement = Arrangement.Center, modifier = modifier) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.verticalItemSpacing),
+        modifier = modifier.fillMaxWidth(),
+    ) {
         Icon(
-            modifier =
-                Modifier.align(Alignment.CenterHorizontally)
-                    .padding(vertical = MaterialTheme.dimens.verticalItemSpacing)
-                    .size(128.dp),
+            modifier = Modifier.align(Alignment.CenterHorizontally).size(128.dp),
             painter = painterResource(id = R.drawable.ic_weightlifter_down),
             contentDescription = null,
             tint = color.value.copy(alpha = IllustrationAlpha),

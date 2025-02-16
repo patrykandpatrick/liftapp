@@ -87,8 +87,8 @@ private fun RoutineListScreen(
                     horizontal = dimensPadding.contentHorizontalSmall,
                     vertical = dimensPadding.contentVertical,
                 ),
-            verticalItemSpacing = dimensPadding.contentVerticalSmall,
-            horizontalArrangement = Arrangement.spacedBy(dimensPadding.contentHorizontalSmall),
+            verticalItemSpacing = dimensPadding.itemVerticalSmall,
+            horizontalArrangement = Arrangement.spacedBy(dimensPadding.itemHorizontalSmall),
         ) {
             items(items = routines, key = { it.id }) { routine ->
                 RoutineCard(

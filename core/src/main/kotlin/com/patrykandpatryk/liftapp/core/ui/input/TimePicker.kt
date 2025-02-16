@@ -118,7 +118,7 @@ private fun TimePickerContent(
                 Modifier.padding(top = LocalDimens.current.dialog.paddingLarge)
                     .height(IntrinsicSize.Max),
             horizontalArrangement =
-                Arrangement.spacedBy(LocalDimens.current.padding.contentHorizontalSmall),
+                Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
         ) {
             val inputTextStyle =
                 MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center)

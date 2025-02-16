@@ -62,10 +62,7 @@ fun NumberInput(
                 null
             },
         leadingIcon = {
-            Row(
-                modifier =
-                    Modifier.padding(end = LocalDimens.current.padding.contentHorizontalSmall)
-            ) {
+            Row(modifier = Modifier.padding(end = LocalDimens.current.padding.itemVerticalSmall)) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     onLongClick = {
@@ -99,8 +96,7 @@ fun NumberInput(
         },
         trailingIcon = {
             Row(
-                modifier =
-                    Modifier.padding(start = LocalDimens.current.padding.contentHorizontalSmall)
+                modifier = Modifier.padding(start = LocalDimens.current.padding.itemHorizontalSmall)
             ) {
                 if (suffix != null) {
                     Text(
