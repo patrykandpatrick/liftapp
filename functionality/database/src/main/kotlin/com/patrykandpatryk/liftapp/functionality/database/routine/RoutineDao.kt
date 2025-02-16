@@ -25,8 +25,15 @@ interface RoutineDao {
     )
     fun getRoutineExercises(routineId: Long): Flow<List<ExerciseWithGoalDto>>
 
-    @Query("SELECT * FROM routine WHERE routine_id = :routineId")
-    fun getRoutine(routineId: Long): Flow<RoutineEntity?>
+    @Query(
+        "SELECT r.routine_id, r.routine_name, GROUP_CONCAT(ewr.exercise_id, ',') exercise_ids FROM routine r " +
+            "LEFT JOIN exercise_with_routine ewr on ewr.routine_id = r.routine_id " +
+            "WHERE r.routine_id = :routineID GROUP BY r.routine_id"
+    )
+    fun getRoutineWithExerciseIds(routineID: Long): Flow<RoutineWithExerciseIdsEntity?>
+
+    @Query("SELECT * FROM routine WHERE routine_id = :routineID")
+    fun getRoutine(routineID: Long): Flow<RoutineEntity?>
 
     @Upsert suspend fun upsert(routine: RoutineEntity): Long
 

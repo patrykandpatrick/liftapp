@@ -5,6 +5,7 @@ import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
+import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesContract
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.functionality.database.appendSQLOrderByCase
 import javax.inject.Inject
@@ -20,7 +21,7 @@ constructor(
     private val exerciseDao: ExerciseDao,
     private val exerciseMapper: ExerciseMapper,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
-) : ExerciseRepository {
+) : ExerciseRepository, GetRoutineExercisesContract {
 
     override fun getAllExercises(): Flow<List<Exercise>> =
         exerciseDao.getAllExercises().map(exerciseMapper::toDomain).flowOn(dispatcher)

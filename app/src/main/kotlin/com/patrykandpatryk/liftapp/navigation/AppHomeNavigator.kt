@@ -8,6 +8,7 @@ import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.feature.main.navigation.HomeNavigator
+import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineRouteData
 
 @Immutable
 class AppHomeNavigator(private val navController: NavController) : HomeNavigator {
@@ -49,7 +50,7 @@ class AppHomeNavigator(private val navController: NavController) : HomeNavigator
     }
 
     override fun newRoutine() {
-        navController.navigate(Routes.Routine.new())
+        navController.navigate(NewRoutineRouteData.new())
     }
 
     override fun routine(routineID: Long) {

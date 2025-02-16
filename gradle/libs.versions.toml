@@ -21,6 +21,7 @@ retrofit = "2.11.0"
 room = "2.7.0-alpha12"
 viewmodel = "2.9.0-alpha08"
 timber = "5.0.1"
+turbine = "1.2.0"
 vico = "1.16.0"
 
 androidPlugin = "8.8.0"
@@ -66,6 +67,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 safeArgs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "composeNavigation" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 vico = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "vico" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel" }
 
@@ -74,7 +76,7 @@ kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
 hilt = ["hilt-android", "hilt-navigation"]
 opto = ["opto-core", "opto-domain"]
 ui = ["coil", "compose-ui", "compose-ui-preview", "compose-material-icons", "compose-material3", "compose-navigation", "vico", "immutable-collections", "compose-navigation-material", "compose-material3-adaptive"]
-testing = ["junit", "jupiter", "kotlin-test", "kotlin-coroutines-test"]
+testing = ["junit", "jupiter", "kotlin-test", "kotlin-coroutines-test", "turbine"]
 
 [plugins]
 application = { id = "com.android.application", version.ref = "androidPlugin" }

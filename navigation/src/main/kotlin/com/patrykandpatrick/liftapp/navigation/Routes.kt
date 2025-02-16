@@ -7,15 +7,9 @@ object Routes {
     @Serializable object Home
 
     object Routine {
-        @Serializable class Create internal constructor(val routineID: Long = ID_NOT_SET)
-
         @Serializable class Details internal constructor(val routineID: Long)
 
         fun details(routineID: Long) = Details(routineID)
-
-        fun new() = Create()
-
-        fun edit(routineID: Long) = Create(routineID)
     }
 
     object Exercise {

@@ -220,4 +220,8 @@
     <string name="workout_summary_edit_workout_notes">Notes</string>
     <string name="workout_summary_edit_picker_confirm">Confirm</string>
     <string name="workout_summary_exercises">Exercises</string>
+
+    <!-- Errors -->
+    <string name="generic_error_title">Unexpected Error</string>
+    <string name="error_routine_not_found">Routine has not been found.</string>
 </resources>

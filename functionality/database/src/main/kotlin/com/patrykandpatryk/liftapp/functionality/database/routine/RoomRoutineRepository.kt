@@ -1,10 +1,14 @@
 package com.patrykandpatryk.liftapp.functionality.database.routine
 
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
 import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
+import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseNames
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
+import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsContract
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
@@ -14,24 +18,43 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class RoutineRepositoryImpl
+class RoomRoutineRepository
 @Inject
 constructor(
     private val routineDao: RoutineDao,
     private val routineMapper: RoutineMapper,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
-) : RoutineRepository {
+) :
+    RoutineRepository,
+    GetRoutineWithExercisesContract,
+    GetRoutineWithExerciseIDsContract,
+    UpsertRoutineWithExerciseIdsContract {
 
     override fun getRoutinesWithNames(): Flow<List<RoutineWithExerciseNames>> =
         routineDao.getRoutinesWithExerciseNames().map(routineMapper::toDomain).flowOn(dispatcher)
 
+    override fun getRoutineWithExerciseIDs(routineID: Long): Flow<RoutineWithExerciseIds?> =
+        routineDao
+            .getRoutineWithExerciseIds(routineID)
+            .map { routine ->
+                routine ?: return@map null
+                RoutineWithExerciseIds(
+                    id = routine.id,
+                    name = routine.name,
+                    exerciseIDs = routine.exerciseIDs.split(",").map(String::toLong),
+                )
+            }
+            .flowOn(dispatcher)
+
     override fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?> =
-        combine(
-            routineDao.getRoutine(routineId = routineId),
-            routineDao.getRoutineExercises(routineId = routineId),
-        ) { nullableRoutine, exercisesWithGoals ->
-            nullableRoutine?.let { routine -> routineMapper.toDomain(routine, exercisesWithGoals) }
-        }
+        combine(routineDao.getRoutine(routineId), routineDao.getRoutineExercises(routineId)) {
+                nullableRoutine,
+                exercisesWithGoals ->
+                nullableRoutine?.let { routine ->
+                    routineMapper.toDomain(routine, exercisesWithGoals)
+                }
+            }
+            .flowOn(dispatcher)
 
     override suspend fun upsert(routine: Routine, exerciseIds: List<Long>): Long =
         withContext(dispatcher + NonCancellable) {
