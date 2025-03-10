@@ -17,6 +17,7 @@ import com.patrykandpatryk.liftapp.functionality.database.converter.LocalDateTim
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.RoomExerciseRepository
 import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
+import com.patrykandpatryk.liftapp.functionality.database.plan.PlanDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoomRoutineRepository
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.string.BodyMeasurementStringResource
@@ -81,6 +82,8 @@ interface DatabaseModule {
         @Provides fun provideGoalDao(database: Database): GoalDao = database.goalDao
 
         @Provides fun provideWorkoutDao(database: Database): WorkoutDao = database.workoutDao
+
+        @Provides fun providePlanDao(database: Database): PlanDao = database.planDao
 
         @Provides fun provideInvalidationTracker(database: Database) = database.invalidationTracker
 

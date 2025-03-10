@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "84689217ab6f0ad2c4aeaad15e0584cd",
+    "identityHash": "bac81e7f79747bcdd6bd72d959b87a6e",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -785,6 +785,117 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "plan",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`plan_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `plan_name` TEXT NOT NULL, `plan_description` TEXT NOT NULL, `plan_item_count` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "plan_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "plan_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "plan_description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "itemCount",
+            "columnName": "plan_item_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "plan_id"
+          ]
+        }
+      },
+      {
+        "tableName": "plan_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`plan_item_plan_id` INTEGER NOT NULL, `plan_item_routine_id` INTEGER NOT NULL, `plan_item_order_index` INTEGER NOT NULL, PRIMARY KEY(`plan_item_plan_id`, `plan_item_routine_id`), FOREIGN KEY(`plan_item_plan_id`) REFERENCES `plan`(`plan_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`plan_item_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "planId",
+            "columnName": "plan_item_plan_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routineId",
+            "columnName": "plan_item_routine_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orderIndex",
+            "columnName": "plan_item_order_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "plan_item_plan_id",
+            "plan_item_routine_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_plan_item_plan_item_plan_id",
+            "unique": false,
+            "columnNames": [
+              "plan_item_plan_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plan_item_plan_item_plan_id` ON `${TABLE_NAME}` (`plan_item_plan_id`)"
+          },
+          {
+            "name": "index_plan_item_plan_item_routine_id",
+            "unique": false,
+            "columnNames": [
+              "plan_item_routine_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plan_item_plan_item_routine_id` ON `${TABLE_NAME}` (`plan_item_routine_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "plan",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plan_item_plan_id"
+            ],
+            "referencedColumns": [
+              "plan_id"
+            ]
+          },
+          {
+            "table": "routine",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plan_item_routine_id"
+            ],
+            "referencedColumns": [
+              "routine_id"
+            ]
+          }
+        ]
       }
     ],
     "views": [
@@ -799,7 +910,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '84689217ab6f0ad2c4aeaad15e0584cd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bac81e7f79747bcdd6bd72d959b87a6e')"
     ]
   }
 }

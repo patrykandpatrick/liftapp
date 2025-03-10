@@ -13,6 +13,9 @@ import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
 import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
 import com.patrykandpatryk.liftapp.functionality.database.goal.GoalEntity
+import com.patrykandpatryk.liftapp.functionality.database.plan.PlanDao
+import com.patrykandpatryk.liftapp.functionality.database.plan.PlanEntity
+import com.patrykandpatryk.liftapp.functionality.database.plan.PlanItemEntity
 import com.patrykandpatryk.liftapp.functionality.database.routine.ExerciseWithRoutineEntity
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineEntity
@@ -36,6 +39,8 @@ import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutWithExe
             WorkoutWithExerciseEntity::class,
             WorkoutGoalEntity::class,
             ExerciseSetEntity::class,
+            PlanEntity::class,
+            PlanItemEntity::class,
         ],
     views = [BodyMeasurementWithLatestEntryViewResult::class, RoutineWithExerciseNamesView::class],
     version = 1,
@@ -56,4 +61,6 @@ abstract class Database : RoomDatabase() {
     abstract val goalDao: GoalDao
 
     abstract val workoutDao: WorkoutDao
+
+    abstract val planDao: PlanDao
 }

@@ -224,4 +224,5 @@
     <!-- Errors -->
     <string name="generic_error_title">Unexpected Error</string>
     <string name="error_routine_not_found">Routine has not been found.</string>
+    <string name="error_plan_not_found">Training plan has not been found.</string>
 </resources>
