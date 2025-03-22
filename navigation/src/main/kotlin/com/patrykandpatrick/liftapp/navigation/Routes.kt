@@ -66,4 +66,10 @@ object Routes {
     @Serializable object Settings
 
     @Serializable object OneRepMax
+
+    object Plan {
+        fun edit(planID: Long) = NewPlanRouteData(planID)
+
+        fun new() = NewPlanRouteData(ID_NOT_SET)
+    }
 }

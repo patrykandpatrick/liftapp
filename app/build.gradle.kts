@@ -31,6 +31,7 @@ dependencies {
     implementation(project(":feature:newexercise"))
     implementation(project(":feature:newbodymeasuremententry"))
     implementation(project(":feature:onerepmax"))
+    implementation(project(":feature:newplan"))
     implementation(project(":feature:newroutine"))
     implementation(project(":feature:routine"))
     implementation(project(":feature:routineList"))

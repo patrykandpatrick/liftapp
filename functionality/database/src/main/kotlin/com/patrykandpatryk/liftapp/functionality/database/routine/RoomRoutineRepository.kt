@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.functionality.database.routine
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutinesWithExerciseNamesContract
 import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
@@ -28,9 +29,10 @@ constructor(
     RoutineRepository,
     GetRoutineWithExercisesContract,
     GetRoutineWithExerciseIDsContract,
-    UpsertRoutineWithExerciseIdsContract {
+    UpsertRoutineWithExerciseIdsContract,
+    GetRoutinesWithExerciseNamesContract {
 
-    override fun getRoutinesWithNames(): Flow<List<RoutineWithExerciseNames>> =
+    override fun getRoutinesWithExerciseNames(): Flow<List<RoutineWithExerciseNames>> =
         routineDao.getRoutinesWithExerciseNames().map(routineMapper::toDomain).flowOn(dispatcher)
 
     override fun getRoutineWithExerciseIDs(routineID: Long): Flow<RoutineWithExerciseIds?> =

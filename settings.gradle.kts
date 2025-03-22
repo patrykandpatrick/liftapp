@@ -34,6 +34,7 @@ include(
     ":feature:home:plan",
     ":feature:newbodymeasuremententry",
     ":feature:newexercise",
+    ":feature:newplan",
     ":feature:newroutine",
     ":feature:onerepmax",
     ":feature:routine",

@@ -154,6 +154,10 @@ fun NavGraphBuilder.addRoutineExerciseGoal(navigator: ExerciseGoalNavigator) {
     composable<ExerciseGoalRouteData> { ExerciseGoalScreen(navigator) }
 }
 
+fun NavGraphBuilder.addNewPlan() {
+    composable<NewPlanRouteData> { NewPlanScreen() }
+}
+
 fun NavGraphBuilder.addNewRoutine(navigator: NewRoutineNavigator) {
     composable<NewRoutineRouteData> { NewRoutineScreen(navigator) }
 }

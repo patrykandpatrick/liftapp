@@ -38,6 +38,6 @@ constructor(
     }
 
     private fun createNewPlan() {
-        viewModelScope.launch { navigationCommander.navigateTo(TODO()) }
+        viewModelScope.launch { navigationCommander.navigateTo(Routes.Plan.new()) }
     }
 }

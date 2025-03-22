@@ -97,6 +97,7 @@
     <string name="tab_details">Details</string>
 
     <string name="generic_name">Name</string>
+    <string name="generic_description">Description</string>
     <string name="generic_type">Type</string>
     <string name="generic_list">List</string>
     <string name="generic_main_muscles">Main Muscles</string>
@@ -230,6 +231,19 @@
     <string name="plan_no_active_plan">You have no active training plan</string>
     <string name="plan_no_active_plan_create_cta">Create new </string>
     <string name="plan_no_active_plan_choose_existing_cta">Choose existing</string>
+
+    <!-- New Training Plan -->
+    <string name="route_new_plan">New Training Plan</string>
+    <string name="route_new_plan_edit">Edit Training Plan</string>
+    <string name="training_plan_start_date">Start date</string>
+    <string name="training_plan_name_placeholder">My Training Plan</string>
+    <string name="training_plan_cycle_count">Cycle Count</string>
+    <string name="training_plan_item_add_rest_day">Add rest day</string>
+    <string name="training_plan_item_add_routine">Add routine</string>
+    <string name="training_plan_item_rest_day">Rest day</string>
+    <string name="training_plan_item_remove">Remove the plan item</string>
+    <string name="training_plan_item_day_indicator_label">Day</string>
+    <string name="training_plan_error_no_routines">The plan needs to have at least one routine</string>
 
     <!-- Errors -->
     <string name="generic_error_title">Unexpected Error</string>
