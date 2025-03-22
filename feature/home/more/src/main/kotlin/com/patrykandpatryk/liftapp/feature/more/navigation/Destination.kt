@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class Destination(
-    val navigate: MoreNavigator.() -> Unit,
+    val getRoute: () -> Any,
     @StringRes val titleResourceId: Int,
     @DrawableRes val iconResourceId: Int,
 )

@@ -36,22 +36,6 @@ class AppHomeNavigator(private val navController: NavController) : HomeNavigator
         navController.navigate(Routes.BodyMeasurement.details(bodyMeasurementID))
     }
 
-    override fun oneRepMaxCalculator() {
-        navController.navigate(Routes.OneRepMax)
-    }
-
-    override fun settings() {
-        navController.navigate(Routes.Settings)
-    }
-
-    override fun about() {
-        navController.navigate(Routes.About)
-    }
-
-    override fun routineList() {
-        navController.navigate(Routes.Routine.list())
-    }
-
     override fun newWorkout(routineID: Long) {
         navController.navigate(WorkoutRouteData.new(routineID))
     }

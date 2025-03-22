@@ -14,17 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.feature.more.navigation.MoreNavigator
 import com.patrykandpatryk.liftapp.feature.more.navigation.destinations
 
 @Composable
-fun MoreScreen(navigator: MoreNavigator, padding: PaddingValues, modifier: Modifier = Modifier) {
+fun MoreScreen(padding: PaddingValues, modifier: Modifier = Modifier) {
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val viewModel: MoreViewModel = hiltViewModel()
 
     Scaffold(
         modifier =
@@ -47,9 +47,8 @@ fun MoreScreen(navigator: MoreNavigator, padding: PaddingValues, modifier: Modif
                             contentDescription = null,
                         )
                     },
-                ) {
-                    destination.navigate(navigator)
-                }
+                    onClick = { viewModel.navigateTo(destination) },
+                )
             }
         }
     }
@@ -58,5 +57,5 @@ fun MoreScreen(navigator: MoreNavigator, padding: PaddingValues, modifier: Modif
 @MultiDevicePreview
 @Composable
 private fun MoreScreenPreview() {
-    LiftAppTheme { MoreScreen(navigator = interfaceStub(), padding = PaddingValues()) }
+    LiftAppTheme { MoreScreen(padding = PaddingValues()) }
 }

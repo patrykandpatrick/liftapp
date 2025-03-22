@@ -110,7 +110,7 @@ private fun HomeScaffold(
 
                     HomeRoute.More ->
                         composable<HomeRoute.More> {
-                            MoreScreen(navigator = homeNavigator, padding = paddingValues)
+                            MoreScreen(padding = paddingValues)
                         }
 
                     HomeRoute.Plan ->
