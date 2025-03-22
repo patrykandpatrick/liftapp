@@ -8,7 +8,6 @@ import androidx.navigation.navOptions
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.ComposeNavigationResultListener
 import com.patrykandpatryk.liftapp.core.navigation.NavigationResultListener
@@ -102,7 +101,7 @@ class MainNavigator(private val navController: NavController) :
             }
 
             override fun newWorkout() {
-                navController.navigate(WorkoutRouteData.new(routineID))
+                navController.navigate(Routes.Workout.new(routineID))
             }
         }
 }

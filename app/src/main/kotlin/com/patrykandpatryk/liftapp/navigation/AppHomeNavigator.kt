@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.feature.main.navigation.HomeNavigator
@@ -34,14 +33,6 @@ class AppHomeNavigator(private val navController: NavController) : HomeNavigator
 
     override fun bodyMeasurementDetails(bodyMeasurementID: Long) {
         navController.navigate(Routes.BodyMeasurement.details(bodyMeasurementID))
-    }
-
-    override fun newWorkout(routineID: Long) {
-        navController.navigate(WorkoutRouteData.new(routineID))
-    }
-
-    override fun openWorkout(workoutID: Long) {
-        navController.navigate(WorkoutRouteData.edit(workoutID))
     }
 }
 

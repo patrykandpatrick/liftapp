@@ -1,7 +1,7 @@
 package com.patrykandpatrick.liftapp.feature.workout.model
 
 import androidx.lifecycle.SavedStateHandle
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
+import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider

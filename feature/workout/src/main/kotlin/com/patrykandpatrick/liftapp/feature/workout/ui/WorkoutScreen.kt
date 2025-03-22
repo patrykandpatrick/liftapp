@@ -64,8 +64,8 @@ import com.patrykandpatrick.liftapp.feature.workout.model.getPainter
 import com.patrykandpatrick.liftapp.feature.workout.model.getText
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.copy
 import com.patrykandpatryk.liftapp.core.extension.getBottom
@@ -500,7 +500,7 @@ private fun WorkoutScreenPreview() {
                             textFieldStateManager = textFieldStateManager,
                             formatter = PreviewResource.formatter(),
                             stringProvider = PreviewResource.stringProvider,
-                            workoutRouteData = WorkoutRouteData(),
+                            workoutRouteData = Routes.Workout.new(0L),
                             savedStateHandle = savedStateHandle,
                         ),
                     upsertGoalSets = UpsertGoalSetsUseCase(interfaceStub()),

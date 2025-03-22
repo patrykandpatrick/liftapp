@@ -21,11 +21,10 @@ import com.patrykandpatryk.liftapp.core.extension.increaseBy
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.feature.dashboard.navigation.DashboardNavigator
+import com.patrykandpatryk.liftapp.feature.dashboard.model.Action
 
 @Composable
 fun DashboardScreen(
-    navigator: DashboardNavigator,
     padding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = hiltViewModel(),
@@ -74,7 +73,10 @@ fun DashboardScreen(
                 }
 
                 items(items = state.activeWorkouts, key = { it.id }) { workout ->
-                    WorkoutCard(workout = workout, onClick = { navigator.openWorkout(workout.id) })
+                    WorkoutCard(
+                        workout = workout,
+                        onClick = { viewModel.onAction(Action.OpenWorkout(workout.id)) },
+                    )
                 }
             }
 
@@ -98,7 +100,10 @@ fun DashboardScreen(
                 }
 
                 items(items = state.pastWorkouts, key = { it.id }) { workout ->
-                    WorkoutCard(workout = workout, onClick = { navigator.openWorkout(workout.id) })
+                    WorkoutCard(
+                        workout = workout,
+                        onClick = { viewModel.onAction(Action.OpenWorkout(workout.id)) },
+                    )
                 }
             }
         }

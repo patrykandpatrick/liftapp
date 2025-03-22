@@ -3,6 +3,7 @@ package com.patrykandpatrick.liftapp.navigation
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import kotlinx.serialization.Serializable
 
@@ -71,5 +72,11 @@ object Routes {
         fun edit(planID: Long) = NewPlanRouteData(planID)
 
         fun new() = NewPlanRouteData(ID_NOT_SET)
+    }
+
+    object Workout {
+        fun new(routineID: Long) = WorkoutRouteData(routineID)
+
+        fun edit(workoutID: Long) = WorkoutRouteData(workoutID = workoutID)
     }
 }

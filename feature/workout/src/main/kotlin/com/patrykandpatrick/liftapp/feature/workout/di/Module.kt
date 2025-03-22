@@ -2,7 +2,7 @@ package com.patrykandpatrick.liftapp.feature.workout.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
+import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

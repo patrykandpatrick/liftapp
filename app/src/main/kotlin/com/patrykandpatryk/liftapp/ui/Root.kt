@@ -26,12 +26,12 @@ import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigato
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.newplan.ui.NewPlanScreen
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisEnterTransition

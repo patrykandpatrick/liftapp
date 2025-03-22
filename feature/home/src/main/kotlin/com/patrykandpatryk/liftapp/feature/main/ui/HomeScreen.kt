@@ -94,9 +94,7 @@ private fun HomeScaffold(
                         }
 
                     HomeRoute.Dashboard ->
-                        composable<HomeRoute.Dashboard> {
-                            DashboardScreen(navigator = homeNavigator, padding = paddingValues)
-                        }
+                        composable<HomeRoute.Dashboard> { DashboardScreen(padding = paddingValues) }
 
                     HomeRoute.Exercises ->
                         composable<HomeRoute.Exercises> {
@@ -109,9 +107,7 @@ private fun HomeScaffold(
                         }
 
                     HomeRoute.More ->
-                        composable<HomeRoute.More> {
-                            MoreScreen(padding = paddingValues)
-                        }
+                        composable<HomeRoute.More> { MoreScreen(padding = paddingValues) }
 
                     HomeRoute.Plan ->
                         composable<HomeRoute.Plan> { PlanScreen(padding = paddingValues) }
