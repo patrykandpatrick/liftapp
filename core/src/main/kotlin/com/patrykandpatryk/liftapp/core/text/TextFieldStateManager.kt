@@ -29,7 +29,7 @@ constructor(
         validators: TextValidationElementProvider<String>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
-        onValueChange: (String) -> Unit = {},
+        onValueChange: (String?) -> Unit = {},
         veto: (String) -> Boolean = { false },
         enabled: TextFieldState<String>.() -> Boolean = { true },
     ): StringTextFieldState =
@@ -51,7 +51,7 @@ constructor(
         validators: TextValidationElementProvider<Int>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
-        onValueChange: (Int) -> Unit = {},
+        onValueChange: (Int?) -> Unit = {},
         veto: (Int) -> Boolean = { false },
         enabled: TextFieldState<Int>.() -> Boolean = { true },
     ): IntTextFieldState =
@@ -73,7 +73,7 @@ constructor(
         validators: TextValidationElementProvider<Long>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
-        onValueChange: (Long) -> Unit = {},
+        onValueChange: (Long?) -> Unit = {},
         veto: (Long) -> Boolean = { false },
         enabled: TextFieldState<Long>.() -> Boolean = { true },
     ): LongTextFieldState =
@@ -95,7 +95,7 @@ constructor(
         validators: TextValidationElementProvider<Double>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
-        onValueChange: (Double) -> Unit = {},
+        onValueChange: (Double?) -> Unit = {},
         veto: (Double) -> Boolean = { false },
         enabled: TextFieldState<Double>.() -> Boolean = { true },
     ): DoubleTextFieldState =
@@ -119,7 +119,7 @@ constructor(
         validators: TextValidationElementProvider<LocalDate>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
-        onValueChange: (LocalDate) -> Unit = {},
+        onValueChange: (LocalDate?) -> Unit = {},
         veto: (LocalDate) -> Boolean = { false },
         enabled: TextFieldState<LocalDate>.() -> Boolean = { true },
     ): LocalDateTextFieldState =
@@ -143,7 +143,7 @@ constructor(
         validators: TextValidationElementProvider<LocalTime>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
-        onValueChange: (LocalTime) -> Unit = {},
+        onValueChange: (LocalTime?) -> Unit = {},
         veto: (LocalTime) -> Boolean = { false },
         enabled: TextFieldState<LocalTime>.() -> Boolean = { true },
     ): LocalTimeTextFieldState =

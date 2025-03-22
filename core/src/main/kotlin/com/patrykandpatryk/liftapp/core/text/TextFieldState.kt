@@ -21,7 +21,7 @@ abstract class TextFieldState<T : Any>(
     initialText: String,
     val textValidator: TextValidator<T>?,
     protected val onTextChange: (String) -> Unit,
-    protected val onValueChange: (T) -> Unit,
+    protected val onValueChange: (T?) -> Unit,
     protected val veto: (T) -> Boolean,
     protected val enabled: TextFieldState<T>.() -> Boolean,
 ) : ValueProvider<T> {
@@ -91,6 +91,13 @@ abstract class TextFieldState<T : Any>(
     fun <T> getCondition(validatorClass: Class<T>): T? =
         textValidator?.getTextValidatorElement(validatorClass)
 
+    fun clear() {
+        textFieldValue = TextFieldValue()
+        _errorMessage.value = null
+        onTextChange(text)
+        onValueChange(null)
+    }
+
     companion object {
         internal const val MINUS_SIGN = "-"
     }
@@ -101,7 +108,7 @@ class StringTextFieldState(
     initialValue: String = "",
     textValidator: TextValidator<String>? = null,
     onTextChange: (String) -> Unit = {},
-    onValueChange: (String) -> Unit = {},
+    onValueChange: (String?) -> Unit = {},
     veto: (String) -> Boolean = { false },
     enabled: TextFieldState<String>.() -> Boolean = { true },
 ) :
@@ -125,7 +132,7 @@ class IntTextFieldState(
     initialValue: String = "",
     textValidator: TextValidator<Int>? = null,
     onTextChange: (String) -> Unit = {},
-    onValueChange: (Int) -> Unit = {},
+    onValueChange: (Int?) -> Unit = {},
     veto: (Int) -> Boolean = { false },
     enabled: TextFieldState<Int>.() -> Boolean = { true },
 ) : TextFieldState<Int>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
@@ -144,7 +151,7 @@ class LongTextFieldState(
     initialValue: String = "",
     textValidator: TextValidator<Long>? = null,
     onTextChange: (String) -> Unit = {},
-    onValueChange: (Long) -> Unit = {},
+    onValueChange: (Long?) -> Unit = {},
     veto: (Long) -> Boolean = { false },
     enabled: TextFieldState<Long>.() -> Boolean = { true },
 ) : TextFieldState<Long>(initialValue, textValidator, onTextChange, onValueChange, veto, enabled) {
@@ -164,7 +171,7 @@ class DoubleTextFieldState(
     initialValue: String = "",
     textValidator: TextValidator<Double>? = null,
     onTextChange: (String) -> Unit = {},
-    onValueChange: (Double) -> Unit = {},
+    onValueChange: (Double?) -> Unit = {},
     veto: (Double) -> Boolean = { false },
     enabled: TextFieldState<Double>.() -> Boolean = { true },
 ) :
@@ -192,7 +199,7 @@ class LocalDateTextFieldState(
     initialValue: String = "",
     textValidator: TextValidator<LocalDate>? = null,
     onTextChange: (String) -> Unit = {},
-    onValueChange: (LocalDate) -> Unit = {},
+    onValueChange: (LocalDate?) -> Unit = {},
     veto: (LocalDate) -> Boolean = { false },
     enabled: TextFieldState<LocalDate>.() -> Boolean = { true },
 ) :
@@ -206,7 +213,8 @@ class LocalDateTextFieldState(
     ) {
     override val defaultValue: LocalDate = LocalDate.now()
 
-    override fun toValue(text: String) = LocalDate.parse(text, formatter)
+    override fun toValue(text: String) =
+        if (text.isBlank()) null else LocalDate.parse(text, formatter)
 
     override fun toText(value: LocalDate): String = formatter.format(value)
 }
@@ -217,7 +225,7 @@ class LocalTimeTextFieldState(
     initialValue: String = "",
     textValidator: TextValidator<LocalTime>? = null,
     onTextChange: (String) -> Unit = {},
-    onValueChange: (LocalTime) -> Unit = {},
+    onValueChange: (LocalTime?) -> Unit = {},
     veto: (LocalTime) -> Boolean = { false },
     enabled: TextFieldState<LocalTime>.() -> Boolean = { true },
 ) :
