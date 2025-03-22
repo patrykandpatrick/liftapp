@@ -30,10 +30,6 @@ class AppHomeNavigator(private val navController: NavController) : HomeNavigator
     override fun back() {
         navController.popBackStack()
     }
-
-    override fun bodyMeasurementDetails(bodyMeasurementID: Long) {
-        navController.navigate(Routes.BodyMeasurement.details(bodyMeasurementID))
-    }
 }
 
 @Composable

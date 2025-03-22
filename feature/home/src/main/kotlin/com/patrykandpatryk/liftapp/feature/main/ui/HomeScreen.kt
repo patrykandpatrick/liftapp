@@ -87,10 +87,7 @@ private fun HomeScaffold(
                 when (routeItem.route) {
                     HomeRoute.BodyMeasurements ->
                         composable<HomeRoute.BodyMeasurements> {
-                            BodyMeasurementListScreen(
-                                navigator = homeNavigator,
-                                padding = paddingValues,
-                            )
+                            BodyMeasurementListScreen(padding = paddingValues)
                         }
 
                     HomeRoute.Dashboard ->

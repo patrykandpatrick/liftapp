@@ -21,11 +21,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
-import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.navigation.BodyMeasurementListNavigator
+import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.model.Action
 
 @Composable
 fun BodyMeasurementListScreen(
-    navigator: BodyMeasurementListNavigator,
     modifier: Modifier = Modifier,
     padding: PaddingValues,
 ) {
@@ -50,7 +49,7 @@ fun BodyMeasurementListScreen(
                     title = item.headline,
                     description = item.supportingText,
                     iconPainter = painterResource(id = item.bodyMeasurementType.iconRes),
-                    onClick = { navigator.bodyMeasurementDetails(item.bodyMeasurementID) },
+                    onClick = { viewModel.onAction(Action.OpenDetails(item.bodyMeasurementID)) },
                 )
             }
         }
