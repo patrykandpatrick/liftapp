@@ -2,7 +2,7 @@ package com.patrykandpatryk.liftapp.feature.newroutine.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

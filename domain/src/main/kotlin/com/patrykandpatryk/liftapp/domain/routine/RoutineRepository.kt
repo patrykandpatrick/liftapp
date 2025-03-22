@@ -4,8 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface RoutineRepository {
 
-    fun getRoutinesWithNames(): Flow<List<RoutineWithExerciseNames>>
-
     fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?>
 
     suspend fun upsert(routine: Routine, exerciseIds: List<Long>): Long

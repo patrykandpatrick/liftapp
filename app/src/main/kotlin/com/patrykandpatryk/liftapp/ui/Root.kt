@@ -29,6 +29,10 @@ import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutRouteData
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
+import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
+import com.patrykandpatrick.liftapp.newplan.ui.NewPlanScreen
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisEnterTransition
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisExitTransition
@@ -49,11 +53,11 @@ import com.patrykandpatryk.liftapp.feature.main.ui.HomeScreen
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
-import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineRouteData
 import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutineScreen
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxNavigator
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
+import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
 import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
 import com.patrykandpatryk.liftapp.navigation.MainNavigator
@@ -90,18 +94,20 @@ fun Root(
                 popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
                 popExitTransition = { sharedXAxisExitTransition(forward = false) },
             ) {
-                addHome(homeNavigator)
                 addAbout()
-                addSettings(mainNavigator)
-                addOneRepMax(mainNavigator)
-                addNewRoutine(mainNavigator)
                 addBodyMeasurementDetailDestination(mainNavigator)
+                addExercises(mainNavigator)
+                addExerciseDetails(mainNavigator)
+                addHome(homeNavigator)
                 addNewBodyMeasurementDestination(mainNavigator::back)
                 addNewExercise(mainNavigator)
-                addExerciseDetails(mainNavigator)
-                addExercises(mainNavigator)
+                addNewPlan()
+                addNewRoutine(mainNavigator)
+                addOneRepMax(mainNavigator)
                 addRoutine(mainNavigator)
+                addRoutineList()
                 addRoutineExerciseGoal(mainNavigator)
+                addSettings(mainNavigator)
                 addWorkout(mainNavigator)
             }
         }
@@ -138,6 +144,10 @@ fun NavGraphBuilder.addRoutine(mainNavigator: MainNavigator) {
         val args = it.toRoute<Routes.Routine.Details>()
         RoutineScreen(args.routineID, mainNavigator.getRoutineNavigator(args.routineID))
     }
+}
+
+fun NavGraphBuilder.addRoutineList() {
+    composable<RoutineListRouteData> { RoutineListScreen() }
 }
 
 fun NavGraphBuilder.addRoutineExerciseGoal(navigator: ExerciseGoalNavigator) {

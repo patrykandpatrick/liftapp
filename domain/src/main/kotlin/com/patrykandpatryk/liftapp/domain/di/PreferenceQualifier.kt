@@ -6,4 +6,6 @@ object PreferenceQualifier {
     @Qualifier annotation class GoalInfoVisible
 
     @Qualifier annotation class LongDistanceUnit
+
+    @Qualifier annotation class ActivePlan
 }

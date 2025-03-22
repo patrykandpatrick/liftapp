@@ -1,10 +1,10 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.model
 
+import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.exception.RoutineNotFoundException
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
-import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineRouteData
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

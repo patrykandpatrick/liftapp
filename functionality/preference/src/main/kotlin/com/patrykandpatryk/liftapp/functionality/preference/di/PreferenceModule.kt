@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
+import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.functionality.preference.repository.PreferenceRepositoryImpl
@@ -46,5 +47,11 @@ interface PreferenceModule {
         fun provideLongDistanceUnitPreference(
             repository: PreferenceRepository
         ): Preference<LongDistanceUnit> = repository.longDistanceUnit
+
+        @Provides
+        @PreferenceQualifier.ActivePlan
+        fun provideActivePlanIDPreference(
+            repository: PreferenceRepository
+        ): Preference<ActivePlan?> = repository.activePlan
     }
 }

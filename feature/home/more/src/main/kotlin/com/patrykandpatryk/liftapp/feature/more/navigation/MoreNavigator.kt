@@ -6,6 +6,8 @@ import androidx.compose.runtime.Stable
 interface MoreNavigator {
     fun oneRepMaxCalculator()
 
+    fun routineList()
+
     fun settings()
 
     fun about()

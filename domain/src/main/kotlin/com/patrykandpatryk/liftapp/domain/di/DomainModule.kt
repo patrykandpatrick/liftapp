@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.domain.di
 
 import com.patrykandpatryk.liftapp.domain.model.StringResource
+import com.patrykandpatryk.liftapp.domain.serialization.LocalDateSerializer
 import com.patrykandpatryk.liftapp.domain.serialization.PolymorphicEnumSerializer
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -17,6 +18,7 @@ import kotlin.reflect.KClass
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
@@ -54,6 +56,8 @@ interface DomainModule {
                         subclass(kClass, serializer)
                     }
                 }
+
+                contextual(LocalDateSerializer())
             }
         }
     }

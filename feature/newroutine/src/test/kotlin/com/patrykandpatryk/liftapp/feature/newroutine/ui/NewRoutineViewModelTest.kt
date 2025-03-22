@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
@@ -17,7 +18,6 @@ import com.patrykandpatryk.liftapp.feature.newroutine.model.GetExerciseItemsUseC
 import com.patrykandpatryk.liftapp.feature.newroutine.model.GetRoutineWithExerciseIDsUseCase
 import com.patrykandpatryk.liftapp.feature.newroutine.model.NewRoutineSavedState
 import com.patrykandpatryk.liftapp.feature.newroutine.model.UpsertRoutineUseCase
-import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineRouteData
 import com.patrykandpatryk.liftapp.testing.TestStringProvider
 import com.patrykandpatryk.liftapp.testing.expectMostRecentErrorThrowable
 import com.patrykandpatryk.liftapp.testing.expectMostRecentSuccessData
@@ -58,7 +58,7 @@ class NewRoutineViewModelTest {
     private val newRoutineSavedState = NewRoutineSavedState(savedStateHandle)
 
     private fun getSut(routineID: Long): NewRoutineViewModel {
-        val routeData = NewRoutineRouteData.edit(routineID)
+        val routeData = Routes.Routine.edit(routineID)
         return NewRoutineViewModel(
             viewModelScope = coroutineScope,
             getRoutineWithExerciseIDsUseCase =

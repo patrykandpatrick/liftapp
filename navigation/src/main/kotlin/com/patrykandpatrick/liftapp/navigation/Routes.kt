@@ -1,5 +1,8 @@
 package com.patrykandpatrick.liftapp.navigation
 
+import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
+import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import kotlinx.serialization.Serializable
 
@@ -10,6 +13,15 @@ object Routes {
         @Serializable class Details internal constructor(val routineID: Long)
 
         fun details(routineID: Long) = Details(routineID)
+
+        fun edit(routineID: Long) = NewRoutineRouteData(routineID)
+
+        fun list() = RoutineListRouteData(isPickingRoutine = false)
+
+        fun new() = NewRoutineRouteData(ID_NOT_SET)
+
+        fun pickRoutine(resultKey: String) =
+            RoutineListRouteData(isPickingRoutine = true, resultKey = resultKey)
     }
 
     object Exercise {

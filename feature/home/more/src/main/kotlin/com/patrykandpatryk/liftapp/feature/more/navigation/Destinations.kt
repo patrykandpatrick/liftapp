@@ -13,6 +13,11 @@ val destinations =
             iconResourceId = R.drawable.ic_calculator,
         ),
         Destination(
+            navigate = { routineList() },
+            titleResourceId = R.string.route_routines,
+            iconResourceId = R.drawable.ic_routines_outlined,
+        ),
+        Destination(
             navigate = { settings() },
             titleResourceId = R.string.route_settings,
             iconResourceId = R.drawable.ic_settings,

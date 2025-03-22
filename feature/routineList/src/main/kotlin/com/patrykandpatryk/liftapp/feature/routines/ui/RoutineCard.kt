@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.routines
+package com.patrykandpatryk.liftapp.feature.routines.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,21 +11,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.core.extension.forEachIndexedExtended
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.RoutineCardShape
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RoutineCard(
     title: String,
-    exercises: ImmutableList<String>,
+    exercises: List<String>,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -47,10 +44,10 @@ fun RoutineCard(
 
             Text(
                 text =
-                    buildAnnotatedString {
-                        exercises.forEachIndexedExtended { _, _, isLast, value ->
+                    buildString {
+                        exercises.forEach { value ->
+                            if (isNotEmpty()) append("\n")
                             append("• $value")
-                            if (!isLast) append("\n")
                         }
                     },
                 style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 24.sp),

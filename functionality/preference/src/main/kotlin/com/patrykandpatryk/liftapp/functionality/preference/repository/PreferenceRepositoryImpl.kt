@@ -11,6 +11,7 @@ import com.patrykandpatrick.opto.core.PreferenceManager
 import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
+import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -19,16 +20,22 @@ import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 private const val KEY_MASS_UNIT = "mass_unit"
 private const val KEY_DISTANCE_UNIT = "distance_unit"
 private const val KEY_HOUR_FORMAT = "hour_format"
 private const val KEY_GOAL_INFO_VISIBLE = "goal_info_visible"
+private const val KEY_ACTIVE_PLAN_ID = "active_plan_id"
 
 class PreferenceRepositoryImpl
 @Inject
-constructor(override val dataStore: DataStore<Preferences>, private val application: Application) :
-    PreferenceRepository, PreferenceManager {
+constructor(
+    override val dataStore: DataStore<Preferences>,
+    private val application: Application,
+    private val json: Json,
+) : PreferenceRepository, PreferenceManager {
 
     override val massUnit = enumPreference(KEY_MASS_UNIT, MassUnit.Kilograms)
 
@@ -48,6 +55,14 @@ constructor(override val dataStore: DataStore<Preferences>, private val applicat
 
     override val goalInfoVisible: Preference<Boolean> =
         preference(booleanPreferencesKey(KEY_GOAL_INFO_VISIBLE), true)
+
+    override val activePlan: Preference<ActivePlan?> =
+        preference(
+            key = stringPreferencesKey(KEY_ACTIVE_PLAN_ID),
+            defaultValue = null,
+            serialize = { json.encodeToString(it) },
+            deserialize = { json.decodeFromString(it) },
+        )
 
     override val is24H: Flow<Boolean>
         get() =

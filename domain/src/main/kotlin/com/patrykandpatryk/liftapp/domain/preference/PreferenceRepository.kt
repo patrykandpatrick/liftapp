@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.domain.preference
 import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
+import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
@@ -17,6 +18,8 @@ interface PreferenceRepository {
     val shortDistanceUnit: Flow<ShortDistanceUnit>
     val hourFormat: Preference<HourFormat>
     val goalInfoVisible: Preference<Boolean>
+
+    val activePlan: Preference<ActivePlan?>
 
     val is24H: Flow<Boolean>
 

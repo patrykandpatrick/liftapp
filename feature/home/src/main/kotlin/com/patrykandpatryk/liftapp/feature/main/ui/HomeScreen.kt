@@ -29,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.patrykandpatrick.liftapp.plan.ui.PlanScreen
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
@@ -45,7 +46,6 @@ import com.patrykandpatryk.liftapp.feature.main.navigation.HomeNavigator
 import com.patrykandpatryk.liftapp.feature.main.navigation.HomeRoute
 import com.patrykandpatryk.liftapp.feature.main.navigation.navBarRoutes
 import com.patrykandpatryk.liftapp.feature.more.ui.MoreScreen
-import com.patrykandpatryk.liftapp.feature.routines.RoutineListScreen
 
 @Composable
 fun HomeScreen(homeNavigator: HomeNavigator, modifier: Modifier = Modifier) {
@@ -113,10 +113,8 @@ private fun HomeScaffold(
                             MoreScreen(navigator = homeNavigator, padding = paddingValues)
                         }
 
-                    HomeRoute.Routines ->
-                        composable<HomeRoute.Routines> {
-                            RoutineListScreen(navigator = homeNavigator, padding = paddingValues)
-                        }
+                    HomeRoute.Plan ->
+                        composable<HomeRoute.Plan> { PlanScreen(padding = paddingValues) }
                 }
             }
         }

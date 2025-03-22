@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.testing
 import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
+import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -43,6 +44,8 @@ class TestPreferenceRepository : PreferenceRepository {
         }
 
     override val goalInfoVisible: Preference<Boolean> = preference(true)
+
+    override val activePlan: Preference<ActivePlan?> = preference(null)
 
     override val allPreferences: Flow<AllPreferences> =
         combine(massUnit.get(), longDistanceUnit.get(), hourFormat.get()) {

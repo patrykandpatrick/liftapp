@@ -5,12 +5,7 @@ import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.navigation.BodyMe
 import com.patrykandpatryk.liftapp.feature.dashboard.navigation.DashboardNavigator
 import com.patrykandpatryk.liftapp.feature.exercises.navigation.ExerciseListNavigator
 import com.patrykandpatryk.liftapp.feature.more.navigation.MoreNavigator
-import com.patrykandpatryk.liftapp.feature.routines.RoutineListNavigator
 
 @Immutable
 interface HomeNavigator :
-    DashboardNavigator,
-    RoutineListNavigator,
-    ExerciseListNavigator,
-    BodyMeasurementListNavigator,
-    MoreNavigator
+    DashboardNavigator, ExerciseListNavigator, BodyMeasurementListNavigator, MoreNavigator

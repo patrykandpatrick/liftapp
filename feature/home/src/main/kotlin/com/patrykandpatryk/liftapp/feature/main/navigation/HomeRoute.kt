@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 sealed interface HomeRoute {
     @Serializable data object Dashboard : HomeRoute
 
-    @Serializable data object Routines : HomeRoute
+    @Serializable data object Plan : HomeRoute
 
     @Serializable data object Exercises : HomeRoute
 

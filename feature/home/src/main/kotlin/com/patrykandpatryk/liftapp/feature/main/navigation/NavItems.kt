@@ -14,8 +14,8 @@ val navBarRoutes: List<NavItemRoute<HomeRoute>> by lazy {
             selectedIconRes = R.drawable.ic_dashboard_filled,
         ),
         NavItemRoute(
-            route = HomeRoute.Routines,
-            titleRes = R.string.route_routines,
+            route = HomeRoute.Plan,
+            titleRes = R.string.route_active_plan_short,
             deselectedIconRes = R.drawable.ic_routines_outlined,
             selectedIconRes = R.drawable.ic_routines_filled,
         ),

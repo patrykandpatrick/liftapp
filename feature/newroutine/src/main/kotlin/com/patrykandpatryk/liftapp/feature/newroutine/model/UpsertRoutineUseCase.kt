@@ -1,8 +1,8 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.model
 
+import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsContract
-import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineRouteData
 import javax.inject.Inject
 
 class UpsertRoutineUseCase
