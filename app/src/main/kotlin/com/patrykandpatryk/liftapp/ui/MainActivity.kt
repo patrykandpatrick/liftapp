@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import com.patrykandpatryk.liftapp.core.extension.isDarkMode
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModePublisher
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -20,6 +21,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var darkModeReceiver: IsDarkModeReceiver
 
+    @Inject lateinit var navigationCommander: NavigationCommander
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         updateDarkMode(resources.configuration.isDarkMode)
@@ -27,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val darkMode by darkModeReceiver().collectAsState()
-            Root(darkTheme = darkMode)
+            Root(darkTheme = darkMode, navigationCommander = navigationCommander)
         }
     }
 

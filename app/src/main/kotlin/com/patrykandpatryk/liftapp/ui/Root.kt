@@ -7,9 +7,11 @@ import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavDestinationBuilder
 import androidx.navigation.NavGraphBuilder
@@ -33,6 +35,8 @@ import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisExitTransition
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.feature.about.ui.About
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui.BodyMeasurementDetailScreen
@@ -60,11 +64,16 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 @Composable
-fun Root(modifier: Modifier = Modifier, darkTheme: Boolean) {
+fun Root(
+    modifier: Modifier = Modifier,
+    darkTheme: Boolean,
+    navigationCommander: NavigationCommander,
+) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
     val mainNavigator = rememberMainNavigator(navController)
     val homeNavigator = rememberHomeNavigator(navController)
+    navigationCommander.HandleCommands(navController)
 
     LiftAppTheme(darkTheme = darkTheme) {
         ModalBottomSheetLayout(
@@ -94,6 +103,27 @@ fun Root(modifier: Modifier = Modifier, darkTheme: Boolean) {
                 addRoutine(mainNavigator)
                 addRoutineExerciseGoal(mainNavigator)
                 addWorkout(mainNavigator)
+            }
+        }
+    }
+}
+
+@Composable
+private fun NavigationCommander.HandleCommands(navController: NavController) {
+    LaunchedEffect(this) {
+        navigationCommand.collect { command ->
+            when (command) {
+                is NavigationCommand.Route -> {
+                    navController.navigate(command.route)
+                }
+                is NavigationCommand.PopBackStack -> {
+                    val route = command.route
+                    if (route != null) {
+                        navController.popBackStack(route, command.inclusive, command.saveState)
+                    } else {
+                        navController.popBackStack()
+                    }
+                }
             }
         }
     }
