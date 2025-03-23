@@ -1,14 +1,28 @@
 package com.patrykandpatrick.liftapp.navigation
 
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
+import com.patrykandpatrick.liftapp.navigation.serialization.ExercisesSerializer
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import kotlinx.serialization.Serializable
 
 object Routes {
-    @Serializable object Home
+    @Serializable
+    object Home {
+        @Serializable object Dashboard
+
+        @Serializable object Plan
+
+        @Serializable(ExercisesSerializer::class)
+        object Exercises : ExerciseListRouteData(Mode.View, disabledExerciseIDs = null)
+
+        @Serializable object BodyMeasurements
+
+        @Serializable object More
+    }
 
     object Routine {
         @Serializable class Details internal constructor(val routineID: Long)
@@ -30,19 +44,19 @@ object Routes {
 
         @Serializable class Details internal constructor(val exerciseID: Long)
 
-        @Serializable
-        class List
-        internal constructor(
-            val pickingMode: Boolean,
-            val disabledExerciseIDs: kotlin.collections.List<Long>? = null,
-        )
-
         fun details(exerciseID: Long) = Details(exerciseID)
 
-        fun list() = List(false, null)
+        fun list() =
+            ExerciseListRouteData(
+                mode = ExerciseListRouteData.Mode.View,
+                disabledExerciseIDs = null,
+            )
 
-        fun pick(disabledExerciseIDs: kotlin.collections.List<Long>? = null) =
-            List(true, disabledExerciseIDs)
+        fun pick(resultKey: String, disabledExerciseIDs: List<Long>? = null) =
+            ExerciseListRouteData(
+                mode = ExerciseListRouteData.Mode.Pick(resultKey),
+                disabledExerciseIDs = disabledExerciseIDs,
+            )
 
         fun new() = Create()
 

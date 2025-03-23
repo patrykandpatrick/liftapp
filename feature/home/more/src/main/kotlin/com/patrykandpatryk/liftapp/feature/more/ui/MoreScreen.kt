@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.more.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,13 +21,12 @@ import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.feature.more.navigation.destinations
 
 @Composable
-fun MoreScreen(padding: PaddingValues, modifier: Modifier = Modifier) {
+fun MoreScreen(modifier: Modifier = Modifier) {
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val viewModel: MoreViewModel = hiltViewModel()
 
     Scaffold(
-        modifier =
-            modifier.padding(padding).nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(id = R.string.route_more)) },
@@ -57,5 +55,5 @@ fun MoreScreen(padding: PaddingValues, modifier: Modifier = Modifier) {
 @MultiDevicePreview
 @Composable
 private fun MoreScreenPreview() {
-    LiftAppTheme { MoreScreen(padding = PaddingValues()) }
+    LiftAppTheme { MoreScreen() }
 }

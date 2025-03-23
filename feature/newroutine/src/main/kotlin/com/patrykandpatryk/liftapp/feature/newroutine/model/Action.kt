@@ -8,4 +8,8 @@ internal sealed interface Action {
     class RemoveExercise(val id: Long) : Action
 
     class SaveRoutine(val state: NewRoutineState) : Action
+
+    data object PopBackStack : Action
+
+    data class PickExercises(val disabledExerciseIDs: List<Long>) : Action
 }

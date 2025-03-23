@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,11 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.calculateStartPadding
-import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.extension.getBottom
-import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
@@ -60,67 +58,34 @@ import com.patrykandpatryk.liftapp.core.ui.SearchBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.feature.exercises.model.Event
+import com.patrykandpatryk.liftapp.feature.exercises.model.Action
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
-import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
-import com.patrykandpatryk.liftapp.feature.exercises.navigation.ExerciseListNavigator
 
 @Composable
-fun ExerciseListScreen(
-    pickingMode: Boolean,
-    disabledExerciseIDs: List<Long>?,
-    navigator: ExerciseListNavigator,
-    modifier: Modifier = Modifier,
-    padding: PaddingValues = PaddingValues(),
-) {
-    val viewModel: ExerciseViewModel =
-        hiltViewModel(
-            creationCallback = { factory: ExerciseViewModel.Factory ->
-                factory.create(pickingMode, disabledExerciseIDs)
-            }
-        )
+fun ExerciseListScreen(modifier: Modifier = Modifier) {
+    val viewModel: ExerciseViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
 
-    viewModel.events.collectInComposable { event ->
-        when (event) {
-            is Event.OnExercisesPicked -> {
-                navigator.onExercisesPicked(event.exerciseIds)
-            }
-        }
-    }
-
-    ExerciseListScreen(
-        navigator = navigator,
-        modifier = modifier,
-        padding = padding,
-        state = state,
-        onIntent = viewModel::handleIntent,
-    )
+    ExerciseListScreen(modifier = modifier, state = state, onAction = viewModel::handleIntent)
 }
 
 @Composable
 private fun ExerciseListScreen(
-    navigator: ExerciseListNavigator,
     modifier: Modifier = Modifier,
-    padding: PaddingValues = PaddingValues(),
     state: ScreenState,
-    onIntent: (Intent) -> Unit,
+    onAction: (Action) -> Unit,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier.padding(bottom = padding.calculateBottomPadding()),
+        modifier = modifier,
         floatingActionButton = {
             if (state.pickingMode.not()) {
                 ExtendedFloatingActionButton(
                     text = stringResource(id = R.string.action_new_exercise),
                     icon = painterResource(id = R.drawable.ic_add),
-                    onClick = { navigator.newExercise() },
-                    modifier =
-                        Modifier.thenIf(padding.calculateBottomPadding() == 0.dp) {
-                            padding(WindowInsets.navigationBars.asPaddingValues())
-                        },
+                    onClick = { onAction(Action.GoToNewExercise) },
                 )
             }
         },
@@ -128,13 +93,13 @@ private fun ExerciseListScreen(
             TopBar(
                 state = state,
                 topAppBarScrollBehavior = topAppBarScrollBehavior,
-                onIntent = onIntent,
-                navigateBack = { navigator.back() },
+                onAction = onAction,
+                navigateBack = { onAction(Action.PopBackStack) },
             )
         },
         bottomBar = {
-            if (state.pickingMode) {
-                BottomBar(navigator = navigator, onIntent = onIntent)
+            if (state.mode is ExerciseListRouteData.Mode.Pick) {
+                BottomBar(mode = state.mode, onAction = onAction)
             }
         },
         contentWindowInsets = WindowInsets.statusBars,
@@ -148,19 +113,14 @@ private fun ExerciseListScreen(
             contentPadding =
                 PaddingValues(
                     top = internalPadding.calculateTopPadding(),
-                    bottom =
-                        if (padding.calculateBottomPadding() == 0.dp) {
-                            WindowInsets.navigationBars.getBottom()
-                        } else {
-                            0.dp
-                        },
+                    bottom = WindowInsets.navigationBars.getBottom(),
                 ),
         ) {
             if (state.query.isEmpty()) {
                 item {
                     Controls(
                         groupBy = state.groupBy,
-                        onGroupBySelection = { onIntent(Intent.SetGroupBy(it)) },
+                        onGroupBySelection = { onAction(Action.SetGroupBy(it)) },
                     )
                 }
             }
@@ -168,12 +128,7 @@ private fun ExerciseListScreen(
             items(items = state.exercises, key = { it.key }, contentType = { it::class }) { item ->
                 when (item) {
                     is ExercisesItem.Exercise -> {
-                        ExerciseItem(
-                            navigator = navigator,
-                            state = state,
-                            item = item,
-                            onIntent = onIntent,
-                        )
+                        ExerciseItem(state = state, item = item, onAction = onAction)
                     }
 
                     is ExercisesItem.Header -> {
@@ -197,10 +152,9 @@ private fun ExerciseListScreen(
 
 @Composable
 private fun LazyItemScope.ExerciseItem(
-    navigator: ExerciseListNavigator,
     state: ScreenState,
     item: ExercisesItem.Exercise,
-    onIntent: (Intent) -> Unit,
+    onAction: (Action) -> Unit,
 ) {
     if (state.pickingMode) {
         CheckableListItem(
@@ -213,7 +167,7 @@ private fun LazyItemScope.ExerciseItem(
                     )
                     .animateItem(),
             checked = item.checked,
-            onCheckedChange = { checked -> onIntent(Intent.SetExerciseChecked(item.id, checked)) },
+            onCheckedChange = { checked -> onAction(Action.SetExerciseChecked(item.id, checked)) },
             enabled = item.enabled,
         )
     } else {
@@ -221,7 +175,8 @@ private fun LazyItemScope.ExerciseItem(
             title = item.name,
             description = item.muscles,
             iconPainter = painterResource(id = item.iconRes),
-            modifier = Modifier.animateItem().clickable { navigator.exerciseDetails(item.id) },
+            modifier =
+                Modifier.animateItem().clickable { onAction(Action.GoToExerciseDetails(item.id)) },
             enabled = item.enabled,
             titleHighlightPosition = item.nameHighlightPosition,
         )
@@ -232,7 +187,7 @@ private fun LazyItemScope.ExerciseItem(
 private fun TopBar(
     state: ScreenState,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    onIntent: (Intent) -> Unit,
+    onAction: (Action) -> Unit,
     navigateBack: () -> Unit,
 ) {
     if (state.pickingMode) {
@@ -260,14 +215,14 @@ private fun TopBar(
 
             SearchBar(
                 value = state.query,
-                onValueChange = { onIntent(Intent.SetQuery(it)) },
+                onValueChange = { onAction(Action.SetQuery(it)) },
                 modifier = Modifier.padding(all = MaterialTheme.dimens.padding.contentHorizontal),
             )
         }
     } else {
         SearchBar(
             value = state.query,
-            onValueChange = { onIntent(Intent.SetQuery(it)) },
+            onValueChange = { onAction(Action.SetQuery(it)) },
             modifier =
                 Modifier.statusBarsPadding()
                     .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
@@ -276,9 +231,9 @@ private fun TopBar(
 }
 
 @Composable
-private fun BottomBar(navigator: ExerciseListNavigator, onIntent: (Intent) -> Unit) {
+private fun BottomBar(mode: ExerciseListRouteData.Mode.Pick, onAction: (Action) -> Unit) {
     BottomAppBar(contentPadding = PaddingValues(start = 4.dp, end = 16.dp)) {
-        IconButton(onClick = { navigator.newExercise() }) {
+        IconButton(onClick = { onAction(Action.GoToNewExercise) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_add),
                 contentDescription = stringResource(id = R.string.action_new_exercise),
@@ -290,7 +245,7 @@ private fun BottomBar(navigator: ExerciseListNavigator, onIntent: (Intent) -> Un
         ExtendedFloatingActionButton(
             text = stringResource(id = R.string.action_done),
             icon = painterResource(id = R.drawable.ic_check),
-            onClick = { onIntent(Intent.FinishPickingExercises) },
+            onClick = { onAction(Action.FinishPickingExercises(mode.resultKey)) },
             modifier = Modifier.align(Alignment.CenterVertically),
             elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
         )
@@ -343,10 +298,7 @@ private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
 @Composable
 fun ExercisesPreview() {
     LiftAppTheme {
-        ExerciseListScreen(
-            navigator = interfaceStub(),
-            state = getScreenState(pickingMode = false),
-        ) {}
+        ExerciseListScreen(state = getScreenState(mode = ExerciseListRouteData.Mode.View)) {}
     }
 }
 
@@ -354,9 +306,6 @@ fun ExercisesPreview() {
 @Composable
 fun ExercisesPreviewPickingMode() {
     LiftAppTheme {
-        ExerciseListScreen(
-            navigator = interfaceStub(),
-            state = getScreenState(pickingMode = true),
-        ) {}
+        ExerciseListScreen(state = getScreenState(mode = ExerciseListRouteData.Mode.Pick(""))) {}
     }
 }

@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.bodymeasurementlist.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -24,17 +23,13 @@ import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.model.Action
 
 @Composable
-fun BodyMeasurementListScreen(
-    modifier: Modifier = Modifier,
-    padding: PaddingValues,
-) {
+fun BodyMeasurementListScreen(modifier: Modifier = Modifier) {
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val viewModel: BodyMeasurementListViewModel = hiltViewModel()
     val items by viewModel.items.collectAsState()
 
     Scaffold(
-        modifier =
-            modifier.padding(padding).nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(id = R.string.route_body)) },

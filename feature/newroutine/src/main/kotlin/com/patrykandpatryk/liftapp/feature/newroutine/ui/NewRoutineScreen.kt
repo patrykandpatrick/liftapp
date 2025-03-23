@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +39,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.exception.getUIMessage
-import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
@@ -57,7 +55,6 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.core.ui.theme.Colors.IllustrationAlpha
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
@@ -67,32 +64,22 @@ import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Action
-import com.patrykandpatryk.liftapp.feature.newroutine.navigation.NewRoutineNavigator
 
 @Composable
-fun NewRoutineScreen(navigator: NewRoutineNavigator, modifier: Modifier = Modifier) {
+fun NewRoutineScreen(modifier: Modifier = Modifier) {
     val viewModel: NewRoutineViewModel = hiltViewModel()
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(Unit) {
-        navigator.registerResultListener(key = Constants.Keys.PICKED_EXERCISE_IDS) {
-            pickedExerciseIds: List<Long> ->
-            viewModel.onAction(Action.AddExercises(pickedExerciseIds))
-        }
-    }
-
     state.Unfold(
-        onError = { error -> Error(message = error.getUIMessage(), onCloseClick = navigator::back) }
+        onError = { error ->
+            Error(
+                message = error.getUIMessage(),
+                onCloseClick = { viewModel.onAction(Action.PopBackStack) },
+            )
+        }
     ) { state ->
-        LaunchedEffect(state.routineSaved) { if (state.routineSaved) navigator.back() }
-
-        NewRoutineScreen(
-            state = state,
-            onAction = viewModel::onAction,
-            navigator = navigator,
-            modifier = modifier,
-        )
+        NewRoutineScreen(state = state, onAction = viewModel::onAction, modifier = modifier)
     }
 }
 
@@ -100,7 +87,6 @@ fun NewRoutineScreen(navigator: NewRoutineNavigator, modifier: Modifier = Modifi
 private fun NewRoutineScreen(
     state: NewRoutineState,
     onAction: (Action) -> Unit,
-    navigator: NewRoutineNavigator,
     modifier: Modifier = Modifier,
 ) {
     val windowWidthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
@@ -118,7 +104,7 @@ private fun NewRoutineScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigator::back) {
+                    IconButton(onClick = { onAction(Action.PopBackStack) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
@@ -168,7 +154,7 @@ private fun NewRoutineScreen(
                                         state.errorEffectState,
                                         state.exercises.isInvalid,
                                     ),
-                                onClick = { navigator.pickExercises(state.exerciseIds) },
+                                onClick = { onAction(Action.PickExercises(state.exerciseIds)) },
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_add_circle),
@@ -275,10 +261,8 @@ private fun NewRoutinePreviewInternal(
                     isEdit = false,
                     errorEffectState = ErrorEffectState(),
                     showErrors = false,
-                    routineSaved = false,
                 ),
             onAction = {},
-            navigator = interfaceStub(),
         )
     }
 }

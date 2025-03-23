@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
+import app.cash.turbine.turbineScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
@@ -10,6 +11,8 @@ import com.patrykandpatryk.liftapp.domain.exception.RoutineNotFoundException
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
@@ -57,6 +60,8 @@ class NewRoutineViewModelTest {
 
     private val newRoutineSavedState = NewRoutineSavedState(savedStateHandle)
 
+    private val navigationCommander = NavigationCommander()
+
     private fun getSut(routineID: Long): NewRoutineViewModel {
         val routeData = Routes.Routine.edit(routineID)
         return NewRoutineViewModel(
@@ -71,6 +76,7 @@ class NewRoutineViewModelTest {
             newRoutineSavedState = newRoutineSavedState,
             listValidator = NonEmptyCollectionValidator(TestStringProvider),
             upsertRoutine = UpsertRoutineUseCase(routeData) { _, _ -> 1L },
+            navigationCommander = navigationCommander,
         )
     }
 
@@ -156,12 +162,16 @@ class NewRoutineViewModelTest {
     @Test
     fun `Given routine with a name and exercises is about to be saved, routine is saved`() =
         runTest {
-            val sut = getSut(routineID = ID_NOT_SET)
-            sut.state.test {
-                expectMostRecentSuccessData().name.updateText("Routine")
-                sut.onAction(Action.AddExercises(exerciseItems.map { it.id }))
-                sut.onAction(Action.SaveRoutine(expectMostRecentSuccessData()))
-                assertTrue(expectMostRecentSuccessData().routineSaved)
+            turbineScope {
+                val sut = getSut(routineID = ID_NOT_SET)
+                val navigationCommand = navigationCommander.navigationCommand.testIn(this)
+                sut.state.test {
+                    expectMostRecentSuccessData().name.updateText("Routine")
+                    sut.onAction(Action.AddExercises(exerciseItems.map { it.id }))
+                    sut.onAction(Action.SaveRoutine(expectMostRecentSuccessData()))
+                    assertInstanceOf<NavigationCommand.PopBackStack>(navigationCommand.awaitItem())
+                    navigationCommand.cancel()
+                }
             }
         }
 

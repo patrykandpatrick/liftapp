@@ -14,7 +14,6 @@ data class NewRoutineState(
     val isEdit: Boolean,
     val errorEffectState: ErrorEffectState,
     val showErrors: Boolean,
-    val routineSaved: Boolean,
 ) {
     val exerciseIds: List<Long> = exercises.value.map { it.id }
 }

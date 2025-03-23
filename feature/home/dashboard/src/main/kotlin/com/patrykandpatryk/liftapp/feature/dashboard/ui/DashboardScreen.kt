@@ -3,7 +3,6 @@ package com.patrykandpatryk.liftapp.feature.dashboard.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,15 +24,13 @@ import com.patrykandpatryk.liftapp.feature.dashboard.model.Action
 
 @Composable
 fun DashboardScreen(
-    padding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier =
-            modifier.padding(padding).nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = stringResource(id = R.string.route_dashboard),

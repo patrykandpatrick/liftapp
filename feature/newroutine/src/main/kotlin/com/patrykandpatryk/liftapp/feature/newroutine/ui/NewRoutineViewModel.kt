@@ -2,11 +2,13 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.ui.ErrorEffectState
 import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
 import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
@@ -20,6 +22,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -34,22 +38,19 @@ constructor(
     private val listValidator:
         NonEmptyCollectionValidator<RoutineExerciseItem, List<RoutineExerciseItem>>,
     private val upsertRoutine: UpsertRoutineUseCase,
+    private val navigationCommander: NavigationCommander,
 ) : ViewModel(viewModelScope) {
     private val name = textFieldStateManager.stringTextField(validators = { nonEmpty() })
 
     private val errorEffectState = ErrorEffectState()
 
-    private val routineSaved = MutableStateFlow(false)
-
     private val showErrors = MutableStateFlow(false)
 
     val state =
-        combine(
-                getRoutineWithExerciseIDsUseCase(),
-                getExerciseItemsUseCase(),
-                showErrors,
-                routineSaved,
-            ) { routine, exercises, showErrors, routineSaved ->
+        combine(getRoutineWithExerciseIDsUseCase(), getExerciseItemsUseCase(), showErrors) {
+                routine,
+                exercises,
+                showErrors ->
                 if (routine != null) loadRoutineData(routine)
                 NewRoutineState(
                     id = routine?.id ?: ID_NOT_SET,
@@ -58,10 +59,13 @@ constructor(
                     isEdit = routine != null,
                     errorEffectState = errorEffectState,
                     showErrors = showErrors,
-                    routineSaved = routineSaved,
                 )
             }
             .toLoadableStateFlow(viewModelScope)
+
+    init {
+        observePickedExercises()
+    }
 
     private fun loadRoutineData(routineWithExerciseIds: RoutineWithExerciseIds) {
         if (!newRoutineSavedState.isInitialized) {
@@ -76,6 +80,8 @@ constructor(
             is Action.AddExercises -> addExerciseIDs(action.ids)
             is Action.RemoveExercise -> removeExerciseID(action.id)
             is Action.SaveRoutine -> save(action.state)
+            is Action.PopBackStack -> popBackStack()
+            is Action.PickExercises -> pickExercises(action.disabledExerciseIDs)
         }
     }
 
@@ -98,8 +104,31 @@ constructor(
 
             viewModelScope.launch {
                 upsertRoutine(name.value, exerciseIds)
-                this@NewRoutineViewModel.routineSaved.value = true
+                navigationCommander.popBackStack()
             }
         }
+    }
+
+    private fun pickExercises(disabledExerciseIDs: List<Long>) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(
+                Routes.Exercise.pick(KEY_EXERCISE_IDS, disabledExerciseIDs)
+            )
+        }
+    }
+
+    private fun popBackStack() {
+        viewModelScope.launch { navigationCommander.popBackStack() }
+    }
+
+    private fun observePickedExercises() {
+        navigationCommander
+            .getResults<List<Long>>(KEY_EXERCISE_IDS)
+            .onEach { newRoutineSavedState.addExerciseIDs(it) }
+            .launchIn(viewModelScope)
+    }
+
+    companion object {
+        private const val KEY_EXERCISE_IDS = "exercise_ids"
     }
 }

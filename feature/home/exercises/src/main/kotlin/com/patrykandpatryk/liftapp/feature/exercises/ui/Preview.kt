@@ -1,11 +1,12 @@
 package com.patrykandpatryk.liftapp.feature.exercises.ui
 
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 
-internal fun getScreenState(pickingMode: Boolean): ScreenState =
+internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
     ScreenState(
-        pickingMode = pickingMode,
+        mode = mode,
         exercises =
             listOf(
                 ExercisesItem.Header("A"),

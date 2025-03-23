@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.main
+package com.patrykandpatryk.liftapp.ui
 
 import androidx.lifecycle.ViewModel
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
@@ -7,5 +7,4 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val logger: UiLogger) :
-    ViewModel(), LogPublisher by logger
+class RootViewModel @Inject constructor(logger: UiLogger) : ViewModel(), LogPublisher by logger

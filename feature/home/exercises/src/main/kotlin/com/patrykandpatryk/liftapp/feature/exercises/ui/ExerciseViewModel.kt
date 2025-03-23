@@ -2,17 +2,18 @@ package com.patrykandpatryk.liftapp.feature.exercises.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
+import com.patrykandpatryk.liftapp.feature.exercises.model.Action
 import com.patrykandpatryk.liftapp.feature.exercises.model.Event
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
-import com.patrykandpatryk.liftapp.feature.exercises.model.Intent
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.exercises.usecase.GetExercisesItemsUseCase
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,15 +25,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@HiltViewModel(assistedFactory = ExerciseViewModel.Factory::class)
+@HiltViewModel
 class ExerciseViewModel
-@AssistedInject
+@Inject
 constructor(
-    @Assisted val pickingMode: Boolean,
-    @Assisted val disabledExerciseIDs: List<Long>?,
+    private val routeData: ExerciseListRouteData,
     getExercisesItems: GetExercisesItemsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event> {
+    private val navigationCommander: NavigationCommander,
+) : ViewModel(), ScreenStateHandler<ScreenState, Action, Event> {
 
     private val query = MutableStateFlow(value = "")
 
@@ -45,7 +46,7 @@ constructor(
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     override val state: MutableStateFlow<ScreenState> =
-        MutableStateFlow(ScreenState(pickingMode = pickingMode))
+        MutableStateFlow(ScreenState(mode = routeData.mode))
 
     override val events: MutableSharedFlow<Event> = MutableSharedFlow()
 
@@ -58,12 +59,15 @@ constructor(
             .launchIn(viewModelScope)
     }
 
-    override fun handleIntent(intent: Intent) =
-        when (intent) {
-            is Intent.SetQuery -> setQuery(intent.query)
-            is Intent.SetGroupBy -> setGroupBy(intent.groupBy)
-            is Intent.SetExerciseChecked -> setExerciseChecked(intent.exerciseId, intent.checked)
-            is Intent.FinishPickingExercises -> finishPickingExercises()
+    override fun handleIntent(action: Action) =
+        when (action) {
+            is Action.SetQuery -> setQuery(action.query)
+            is Action.SetGroupBy -> setGroupBy(action.groupBy)
+            is Action.SetExerciseChecked -> setExerciseChecked(action.exerciseId, action.checked)
+            is Action.FinishPickingExercises -> finishPickingExercises(action.resultKey)
+            is Action.GoToExerciseDetails -> goToExerciseDetails(action.exerciseID)
+            Action.GoToNewExercise -> goToNewExercise()
+            Action.PopBackStack -> popBackStack()
         }
 
     private fun setQuery(query: String) {
@@ -94,7 +98,7 @@ constructor(
 
     private fun List<ExercisesItem>.updateState(): List<ExercisesItem> = map { exerciseItem ->
         if (exerciseItem is ExercisesItem.Exercise) {
-            val enabled = disabledExerciseIDs?.contains(exerciseItem.id)?.not() ?: true
+            val enabled = routeData.disabledExerciseIDs?.contains(exerciseItem.id)?.not() ?: true
             exerciseItem.copy(
                 checked = enabled && checkedExerciseIds.contains(exerciseItem.id),
                 enabled = enabled,
@@ -104,16 +108,24 @@ constructor(
         }
     }
 
-    private fun finishPickingExercises() {
-        viewModelScope.launch(dispatcher) {
-            events.emit(Event.OnExercisesPicked(checkedExerciseIds.toList()))
+    private fun finishPickingExercises(resultKey: String) {
+        viewModelScope.launch {
+            navigationCommander.publishResult(resultKey, checkedExerciseIds.toList())
+            navigationCommander.popBackStack()
         }
     }
 
-    override fun close() = Unit
+    private fun goToExerciseDetails(exerciseID: Long) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Exercise.details(exerciseID))
+        }
+    }
 
-    @AssistedFactory
-    interface Factory {
-        fun create(pickingMode: Boolean, disabledExerciseIDs: List<Long>?): ExerciseViewModel
+    private fun goToNewExercise() {
+        viewModelScope.launch { navigationCommander.navigateTo(Routes.Exercise.new()) }
+    }
+
+    private fun popBackStack() {
+        viewModelScope.launch { navigationCommander.popBackStack() }
     }
 }
