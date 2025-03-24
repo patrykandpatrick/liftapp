@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
-import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
-import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
@@ -19,8 +17,7 @@ class MainNavigator(private val navController: NavController) :
     ExerciseDetailsNavigator,
     NewExerciseNavigator,
     BodyMeasurementDetailsNavigator,
-    SettingsNavigator,
-    ExerciseGoalNavigator {
+    SettingsNavigator {
     override fun back() {
         navController.popBackStack()
     }
@@ -53,7 +50,7 @@ class MainNavigator(private val navController: NavController) :
             }
 
             override fun exerciseGoal(exerciseID: Long) {
-                navController.navigate(ExerciseGoalRouteData(routineID, exerciseID))
+                navController.navigate(Routes.Exercise.goal(routineID, exerciseID))
             }
 
             override fun newWorkout() {

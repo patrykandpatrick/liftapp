@@ -1,6 +1,6 @@
 package com.patrykandpatrick.feature.exercisegoal.model
 
-import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatryk.liftapp.domain.goal.GetExerciseGoalContract
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import javax.inject.Inject

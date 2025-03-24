@@ -22,7 +22,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -34,12 +33,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.feature.exercisegoal.model.Action
 import com.patrykandpatrick.feature.exercisegoal.model.GetExerciseNameAndTypeUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GoalInput
 import com.patrykandpatrick.feature.exercisegoal.model.SaveGoalUseCase
-import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
-import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.prettyString
@@ -64,6 +63,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.goal.SaveGoalContract
 import com.patrykandpatryk.liftapp.domain.model.Name
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.Dispatchers
@@ -71,14 +71,11 @@ import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun ExerciseGoalScreen(
-    navigator: ExerciseGoalNavigator,
     modifier: Modifier = Modifier,
     viewModel: ExerciseGoalViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val dimens = LocalDimens.current
-
-    LaunchedEffect(state) { if (state?.goalSaved == true) navigator.back() }
 
     Scaffold(
         modifier = modifier,
@@ -86,7 +83,7 @@ fun ExerciseGoalScreen(
             CenterAlignedTopAppBar(
                 title = { Text(text = state?.exerciseName?.getDisplayName().orEmpty()) },
                 navigationIcon = {
-                    IconButton(onClick = navigator::back) {
+                    IconButton(onClick = { viewModel.onAction(Action.PopBackStack) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
@@ -95,7 +92,11 @@ fun ExerciseGoalScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { viewModel.setGoalInfoVisible(state?.goalInfoVisible != true) }
+                        onClick = {
+                            viewModel.onAction(
+                                Action.SetGoalInfoVisible(state?.goalInfoVisible != true)
+                            )
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.TwoTone.Info,
@@ -107,7 +108,7 @@ fun ExerciseGoalScreen(
         },
         bottomBar = {
             if (state != null) {
-                BottomAppBar.Save(onClick = { viewModel.save(state) })
+                BottomAppBar.Save(onClick = { viewModel.onAction(Action.SaveGoal(state)) })
             }
         },
     ) { paddingValues ->
@@ -133,7 +134,7 @@ fun ExerciseGoalScreen(
             if (state != null) {
                 content(
                     infoVisible = state.goalInfoVisible,
-                    toggleInfoVisible = { viewModel.setGoalInfoVisible(false) },
+                    toggleInfoVisible = { viewModel.onAction(Action.SetGoalInfoVisible(false)) },
                     goalInput = state.input,
                 )
             }
@@ -272,11 +273,10 @@ private fun ExerciseGoalPreview() {
         val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
         val infoPreference = PreviewResource.preference(true)
         val unitPreference = PreviewResource.preference(LongDistanceUnit.Kilometer)
-        val routeData = ExerciseGoalRouteData(0, 0)
+        val routeData = Routes.Exercise.goal(0, 0)
         val saveGoalContract: SaveGoalContract = interfaceStub()
 
         ExerciseGoalScreen(
-            navigator = interfaceStub(),
             viewModel =
                 remember {
                     ExerciseGoalViewModel(
@@ -299,8 +299,9 @@ private fun ExerciseGoalPreview() {
                         textFieldStateManager = textFieldStateManager,
                         infoVisiblePreference = infoPreference,
                         longDistanceUnitPreference = unitPreference,
+                        navigationCommander = NavigationCommander(),
                     )
-                },
+                }
         )
     }
 }

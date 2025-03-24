@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.navigation
 
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
@@ -61,6 +62,8 @@ object Routes {
         fun new() = Create()
 
         fun edit(exerciseID: Long) = Create(exerciseID)
+
+        fun goal(routineID: Long, exerciseID: Long) = ExerciseGoalRouteData(routineID, exerciseID)
     }
 
     object BodyMeasurement {

@@ -2,7 +2,7 @@ package com.patrykandpatrick.feature.exercisegoal.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

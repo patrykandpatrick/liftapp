@@ -9,5 +9,4 @@ data class State(
     val exerciseName: Name,
     val input: GoalInput,
     val goalInfoVisible: Boolean,
-    val goalSaved: Boolean,
 )

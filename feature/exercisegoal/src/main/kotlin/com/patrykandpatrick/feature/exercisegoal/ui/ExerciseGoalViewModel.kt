@@ -3,6 +3,7 @@ package com.patrykandpatrick.feature.exercisegoal.ui
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.feature.exercisegoal.model.Action
 import com.patrykandpatrick.feature.exercisegoal.model.GetExerciseNameAndTypeUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GoalInput
@@ -12,16 +13,18 @@ import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Stable
 @HiltViewModel
@@ -36,8 +39,8 @@ constructor(
     @PreferenceQualifier.GoalInfoVisible private val infoVisiblePreference: Preference<Boolean>,
     @PreferenceQualifier.LongDistanceUnit
     private val longDistanceUnitPreference: Preference<LongDistanceUnit>,
+    private val navigationCommander: NavigationCommander,
 ) : ViewModel(coroutineScope) {
-    private val goalSaved = MutableStateFlow(false)
 
     val state =
         combine(
@@ -45,28 +48,40 @@ constructor(
                 getGoalUseCase(),
                 infoVisiblePreference.get(),
                 longDistanceUnitPreference.get(),
-                goalSaved,
-            ) { exercise, goal, infoVisible, distanceUnit, goalSaved ->
+            ) { exercise, goal, infoVisible, distanceUnit ->
                 exercise?.let { (name, type) ->
                     State(
                         goalID = goal.id,
                         exerciseName = name,
                         input = GoalInput.create(textFieldStateManager, goal, type, distanceUnit),
                         goalInfoVisible = infoVisible,
-                        goalSaved = goalSaved,
                     )
                 }
             }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    fun setGoalInfoVisible(visible: Boolean) {
+    fun onAction(action: Action) {
+        when (action) {
+            is Action.SetGoalInfoVisible -> setGoalInfoVisible(action.visible)
+            is Action.SaveGoal -> save(action.state)
+            is Action.PopBackStack -> popBackStack()
+        }
+    }
+
+    private fun popBackStack() {
+        viewModelScope.launch { navigationCommander.popBackStack() }
+    }
+
+    private fun setGoalInfoVisible(visible: Boolean) {
         viewModelScope.launch { infoVisiblePreference.set(visible) }
     }
 
-    fun save(state: State) {
+    private fun save(state: State) {
         if (textFieldStateManager.hasErrors()) return
         viewModelScope.launch {
             val input = state.input
+            navigationCommander.popBackStack()
+            withContext(NonCancellable) {}
             saveGoalUseCase(
                 Goal(
                     id = state.goalID,
@@ -80,7 +95,6 @@ constructor(
                     calories = input.calories?.state?.value ?: 0.0,
                 )
             )
-            goalSaved.value = true
         }
     }
 }
