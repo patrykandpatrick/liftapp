@@ -7,7 +7,11 @@ sealed interface NavigationCommand {
         val saveState: Boolean = false,
     ) : NavigationCommand
 
-    data class Route(val route: Any) : NavigationCommand
+    data class Route(
+        val route: Any,
+        val popUpTo: Any? = null,
+        val launchSingleTop: Boolean = false,
+    ) : NavigationCommand
 
     companion object
 }

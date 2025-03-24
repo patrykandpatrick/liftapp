@@ -34,11 +34,11 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.navDeepLink
+import androidx.navigation.navOptions
 import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalNavigator
 import com.patrykandpatrick.feature.exercisegoal.navigation.ExerciseGoalRouteData
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
@@ -143,7 +143,7 @@ fun Root(
                     addRoutineList()
                     addRoutineExerciseGoal(mainNavigator)
                     addSettings(mainNavigator)
-                    addWorkout(mainNavigator)
+                    addWorkout()
                 }
             }
         }
@@ -160,7 +160,16 @@ private fun NavigationCommander.HandleCommands(
             when (command) {
                 is NavigationCommand.Route -> {
                     setIsLastNavigationForward(true)
-                    navController.navigate(command.route)
+                    navController.navigate(
+                        route = command.route,
+                        navOptions =
+                            navOptions {
+                                command.popUpTo?.also {
+                                    popUpTo(it)
+                                    launchSingleTop = command.launchSingleTop
+                                }
+                            },
+                    )
                 }
                 is NavigationCommand.PopBackStack -> {
                     setIsLastNavigationForward(false)
@@ -266,11 +275,11 @@ fun NavGraphBuilder.addOneRepMax() {
     composable<Routes.OneRepMax> { OneRepMaxScreen() }
 }
 
-fun NavGraphBuilder.addWorkout(navigator: WorkoutNavigator) {
+fun NavGraphBuilder.addWorkout() {
     composable<WorkoutRouteData>(
         deepLinks = listOf(navDeepLink { uriPattern = DeepLink.WorkoutRoute.uri })
-    ) { backStackEntry ->
-        WorkoutScreen(navigator = navigator)
+    ) {
+        WorkoutScreen()
     }
 }
 

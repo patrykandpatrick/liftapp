@@ -63,7 +63,6 @@ import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
 import com.patrykandpatrick.liftapp.feature.workout.model.getPainter
 import com.patrykandpatrick.liftapp.feature.workout.model.getText
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
-import com.patrykandpatrick.liftapp.feature.workout.navigation.WorkoutNavigator
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.R
@@ -85,6 +84,7 @@ import com.patrykandpatryk.liftapp.core.ui.wheel.rememberWheelPickerState
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
@@ -102,21 +102,13 @@ private const val TIMER_EXIT_ANIMATION_DURATION = 120
 private const val TIMER_ANIMATION_SCALE = .92f
 
 @Composable
-fun WorkoutScreen(
-    navigator: WorkoutNavigator,
-    modifier: Modifier = Modifier,
-    viewModel: WorkoutViewModel = hiltViewModel(),
-) {
+fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = hiltViewModel()) {
     val workout = viewModel.workout.collectAsStateWithLifecycle().value
     val restTimerService =
         rememberRestTimerServiceController().restTimerService.collectAsStateWithLifecycle(null)
     val selectedPage = viewModel.selectedPage.collectAsStateWithLifecycle().value
 
     RestTimerEffect(viewModel, restTimerService)
-
-    LaunchedEffect(viewModel) {
-        viewModel.isWorkoutFinished.filter { it }.collect { navigator.home() }
-    }
 
     Scaffold(
         topBar = {
@@ -128,7 +120,9 @@ fun WorkoutScreen(
                         overflow = TextOverflow.Ellipsis,
                     )
                 },
-                navigationIcon = { AppBars.BackArrow(onClick = navigator::back) },
+                navigationIcon = {
+                    AppBars.BackArrow(onClick = { viewModel.onAction(Action.PopBackStack) })
+                },
             )
         },
         bottomBar = {
@@ -424,7 +418,6 @@ private fun WorkoutScreenPreview() {
             PreviewResource.textFieldStateManager(savedStateHandle = savedStateHandle)
 
         WorkoutScreen(
-            navigator = interfaceStub(),
             viewModel =
                 WorkoutViewModel(
                     getEditableWorkoutUseCase =
@@ -506,8 +499,9 @@ private fun WorkoutScreenPreview() {
                     upsertGoalSets = UpsertGoalSetsUseCase(interfaceStub()),
                     upsertExerciseSet = UpsertExerciseSetUseCase(interfaceStub()),
                     updateWorkoutUseCase = UpdateWorkoutUseCase(interfaceStub()),
+                    navigationCommander = NavigationCommander(),
                     coroutineScope = rememberCoroutineScope(),
-                ),
+                )
         )
     }
 }

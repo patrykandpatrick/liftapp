@@ -32,6 +32,8 @@ sealed interface Action {
     ) : Action
 
     data class UpdateWorkoutNotes(val notes: TextFieldState<String>) : Action
+
+    data object PopBackStack : Action
 }
 
 @Composable

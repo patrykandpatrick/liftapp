@@ -9,8 +9,11 @@ import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseC
 import com.patrykandpatrick.liftapp.feature.workout.model.UpdateWorkoutUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.domain.Constants.Workout.EXERCISE_CHANGE_DELAY
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -23,10 +26,8 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -47,6 +48,7 @@ constructor(
     private val upsertGoalSets: UpsertGoalSetsUseCase,
     private val upsertExerciseSet: UpsertExerciseSetUseCase,
     private val updateWorkoutUseCase: UpdateWorkoutUseCase,
+    private val navigationCommander: NavigationCommander,
     coroutineScope: CoroutineScope,
 ) : ViewModel(coroutineScope) {
 
@@ -80,10 +82,6 @@ constructor(
             )
             .stateIn(coroutineScope, SharingStarted.Lazily, 0)
 
-    private val _isWorkoutFinished = MutableStateFlow<Boolean>(false)
-
-    val isWorkoutFinished: StateFlow<Boolean> = _isWorkoutFinished.asStateFlow()
-
     fun onAction(action: Action) {
         when (action) {
             is Action.MovePageBy -> onPageDelta(action.delta)
@@ -93,6 +91,7 @@ constructor(
                 updateWorkoutStartDateTime(action.date, action.time)
             is Action.UpdateWorkoutEndDateTime -> updateWorkoutEndDateTime(action.date, action.time)
             is Action.UpdateWorkoutNotes -> updateWorkoutNotes(action.notes)
+            is Action.PopBackStack -> popBackStack()
         }
     }
 
@@ -172,8 +171,8 @@ constructor(
     }
 
     private fun finishWorkout() {
-        _isWorkoutFinished.value = true
         viewModelScope.launch {
+            returnToHome()
             withContext(NonCancellable) {
                 val workout = getWorkout()
                 if (workout.endDate == null) {
@@ -189,5 +188,15 @@ constructor(
         setIndex: Int,
     ) {
         viewModelScope.launch { upsertExerciseSet(getWorkout().id, exercise.id, set, setIndex) }
+    }
+
+    private fun popBackStack() {
+        viewModelScope.launch { navigationCommander.popBackStack() }
+    }
+
+    private suspend fun returnToHome() {
+        navigationCommander.navigateTo(
+            NavigationCommand.Route(route = Routes.Home, popUpTo = Routes.Home)
+        )
     }
 }
