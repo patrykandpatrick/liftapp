@@ -13,7 +13,6 @@ import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.exercise.navigation.ExerciseDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
-import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxNavigator
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 
@@ -22,7 +21,6 @@ class MainNavigator(private val navController: NavController) :
     ExerciseDetailsNavigator,
     NewExerciseNavigator,
     BodyMeasurementDetailsNavigator,
-    OneRepMaxNavigator,
     SettingsNavigator,
     ExerciseGoalNavigator,
     WorkoutNavigator {

@@ -67,7 +67,6 @@ import com.patrykandpatryk.liftapp.feature.exercises.ui.ExerciseListScreen
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
 import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutineScreen
-import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxNavigator
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
@@ -139,7 +138,7 @@ fun Root(
                     addNewExercise(mainNavigator)
                     addNewPlan()
                     addNewRoutine()
-                    addOneRepMax(mainNavigator)
+                    addOneRepMax()
                     addRoutine(mainNavigator)
                     addRoutineList()
                     addRoutineExerciseGoal(mainNavigator)
@@ -263,8 +262,8 @@ fun NavGraphBuilder.addSettings(navigator: SettingsNavigator) {
     composable<Routes.Settings> { Settings(navigator) }
 }
 
-fun NavGraphBuilder.addOneRepMax(navigator: OneRepMaxNavigator) {
-    composable<Routes.OneRepMax> { OneRepMaxScreen(navigator) }
+fun NavGraphBuilder.addOneRepMax() {
+    composable<Routes.OneRepMax> { OneRepMaxScreen() }
 }
 
 fun NavGraphBuilder.addWorkout(navigator: WorkoutNavigator) {

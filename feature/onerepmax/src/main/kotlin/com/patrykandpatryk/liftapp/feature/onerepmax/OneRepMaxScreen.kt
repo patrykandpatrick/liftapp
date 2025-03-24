@@ -51,7 +51,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
@@ -61,16 +60,17 @@ import com.patrykandpatryk.liftapp.core.ui.animation.StiffnessForAppearance
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.feature.onerepmax.model.Action
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
-fun OneRepMaxScreen(navigator: OneRepMaxNavigator, modifier: Modifier = Modifier) {
+fun OneRepMaxScreen(modifier: Modifier = Modifier) {
     val viewModel = hiltViewModel<OneRepMaxViewModel>()
     OneRepMaxScreen(
         state = viewModel.state,
-        navigator = navigator,
+        onAction = viewModel::onAction,
         modifier =
             modifier
                 .background(MaterialTheme.colorScheme.background)
@@ -80,24 +80,24 @@ fun OneRepMaxScreen(navigator: OneRepMaxNavigator, modifier: Modifier = Modifier
 
 @Composable
 private fun OneRepMaxScreen(
-    navigator: OneRepMaxNavigator,
     state: OneRepMaxState,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (
         currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass ==
             WindowWidthSizeClass.COMPACT
     ) {
-        OneRepMaxScreenCompact(state = state, navigator = navigator, modifier = modifier)
+        OneRepMaxScreenCompact(state = state, onAction = onAction, modifier = modifier)
     } else {
-        OneRepMaxScreenLarge(state = state, navigator = navigator, modifier = modifier)
+        OneRepMaxScreenLarge(state = state, onAction = onAction, modifier = modifier)
     }
 }
 
 @Composable
 private fun OneRepMaxScreenCompact(
     state: OneRepMaxState,
-    navigator: OneRepMaxNavigator,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -106,7 +106,7 @@ private fun OneRepMaxScreenCompact(
             CenterAlignedTopAppBar(
                 title = { Text(text = stringResource(id = R.string.route_one_rep_max)) },
                 navigationIcon = {
-                    IconButton(onClick = navigator::back) {
+                    IconButton(onClick = { onAction(Action.PopBackStack) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
@@ -167,7 +167,7 @@ private fun OneRepMaxScreenCompact(
 @Composable
 fun OneRepMaxScreenLarge(
     state: OneRepMaxState,
-    navigator: OneRepMaxNavigator,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -176,7 +176,7 @@ fun OneRepMaxScreenLarge(
             CenterAlignedTopAppBar(
                 title = { Text(text = stringResource(id = R.string.route_one_rep_max)) },
                 navigationIcon = {
-                    IconButton(onClick = navigator::back) {
+                    IconButton(onClick = { onAction(Action.PopBackStack) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
@@ -362,7 +362,6 @@ private fun OneRepMaxPreview(history: List<HistoryEntryModel>) {
             SavedStateHandle().apply { set(OneRepMaxState.HISTORY_KEY, history) }
         }
         OneRepMaxScreen(
-            navigator = interfaceStub(),
             state =
                 OneRepMaxState(
                     coroutineScope = rememberCoroutineScope { Dispatchers.Unconfined },
@@ -370,6 +369,7 @@ private fun OneRepMaxPreview(history: List<HistoryEntryModel>) {
                     getMassUnit = { flowOf(MassUnit.Kilograms) },
                     formatWeight = formatter::formatWeight,
                 ),
+            onAction = {},
         )
     }
 }
