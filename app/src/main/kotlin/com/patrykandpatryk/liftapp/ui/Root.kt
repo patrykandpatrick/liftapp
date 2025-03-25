@@ -39,6 +39,7 @@ import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
@@ -60,8 +61,7 @@ import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.feature.about.ui.About
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui.BodyMeasurementDetailScreen
-import com.patrykandpatryk.liftapp.feature.exercise.navigation.ExerciseDetailsNavigator
-import com.patrykandpatryk.liftapp.feature.exercise.ui.ExerciseDetails
+import com.patrykandpatryk.liftapp.feature.exercise.ui.ExerciseDetailsScreen
 import com.patrykandpatryk.liftapp.feature.exercises.ui.ExerciseListScreen
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.ui.NewExercise
@@ -130,7 +130,7 @@ fun Root(
                     addAbout()
                     addBodyMeasurementDetailDestination(mainNavigator)
                     addExercises()
-                    addExerciseDetails(mainNavigator)
+                    addExerciseDetails()
                     addNestedHomeGraph(Modifier.padding(paddingValues))
                     addNewBodyMeasurementDestination(mainNavigator::back)
                     addNewExercise(mainNavigator)
@@ -227,11 +227,8 @@ fun NavGraphBuilder.addExercises() {
     }
 }
 
-fun NavGraphBuilder.addExerciseDetails(navigator: ExerciseDetailsNavigator) {
-    composable<Routes.Exercise.Details> {
-        val args = it.toRoute<Routes.Exercise.Details>()
-        ExerciseDetails(args.exerciseID, navigator)
-    }
+fun NavGraphBuilder.addExerciseDetails() {
+    composable<ExerciseDetailsRouteData> { ExerciseDetailsScreen() }
 }
 
 fun NavGraphBuilder.addNewExercise(navigator: NewExerciseNavigator) {

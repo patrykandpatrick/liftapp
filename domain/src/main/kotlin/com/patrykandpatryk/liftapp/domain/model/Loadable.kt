@@ -5,5 +5,7 @@ sealed interface Loadable<out T : Any> {
 
     data class Error<T : Any>(val error: Throwable) : Loadable<T>
 
-    object Loading : Loadable<Nothing>
+    data object Loading : Loadable<Nothing>
 }
+
+fun <T : Any> T.toLoadable(): Loadable<T> = Loadable.Success(this)

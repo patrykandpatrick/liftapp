@@ -25,6 +25,12 @@ fun <T : Any> Loadable<T>.Unfold(
     }
 }
 
+fun <T : Any> Loadable<T>.valueOrNull(): T? =
+    when (this) {
+        is Loadable.Success -> data
+        else -> null
+    }
+
 fun <T : Any> Flow<T>.toLoadableStateFlow(
     scope: CoroutineScope,
     started: SharingStarted = SharingStarted.WhileSubscribed(),

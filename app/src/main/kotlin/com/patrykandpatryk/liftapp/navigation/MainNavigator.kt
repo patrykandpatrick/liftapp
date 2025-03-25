@@ -7,19 +7,14 @@ import androidx.navigation.NavController
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
-import com.patrykandpatryk.liftapp.feature.exercise.navigation.ExerciseDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 
 @Stable
 class MainNavigator(private val navController: NavController) :
-    ExerciseDetailsNavigator, NewExerciseNavigator, BodyMeasurementDetailsNavigator {
+    NewExerciseNavigator, BodyMeasurementDetailsNavigator {
     override fun back() {
         navController.popBackStack()
-    }
-
-    override fun editExercise(exerciseID: Long) {
-        navController.navigate(Routes.Exercise.edit(exerciseID))
     }
 
     override fun newBodyMeasurement(bodyMeasurementId: Long, bodyEntryMeasurementId: Long?) {
