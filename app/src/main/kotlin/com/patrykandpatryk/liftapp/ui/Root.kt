@@ -69,8 +69,7 @@ import com.patrykandpatryk.liftapp.feature.newroutine.ui.NewRoutineScreen
 import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
-import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
-import com.patrykandpatryk.liftapp.feature.settings.ui.Settings
+import com.patrykandpatryk.liftapp.feature.settings.ui.SettingsScreen
 import com.patrykandpatryk.liftapp.navigation.MainNavigator
 import com.patrykandpatryk.liftapp.navigation.navigationBarItems
 import com.patrykandpatryk.liftapp.navigation.rememberMainNavigator
@@ -141,7 +140,7 @@ fun Root(
                     addRoutine(mainNavigator)
                     addRoutineList()
                     addRoutineExerciseGoal()
-                    addSettings(mainNavigator)
+                    addSettings()
                     addWorkout()
                 }
             }
@@ -266,8 +265,8 @@ fun NavGraphBuilder.addAbout() {
     composable<Routes.About> { About() }
 }
 
-fun NavGraphBuilder.addSettings(navigator: SettingsNavigator) {
-    composable<Routes.Settings> { Settings(navigator) }
+fun NavGraphBuilder.addSettings() {
+    composable<Routes.Settings> { SettingsScreen() }
 }
 
 fun NavGraphBuilder.addOneRepMax() {

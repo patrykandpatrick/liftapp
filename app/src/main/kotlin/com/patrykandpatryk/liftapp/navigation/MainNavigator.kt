@@ -10,14 +10,10 @@ import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.Bod
 import com.patrykandpatryk.liftapp.feature.exercise.navigation.ExerciseDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
-import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
 
 @Stable
 class MainNavigator(private val navController: NavController) :
-    ExerciseDetailsNavigator,
-    NewExerciseNavigator,
-    BodyMeasurementDetailsNavigator,
-    SettingsNavigator {
+    ExerciseDetailsNavigator, NewExerciseNavigator, BodyMeasurementDetailsNavigator {
     override fun back() {
         navController.popBackStack()
     }

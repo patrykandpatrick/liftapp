@@ -19,11 +19,11 @@ import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
-import com.patrykandpatryk.liftapp.feature.settings.navigator.SettingsNavigator
+import com.patrykandpatryk.liftapp.feature.settings.model.Action
 import com.patrykandpatryk.liftapp.feature.settings.viewmodel.SettingsViewModel
 
 @Composable
-fun Settings(navigator: SettingsNavigator, modifier: Modifier = Modifier) {
+fun SettingsScreen(modifier: Modifier = Modifier) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val viewModel = hiltViewModel<SettingsViewModel>()
     val allPreferences by viewModel.allPreferences.collectAsState(initial = null)
@@ -34,7 +34,7 @@ fun Settings(navigator: SettingsNavigator, modifier: Modifier = Modifier) {
             TopAppBar(
                 title = stringResource(id = R.string.route_settings),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = navigator::back,
+                onBackClick = { viewModel.onAction(Action.PopBackStack) },
             )
         },
     ) { paddingValues ->
@@ -47,7 +47,7 @@ fun Settings(navigator: SettingsNavigator, modifier: Modifier = Modifier) {
                     selectedValue = allPreferences?.longDistanceUnit,
                     values = LongDistanceUnit.entries.toTypedArray(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
-                    onValueChange = viewModel::setDistanceUnit,
+                    onValueChange = { viewModel.onAction(Action.SetDistanceUnit(it)) },
                     iconPainter = painterResource(id = R.drawable.ic_distance),
                 )
             }
@@ -58,7 +58,7 @@ fun Settings(navigator: SettingsNavigator, modifier: Modifier = Modifier) {
                     selectedValue = allPreferences?.massUnit,
                     values = MassUnit.entries.toTypedArray(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
-                    onValueChange = viewModel::setMassUnit,
+                    onValueChange = { viewModel.onAction(Action.SetMassUnit(it)) },
                     iconPainter = painterResource(id = R.drawable.ic_weight),
                 )
             }
@@ -72,7 +72,7 @@ fun Settings(navigator: SettingsNavigator, modifier: Modifier = Modifier) {
                     values = HourFormat.entries.toTypedArray(),
                     iconPainter = painterResource(id = R.drawable.ic_time),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
-                    onValueChange = viewModel::setHourFormat,
+                    onValueChange = { viewModel.onAction(Action.SetHourFormat(it)) },
                 )
             }
         }
