@@ -3,6 +3,7 @@ package com.patrykandpatrick.liftapp.navigation
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
@@ -42,8 +43,6 @@ object Routes {
     }
 
     object Exercise {
-        @Serializable class Create internal constructor(val exerciseID: Long = ID_NOT_SET)
-
         fun details(exerciseID: Long) = ExerciseDetailsRouteData(exerciseID)
 
         fun list() =
@@ -58,9 +57,9 @@ object Routes {
                 disabledExerciseIDs = disabledExerciseIDs,
             )
 
-        fun new() = Create()
+        fun new() = NewExerciseRouteData(ID_NOT_SET)
 
-        fun edit(exerciseID: Long) = Create(exerciseID)
+        fun edit(exerciseID: Long) = NewExerciseRouteData(exerciseID)
 
         fun goal(routineID: Long, exerciseID: Long) = ExerciseGoalRouteData(routineID, exerciseID)
     }

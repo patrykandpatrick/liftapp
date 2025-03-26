@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.core.viewmodel.SavedStateHandleViewModel
@@ -19,24 +20,24 @@ import com.patrykandpatryk.liftapp.domain.extension.toggle
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
-import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import com.patrykandpatryk.liftapp.feature.newexercise.model.Action
+import com.patrykandpatryk.liftapp.feature.newexercise.model.NewExerciseState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 private const val STATE_KEY = "screen_state"
 
-@HiltViewModel(assistedFactory = NewExerciseViewModel.Factory::class)
+@HiltViewModel
 class NewExerciseViewModel
-@AssistedInject
+@Inject
 constructor(
-    @Assisted private val exerciseId: Long,
+    private val newExerciseRouteData: NewExerciseRouteData,
     private val logger: UiLogger,
     private val getExercise: GetExerciseUseCase,
     override val savedStateHandle: SavedStateHandle,
@@ -45,13 +46,25 @@ constructor(
     private val exerciseToStateMapper: Mapper<Exercise, NewExerciseState>,
     private val stateToInsertExercise: Mapper<NewExerciseState.Valid, Exercise.Insert>,
     private val stateToUpdateExercise: Mapper<NewExerciseState.Valid, Exercise.Update>,
+    private val navigationCommander: NavigationCommander,
 ) : ViewModel(), SavedStateHandleViewModel, LogPublisher by logger {
     init {
-        if (exerciseId != ID_NOT_SET) loadExerciseState(exerciseId)
+        if (newExerciseRouteData.exerciseID != ID_NOT_SET)
+            loadExerciseState(newExerciseRouteData.exerciseID)
     }
 
     internal var state: NewExerciseState by
         saveable(STATE_KEY) { mutableStateOf(NewExerciseState.Invalid()) }
+
+    fun onAction(action: Action) {
+        when (action) {
+            Action.PopBackStack -> popBackStack()
+        }
+    }
+
+    private fun popBackStack() {
+        viewModelScope.launch { navigationCommander.popBackStack() }
+    }
 
     fun updateName(name: String) {
         val validatableName: Validatable<Name> =
@@ -86,23 +99,22 @@ constructor(
         state = state.copyState(tertiaryMuscles = state.tertiaryMuscles.toggle(muscle))
     }
 
-    fun save(): Boolean {
-        return when (val state = state) {
+    fun save() {
+        when (val state = state) {
             is NewExerciseState.Valid -> {
                 insertOrUpdateExercise(state)
-                true
+                popBackStack()
             }
 
             is NewExerciseState.Invalid -> {
                 this.state = state.copy(showErrors = true)
-                false
             }
         }
     }
 
     private fun insertOrUpdateExercise(state: NewExerciseState.Valid) {
         viewModelScope.launch {
-            if (exerciseId != ID_NOT_SET) {
+            if (newExerciseRouteData.exerciseID != ID_NOT_SET) {
                 updateExercise(stateToUpdateExercise(state))
             } else {
                 insertExercise(stateToInsertExercise(state))
@@ -117,10 +129,5 @@ constructor(
                 ?.let { exerciseToStateMapper(it) }
                 ?.also { existingExerciseState -> state = existingExerciseState }
         }
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(exerciseId: Long): NewExerciseViewModel
     }
 }

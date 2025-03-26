@@ -2,7 +2,7 @@ package com.patrykandpatryk.liftapp.feature.newexercise.mapper
 
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
-import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
+import com.patrykandpatryk.liftapp.feature.newexercise.model.NewExerciseState
 import javax.inject.Inject
 
 class StateToExerciseUpdateMapper @Inject constructor() :

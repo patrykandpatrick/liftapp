@@ -7,12 +7,10 @@ import androidx.navigation.NavController
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
-import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 
 @Stable
-class MainNavigator(private val navController: NavController) :
-    NewExerciseNavigator, BodyMeasurementDetailsNavigator {
+class MainNavigator(private val navController: NavController) : BodyMeasurementDetailsNavigator {
     override fun back() {
         navController.popBackStack()
     }

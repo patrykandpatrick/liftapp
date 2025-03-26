@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.isLandscape
 import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.core.extension.thenIf
@@ -49,40 +48,34 @@ import com.patrykandpatryk.liftapp.core.ui.resource.prettyName
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.feature.newexercise.navigation.NewExerciseNavigator
-import com.patrykandpatryk.liftapp.feature.newexercise.state.NewExerciseState
+import com.patrykandpatryk.liftapp.feature.newexercise.model.Action
+import com.patrykandpatryk.liftapp.feature.newexercise.model.NewExerciseState
 
 @Composable
-fun NewExercise(exerciseID: Long, navigator: NewExerciseNavigator, modifier: Modifier = Modifier) {
-    val viewModel: NewExerciseViewModel =
-        hiltViewModel(
-            creationCallback = { factory: NewExerciseViewModel.Factory ->
-                factory.create(exerciseID)
-            }
-        )
+fun NewExerciseScreen(modifier: Modifier = Modifier) {
+    val viewModel: NewExerciseViewModel = hiltViewModel()
 
     val snackbarHostState = remember { SnackbarHostState() }
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
-    NewExercise(
+    NewExerciseScreen(
         modifier = modifier,
         state = viewModel.state,
-        navigator = navigator,
+        onAction = viewModel::onAction,
         updateName = viewModel::updateName,
         updateExerciseType = viewModel::updateExerciseType,
         updateMainMuscles = viewModel::updateMainMuscles,
         updateSecondaryMuscles = viewModel::updateSecondaryMuscles,
         updateTertiaryMuscles = viewModel::updateTertiaryMuscles,
-        onSave = { if (viewModel.save()) navigator.back() },
+        onSave = { viewModel.save() },
         snackbarHostState = snackbarHostState,
     )
 }
 
 @Composable
-private fun NewExercise(
-    modifier: Modifier = Modifier,
+private fun NewExerciseScreen(
     state: NewExerciseState,
-    navigator: NewExerciseNavigator,
+    onAction: (Action) -> Unit,
     updateName: (String) -> Unit,
     updateExerciseType: (ExerciseType) -> Unit,
     updateMainMuscles: (Muscle) -> Unit,
@@ -90,6 +83,7 @@ private fun NewExercise(
     updateTertiaryMuscles: (Muscle) -> Unit,
     onSave: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -102,7 +96,7 @@ private fun NewExercise(
             TopAppBar(
                 title = stringResource(id = R.string.title_new_exercise),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = navigator::back,
+                onBackClick = { onAction(Action.PopBackStack) },
             )
         },
         floatingActionButton = {
@@ -242,9 +236,9 @@ fun PreviewNewExerciseLight() {
 @Composable
 private fun PreviewNewExercise() {
     LiftAppTheme {
-        NewExercise(
+        NewExerciseScreen(
             state = NewExerciseState.Invalid(),
-            navigator = interfaceStub(),
+            onAction = {},
             updateName = {},
             updateExerciseType = {},
             updateMainMuscles = {},

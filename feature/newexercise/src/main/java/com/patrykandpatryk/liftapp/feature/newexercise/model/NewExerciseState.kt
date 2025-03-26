@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.feature.newexercise.state
+package com.patrykandpatryk.liftapp.feature.newexercise.model
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
