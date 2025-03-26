@@ -59,16 +59,10 @@ fun NewExerciseScreen(modifier: Modifier = Modifier) {
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
     NewExerciseScreen(
-        modifier = modifier,
         state = viewModel.state,
         onAction = viewModel::onAction,
-        updateName = viewModel::updateName,
-        updateExerciseType = viewModel::updateExerciseType,
-        updateMainMuscles = viewModel::updateMainMuscles,
-        updateSecondaryMuscles = viewModel::updateSecondaryMuscles,
-        updateTertiaryMuscles = viewModel::updateTertiaryMuscles,
-        onSave = { viewModel.save() },
         snackbarHostState = snackbarHostState,
+        modifier = modifier,
     )
 }
 
@@ -76,12 +70,6 @@ fun NewExerciseScreen(modifier: Modifier = Modifier) {
 private fun NewExerciseScreen(
     state: NewExerciseState,
     onAction: (Action) -> Unit,
-    updateName: (String) -> Unit,
-    updateExerciseType: (ExerciseType) -> Unit,
-    updateMainMuscles: (Muscle) -> Unit,
-    updateSecondaryMuscles: (Muscle) -> Unit,
-    updateTertiaryMuscles: (Muscle) -> Unit,
-    onSave: () -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
@@ -105,7 +93,7 @@ private fun NewExerciseScreen(
                     Modifier.consumeWindowInsets(insets = WindowInsets.navigationBars).imePadding(),
                 text = stringResource(id = R.string.action_save),
                 icon = painterResource(id = R.drawable.ic_save),
-                onClick = onSave,
+                onClick = { onAction(Action.Save) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -122,27 +110,13 @@ private fun NewExerciseScreen(
                     ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.verticalItemSpacing),
         ) {
-            Content(
-                state = state,
-                updateName = updateName,
-                updateExerciseType = updateExerciseType,
-                updateMainMuscles = updateMainMuscles,
-                updateSecondaryMuscles = updateSecondaryMuscles,
-                updateTertiaryMuscles = updateTertiaryMuscles,
-            )
+            Content(state = state, onAction = onAction)
         }
     }
 }
 
 @Composable
-private fun Content(
-    state: NewExerciseState,
-    updateName: (String) -> Unit,
-    updateExerciseType: (ExerciseType) -> Unit,
-    updateMainMuscles: (Muscle) -> Unit,
-    updateSecondaryMuscles: (Muscle) -> Unit,
-    updateTertiaryMuscles: (Muscle) -> Unit,
-) {
+private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     val (typeExpanded, setTypeExpanded) = remember { mutableStateOf(false) }
     val (mainMusclesExpanded, setMainMusclesExpanded) = remember { mutableStateOf(false) }
     val (secondaryMusclesExpanded, setSecondaryMusclesExpanded) = remember { mutableStateOf(false) }
@@ -155,7 +129,7 @@ private fun Content(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.displayName,
-            onValueChange = updateName,
+            onValueChange = { onAction(Action.UpdateName(it)) },
             label = { Text(text = stringResource(id = R.string.generic_name)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -185,7 +159,7 @@ private fun Content(
         items = remember { ExerciseType.entries },
         getItemText = { it.prettyName },
         label = stringResource(id = R.string.generic_type),
-        onClick = updateExerciseType,
+        onClick = { onAction(Action.UpdateExerciseType(it)) },
     )
 
     DropdownMenu(
@@ -196,7 +170,7 @@ private fun Content(
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
         label = stringResource(id = R.string.generic_main_muscles),
-        onClick = updateMainMuscles,
+        onClick = { onAction(Action.ToggleMainMuscle(it)) },
         disabledItems = state.disabledMainMuscles,
         isError = state.showMainMusclesError,
         errorText = stringResource(id = R.string.error_pick_main_muscles),
@@ -210,7 +184,7 @@ private fun Content(
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
         label = stringResource(id = R.string.generic_secondary_muscles),
-        onClick = updateSecondaryMuscles,
+        onClick = { onAction(Action.ToggleSecondaryMuscle(it)) },
         disabledItems = state.disabledSecondaryMuscles,
     )
 
@@ -222,7 +196,7 @@ private fun Content(
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
         label = stringResource(id = R.string.generic_tertiary_muscles),
-        onClick = updateTertiaryMuscles,
+        onClick = { onAction(Action.ToggleTertiaryMuscle(it)) },
         disabledItems = state.disabledTertiaryMuscles,
     )
 }
@@ -239,12 +213,6 @@ private fun PreviewNewExercise() {
         NewExerciseScreen(
             state = NewExerciseState.Invalid(),
             onAction = {},
-            updateName = {},
-            updateExerciseType = {},
-            updateMainMuscles = {},
-            updateSecondaryMuscles = {},
-            updateTertiaryMuscles = {},
-            onSave = {},
             snackbarHostState = SnackbarHostState(),
         )
     }

@@ -58,6 +58,12 @@ constructor(
 
     fun onAction(action: Action) {
         when (action) {
+            is Action.UpdateName -> updateName(action.name)
+            is Action.UpdateExerciseType -> updateExerciseType(action.exerciseType)
+            is Action.ToggleMainMuscle -> updateMainMuscles(action.muscle)
+            is Action.ToggleSecondaryMuscle -> updateSecondaryMuscles(action.muscle)
+            is Action.ToggleTertiaryMuscle -> updateTertiaryMuscles(action.muscle)
+            Action.Save -> save()
             Action.PopBackStack -> popBackStack()
         }
     }
@@ -66,7 +72,7 @@ constructor(
         viewModelScope.launch { navigationCommander.popBackStack() }
     }
 
-    fun updateName(name: String) {
+    private fun updateName(name: String) {
         val validatableName: Validatable<Name> =
             if (name.isBlank()) {
                 Name.Raw(name).toInvalid()
@@ -76,11 +82,11 @@ constructor(
         state = state.copyState(name = validatableName, displayName = name)
     }
 
-    fun updateExerciseType(type: ExerciseType) {
+    private fun updateExerciseType(type: ExerciseType) {
         state = state.copyState(type = type)
     }
 
-    fun updateMainMuscles(muscle: Muscle) {
+    private fun updateMainMuscles(muscle: Muscle) {
         val updatedMuscle = state.mainMuscles.value.toggle(muscle)
         val mainMusclesValidatable =
             if (updatedMuscle.isEmpty()) {
@@ -91,15 +97,15 @@ constructor(
         state = state.copyState(mainMuscles = mainMusclesValidatable)
     }
 
-    fun updateSecondaryMuscles(muscle: Muscle) {
+    private fun updateSecondaryMuscles(muscle: Muscle) {
         state = state.copyState(secondaryMuscles = state.secondaryMuscles.toggle(muscle))
     }
 
-    fun updateTertiaryMuscles(muscle: Muscle) {
+    private fun updateTertiaryMuscles(muscle: Muscle) {
         state = state.copyState(tertiaryMuscles = state.tertiaryMuscles.toggle(muscle))
     }
 
-    fun save() {
+    private fun save() {
         when (val state = state) {
             is NewExerciseState.Valid -> {
                 insertOrUpdateExercise(state)
