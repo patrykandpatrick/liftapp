@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.navigation
 
+import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
@@ -65,13 +66,12 @@ object Routes {
     }
 
     object BodyMeasurement {
-        @Serializable class Details internal constructor(val bodyMeasurementID: Long)
 
         @Serializable
         class Create
         internal constructor(val bodyMeasurementID: Long, val bodyMeasurementEntryID: Long)
 
-        fun details(bodyMeasurementID: Long) = Details(bodyMeasurementID)
+        fun details(bodyMeasurementID: Long) = BodyMeasurementDetailsRouteData(bodyMeasurementID)
 
         fun newMeasurement(bodyMeasurementID: Long, bodyMeasurementEntryID: Long = ID_NOT_SET) =
             Create(bodyMeasurementID, bodyMeasurementEntryID)

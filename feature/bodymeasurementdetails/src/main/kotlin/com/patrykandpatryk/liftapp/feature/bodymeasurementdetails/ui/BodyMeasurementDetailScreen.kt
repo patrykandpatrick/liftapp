@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,6 +20,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -33,32 +33,26 @@ import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
+import com.patrykandpatryk.liftapp.core.model.Unfold
+import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
 import com.patrykandpatryk.liftapp.core.ui.OptionItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
+import com.patrykandpatryk.liftapp.domain.model.Loadable
+import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.Action
+import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.ScreenState
 
 @Composable
-fun BodyMeasurementDetailScreen(
-    bodyMeasurementID: Long,
-    navigator: BodyMeasurementDetailsNavigator,
-    modifier: Modifier = Modifier,
-) {
-    val viewModel: BodyMeasurementDetailViewModel =
-        hiltViewModel(
-            creationCallback = { factory: BodyMeasurementDetailViewModel.Factory ->
-                factory.create(bodyMeasurementID)
-            }
-        )
+fun BodyMeasurementDetailScreen(modifier: Modifier = Modifier) {
+    val viewModel: BodyMeasurementDetailViewModel = hiltViewModel()
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     BodyMeasurementDetailScreen(
-        onIntent = viewModel::handleIntent,
         state = state,
-        navigator = navigator,
+        onAction = viewModel::onAction,
         modelProducer = viewModel.chartEntryModelProducer,
         modifier = modifier,
     )
@@ -66,9 +60,8 @@ fun BodyMeasurementDetailScreen(
 
 @Composable
 private fun BodyMeasurementDetailScreen(
-    onIntent: (Intent) -> Unit,
-    state: ScreenState,
-    navigator: BodyMeasurementDetailsNavigator,
+    state: Loadable<ScreenState>,
+    onAction: (Action) -> Unit,
     modelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
@@ -78,9 +71,9 @@ private fun BodyMeasurementDetailScreen(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = state.name,
+                title = state.valueOrNull()?.name.orEmpty(),
                 scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = navigator::back,
+                onBackClick = { onAction(Action.PopBackStack) },
             )
         },
         floatingActionButton = {
@@ -93,82 +86,96 @@ private fun BodyMeasurementDetailScreen(
                         contentDescription = null,
                     )
                 },
-                onClick = { navigator.newBodyMeasurement(state.bodyMeasurementID) },
+                onClick = { onAction(Action.AddBodyMeasurement) },
             )
         },
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            contentPadding = Companion.navigationBars.toPaddingValues(),
-        ) {
-            item {
-                Chart(
-                    modifier =
-                        Modifier.padding(
-                            top = LocalDimens.current.padding.itemVertical,
-                            bottom = LocalDimens.current.padding.itemVertical,
-                            start = LocalDimens.current.padding.contentHorizontal,
-                        ),
-                    chart =
-                        lineChart(
-                            axisValuesOverrider =
-                                AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f)
-                        ),
-                    chartModelProducer = modelProducer,
-                    startAxis =
-                        rememberStartAxis(
-                            itemPlacer =
-                                remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }
-                        ),
-                    bottomAxis = rememberBottomAxis(),
-                    chartScrollSpec =
-                        rememberChartScrollSpec(
-                            initialScroll = InitialScroll.End,
-                            autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,
-                        ),
-                )
-            }
+        state.Unfold { state ->
+            ListContent(
+                state = state,
+                modelProducer = modelProducer,
+                onAction = onAction,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+    }
+}
 
-            item {
-                Text(
-                    modifier =
-                        Modifier.padding(
-                            vertical = LocalDimens.current.padding.itemVertical,
-                            horizontal = LocalDimens.current.padding.contentHorizontal,
-                        ),
-                    text = stringResource(id = R.string.generic_journal),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
+@Composable
+private fun ListContent(
+    state: ScreenState,
+    modelProducer: ChartEntryModelProducer,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier, contentPadding = Companion.navigationBars.toPaddingValues()) {
+        item {
+            Chart(
+                modifier =
+                    Modifier.padding(
+                        top = LocalDimens.current.padding.itemVertical,
+                        bottom = LocalDimens.current.padding.itemVertical,
+                        start = LocalDimens.current.padding.contentHorizontal,
+                    ),
+                chart =
+                    lineChart(
+                        axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f)
+                    ),
+                chartModelProducer = modelProducer,
+                startAxis =
+                    rememberStartAxis(
+                        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }
+                    ),
+                bottomAxis = rememberBottomAxis(),
+                chartScrollSpec =
+                    rememberChartScrollSpec(
+                        initialScroll = InitialScroll.End,
+                        autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,
+                    ),
+            )
+        }
 
-            items(items = state.entries, key = { it.id }) { entry ->
-                ListItemWithOptions(
-                    mainContent = {
-                        ListItem(
-                            title = { Text(entry.value) },
-                            modifier = Modifier.animateItem(),
-                            description = { Text(entry.date) },
-                        )
-                    },
-                    optionItems =
-                        listOf(
-                            OptionItem(
-                                iconPainter = painterResource(id = R.drawable.ic_edit),
-                                label = stringResource(id = R.string.action_edit),
-                                onClick = {
-                                    navigator.newBodyMeasurement(state.bodyMeasurementID, entry.id)
-                                },
-                            ),
-                            OptionItem(
-                                iconPainter = painterResource(id = R.drawable.ic_delete),
-                                label = stringResource(id = R.string.action_delete),
-                                onClick = { onIntent(Intent.DeleteBodyMeasurementEntry(entry.id)) },
-                            ),
+        item {
+            Text(
+                modifier =
+                    Modifier.padding(
+                        vertical = LocalDimens.current.padding.itemVertical,
+                        horizontal = LocalDimens.current.padding.contentHorizontal,
+                    ),
+                text = stringResource(id = R.string.generic_journal),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+
+        items(items = state.entries, key = { it.id }) { entry ->
+            ListItemWithOptions(
+                mainContent = {
+                    ListItem(
+                        title = { Text(entry.value) },
+                        modifier = Modifier.animateItem(),
+                        description = { Text(entry.date) },
+                    )
+                },
+                optionItems =
+                    listOf(
+                        OptionItem(
+                            iconPainter = painterResource(id = R.drawable.ic_edit),
+                            label = stringResource(id = R.string.action_edit),
+                            onClick = {
+                                onAction(
+                                    Action.EditBodyMeasurement(bodyEntryMeasurementId = entry.id)
+                                )
+                            },
                         ),
-                    isExpanded = entry.isExpanded,
-                    setExpanded = { onIntent(Intent.ExpandItem(id = entry.id)) },
-                )
-            }
+                        OptionItem(
+                            iconPainter = painterResource(id = R.drawable.ic_delete),
+                            label = stringResource(id = R.string.action_delete),
+                            onClick = { onAction(Action.DeleteBodyMeasurementEntry(entry.id)) },
+                        ),
+                    ),
+                isExpanded = entry.isExpanded,
+                setExpanded = { onAction(Action.ExpandItem(id = entry.id)) },
+            )
         }
     }
 }

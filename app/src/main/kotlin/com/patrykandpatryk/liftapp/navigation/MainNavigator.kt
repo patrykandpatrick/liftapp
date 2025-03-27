@@ -5,23 +5,13 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import com.patrykandpatrick.liftapp.navigation.Routes
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
-import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 
 @Stable
-class MainNavigator(private val navController: NavController) : BodyMeasurementDetailsNavigator {
-    override fun back() {
-        navController.popBackStack()
-    }
+class MainNavigator(private val navController: NavController) {
 
-    override fun newBodyMeasurement(bodyMeasurementId: Long, bodyEntryMeasurementId: Long?) {
-        navController.navigate(
-            Routes.BodyMeasurement.newMeasurement(
-                bodyMeasurementId,
-                bodyEntryMeasurementId ?: ID_NOT_SET,
-            )
-        )
+    fun back() {
+        navController.popBackStack()
     }
 
     fun getRoutineNavigator(routineID: Long): RoutineNavigator =

@@ -39,6 +39,7 @@ import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
@@ -60,7 +61,6 @@ import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.feature.about.ui.About
-import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.navigation.BodyMeasurementDetailsNavigator
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui.BodyMeasurementDetailScreen
 import com.patrykandpatryk.liftapp.feature.exercise.ui.ExerciseDetailsScreen
 import com.patrykandpatryk.liftapp.feature.exercises.ui.ExerciseListScreen
@@ -128,7 +128,7 @@ fun Root(
                     popExitTransition = { sharedXAxisExitTransition(forward = false) },
                 ) {
                     addAbout()
-                    addBodyMeasurementDetailDestination(mainNavigator)
+                    addBodyMeasurementDetailDestination()
                     addExercises()
                     addExerciseDetails()
                     addNestedHomeGraph(Modifier.padding(paddingValues))
@@ -235,13 +235,8 @@ fun NavGraphBuilder.addNewExercise() {
     composable<NewExerciseRouteData> { NewExerciseScreen() }
 }
 
-fun NavGraphBuilder.addBodyMeasurementDetailDestination(
-    navigator: BodyMeasurementDetailsNavigator
-) {
-    composable<Routes.BodyMeasurement.Details> {
-        val args = it.toRoute<Routes.BodyMeasurement.Details>()
-        BodyMeasurementDetailScreen(args.bodyMeasurementID, navigator)
-    }
+fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
+    composable<BodyMeasurementDetailsRouteData> { BodyMeasurementDetailScreen() }
 }
 
 fun NavGraphBuilder.addNewBodyMeasurementDestination(onDismissRequest: () -> Unit) {
