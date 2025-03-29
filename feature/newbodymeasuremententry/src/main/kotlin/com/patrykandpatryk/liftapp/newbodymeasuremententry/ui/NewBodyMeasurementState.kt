@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
@@ -27,11 +28,13 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.time.LocalDateTime
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val LocalDateTimeKey = "LocalDateTime"
 
@@ -72,8 +75,8 @@ class NewBodyMeasurementState(
 
     @AssistedInject
     constructor(
-        @Assisted id: Long,
-        @Assisted entryId: Long?,
+        @Assisted("id") id: Long,
+        @Assisted("entryID") entryId: Long,
         @Assisted coroutineScope: CoroutineScope,
         getFormattedDateUseCase: GetFormattedDateUseCase,
         getBodyMeasurementWithLatestEntryUseCaseFactory:
@@ -87,7 +90,8 @@ class NewBodyMeasurementState(
         getFormattedDateUseCase::invoke,
         getBodyMeasurementWithLatestEntryUseCaseFactory.create(id)::invoke,
         {
-            if (entryId != null) getBodyMeasurementEntryUseCaseFactory.create(entryId).invoke()
+            if (entryId != ID_NOT_SET)
+                getBodyMeasurementEntryUseCaseFactory.create(entryId).invoke()
             else null
         },
         upsertBodyMeasurementUseCaseFactory.create(id, entryId)::invoke,
@@ -185,9 +189,11 @@ class NewBodyMeasurementState(
             return
         }
         coroutineScope.launch {
-            upsertBodyMeasurementEntry(inputData.toBodyMeasurementValue(), dateTime.value)
-            _entrySaved.value = true
-            updateLocalDateTime { LocalDateTime.now() }
+            withContext(NonCancellable) {
+                upsertBodyMeasurementEntry(inputData.toBodyMeasurementValue(), dateTime.value)
+                _entrySaved.value = true
+                updateLocalDateTime { LocalDateTime.now() }
+            }
         }
     }
 
@@ -248,8 +254,8 @@ class NewBodyMeasurementState(
     @AssistedFactory
     interface Factory {
         fun create(
-            id: Long,
-            entryId: Long?,
+            @Assisted("id") id: Long,
+            @Assisted("entryID") entryId: Long,
             coroutineScope: CoroutineScope,
         ): NewBodyMeasurementState
     }

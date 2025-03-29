@@ -50,30 +50,21 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.model.Action
 import java.time.LocalDateTime
 
 @Composable
-fun NewBodyMeasurementEntryBottomSheet(
-    bodyMeasurementId: Long,
-    bodyMeasurementEntryId: Long?,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val viewModel =
-        hiltViewModel<NewBodyMeasurementEntryViewModel, NewBodyMeasurementEntryViewModel.Factory>(
-            creationCallback = { factory ->
-                factory.create(bodyMeasurementId, bodyMeasurementEntryId)
-            }
-        )
+fun NewBodyMeasurementEntryBottomSheet(modifier: Modifier = Modifier) {
+    val viewModel: NewBodyMeasurementEntryViewModel = hiltViewModel()
     val entrySaved = viewModel.state.entrySaved.value
 
-    BackHandler(onBack = onDismissRequest)
+    BackHandler(onBack = { viewModel.onAction(Action.PopBackStack) })
 
-    LaunchedEffect(entrySaved) { if (entrySaved) onDismissRequest() }
+    LaunchedEffect(entrySaved) { if (entrySaved) viewModel.onAction(Action.PopBackStack) }
 
     NewBodyMeasurementEntryBottomSheetContent(
         state = viewModel.state,
-        onDismissRequest = onDismissRequest,
+        onAction = viewModel::onAction,
         modifier = modifier,
     )
 }
@@ -81,7 +72,7 @@ fun NewBodyMeasurementEntryBottomSheet(
 @Composable
 private fun NewBodyMeasurementEntryBottomSheetContent(
     state: NewBodyMeasurementState,
-    onDismissRequest: () -> Unit,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val dimens = LocalDimens.current
@@ -105,7 +96,7 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
         modifier =
             modifier.navigationBarsPadding().padding(vertical = dimens.padding.contentVertical)
     ) {
-        DialogTopBar(title = state.name.value, onCloseClick = onDismissRequest)
+        DialogTopBar(title = state.name.value, onCloseClick = { onAction(Action.PopBackStack) })
 
         Column(
             modifier =
@@ -239,7 +230,7 @@ fun NewBodyMeasurementEntryBottomSheetContentPreview() {
                                 savedStateHandle = savedStateHandle,
                             )
                         },
-                    onDismissRequest = {},
+                    onAction = {},
                 )
             }
         }

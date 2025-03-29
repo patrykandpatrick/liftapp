@@ -10,10 +10,6 @@ import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 @Stable
 class MainNavigator(private val navController: NavController) {
 
-    fun back() {
-        navController.popBackStack()
-    }
-
     fun getRoutineNavigator(routineID: Long): RoutineNavigator =
         object : RoutineNavigator {
             override fun back() {

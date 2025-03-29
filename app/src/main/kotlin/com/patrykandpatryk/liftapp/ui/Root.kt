@@ -43,6 +43,7 @@ import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteD
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
@@ -57,7 +58,6 @@ import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisExitTransition
 import com.patrykandpatryk.liftapp.core.ui.animation.slideAndFadeIn
 import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.feature.about.ui.About
@@ -132,7 +132,7 @@ fun Root(
                     addExercises()
                     addExerciseDetails()
                     addNestedHomeGraph(Modifier.padding(paddingValues))
-                    addNewBodyMeasurementDestination(mainNavigator::back)
+                    addNewBodyMeasurementDestination()
                     addNewExercise()
                     addNewPlan()
                     addNewRoutine()
@@ -239,15 +239,8 @@ fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
     composable<BodyMeasurementDetailsRouteData> { BodyMeasurementDetailScreen() }
 }
 
-fun NavGraphBuilder.addNewBodyMeasurementDestination(onDismissRequest: () -> Unit) {
-    bottomSheet<Routes.BodyMeasurement.Create> { backStackEntry ->
-        val args = backStackEntry.toRoute<Routes.BodyMeasurement.Create>()
-        NewBodyMeasurementEntryBottomSheet(
-            bodyMeasurementId = args.bodyMeasurementID,
-            bodyMeasurementEntryId = args.bodyMeasurementEntryID.takeIf { it != ID_NOT_SET },
-            onDismissRequest = onDismissRequest,
-        )
-    }
+fun NavGraphBuilder.addNewBodyMeasurementDestination() {
+    bottomSheet<NewBodyMeasurementRouteData> { NewBodyMeasurementEntryBottomSheet() }
 }
 
 fun NavGraphBuilder.addAbout() {
