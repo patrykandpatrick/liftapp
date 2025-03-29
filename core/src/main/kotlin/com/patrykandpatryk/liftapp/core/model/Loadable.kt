@@ -15,12 +15,12 @@ import kotlinx.coroutines.flow.stateIn
 @Composable
 fun <T : Any> Loadable<T>.Unfold(
     onLoading: @Composable () -> Unit = {},
-    onError: @Composable (Throwable) -> Unit = { Error(message = it.getUIMessage()) },
+    onError: @Composable ((Throwable) -> Unit)? = { Error(message = it.getUIMessage()) },
     onSuccess: @Composable (T) -> Unit,
 ) {
     when (this) {
         is Loadable.Loading -> onLoading()
-        is Loadable.Error -> onError(error)
+        is Loadable.Error -> onError?.invoke(error)
         is Loadable.Success -> onSuccess(data)
     }
 }

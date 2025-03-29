@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,7 +34,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,13 +43,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.calculateStartPadding
 import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.thenIf
+import com.patrykandpatryk.liftapp.core.model.Unfold
+import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
+import com.patrykandpatryk.liftapp.core.ui.Error
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults
@@ -58,6 +62,8 @@ import com.patrykandpatryk.liftapp.core.ui.SearchBar
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatryk.liftapp.domain.model.Loadable
+import com.patrykandpatryk.liftapp.domain.model.toLoadable
 import com.patrykandpatryk.liftapp.feature.exercises.model.Action
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
@@ -65,23 +71,27 @@ import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 @Composable
 fun ExerciseListScreen(modifier: Modifier = Modifier) {
     val viewModel: ExerciseViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState()
+    val loadableScreenState by viewModel.state.collectAsStateWithLifecycle()
 
-    ExerciseListScreen(modifier = modifier, state = state, onAction = viewModel::handleIntent)
+    ExerciseListScreen(
+        modifier = modifier,
+        loadableScreenState = loadableScreenState,
+        onAction = viewModel::handleAction,
+    )
 }
 
 @Composable
 private fun ExerciseListScreen(
     modifier: Modifier = Modifier,
-    state: ScreenState,
+    loadableScreenState: Loadable<ScreenState>,
     onAction: (Action) -> Unit,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            if (state.pickingMode.not()) {
+            if (loadableScreenState.valueOrNull()?.pickingMode != true) {
                 ExtendedFloatingActionButton(
                     text = stringResource(id = R.string.action_new_exercise),
                     icon = painterResource(id = R.drawable.ic_add),
@@ -90,60 +100,80 @@ private fun ExerciseListScreen(
             }
         },
         topBar = {
-            TopBar(
-                state = state,
-                topAppBarScrollBehavior = topAppBarScrollBehavior,
-                onAction = onAction,
-                navigateBack = { onAction(Action.PopBackStack) },
-            )
+            loadableScreenState.Unfold(onError = null) { state ->
+                TopBar(
+                    state = state,
+                    topAppBarScrollBehavior = topAppBarScrollBehavior,
+                    onAction = onAction,
+                    navigateBack = { onAction(Action.PopBackStack) },
+                )
+            }
         },
         bottomBar = {
-            if (state.mode is ExerciseListRouteData.Mode.Pick) {
-                BottomBar(mode = state.mode, onAction = onAction)
+            val mode = loadableScreenState.valueOrNull()?.mode
+            if (mode is ExerciseListRouteData.Mode.Pick) {
+                BottomBar(mode = mode, onAction = onAction)
             }
         },
         contentWindowInsets = WindowInsets.statusBars,
     ) { internalPadding ->
-        LazyColumn(
-            modifier =
-                Modifier.thenIf(state.pickingMode) {
-                    nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-                },
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding =
-                PaddingValues(
-                    top = internalPadding.calculateTopPadding(),
-                    bottom = WindowInsets.navigationBars.getBottom(),
-                ),
-        ) {
-            if (state.query.isEmpty()) {
-                item {
-                    Controls(
-                        groupBy = state.groupBy,
-                        onGroupBySelection = { onAction(Action.SetGroupBy(it)) },
-                    )
-                }
+        loadableScreenState.Unfold(onError = { Error(Modifier.padding(internalPadding)) }) { state
+            ->
+            ListContent(
+                state = state,
+                onAction = onAction,
+                paddingValues = internalPadding,
+                modifier =
+                    Modifier.thenIf(state.pickingMode) {
+                        nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                    },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ListContent(
+    state: ScreenState,
+    onAction: (Action) -> Unit,
+    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        contentPadding =
+            PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                bottom = WindowInsets.navigationBars.getBottom(),
+            ),
+    ) {
+        if (state.query.isEmpty()) {
+            item {
+                Controls(
+                    groupBy = state.groupBy,
+                    onGroupBySelection = { onAction(Action.SetGroupBy(it)) },
+                )
             }
+        }
 
-            items(items = state.exercises, key = { it.key }, contentType = { it::class }) { item ->
-                when (item) {
-                    is ExercisesItem.Exercise -> {
-                        ExerciseItem(state = state, item = item, onAction = onAction)
-                    }
+        items(items = state.exercises, key = { it.key }, contentType = { it::class }) { item ->
+            when (item) {
+                is ExercisesItem.Exercise -> {
+                    ExerciseItem(state = state, item = item, onAction = onAction)
+                }
 
-                    is ExercisesItem.Header -> {
-                        ListSectionTitle(
-                            title = item.title,
-                            modifier =
-                                Modifier.animateItem()
-                                    .padding(
-                                        start =
-                                            MaterialTheme.dimens.list.itemIconBackgroundSize +
-                                                ListItemDefaults.paddingValues
-                                                    .calculateStartPadding()
-                                    ),
-                        )
-                    }
+                is ExercisesItem.Header -> {
+                    ListSectionTitle(
+                        title = item.title,
+                        modifier =
+                            Modifier.animateItem()
+                                .padding(
+                                    start =
+                                        MaterialTheme.dimens.list.itemIconBackgroundSize +
+                                            ListItemDefaults.paddingValues.calculateStartPadding()
+                                ),
+                    )
                 }
             }
         }
@@ -298,7 +328,10 @@ private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
 @Composable
 fun ExercisesPreview() {
     LiftAppTheme {
-        ExerciseListScreen(state = getScreenState(mode = ExerciseListRouteData.Mode.View)) {}
+        ExerciseListScreen(
+            loadableScreenState =
+                getScreenState(mode = ExerciseListRouteData.Mode.View).toLoadable()
+        ) {}
     }
 }
 
@@ -306,6 +339,9 @@ fun ExercisesPreview() {
 @Composable
 fun ExercisesPreviewPickingMode() {
     LiftAppTheme {
-        ExerciseListScreen(state = getScreenState(mode = ExerciseListRouteData.Mode.Pick(""))) {}
+        ExerciseListScreen(
+            loadableScreenState =
+                getScreenState(mode = ExerciseListRouteData.Mode.Pick("")).toLoadable()
+        ) {}
     }
 }

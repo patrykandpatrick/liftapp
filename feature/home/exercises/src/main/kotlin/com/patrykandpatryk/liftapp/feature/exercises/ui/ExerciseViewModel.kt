@@ -4,23 +4,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
+import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
+import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
 import com.patrykandpatryk.liftapp.feature.exercises.model.Action
-import com.patrykandpatryk.liftapp.feature.exercises.model.Event
 import com.patrykandpatryk.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.exercises.usecase.GetExercisesItemsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,33 +32,37 @@ constructor(
     getExercisesItems: GetExercisesItemsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val navigationCommander: NavigationCommander,
-) : ViewModel(), ScreenStateHandler<ScreenState, Action, Event> {
+) : ViewModel() {
 
     private val query = MutableStateFlow(value = "")
 
     private val groupBy = MutableStateFlow(value = GroupBy.Name)
 
-    private val checkedExerciseIds: MutableSet<Long> = HashSet()
+    private val checkedExerciseIds = MutableStateFlow<Set<Long>>(emptySet())
 
     val exercises =
         getExercisesItems(query = query, groupBy = groupBy)
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    override val state: MutableStateFlow<ScreenState> =
-        MutableStateFlow(ScreenState(mode = routeData.mode))
-
-    override val events: MutableSharedFlow<Event> = MutableSharedFlow()
-
-    init {
-        getExercisesItems(query = query, groupBy = groupBy)
-            .flowOn(dispatcher)
-            .onEach { exercises ->
-                state.update { state -> state.copy(exercises = exercises.updateState()) }
+    val state: StateFlow<Loadable<ScreenState>> =
+        combine(
+                getExercisesItems(query = query, groupBy = groupBy),
+                query,
+                groupBy,
+                checkedExerciseIds,
+            ) { exerciseItems, query, groupBy, checkedExerciseIds ->
+                ScreenState(
+                    mode = routeData.mode,
+                    exercises = exerciseItems.updateState(checkedExerciseIds),
+                    query = query,
+                    groupBy = groupBy,
+                    selectedItemCount = checkedExerciseIds.size,
+                )
             }
-            .launchIn(viewModelScope)
-    }
+            .flowOn(dispatcher)
+            .toLoadableStateFlow(viewModelScope)
 
-    override fun handleIntent(action: Action) =
+    fun handleAction(action: Action) =
         when (action) {
             is Action.SetQuery -> setQuery(action.query)
             is Action.SetGroupBy -> setGroupBy(action.groupBy)
@@ -71,32 +74,28 @@ constructor(
         }
 
     private fun setQuery(query: String) {
-        state.update { state -> state.copy(query = query) }
         this.query.value = query
     }
 
     private fun setGroupBy(groupBy: GroupBy) {
-        state.update { state -> state.copy(groupBy = groupBy) }
         this.groupBy.value = groupBy
     }
 
     private fun setExerciseChecked(exerciseId: Long, checked: Boolean) {
         viewModelScope.launch(dispatcher) {
-            if (checked) {
-                checkedExerciseIds.add(exerciseId)
-            } else {
-                checkedExerciseIds.remove(exerciseId)
-            }
-            state.update { state ->
-                state.copy(
-                    exercises = state.exercises.updateState(),
-                    selectedItemCount = checkedExerciseIds.size,
-                )
+            checkedExerciseIds.update { set ->
+                if (checked) {
+                    set + exerciseId
+                } else {
+                    set - exerciseId
+                }
             }
         }
     }
 
-    private fun List<ExercisesItem>.updateState(): List<ExercisesItem> = map { exerciseItem ->
+    private fun List<ExercisesItem>.updateState(
+        checkedExerciseIds: Set<Long>
+    ): List<ExercisesItem> = map { exerciseItem ->
         if (exerciseItem is ExercisesItem.Exercise) {
             val enabled = routeData.disabledExerciseIDs?.contains(exerciseItem.id)?.not() ?: true
             exerciseItem.copy(
@@ -110,7 +109,7 @@ constructor(
 
     private fun finishPickingExercises(resultKey: String) {
         viewModelScope.launch {
-            navigationCommander.publishResult(resultKey, checkedExerciseIds.toList())
+            navigationCommander.publishResult(resultKey, checkedExerciseIds.value.toList())
             navigationCommander.popBackStack()
         }
     }
