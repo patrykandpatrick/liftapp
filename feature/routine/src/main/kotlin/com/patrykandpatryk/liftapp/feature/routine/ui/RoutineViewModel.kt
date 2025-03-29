@@ -1,65 +1,88 @@
 package com.patrykandpatryk.liftapp.feature.routine.ui
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
 import com.patrykandpatryk.liftapp.core.model.MuscleModel
+import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
+import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
+import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.routine.DeleteExerciseFromRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
-import com.patrykandpatryk.liftapp.domain.state.ScreenStateHandler
-import com.patrykandpatryk.liftapp.feature.routine.model.Event
-import com.patrykandpatryk.liftapp.feature.routine.model.Intent
+import com.patrykandpatryk.liftapp.feature.routine.model.Action
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.routine.usecase.ReorderExercisesUseCase
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
-private const val SCREEN_STATE_KEY = "screenState"
-
-@HiltViewModel(assistedFactory = RoutineViewModel.Factory::class)
+@HiltViewModel
 class RoutineViewModel
-@AssistedInject
+@Inject
 constructor(
-    @Assisted private val routineId: Long,
+    private val routeData: RoutineDetailsRouteData,
     private val logger: UiLogger,
     isDarkModeReceiver: IsDarkModeReceiver,
     getRoutine: GetRoutineWithExercisesUseCase,
-    private val savedStateHandle: SavedStateHandle,
     private val deleteRoutine: DeleteRoutineUseCase,
     private val deleteExerciseFromRoutine: DeleteExerciseFromRoutineUseCase,
     private val muscleImageProvider: MuscleImageProvider,
     private val reorderExercisesUseCase: ReorderExercisesUseCase,
-) : ViewModel(), ScreenStateHandler<ScreenState, Intent, Event>, LogPublisher by logger {
+    private val navigationCommander: NavigationCommander,
+) : ViewModel(), LogPublisher by logger {
 
-    private val eventChannel = Channel<Event>()
+    private val showDeleteDialog = MutableStateFlow(false)
 
-    override val state: StateFlow<ScreenState> =
-        savedStateHandle.getStateFlow(SCREEN_STATE_KEY, ScreenState.Loading)
+    private val imagePath = MutableStateFlow<String?>(null)
 
-    override val events: Flow<Event> = eventChannel.receiveAsFlow()
+    val screenState: StateFlow<Loadable<ScreenState>> =
+        combine(
+                getRoutine(routeData.routineID),
+                imagePath,
+                isDarkModeReceiver(),
+                showDeleteDialog,
+            ) { routine, imagePath, isDarkMode, showDeleteDialog ->
+                if (routine == null) {
+                    error("Routine with id ${routeData.routineID} not found, or deleted.")
+                } else {
+                    loadBitmap(
+                        primaryMuscles = routine.primaryMuscles,
+                        secondaryMuscles = routine.secondaryMuscles,
+                        tertiaryMuscles = routine.tertiaryMuscles,
+                        isDarkMode = isDarkMode,
+                    )
+                    ScreenState(
+                        name = routine.name,
+                        showDeleteDialog = showDeleteDialog,
+                        imagePath = imagePath,
+                        exercises = routine.exercises,
+                        muscles =
+                            MuscleModel.create(
+                                primaryMuscles = routine.primaryMuscles,
+                                secondaryMuscles = routine.secondaryMuscles,
+                                tertiaryMuscles = routine.tertiaryMuscles,
+                            ),
+                    )
+                }
+            }
+            .toLoadableStateFlow(viewModelScope)
 
     init {
-        combine(getRoutine(routineId), isDarkModeReceiver()) { routine, isDarkMode ->
+        combine(getRoutine(routeData.routineID), isDarkModeReceiver()) { routine, isDarkMode ->
                 if (routine == null) {
-                    Timber.e("Routine with id $routineId not found, or deleted.")
-                    eventChannel.send(Event.RoutineNotFound)
+                    error("Routine with id ${routeData.routineID} not found, or deleted.")
                 } else {
                     updateState(routine = routine, isDarkMode = isDarkMode)
                 }
@@ -68,18 +91,6 @@ constructor(
     }
 
     private fun updateState(routine: RoutineWithExercises, isDarkMode: Boolean) {
-        updateScreenState {
-            mutate(
-                name = routine.name,
-                exercises = routine.exercises,
-                muscles =
-                    MuscleModel.create(
-                        primaryMuscles = routine.primaryMuscles,
-                        secondaryMuscles = routine.secondaryMuscles,
-                        tertiaryMuscles = routine.tertiaryMuscles,
-                    ),
-            )
-        }
 
         loadBitmap(
             primaryMuscles = routine.primaryMuscles,
@@ -96,65 +107,80 @@ constructor(
         isDarkMode: Boolean,
     ) {
         viewModelScope.launch {
-            updateScreenState {
-                mutate(
-                    imagePath =
-                        muscleImageProvider.getMuscleImagePath(
-                            primaryMuscles,
-                            secondaryMuscles,
-                            tertiaryMuscles,
-                            isDark = isDarkMode,
-                        )
+            imagePath.value =
+                muscleImageProvider.getMuscleImagePath(
+                    primaryMuscles = primaryMuscles,
+                    secondaryMuscles = secondaryMuscles,
+                    tertiaryMuscles = tertiaryMuscles,
+                    isDark = isDarkMode,
                 )
-            }
         }
     }
 
-    override fun handleIntent(intent: Intent) {
-        when (intent) {
-            Intent.Edit -> handleEdit()
-            Intent.ShowDeleteDialog -> handleDeleteDialogVisibility(visible = true)
-            Intent.HideDeleteDialog -> handleDeleteDialogVisibility(visible = false)
-            Intent.Delete -> deleteRoutine()
-            is Intent.DeleteExercise -> deleteExercise(intent.exerciseId)
-            is Intent.Reorder -> reorder(intent)
+    fun handleAction(action: Action) {
+        when (action) {
+            Action.Edit -> handleEdit()
+            Action.ShowDeleteDialog -> handleDeleteDialogVisibility(visible = true)
+            Action.HideDeleteDialog -> handleDeleteDialogVisibility(visible = false)
+            Action.Delete -> deleteRoutine()
+            is Action.DeleteExercise -> deleteExercise(action.exerciseId)
+            is Action.Reorder -> reorder(action)
+            Action.PopBackStack -> popBackStack()
+            Action.StartWorkout -> startWorkout()
+            is Action.NavigateToExercise -> navigateToExercise(action.exerciseID)
+            is Action.NavigateToExerciseGoal -> navigateToExerciseGoal(action.exerciseID)
         }
     }
 
-    private fun reorder(reorder: Intent.Reorder) {
+    private fun reorder(reorder: Action.Reorder) {
         viewModelScope.launch {
-            val exercises = ArrayList(state.value.exercises)
+            val exercises = ArrayList(reorder.exercises)
             val exercise = exercises.removeAt(reorder.from)
             exercises.add(reorder.to, exercise)
-            reorderExercisesUseCase(routineId = routineId, exercises = exercises)
+            reorderExercisesUseCase(routineId = routeData.routineID, exercises = exercises)
         }
     }
 
     private fun handleEdit() {
-        viewModelScope.launch { eventChannel.send(Event.EditRoutine) }
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Routine.edit(routeData.routineID))
+        }
     }
 
     private fun deleteRoutine() {
         handleDeleteDialogVisibility(visible = false)
-        viewModelScope.launch { deleteRoutine(routineId) }
+        viewModelScope.launch { deleteRoutine(routeData.routineID) }
     }
 
     private fun deleteExercise(exerciseId: Long) {
         viewModelScope.launch {
-            deleteExerciseFromRoutine(routineId = routineId, exerciseId = exerciseId)
+            deleteExerciseFromRoutine(routineId = routeData.routineID, exerciseId = exerciseId)
         }
     }
 
     private fun handleDeleteDialogVisibility(visible: Boolean) {
-        updateScreenState { mutate(showDeleteDialog = visible) }
+        showDeleteDialog.value = visible
     }
 
-    private inline fun updateScreenState(block: ScreenState.() -> ScreenState) {
-        savedStateHandle[SCREEN_STATE_KEY] = state.value.run(block)
+    private fun popBackStack() {
+        viewModelScope.launch { navigationCommander.popBackStack() }
     }
 
-    @AssistedFactory
-    interface Factory {
-        fun create(routineId: Long): RoutineViewModel
+    private fun startWorkout() {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Workout.new(routeData.routineID))
+        }
+    }
+
+    private fun navigateToExercise(exerciseID: Long) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Exercise.details(exerciseID))
+        }
+    }
+
+    private fun navigateToExerciseGoal(exerciseID: Long) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Exercise.goal(routeData.routineID, exerciseID))
+        }
     }
 }

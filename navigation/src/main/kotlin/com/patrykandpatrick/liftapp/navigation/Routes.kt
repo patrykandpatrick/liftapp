@@ -8,6 +8,7 @@ import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.serialization.ExercisesSerializer
@@ -30,9 +31,7 @@ object Routes {
     }
 
     object Routine {
-        @Serializable class Details internal constructor(val routineID: Long)
-
-        fun details(routineID: Long) = Details(routineID)
+        fun details(routineID: Long) = RoutineDetailsRouteData(routineID)
 
         fun edit(routineID: Long) = NewRoutineRouteData(routineID)
 

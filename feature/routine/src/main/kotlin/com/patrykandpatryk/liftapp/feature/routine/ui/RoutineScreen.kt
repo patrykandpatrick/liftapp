@@ -25,26 +25,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.collectInComposable
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
+import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.tabItems
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
-import com.patrykandpatryk.liftapp.feature.routine.model.Event
-import com.patrykandpatryk.liftapp.feature.routine.model.Intent
+import com.patrykandpatryk.liftapp.domain.model.Loadable
+import com.patrykandpatryk.liftapp.feature.routine.model.Action
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.routine.model.tabs
-import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import kotlinx.coroutines.launch
 
 @Composable
-fun RoutineScreen(routineId: Long, navigator: RoutineNavigator, modifier: Modifier = Modifier) {
-    val viewModel: RoutineViewModel =
-        hiltViewModel(
-            creationCallback = { factory: RoutineViewModel.Factory -> factory.create(routineId) }
-        )
+fun RoutineScreen(modifier: Modifier = Modifier) {
+    val viewModel: RoutineViewModel = hiltViewModel()
 
-    val state by viewModel.state.collectAsState()
+    val loadableState by viewModel.screenState.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -52,36 +48,29 @@ fun RoutineScreen(routineId: Long, navigator: RoutineNavigator, modifier: Modifi
 
     RoutineScreen(
         modifier = modifier,
-        state = state,
-        navigator = navigator,
-        onIntent = viewModel::handleIntent,
+        loadableState = loadableState,
+        onAction = viewModel::handleAction,
         snackbarHostState = snackbarHostState,
     )
 
-    viewModel.events.collectInComposable { event ->
-        when (event) {
-            Event.RoutineNotFound -> navigator.back()
-            is Event.EditRoutine -> navigator.editRoutine()
-        }
+    loadableState.valueOrNull()?.also { state ->
+        DeleteRoutineDialog(
+            isVisible = state.showDeleteDialog,
+            routineName = state.name,
+            onDismissRequest = { viewModel.handleAction(Action.HideDeleteDialog) },
+            onConfirm = { viewModel.handleAction(Action.Delete) },
+        )
     }
-
-    DeleteRoutineDialog(
-        isVisible = state.showDeleteDialog,
-        routineName = state.name,
-        onDismissRequest = { viewModel.handleIntent(Intent.HideDeleteDialog) },
-        onConfirm = { viewModel.handleIntent(Intent.Delete) },
-    )
 }
 
 @Composable
 private fun RoutineScreen(
     modifier: Modifier = Modifier,
-    state: ScreenState,
-    navigator: RoutineNavigator,
-    onIntent: (Intent) -> Unit,
+    loadableState: Loadable<ScreenState>,
+    onAction: (Action) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
-    val tabs = remember(navigator) { tabs(navigator) }
+    val tabs = tabs
     val pagerState = rememberPagerState { tabs.size }
     val scope = rememberCoroutineScope()
 
@@ -89,8 +78,8 @@ private fun RoutineScreen(
         modifier = modifier,
         topBar = {
             TopAppBarWithTabs(
-                title = state.name,
-                onBackClick = navigator::back,
+                title = loadableState.valueOrNull()?.name.orEmpty(),
+                onBackClick = { onAction(Action.PopBackStack) },
                 selectedTabIndex = pagerState.currentPage,
                 onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
                 tabs = tabs.tabItems,
@@ -98,14 +87,14 @@ private fun RoutineScreen(
         },
         bottomBar = {
             BottomAppBar {
-                IconButton(onClick = { onIntent(Intent.ShowDeleteDialog) }) {
+                IconButton(onClick = { onAction(Action.ShowDeleteDialog) }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_delete),
                         contentDescription = stringResource(id = R.string.action_delete),
                     )
                 }
 
-                IconButton(onClick = { onIntent(Intent.Edit) }) {
+                IconButton(onClick = { onAction(Action.Edit) }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_edit),
                         contentDescription = stringResource(id = R.string.action_edit),
@@ -117,7 +106,7 @@ private fun RoutineScreen(
                 ExtendedFloatingActionButton(
                     text = stringResource(R.string.action_work_out),
                     icon = painterResource(R.drawable.ic_workout),
-                    onClick = { navigator.newWorkout() },
+                    onClick = { onAction(Action.StartWorkout) },
                     elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
                 )
             }

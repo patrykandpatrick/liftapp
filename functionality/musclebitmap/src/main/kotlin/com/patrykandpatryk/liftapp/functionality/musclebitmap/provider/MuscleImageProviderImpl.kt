@@ -39,41 +39,41 @@ constructor(
         secondaryMuscles: List<Muscle>,
         tertiaryMuscles: List<Muscle>,
         isDark: Boolean,
-    ): String {
-        val targetDir = File(filesDir, TARGET_SUBDIRECTORY)
+    ): String =
+        withContext(ioDispatcher) {
+            val targetDir = File(filesDir, TARGET_SUBDIRECTORY)
 
-        if (targetDir.exists().not()) {
-            Timber.d("Created targetDir")
-            targetDir.mkdirs()
-        }
+            if (targetDir.exists().not()) {
+                Timber.d("Created targetDir")
+                targetDir.mkdirs()
+            }
 
-        val imageName =
-            nameInfoEncoder.encodeToName(
-                primaryMuscles = primaryMuscles,
-                secondaryMuscles = secondaryMuscles,
-                tertiaryMuscles = tertiaryMuscles,
-                isDark = isDark,
-            )
+            val imageName =
+                nameInfoEncoder.encodeToName(
+                    primaryMuscles = primaryMuscles,
+                    secondaryMuscles = secondaryMuscles,
+                    tertiaryMuscles = tertiaryMuscles,
+                    isDark = isDark,
+                )
 
-        val targetFile = File(targetDir, imageName)
+            val targetFile = File(targetDir, imageName)
 
-        Timber.d("targetFile=${targetFile.path}")
+            Timber.d("targetFile=${targetFile.path}")
 
-        if (targetFile.exists().not()) {
-            val bitmap =
-                withContext(defaultDispatcher) {
-                    Timber.d("Generating bitmap")
-                    muscleImageGeneratorImpl
-                        .generateBitmap(
-                            config = configProvider.get(),
-                            primaryMuscles = primaryMuscles,
-                            secondaryMuscles = secondaryMuscles,
-                            tertiaryMuscles = tertiaryMuscles,
-                        )
-                        .also { Timber.d("Bitmap generated") }
-                }
+            if (targetFile.exists().not()) {
+                val bitmap =
+                    withContext(defaultDispatcher) {
+                        Timber.d("Generating bitmap")
+                        muscleImageGeneratorImpl
+                            .generateBitmap(
+                                config = configProvider.get(),
+                                primaryMuscles = primaryMuscles,
+                                secondaryMuscles = secondaryMuscles,
+                                tertiaryMuscles = tertiaryMuscles,
+                            )
+                            .also { Timber.d("Bitmap generated") }
+                    }
 
-            withContext(ioDispatcher) {
                 val outputStream = targetFile.outputStream()
                 Timber.d("Writing bitmap to file")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -84,8 +84,7 @@ constructor(
                 Timber.d("Bitmap saved")
                 outputStream.close()
             }
-        }
 
-        return targetFile.path
-    }
+            targetFile.path
+        }
 }

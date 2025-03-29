@@ -14,7 +14,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +27,13 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.gestures.onItemYRange
 import com.patrykandpatryk.liftapp.core.gestures.rememberItemRanges
 import com.patrykandpatryk.liftapp.core.gestures.reorderable
+import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.getPrettyStringLong
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
@@ -40,30 +41,25 @@ import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeContainer
 import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeableDeleteBackground
 import com.patrykandpatryk.liftapp.domain.extension.addOrSet
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
-import com.patrykandpatryk.liftapp.feature.routine.model.Intent
+import com.patrykandpatryk.liftapp.feature.routine.model.Action
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
-import com.patrykandpatryk.liftapp.feature.routine.navigator.RoutineNavigator
 import kotlin.math.roundToInt
 
 @Composable
-internal fun Exercises(navigator: RoutineNavigator, modifier: Modifier = Modifier) {
+internal fun Exercises(modifier: Modifier = Modifier) {
     val viewModel: RoutineViewModel = hiltViewModel()
 
-    val state by viewModel.state.collectAsState()
+    val loadableState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    Exercises(
-        state = state,
-        navigator = navigator,
-        onIntent = viewModel::handleIntent,
-        modifier = modifier,
-    )
+    loadableState.Unfold { state ->
+        Exercises(state = state, onAction = viewModel::handleAction, modifier = modifier)
+    }
 }
 
 @Composable
 private fun Exercises(
     state: ScreenState,
-    navigator: RoutineNavigator,
-    onIntent: (Intent) -> Unit,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val itemRanges = rememberItemRanges()
@@ -76,9 +72,10 @@ private fun Exercises(
                 index = index,
                 itemRanges = itemRanges,
                 exercise = exercise,
-                onIntent = onIntent,
-                onItemClick = navigator::exercise,
-                onGoalClick = navigator::exerciseGoal,
+                exercises = state.exercises,
+                onIntent = onAction,
+                onItemClick = { onAction(Action.NavigateToExercise(it)) },
+                onGoalClick = { onAction(Action.NavigateToExerciseGoal(it)) },
             )
         }
     }
@@ -89,7 +86,8 @@ fun LazyItemScope.ListItem(
     index: Int,
     itemRanges: ArrayList<IntRange>,
     exercise: RoutineExerciseItem,
-    onIntent: (Intent) -> Unit,
+    exercises: List<RoutineExerciseItem>,
+    onIntent: (Action) -> Unit,
     onItemClick: (exerciseID: Long) -> Unit,
     onGoalClick: (exerciseID: Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -146,7 +144,13 @@ fun LazyItemScope.ListItem(
                                         lastDragDelta.floatValue = delta
                                     },
                                     onItemReordered = { from, to ->
-                                        onIntent(Intent.Reorder(from = from, to = to))
+                                        onIntent(
+                                            Action.Reorder(
+                                                exercises = exercises,
+                                                from = from,
+                                                to = to,
+                                            )
+                                        )
                                     },
                                 ),
                         painter = painterResource(id = R.drawable.ic_drag_handle),
@@ -157,7 +161,7 @@ fun LazyItemScope.ListItem(
                 onItemClick(exercise.id)
             }
         },
-        onDismiss = { onIntent(Intent.DeleteExercise(exercise.id)) },
+        onDismiss = { onIntent(Action.DeleteExercise(exercise.id)) },
         modifier =
             Modifier.thenIf(isDragging.not()) { animateItem() }
                 .offset { IntOffset(x = 0, y = yOffset.roundToInt()) }

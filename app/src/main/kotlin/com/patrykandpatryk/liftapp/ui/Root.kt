@@ -35,7 +35,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
-import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
@@ -47,6 +46,7 @@ import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.newplan.ui.NewPlanScreen
@@ -70,9 +70,7 @@ import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
 import com.patrykandpatryk.liftapp.feature.settings.ui.SettingsScreen
-import com.patrykandpatryk.liftapp.navigation.MainNavigator
 import com.patrykandpatryk.liftapp.navigation.navigationBarItems
-import com.patrykandpatryk.liftapp.navigation.rememberMainNavigator
 import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -89,7 +87,6 @@ fun Root(
 
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
-    val mainNavigator = rememberMainNavigator(navController)
     val (isLastNavigationForward, setIsLastNavigationForward) = remember { mutableStateOf(true) }
     navigationCommander.HandleCommands(navController, setIsLastNavigationForward)
     val entry = navController.currentBackStackEntryAsState().value
@@ -137,7 +134,7 @@ fun Root(
                     addNewPlan()
                     addNewRoutine()
                     addOneRepMax()
-                    addRoutine(mainNavigator)
+                    addRoutine()
                     addRoutineList()
                     addRoutineExerciseGoal()
                     addSettings()
@@ -198,11 +195,8 @@ fun NavGraphBuilder.addNestedHomeGraph(modifier: Modifier = Modifier) {
     }
 }
 
-fun NavGraphBuilder.addRoutine(mainNavigator: MainNavigator) {
-    composable<Routes.Routine.Details> {
-        val args = it.toRoute<Routes.Routine.Details>()
-        RoutineScreen(args.routineID, mainNavigator.getRoutineNavigator(args.routineID))
-    }
+fun NavGraphBuilder.addRoutine() {
+    composable<RoutineDetailsRouteData> { RoutineScreen() }
 }
 
 fun NavGraphBuilder.addRoutineList() {
