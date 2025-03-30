@@ -87,7 +87,7 @@ constructor(
     }
 
     private fun updateMainMuscles(muscle: Muscle) {
-        val updatedMuscle = state.mainMuscles.value.toggle(muscle)
+        val updatedMuscle = state.primaryMuscles.value.toggle(muscle)
         val mainMusclesValidatable =
             if (updatedMuscle.isEmpty()) {
                 updatedMuscle.toInvalid()

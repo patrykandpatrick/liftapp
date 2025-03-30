@@ -6,17 +6,12 @@ import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatryk.liftapp.core.logging.LogPublisher
 import com.patrykandpatryk.liftapp.core.logging.UiLogger
-import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
-import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
 import com.patrykandpatryk.liftapp.domain.model.Loadable
-import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.domain.muscle.MuscleImageProvider
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.routine.DeleteExerciseFromRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
-import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import com.patrykandpatryk.liftapp.feature.routine.model.Action
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.routine.usecase.ReorderExercisesUseCase
@@ -25,7 +20,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -34,88 +28,31 @@ class RoutineViewModel
 constructor(
     private val routeData: RoutineDetailsRouteData,
     private val logger: UiLogger,
-    isDarkModeReceiver: IsDarkModeReceiver,
     getRoutine: GetRoutineWithExercisesUseCase,
     private val deleteRoutine: DeleteRoutineUseCase,
     private val deleteExerciseFromRoutine: DeleteExerciseFromRoutineUseCase,
-    private val muscleImageProvider: MuscleImageProvider,
     private val reorderExercisesUseCase: ReorderExercisesUseCase,
     private val navigationCommander: NavigationCommander,
 ) : ViewModel(), LogPublisher by logger {
 
     private val showDeleteDialog = MutableStateFlow(false)
 
-    private val imagePath = MutableStateFlow<String?>(null)
-
     val screenState: StateFlow<Loadable<ScreenState>> =
-        combine(
-                getRoutine(routeData.routineID),
-                imagePath,
-                isDarkModeReceiver(),
-                showDeleteDialog,
-            ) { routine, imagePath, isDarkMode, showDeleteDialog ->
+        combine(getRoutine(routeData.routineID), showDeleteDialog) { routine, showDeleteDialog ->
                 if (routine == null) {
                     error("Routine with id ${routeData.routineID} not found, or deleted.")
                 } else {
-                    loadBitmap(
-                        primaryMuscles = routine.primaryMuscles,
-                        secondaryMuscles = routine.secondaryMuscles,
-                        tertiaryMuscles = routine.tertiaryMuscles,
-                        isDarkMode = isDarkMode,
-                    )
                     ScreenState(
                         name = routine.name,
                         showDeleteDialog = showDeleteDialog,
-                        imagePath = imagePath,
                         exercises = routine.exercises,
-                        muscles =
-                            MuscleModel.create(
-                                primaryMuscles = routine.primaryMuscles,
-                                secondaryMuscles = routine.secondaryMuscles,
-                                tertiaryMuscles = routine.tertiaryMuscles,
-                            ),
+                        primaryMuscles = routine.primaryMuscles,
+                        secondaryMuscles = routine.secondaryMuscles,
+                        tertiaryMuscles = routine.tertiaryMuscles,
                     )
                 }
             }
             .toLoadableStateFlow(viewModelScope)
-
-    init {
-        combine(getRoutine(routeData.routineID), isDarkModeReceiver()) { routine, isDarkMode ->
-                if (routine == null) {
-                    error("Routine with id ${routeData.routineID} not found, or deleted.")
-                } else {
-                    updateState(routine = routine, isDarkMode = isDarkMode)
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun updateState(routine: RoutineWithExercises, isDarkMode: Boolean) {
-
-        loadBitmap(
-            primaryMuscles = routine.primaryMuscles,
-            secondaryMuscles = routine.secondaryMuscles,
-            tertiaryMuscles = routine.tertiaryMuscles,
-            isDarkMode = isDarkMode,
-        )
-    }
-
-    private fun loadBitmap(
-        primaryMuscles: List<Muscle>,
-        secondaryMuscles: List<Muscle>,
-        tertiaryMuscles: List<Muscle>,
-        isDarkMode: Boolean,
-    ) {
-        viewModelScope.launch {
-            imagePath.value =
-                muscleImageProvider.getMuscleImagePath(
-                    primaryMuscles = primaryMuscles,
-                    secondaryMuscles = secondaryMuscles,
-                    tertiaryMuscles = tertiaryMuscles,
-                    isDark = isDarkMode,
-                )
-        }
-    }
 
     fun handleAction(action: Action) {
         when (action) {

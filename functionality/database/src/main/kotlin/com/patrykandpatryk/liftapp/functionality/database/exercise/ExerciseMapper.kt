@@ -16,7 +16,7 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
             displayName = stringProvider.getResolvedName(exercise.name),
             name = exercise.name,
             exerciseType = exercise.exerciseType,
-            mainMuscles = exercise.mainMuscles,
+            primaryMuscles = exercise.mainMuscles,
             secondaryMuscles = exercise.secondaryMuscles,
             tertiaryMuscles = exercise.tertiaryMuscles,
         )

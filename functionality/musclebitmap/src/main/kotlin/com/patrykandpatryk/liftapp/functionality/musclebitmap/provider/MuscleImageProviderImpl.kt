@@ -49,7 +49,7 @@ constructor(
             }
 
             val imageName =
-                nameInfoEncoder.encodeToName(
+                getMuscleImageName(
                     primaryMuscles = primaryMuscles,
                     secondaryMuscles = secondaryMuscles,
                     tertiaryMuscles = tertiaryMuscles,
@@ -87,4 +87,17 @@ constructor(
 
             targetFile.path
         }
+
+    override fun getMuscleImageName(
+        primaryMuscles: List<Muscle>,
+        secondaryMuscles: List<Muscle>,
+        tertiaryMuscles: List<Muscle>,
+        isDark: Boolean,
+    ): String =
+        nameInfoEncoder.encodeToName(
+            primaryMuscles = primaryMuscles,
+            secondaryMuscles = secondaryMuscles,
+            tertiaryMuscles = tertiaryMuscles,
+            isDark = isDark,
+        )
 }

@@ -49,4 +49,5 @@ dependencies {
     testImplementation libs.bundles.testing
 
     ksp libs.hilt.compiler
+    ksp libs.glide.ksp
 }

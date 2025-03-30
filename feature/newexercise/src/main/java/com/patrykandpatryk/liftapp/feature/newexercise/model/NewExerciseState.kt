@@ -17,7 +17,7 @@ sealed class NewExerciseState {
     abstract val name: Validatable<Name>
     abstract val displayName: String
     abstract val type: ExerciseType
-    abstract val mainMuscles: Validatable<List<Muscle>>
+    abstract val primaryMuscles: Validatable<List<Muscle>>
     abstract val secondaryMuscles: List<Muscle>
     abstract val tertiaryMuscles: List<Muscle>
 
@@ -25,21 +25,21 @@ sealed class NewExerciseState {
 
     val disabledMainMuscles by lazy { secondaryMuscles + tertiaryMuscles }
 
-    val disabledSecondaryMuscles by lazy { mainMuscles.value + tertiaryMuscles }
+    val disabledSecondaryMuscles by lazy { primaryMuscles.value + tertiaryMuscles }
 
-    val disabledTertiaryMuscles by lazy { mainMuscles.value + secondaryMuscles }
+    val disabledTertiaryMuscles by lazy { primaryMuscles.value + secondaryMuscles }
 
     val showNameError: Boolean
         get() = showErrors && name.isInvalid
 
     val showMainMusclesError: Boolean
-        get() = showErrors && mainMuscles.isInvalid
+        get() = showErrors && primaryMuscles.isInvalid
 
     fun copyState(
         name: Validatable<Name> = this.name,
         displayName: String = this.displayName,
         type: ExerciseType = this.type,
-        mainMuscles: Validatable<List<Muscle>> = this.mainMuscles,
+        mainMuscles: Validatable<List<Muscle>> = this.primaryMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,
     ): NewExerciseState =
@@ -49,7 +49,7 @@ sealed class NewExerciseState {
                     name = name,
                     displayName = displayName,
                     type = type,
-                    mainMuscles = mainMuscles,
+                    primaryMuscles = mainMuscles,
                     secondaryMuscles = secondaryMuscles,
                     tertiaryMuscles = tertiaryMuscles,
                     id = id,
@@ -59,7 +59,7 @@ sealed class NewExerciseState {
                     name = name,
                     displayName = displayName,
                     type = type,
-                    mainMuscles = mainMuscles,
+                    primaryMuscles = mainMuscles,
                     secondaryMuscles = secondaryMuscles,
                     tertiaryMuscles = tertiaryMuscles,
                     showErrors = showErrors && (name.isValid.not() || mainMuscles.isValid.not()),
@@ -73,7 +73,7 @@ sealed class NewExerciseState {
         override val name: Validatable.Valid<Name>,
         override val displayName: String,
         override val type: ExerciseType,
-        override val mainMuscles: Validatable.Valid<List<Muscle>>,
+        override val primaryMuscles: Validatable.Valid<List<Muscle>>,
         override val secondaryMuscles: List<Muscle>,
         override val tertiaryMuscles: List<Muscle>,
         override val id: Long = ID_NOT_SET,
@@ -92,7 +92,7 @@ sealed class NewExerciseState {
         override val name: Validatable<Name> = Name.Empty.toInvalid(),
         override val displayName: String = Name.Empty.value,
         override val type: ExerciseType = ExerciseType.Cardio,
-        override val mainMuscles: Validatable<List<Muscle>> = emptyList<Muscle>().toInvalid(),
+        override val primaryMuscles: Validatable<List<Muscle>> = emptyList<Muscle>().toInvalid(),
         override val secondaryMuscles: List<Muscle> = emptyList(),
         override val tertiaryMuscles: List<Muscle> = emptyList(),
         override val showErrors: Boolean = false,

@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,28 +21,28 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.image.MuscleImage
 import com.patrykandpatryk.liftapp.domain.model.Loadable
-import com.patrykandpatryk.liftapp.feature.exercise.model.State
+import com.patrykandpatryk.liftapp.feature.exercise.model.ScreenState
 
 @Composable
 internal fun Details(modifier: Modifier = Modifier) {
     val viewModel: ExerciseDetailsViewModel = hiltViewModel()
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.screenState.collectAsState()
 
-    Details(modifier = modifier, loadableState = state)
+    Details(modifier = modifier, loadableScreenState = state)
 }
 
 @Composable
-private fun Details(modifier: Modifier = Modifier, loadableState: Loadable<State>) {
+private fun Details(modifier: Modifier = Modifier, loadableScreenState: Loadable<ScreenState>) {
     val dimens = LocalDimens.current
     val muscleDimens = dimens.muscle
 
-    loadableState.Unfold { state ->
+    loadableScreenState.Unfold { state ->
         LazyVerticalGrid(
             modifier = modifier.fillMaxSize(),
             columns = GridCells.Adaptive(minSize = muscleDimens.gridCellMinSize),
@@ -55,14 +53,10 @@ private fun Details(modifier: Modifier = Modifier, loadableState: Loadable<State
                 ),
             horizontalArrangement = Arrangement.spacedBy(muscleDimens.listItemHorizontalMargin),
         ) {
-            item(key = state.imagePath, span = { GridItemSpan(maxLineSpan) }) {
-                AsyncImage(
-                    modifier =
-                        Modifier.aspectRatio(ratio = 1f)
-                            .fillMaxWidth()
-                            .padding(vertical = dimens.padding.contentVertical),
-                    model = state.imagePath,
-                    contentDescription = null,
+            item(key = "image", span = { GridItemSpan(maxLineSpan) }) {
+                MuscleImage(
+                    model = state,
+                    modifier = Modifier.padding(vertical = dimens.padding.contentVertical),
                 )
             }
 

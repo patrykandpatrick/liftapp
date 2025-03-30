@@ -64,11 +64,13 @@ constructor(
             GroupBy.Name -> groupBy { exercise -> exercise.displayName[0].toString() }
             GroupBy.ExerciseType -> groupBy { exercise -> exercise.exerciseType.name }
             GroupBy.MainMuscles -> {
-                flatMap { exercise -> exercise.mainMuscles }
+                flatMap { exercise -> exercise.primaryMuscles }
                     .toSet()
                     .associate { muscle ->
                         stringProvider.getMuscleName(muscle) to
-                            filter { exercise -> exercise.mainMuscles.contains(element = muscle) }
+                            filter { exercise ->
+                                exercise.primaryMuscles.contains(element = muscle)
+                            }
                     }
             }
         }
@@ -83,7 +85,7 @@ constructor(
             name = stringProvider.getResolvedName(exercise.name),
             key = key,
             muscles =
-                exercise.mainMuscles.joinToPrettyString(andText = stringProvider.andInAList) {
+                exercise.primaryMuscles.joinToPrettyString(andText = stringProvider.andInAList) {
                     muscle ->
                     stringProvider.getMuscleName(muscle)
                 },

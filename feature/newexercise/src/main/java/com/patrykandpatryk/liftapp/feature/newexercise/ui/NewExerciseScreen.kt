@@ -165,7 +165,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     DropdownMenu(
         expanded = mainMusclesExpanded,
         onExpandedChange = setMainMusclesExpanded,
-        selectedItems = state.mainMuscles.value,
+        selectedItems = state.primaryMuscles.value,
         items = remember { Muscle.entries },
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },

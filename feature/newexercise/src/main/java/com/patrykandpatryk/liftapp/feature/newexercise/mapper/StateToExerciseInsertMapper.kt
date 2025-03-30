@@ -12,7 +12,7 @@ class StateToExerciseInsertMapper @Inject constructor() :
         Exercise.Insert(
             name = input.name.value,
             exerciseType = input.type,
-            mainMuscles = input.mainMuscles.value,
+            mainMuscles = input.primaryMuscles.value,
             secondaryMuscles = input.secondaryMuscles,
             tertiaryMuscles = input.tertiaryMuscles,
         )

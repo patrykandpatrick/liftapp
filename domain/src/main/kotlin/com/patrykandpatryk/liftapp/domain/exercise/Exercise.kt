@@ -2,21 +2,22 @@ package com.patrykandpatryk.liftapp.domain.exercise
 
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
+import com.patrykandpatryk.liftapp.domain.muscle.MuscleContainer
 
 data class Exercise(
     val id: Long,
     val displayName: String,
     val name: Name,
     val exerciseType: ExerciseType,
-    val mainMuscles: List<Muscle>,
-    val secondaryMuscles: List<Muscle>,
-    val tertiaryMuscles: List<Muscle>,
-) {
+    override val primaryMuscles: List<Muscle>,
+    override val secondaryMuscles: List<Muscle>,
+    override val tertiaryMuscles: List<Muscle>,
+) : MuscleContainer {
 
     fun update(
         id: Long = this.id,
         name: Name = this.name,
-        mainMuscles: List<Muscle> = this.mainMuscles,
+        mainMuscles: List<Muscle> = this.primaryMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,
     ): Update =

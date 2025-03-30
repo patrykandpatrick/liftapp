@@ -34,7 +34,7 @@ import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.model.toLoadable
 import com.patrykandpatryk.liftapp.feature.exercise.model.Action
-import com.patrykandpatryk.liftapp.feature.exercise.model.State
+import com.patrykandpatryk.liftapp.feature.exercise.model.ScreenState
 import com.patrykandpatryk.liftapp.feature.exercise.model.tabs
 import kotlinx.coroutines.launch
 
@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 fun ExerciseDetailsScreen(modifier: Modifier = Modifier) {
     val viewModel: ExerciseDetailsViewModel = hiltViewModel()
 
-    val loadableState by viewModel.state.collectAsState()
+    val loadableState by viewModel.screenState.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -50,7 +50,7 @@ fun ExerciseDetailsScreen(modifier: Modifier = Modifier) {
 
     ExerciseDetailsScreen(
         modifier = modifier,
-        state = loadableState,
+        screenState = loadableState,
         onAction = viewModel::handleIntent,
         snackbarHostState = snackbarHostState,
     )
@@ -67,7 +67,7 @@ fun ExerciseDetailsScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ExerciseDetailsScreen(
-    state: Loadable<State>,
+    screenState: Loadable<ScreenState>,
     onAction: (Action) -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
@@ -80,7 +80,7 @@ private fun ExerciseDetailsScreen(
         modifier = modifier.imePadding(),
         topBar = {
             TopAppBarWithTabs(
-                title = state.valueOrNull()?.name.orEmpty(),
+                title = screenState.valueOrNull()?.name.orEmpty(),
                 onBackClick = { onAction(Action.PopBackStack) },
                 selectedTabIndex = pagerState.currentPage,
                 onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
@@ -149,12 +149,13 @@ private fun DeleteExerciseDialog(
 fun PreviewExerciseDetails() {
     LiftAppTheme {
         ExerciseDetailsScreen(
-            state =
-                State(
+            screenState =
+                ScreenState(
                         name = "Bicep Curl",
                         showDeleteDialog = false,
-                        imagePath = null,
-                        muscles = emptyList(),
+                        primaryMuscles = emptyList(),
+                        secondaryMuscles = emptyList(),
+                        tertiaryMuscles = emptyList(),
                     )
                     .toLoadable(),
             onAction = {},
