@@ -1,22 +1,17 @@
 package com.patrykandpatryk.liftapp.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEach
@@ -29,7 +24,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
@@ -70,7 +64,10 @@ import com.patrykandpatryk.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatryk.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatryk.liftapp.feature.routines.ui.RoutineListScreen
 import com.patrykandpatryk.liftapp.feature.settings.ui.SettingsScreen
+import com.patrykandpatryk.liftapp.navigation.BottomAppBarNavigationHost
+import com.patrykandpatryk.liftapp.navigation.bottomAppBarComposable
 import com.patrykandpatryk.liftapp.navigation.navigationBarItems
+import com.patrykandpatryk.liftapp.navigation.rememberBottomAppBarNavigator
 import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -86,12 +83,9 @@ fun Root(
     CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
 
     val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberNavController(bottomSheetNavigator)
-    val (isLastNavigationForward, setIsLastNavigationForward) = remember { mutableStateOf(true) }
-    navigationCommander.HandleCommands(navController, setIsLastNavigationForward)
-    val entry = navController.currentBackStackEntryAsState().value
-    val isBottomDestination =
-        entry?.destination?.route?.contains(Routes.Home::class.qualifiedName.orEmpty()) ?: true
+    val bottomAppBarNavigator = rememberBottomAppBarNavigator()
+    val navController = rememberNavController(bottomSheetNavigator, bottomAppBarNavigator)
+    navigationCommander.HandleCommands(navController)
 
     LiftAppTheme(darkTheme = darkTheme) {
         ModalBottomSheetLayout(
@@ -99,62 +93,55 @@ fun Root(
             sheetShape = BottomSheetShape,
             sheetBackgroundColor = MaterialTheme.colorScheme.surface,
         ) {
-            Scaffold(
-                bottomBar = {
-                    AnimatedVisibility(
-                        visible = isBottomDestination,
-                        enter = sharedXAxisEnterTransition(forward = isLastNavigationForward),
-                        exit = sharedXAxisExitTransition(forward = isLastNavigationForward),
+            BottomAppBarNavigationHost(
+                navController = navController,
+                navigator = bottomAppBarNavigator,
+                navigationBar = {
+                    BottomNavigationBar(
+                        navController = navController,
+                        navigator = bottomAppBarNavigator,
+                        navItemRoutes = navigationBarItems,
+                    )
+                },
+                content = {
+                    NavHost(
+                        navController = navController,
+                        startDestination = Routes.Home,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                        enterTransition = { sharedXAxisEnterTransition() },
+                        exitTransition = { sharedXAxisExitTransition() },
+                        popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
+                        popExitTransition = { sharedXAxisExitTransition(forward = false) },
                     ) {
-                        BottomNavigationBar(
-                            navController = navController,
-                            navItemRoutes = navigationBarItems,
-                        )
+                        addAbout()
+                        addBodyMeasurementDetailDestination()
+                        addExercises()
+                        addExerciseDetails()
+                        addNestedHomeGraph()
+                        addNewBodyMeasurementDestination()
+                        addNewExercise()
+                        addNewPlan()
+                        addNewRoutine()
+                        addOneRepMax()
+                        addRoutine()
+                        addRoutineList()
+                        addRoutineExerciseGoal()
+                        addSettings()
+                        addWorkout()
                     }
                 },
-                snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-                contentWindowInsets = WindowInsets(0),
-            ) { paddingValues ->
-                NavHost(
-                    navController = navController,
-                    startDestination = Routes.Home,
-                    modifier = modifier.background(MaterialTheme.colorScheme.background),
-                    enterTransition = { sharedXAxisEnterTransition() },
-                    exitTransition = { sharedXAxisExitTransition() },
-                    popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
-                    popExitTransition = { sharedXAxisExitTransition(forward = false) },
-                ) {
-                    addAbout()
-                    addBodyMeasurementDetailDestination()
-                    addExercises()
-                    addExerciseDetails()
-                    addNestedHomeGraph(Modifier.padding(paddingValues))
-                    addNewBodyMeasurementDestination()
-                    addNewExercise()
-                    addNewPlan()
-                    addNewRoutine()
-                    addOneRepMax()
-                    addRoutine()
-                    addRoutineList()
-                    addRoutineExerciseGoal()
-                    addSettings()
-                    addWorkout()
-                }
-            }
+                modifier = modifier.background(MaterialTheme.colorScheme.background),
+            )
         }
     }
 }
 
 @Composable
-private fun NavigationCommander.HandleCommands(
-    navController: NavController,
-    setIsLastNavigationForward: (Boolean) -> Unit,
-) {
+private fun NavigationCommander.HandleCommands(navController: NavController) {
     LaunchedEffect(this) {
         navigationCommand.collect { command ->
             when (command) {
                 is NavigationCommand.Route -> {
-                    setIsLastNavigationForward(true)
                     navController.navigate(
                         route = command.route,
                         navOptions =
@@ -167,7 +154,6 @@ private fun NavigationCommander.HandleCommands(
                     )
                 }
                 is NavigationCommand.PopBackStack -> {
-                    setIsLastNavigationForward(false)
                     val route = command.route
                     if (route != null) {
                         navController.popBackStack(route, command.inclusive, command.saveState)
@@ -190,7 +176,11 @@ fun NavGraphBuilder.addNestedHomeGraph(modifier: Modifier = Modifier) {
         popExitTransition = { sharedXAxisExitTransition(forward = false) },
     ) {
         navigationBarItems.forEach { item ->
-            composable(item.route::class, item.typeMap) { item.content(modifier) }
+            bottomAppBarComposable(item.route::class, item.typeMap) {
+                navBackStackEntry,
+                paddingValues ->
+                item.content(modifier.padding(paddingValues))
+            }
         }
     }
 }

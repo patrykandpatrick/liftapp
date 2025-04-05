@@ -13,35 +13,40 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.navigation.NavItemRoute
+import com.patrykandpatryk.liftapp.navigation.BottomAppBarNavigator
 
 @Composable
 internal fun BottomNavigationBar(
     navController: NavController,
+    navigator: BottomAppBarNavigator,
     navItemRoutes: Collection<NavItemRoute<Any>>,
     modifier: Modifier = Modifier,
 ) {
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentBackStackEntry by navigator.currentDestination.collectAsStateWithLifecycle(null)
     val currentDestination by remember { derivedStateOf { currentBackStackEntry?.destination } }
 
-    Column {
+    Column(modifier.shadow(8.dp)) {
         HorizontalDivider()
 
-        NavigationBar(containerColor = MaterialTheme.colorScheme.surface, modifier = modifier) {
+        NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
             navItemRoutes.forEach { menuRoute ->
                 val selected by derivedStateOf { menuRoute.isSelected(currentDestination) }
                 NavigationBarItem(
                     selected = selected,
                     onClick = {
+                        if (selected) return@NavigationBarItem
                         navController.navigate(
                             menuRoute.route,
                             navOptions { popUpTo<Routes.Home>() },
@@ -75,4 +80,4 @@ internal fun BottomNavigationBar(
 private fun NavItemRoute<*>.isSelected(currentDestination: NavDestination?): Boolean =
     currentDestination?.hierarchy?.any {
         it.route?.contains(checkNotNull(route::class.qualifiedName)) == true
-    } ?: false
+    } == true
