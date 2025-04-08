@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.functionality.database.plan
 
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exception.PlanNotFoundException
+import com.patrykandpatryk.liftapp.domain.plan.GetAllPlansContract
 import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
 import com.patrykandpatryk.liftapp.domain.plan.Plan
 import com.patrykandpatryk.liftapp.domain.plan.UpsertPlanContract
@@ -18,7 +19,10 @@ constructor(
     private val dao: PlanDao,
     private val mapper: PlanMapper,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
-) : GetPlanContract, UpsertPlanContract {
+) : GetAllPlansContract, GetPlanContract, UpsertPlanContract {
+    override fun getPlans(): Flow<List<Plan>> =
+        dao.getAllPlans().map { plans -> mapper.toDomain(plans) }.flowOn(dispatcher)
+
     override fun getPlan(id: Long): Flow<Plan> =
         dao.getPlan(id)
             .map { plans ->

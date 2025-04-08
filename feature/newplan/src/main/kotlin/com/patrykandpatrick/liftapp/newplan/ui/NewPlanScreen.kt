@@ -14,9 +14,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +37,8 @@ import com.patrykandpatrick.liftapp.newplan.model.Action
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -74,15 +73,10 @@ private fun NewPlanScreen(
         Scaffold(
             modifier = modifier.fillMaxSize(),
             topBar = {
-                CenterAlignedTopAppBar(
+                CompactTopAppBar(
                     title = { Title(state.isEdit) },
                     navigationIcon = {
-                        IconButton(onClick = { onAction(Action.PopBackStack) }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = stringResource(id = R.string.action_close),
-                            )
-                        }
+                        CompactTopAppBarDefaults.BackIcon { onAction(Action.PopBackStack) }
                     },
                 )
             },

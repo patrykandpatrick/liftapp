@@ -5,13 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.plan.model.GetPlanStateUseCase
+import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
+import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -21,10 +26,15 @@ constructor(
     getPlanStateUseCase: GetPlanStateUseCase,
     scope: CoroutineScope,
     private val navigationCommander: NavigationCommander,
+    @PreferenceQualifier.ActivePlan private val activePlan: Preference<ActivePlan?>,
 ) : ViewModel(scope) {
 
     val state: StateFlow<Loadable<PlanState>> =
         getPlanStateUseCase().toLoadableStateFlow(viewModelScope)
+
+    init {
+        observeTrainingPlanSelection()
+    }
 
     fun onAction(action: Action) {
         when (action) {
@@ -34,10 +44,25 @@ constructor(
     }
 
     private fun chooseExistingPlan() {
-        viewModelScope.launch { TODO() }
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Plan.select(TRAINING_PLAN_KEY))
+        }
     }
 
     private fun createNewPlan() {
         viewModelScope.launch { navigationCommander.navigateTo(Routes.Plan.new()) }
+    }
+
+    private fun observeTrainingPlanSelection() {
+        navigationCommander
+            .getResults<Long>(TRAINING_PLAN_KEY)
+            .onEach { id ->
+                // TODO navigate to plan start screen
+            }
+            .launchIn(viewModelScope)
+    }
+
+    companion object {
+        private const val TRAINING_PLAN_KEY = "key_training_plan"
     }
 }

@@ -40,10 +40,12 @@ import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.newplan.ui.NewPlanScreen
+import com.patrykandpatrick.liftapp.planlist.ui.PlanListScreen
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.ui.animation.EXIT_ANIM_DURATION
@@ -121,6 +123,7 @@ fun Root(
                         addNewBodyMeasurementDestination()
                         addNewExercise()
                         addNewPlan()
+                        addPlanList()
                         addNewRoutine()
                         addOneRepMax()
                         addRoutine()
@@ -199,6 +202,10 @@ fun NavGraphBuilder.addRoutineExerciseGoal() {
 
 fun NavGraphBuilder.addNewPlan() {
     composable<NewPlanRouteData> { NewPlanScreen() }
+}
+
+fun NavGraphBuilder.addPlanList() {
+    composable<PlanListRouteData> { PlanListScreen() }
 }
 
 fun NavGraphBuilder.addNewRoutine() {

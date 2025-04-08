@@ -33,8 +33,9 @@ object BottomAppBar {
         onClick: () -> Unit,
         modifier: Modifier = Modifier,
         @DrawableRes iconRes: Int? = null,
+        enabled: Boolean = true,
     ) {
-        Button(modifier = modifier.fillMaxWidth(), onClick = onClick) {
+        Button(modifier = modifier.fillMaxWidth(), onClick = onClick, enabled = enabled) {
             if (iconRes != null) {
                 Icon(painterResource(id = iconRes), null)
                 Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
@@ -44,12 +45,13 @@ object BottomAppBar {
     }
 
     @Composable
-    fun Save(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    fun Save(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
         BottomAppBar(modifier) {
             Button(
                 text = stringResource(id = R.string.action_save),
                 iconRes = R.drawable.ic_save,
                 onClick = onClick,
+                enabled = enabled,
             )
         }
     }

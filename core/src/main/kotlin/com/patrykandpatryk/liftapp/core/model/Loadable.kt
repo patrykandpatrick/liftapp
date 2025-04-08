@@ -1,6 +1,9 @@
 package com.patrykandpatryk.liftapp.core.model
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.patrykandpatryk.liftapp.core.exception.getUIMessage
 import com.patrykandpatryk.liftapp.core.ui.Error
 import com.patrykandpatryk.liftapp.domain.model.Loadable
@@ -14,14 +17,17 @@ import kotlinx.coroutines.flow.stateIn
 
 @Composable
 fun <T : Any> Loadable<T>.Unfold(
-    onLoading: @Composable () -> Unit = {},
-    onError: @Composable ((Throwable) -> Unit)? = { Error(message = it.getUIMessage()) },
-    onSuccess: @Composable (T) -> Unit,
+    modifier: Modifier = Modifier,
+    onLoading: @Composable BoxScope.() -> Unit = {},
+    onError: @Composable (BoxScope.(Throwable) -> Unit)? = { Error(message = it.getUIMessage()) },
+    onSuccess: @Composable BoxScope.(T) -> Unit,
 ) {
-    when (this) {
-        is Loadable.Loading -> onLoading()
-        is Loadable.Error -> onError?.invoke(error)
-        is Loadable.Success -> onSuccess(data)
+    Box(modifier) {
+        when (this@Unfold) {
+            is Loadable.Loading -> onLoading()
+            is Loadable.Error -> onError?.invoke(this, error)
+            is Loadable.Success -> onSuccess(data)
+        }
     }
 }
 

@@ -19,6 +19,11 @@ val destinations =
             iconResourceId = R.drawable.ic_routines_outlined,
         ),
         Destination(
+            getRoute = { Routes.Plan.list() },
+            titleResourceId = R.string.route_training_plans,
+            iconResourceId = R.drawable.ic_routines_outlined,
+        ),
+        Destination(
             getRoute = { Routes.Settings },
             titleResourceId = R.string.route_settings,
             iconResourceId = R.drawable.ic_settings,

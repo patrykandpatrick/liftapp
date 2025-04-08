@@ -8,6 +8,7 @@ import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
@@ -83,6 +84,11 @@ object Routes {
         fun edit(planID: Long) = NewPlanRouteData(planID)
 
         fun new() = NewPlanRouteData(ID_NOT_SET)
+
+        fun list() = PlanListRouteData(isPickingTrainingPlan = false, resultKey = "")
+
+        fun select(resultKey: String) =
+            PlanListRouteData(isPickingTrainingPlan = true, resultKey = resultKey)
     }
 
     object Workout {

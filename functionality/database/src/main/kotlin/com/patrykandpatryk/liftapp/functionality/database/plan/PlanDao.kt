@@ -9,9 +9,13 @@ import kotlinx.coroutines.flow.Flow
 interface PlanDao {
 
     @Query(
-        "SELECT * FROM `plan` p LEFT JOIN plan_item pi ON p.plan_id = pi.plan_item_plan_id " +
+        "SELECT p.*, plan_item_order_index, plan_item_order_index, r.*, e.*  FROM `plan` p " +
+            "LEFT JOIN plan_item pi ON p.plan_id = pi.plan_item_plan_id " +
             "LEFT JOIN routine r ON pi.plan_item_routine_id = r.routine_id " +
-            "ORDER BY p.plan_id, pi.plan_item_order_index"
+            "LEFT JOIN exercise_with_routine ewr on ewr.routine_id = plan_item_routine_id " +
+            "LEFT JOIN exercise e ON e.exercise_id = ewr.exercise_id " +
+            "LEFT JOIN goal g ON g.goal_routine_id = ewr.routine_id AND g.goal_exercise_id = ewr.exercise_id " +
+            "ORDER BY p.plan_id, pi.plan_item_order_index, ewr.order_index"
     )
     fun getAllPlans(): Flow<List<PlanWithRoutine>>
 

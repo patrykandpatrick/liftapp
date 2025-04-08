@@ -37,6 +37,7 @@ include(
     ":feature:newplan",
     ":feature:newroutine",
     ":feature:onerepmax",
+    ":feature:planList",
     ":feature:routine",
     ":feature:routineList",
     ":feature:settings",

@@ -13,7 +13,9 @@ fun String.smartToIntOrNull() = prepForConversionToNumber().toIntOrNull()
 fun String.smartToFloatOrNull() = prepForConversionToNumber().toFloatOrNull()
 
 @Composable
-inline fun <T> Collection<T>.joinToPrettyString(toString: @Composable (T) -> String): String =
+inline fun <T : Any> Collection<T>.joinToPrettyString(
+    toString: @Composable (T) -> String = { it.toString() }
+): String =
     joinToPrettyString(
         andText = stringResource(id = R.string.and_in_a_list),
         toString = { toString(it) },

@@ -73,7 +73,7 @@ fun getCardioPrettyString(
         append(MarkupProcessor.Type.BoldSurfaceColor.wrap(duration.getShortFormattedTime()))
     }
     if (calories > 0) {
-        if (isNotBlank()) append(" ${stringResource(string.goal_format_calories_separator)} ")
+        if (isNotBlank()) append(" ${stringResource(string.point_separator)} ")
         append(
             MarkupProcessor.Type.BoldSurfaceColor.wrap(
                 "${decimalFormat.format(calories)} ${stringResource(string.energy_unit_kcal)}"
