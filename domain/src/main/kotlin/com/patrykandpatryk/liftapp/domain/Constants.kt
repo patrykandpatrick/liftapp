@@ -60,6 +60,10 @@ object Constants {
         const val PICKED_EXERCISE_IDS = "pickedExerciseIds"
     }
 
+    object TrainingPlan {
+        const val DEFAULT_CYCLE_COUNT = 6
+    }
+
     object Algorithms {
         const val SCREEN_STATE_KEY = "screenState"
         const val SHA1_NAME = "SHA-1"
