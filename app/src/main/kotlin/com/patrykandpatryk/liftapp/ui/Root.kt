@@ -38,14 +38,14 @@ import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
-import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.PlanCreatorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
-import com.patrykandpatrick.liftapp.newplan.ui.NewPlanScreen
-import com.patrykandpatrick.liftapp.planlist.ui.PlanListScreen
+import com.patrykandpatrick.liftapp.plan.creator.ui.PlanCreatorScreen
+import com.patrykandpatrick.liftapp.plan.list.ui.PlanListScreen
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.ui.animation.EXIT_ANIM_DURATION
@@ -122,7 +122,7 @@ fun Root(
                         addNestedHomeGraph()
                         addNewBodyMeasurementDestination()
                         addNewExercise()
-                        addNewPlan()
+                        addPlanCreator()
                         addPlanList()
                         addNewRoutine()
                         addOneRepMax()
@@ -200,8 +200,8 @@ fun NavGraphBuilder.addRoutineExerciseGoal() {
     composable<ExerciseGoalRouteData> { ExerciseGoalScreen() }
 }
 
-fun NavGraphBuilder.addNewPlan() {
-    composable<NewPlanRouteData> { NewPlanScreen() }
+fun NavGraphBuilder.addPlanCreator() {
+    composable<PlanCreatorRouteData> { PlanCreatorScreen() }
 }
 
 fun NavGraphBuilder.addPlanList() {

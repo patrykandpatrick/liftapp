@@ -6,8 +6,8 @@ import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
-import com.patrykandpatrick.liftapp.navigation.data.NewPlanRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.PlanCreatorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
@@ -81,9 +81,9 @@ object Routes {
     @Serializable object OneRepMax
 
     object Plan {
-        fun edit(planID: Long) = NewPlanRouteData(planID)
+        fun edit(planID: Long) = PlanCreatorRouteData(planID)
 
-        fun new() = NewPlanRouteData(ID_NOT_SET)
+        fun new() = PlanCreatorRouteData(ID_NOT_SET)
 
         fun list() = PlanListRouteData(isPickingTrainingPlan = false, resultKey = "")
 
