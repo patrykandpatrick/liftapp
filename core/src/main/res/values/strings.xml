@@ -108,6 +108,9 @@
     <string name="generic_journal">Journal</string>
     <string name="generic_quoted">”%s“</string>
     <string name="generic_delete_something">Delete “%s”?</string>
+    <string name="generic_today">today</string>
+    <string name="generic_tomorrow">tomorrow</string>
+    <string name="generic_on_date">on %s</string>
 
     <string name="action_save">Save</string>
     <string name="action_back">Back</string>
@@ -180,7 +183,7 @@
     <string name="date_format_short">d MMMM</string>
     <string name="date_format_long">EEEE, d MMMM</string>
     <string name="date_format_full">dd.MM.yyyy</string>
-    <string name="date_format_edit">d MMMM YYYY</string>
+    <string name="date_format_edit">EEEE, d MMMM yyyy</string>
     <string name="time_hours_short">h</string>
     <string name="time_minutes_short">m</string>
     <string name="time_seconds_short">s</string>
@@ -236,9 +239,7 @@
     <!-- New Training Plan -->
     <string name="route_new_plan">New Training Plan</string>
     <string name="route_new_plan_edit">Edit Training Plan</string>
-    <string name="training_plan_start_date">Start date</string>
     <string name="training_plan_name_placeholder">My Training Plan</string>
-    <string name="training_plan_cycle_count">Cycle Count</string>
     <string name="training_plan_item_add_rest_day">Add rest day</string>
     <string name="training_plan_item_add_routine">Add routine</string>
     <string name="training_plan_item_rest_day">Rest day</string>
@@ -250,6 +251,16 @@
     <string name="route_training_plans">Training Plans</string>
     <string name="route_training_plans_select">Select a Training Plan</string>
     <string name="training_plan_cycle_length">%d-Day Cycle</string>
+
+    <!-- Configure Training Plan -->
+    <string name="route_plan_configurator">Configure Training Plan</string>
+    <string name="training_plan_start_date">Start date</string>
+    <string name="training_plan_cycle_count">Cycle count</string>
+    <string name="training_plan_configure_info_text"><![CDATA[Starts <b-surface>%s</b-surface>. Ends in <b-surface>%s</b-surface>, on <b-surface>%s</b-surface>.]]></string>
+    <!-- Example: "2 weeks and 3 days" -->
+    <string name="training_plan_configure_ends_in_weeks_days">%1$d %2$s and %3$d %4$s</string>
+    <!-- Example: "2 weeks" -->
+    <string name="training_plan_configure_ends_in_weeks">%1$d %2$s</string>
 
     <!-- Errors -->
     <string name="generic_error_title">Unexpected Error</string>

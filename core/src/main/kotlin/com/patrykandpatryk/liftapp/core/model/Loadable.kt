@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patrykandpatryk.liftapp.core.exception.getUIMessage
-import com.patrykandpatryk.liftapp.core.ui.Error
+import com.patrykandpatryk.liftapp.core.ui.error.Error
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":feature:onerepmax"))
     implementation(project(":feature:newroutine"))
     implementation(project(":feature:plan:list"))
+    implementation(project(":feature:plan:configurator"))
     implementation(project(":feature:plan:creator"))
     implementation(project(":feature:routine"))
     implementation(project(":feature:routineList"))

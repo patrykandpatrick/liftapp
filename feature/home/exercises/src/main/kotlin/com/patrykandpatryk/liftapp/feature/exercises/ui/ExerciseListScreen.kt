@@ -53,7 +53,6 @@ import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
-import com.patrykandpatryk.liftapp.core.ui.Error
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults
@@ -117,12 +116,10 @@ private fun ExerciseListScreen(
         },
         contentWindowInsets = WindowInsets.statusBars,
     ) { internalPadding ->
-        loadableScreenState.Unfold(onError = { Error(Modifier.padding(internalPadding)) }) { state
-            ->
+        loadableScreenState.Unfold(modifier = Modifier.padding(internalPadding)) { state ->
             ListContent(
                 state = state,
                 onAction = onAction,
-                paddingValues = internalPadding,
                 modifier =
                     Modifier.thenIf(state.pickingMode) {
                         nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
@@ -136,17 +133,12 @@ private fun ExerciseListScreen(
 private fun ListContent(
     state: ScreenState,
     onAction: (Action) -> Unit,
-    paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        contentPadding =
-            PaddingValues(
-                top = paddingValues.calculateTopPadding(),
-                bottom = WindowInsets.navigationBars.getBottom(),
-            ),
+        contentPadding = PaddingValues(bottom = WindowInsets.navigationBars.getBottom()),
     ) {
         if (state.query.isEmpty()) {
             item {

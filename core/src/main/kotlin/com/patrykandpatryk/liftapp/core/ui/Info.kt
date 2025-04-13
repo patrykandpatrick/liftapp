@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.liftapp.core.R
@@ -39,6 +40,15 @@ import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 @Composable
 fun Info(
     text: String,
+    modifier: Modifier = Modifier,
+    buttons: (@Composable RowScope.() -> Unit)? = null,
+) {
+    Info(AnnotatedString(text), modifier, buttons)
+}
+
+@Composable
+fun Info(
+    text: AnnotatedString,
     modifier: Modifier = Modifier,
     buttons: (@Composable RowScope.() -> Unit)? = null,
 ) {
@@ -90,6 +100,7 @@ fun Info(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(Alignment.CenterVertically),
             )
         }
 

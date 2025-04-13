@@ -38,13 +38,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.exception.getUIMessage
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
-import com.patrykandpatryk.liftapp.core.ui.Error
 import com.patrykandpatryk.liftapp.core.ui.ErrorEffectState
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
@@ -71,15 +69,8 @@ fun NewRoutineScreen(modifier: Modifier = Modifier) {
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
-    state.Unfold(
-        onError = { error ->
-            Error(
-                message = error.getUIMessage(),
-                onCloseClick = { viewModel.onAction(Action.PopBackStack) },
-            )
-        }
-    ) { state ->
-        NewRoutineScreen(state = state, onAction = viewModel::onAction, modifier = modifier)
+    state.Unfold(modifier) { state ->
+        NewRoutineScreen(state = state, onAction = viewModel::onAction)
     }
 }
 

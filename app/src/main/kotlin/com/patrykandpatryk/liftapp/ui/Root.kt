@@ -30,6 +30,7 @@ import androidx.navigation.get
 import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
+import com.patrykandpatrick.liftapp.feature.plan.configurator.ui.PlanConfiguratorScreen
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
@@ -39,6 +40,7 @@ import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
+import com.patrykandpatrick.liftapp.navigation.data.PlanConfiguratorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanCreatorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
@@ -124,6 +126,7 @@ fun Root(
                         addNewExercise()
                         addPlanCreator()
                         addPlanList()
+                        addPlanConfigurator()
                         addNewRoutine()
                         addOneRepMax()
                         addRoutine()
@@ -206,6 +209,10 @@ fun NavGraphBuilder.addPlanCreator() {
 
 fun NavGraphBuilder.addPlanList() {
     composable<PlanListRouteData> { PlanListScreen() }
+}
+
+fun NavGraphBuilder.addPlanConfigurator() {
+    composable<PlanConfiguratorRouteData> { PlanConfiguratorScreen() }
 }
 
 fun NavGraphBuilder.addNewRoutine() {

@@ -8,4 +8,12 @@
         <item quantity="one">rep</item>
         <item quantity="other">reps</item>
     </plurals>
+    <plurals name="day_count">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="week_count">
+        <item quantity="one">week</item>
+        <item quantity="other">weeks</item>
+    </plurals>
 </resources>

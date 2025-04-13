@@ -56,9 +56,7 @@ constructor(
     private fun observeTrainingPlanSelection() {
         navigationCommander
             .getResults<Long>(TRAINING_PLAN_KEY)
-            .onEach { id ->
-                // TODO navigate to plan start screen
-            }
+            .onEach { id -> navigationCommander.navigateTo(Routes.Plan.configure(id)) }
             .launchIn(viewModelScope)
     }
 

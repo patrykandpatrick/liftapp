@@ -68,7 +68,7 @@ abstract class TextFieldState<T : Any>(
         val text = toText(value)
         updateText(
             textFieldValue = textFieldValue.copy(text = text, selection = TextRange(text.length)),
-            fromUser = false,
+            fromUser = true,
         )
     }
 
