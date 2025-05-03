@@ -10,11 +10,14 @@ fun Path.addSinLine(
     sinPeriodLength: Int,
     sinHeight: Int,
     horizontal: Boolean = true,
+    verticalOffset: Float = 0f,
 ) {
     val adjustedSinPeriodLength = getAdjustedSinPeriodLength(end - start, sinPeriodLength)
     for (coordinate in start..end) {
         val value =
-            sin(coordinate.toFloat() / adjustedSinPeriodLength) * (sinHeight / 2) + sinHeight / 2
+            sin(coordinate.toFloat() / adjustedSinPeriodLength) * (sinHeight / 2) +
+                sinHeight / 2 +
+                verticalOffset
         if (coordinate == start) {
             if (horizontal) {
                 moveTo(start.toFloat(), value)

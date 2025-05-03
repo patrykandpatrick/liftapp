@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,12 +22,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatryk.liftapp.core.ui.routine.RestCard
+import com.patrykandpatryk.liftapp.core.ui.routine.RoutineCard
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 
 @Composable
 internal fun PlanCreatorItem(
@@ -46,8 +45,8 @@ internal fun PlanCreatorItem(
             when (planItem) {
                 ScreenState.Item.PlaceholderItem ->
                     PlaceholderItem(onAddRestDayClick, onAddRoutineClick)
-                is ScreenState.Item.RestItem -> RestItem()
-                is ScreenState.Item.RoutineItem -> RestItemRoutine(planItem.routine)
+                is ScreenState.Item.RestItem -> RestCard()
+                is ScreenState.Item.RoutineItem -> RoutineCard(planItem.routine)
             }
         }
     }
@@ -105,60 +104,6 @@ private fun PlaceholderItemButton(
             Icon(painter = icon, contentDescription = null)
         }
         Text(text = text, style = MaterialTheme.typography.bodySmall)
-    }
-}
-
-@Composable
-private fun RestItem(modifier: Modifier = Modifier) {
-    Row(
-        horizontalArrangement =
-            Arrangement.spacedBy(
-                LocalDimens.current.padding.itemHorizontal,
-                Alignment.CenterHorizontally,
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = LocalDimens.current.padding.itemHorizontal,
-                    vertical = LocalDimens.current.padding.itemVertical,
-                ),
-    ) {
-        Icon(painter = painterResource(R.drawable.ic_rest_day), contentDescription = null)
-        Text(
-            text = stringResource(R.string.training_plan_item_rest_day),
-            style = MaterialTheme.typography.titleSmall,
-        )
-    }
-}
-
-@Composable
-private fun RestItemRoutine(
-    routineWithExercises: RoutineWithExercises,
-    modifier: Modifier = Modifier,
-) {
-    val cardPadding = LocalDimens.current.card
-    Column(
-        modifier.padding(
-            horizontal = cardPadding.contentPaddingHorizontal,
-            vertical = cardPadding.contentPaddingVertical,
-        ),
-        verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.contentVerticalSmall),
-    ) {
-        Text(text = routineWithExercises.name, style = MaterialTheme.typography.titleMedium)
-
-        Text(
-            text =
-                buildString {
-                    routineWithExercises.exercises.forEach { exercise ->
-                        if (isNotEmpty()) append("\n")
-                        append("• ${exercise.name}")
-                    }
-                },
-            style = MaterialTheme.typography.bodySmall.copy(lineHeight = 20.sp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
 

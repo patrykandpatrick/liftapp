@@ -11,6 +11,7 @@ import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
+import com.patrykandpatryk.liftapp.domain.plan.Plan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +41,7 @@ constructor(
         when (action) {
             Action.ChooseExistingPlan -> chooseExistingPlan()
             Action.CreateNewPlan -> createNewPlan()
+            is Action.OnPlanItemClick -> onPlanItemClick(action.item)
         }
     }
 
@@ -58,6 +60,16 @@ constructor(
             .getResults<Long>(TRAINING_PLAN_KEY)
             .onEach { id -> navigationCommander.navigateTo(Routes.Plan.configure(id)) }
             .launchIn(viewModelScope)
+    }
+
+    private fun onPlanItemClick(item: Plan.Item) {
+        viewModelScope.launch {
+            when (item) {
+                is Plan.Item.RoutineItem ->
+                    navigationCommander.navigateTo(Routes.Routine.details(item.routine.id))
+                is Plan.Item.RestItem -> Unit
+            }
+        }
     }
 
     companion object {

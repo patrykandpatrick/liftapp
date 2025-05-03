@@ -39,6 +39,7 @@ import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
+import com.patrykandpatryk.liftapp.core.ui.DayIndicator
 import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
 import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
@@ -202,7 +203,7 @@ private fun PlanCreatorItem(
         horizontalArrangement =
             Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
     ) {
-        DayIndicator(dayIndex = index, enabled = item !is ScreenState.Item.PlaceholderItem)
+        DayIndicator(dayIndex = index, highlighted = item !is ScreenState.Item.PlaceholderItem)
 
         PlanCreatorItem(
             item = item,

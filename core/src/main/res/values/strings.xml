@@ -190,6 +190,9 @@
     <string name="time_hours_medium">hr</string>
     <string name="time_minutes_medium">min</string>
     <string name="time_seconds_medium">sec</string>
+    <string name="date_range_format_separator">–</string>
+    <string name="date_range_format_day">d</string>
+    <string name="date_range_format_day_month">d MMMM</string>
 
     <string name="content_description_remove_set">Remove set</string>
 
@@ -235,6 +238,7 @@
     <string name="plan_no_active_plan">You have no active training plan</string>
     <string name="plan_no_active_plan_create_cta">Create new </string>
     <string name="plan_no_active_plan_choose_existing_cta">Choose existing</string>
+    <string name="plan_cycle_number_title"><![CDATA[Current Cycle <small>(%d/%d)</small>]]></string>
 
     <!-- New Training Plan -->
     <string name="route_new_plan">New Training Plan</string>
@@ -246,6 +250,7 @@
     <string name="training_plan_item_remove">Remove the plan item</string>
     <string name="training_plan_item_day_indicator_label">Day</string>
     <string name="training_plan_error_no_routines">The plan needs to have at least one routine</string>
+    <string name="training_plan_change_title">Change Training Plan</string>
 
     <!-- Training Plan list -->
     <string name="route_training_plans">Training Plans</string>

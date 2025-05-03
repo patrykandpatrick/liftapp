@@ -1,4 +1,4 @@
-package com.patrykandpatrick.liftapp.plan.creator.ui
+package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,14 +22,14 @@ import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 
 @Composable
-fun DayIndicator(dayIndex: Int, modifier: Modifier = Modifier, enabled: Boolean = true) {
+fun DayIndicator(dayIndex: Int, modifier: Modifier = Modifier, highlighted: Boolean = true) {
     val shape = RoundedCornerShape(8.dp)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
             modifier
                 .then(
-                    if (enabled) {
+                    if (highlighted) {
                         Modifier.background(
                             color = MaterialTheme.colorScheme.primary,
                             shape = shape,
@@ -48,7 +48,7 @@ fun DayIndicator(dayIndex: Int, modifier: Modifier = Modifier, enabled: Boolean 
                 ),
     ) {
         val contentColor =
-            if (enabled) {
+            if (highlighted) {
                 MaterialTheme.colorScheme.onPrimary
             } else {
                 MaterialTheme.colorScheme.onSurface
@@ -88,7 +88,7 @@ private fun DisabledDayIndicatorPreview() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(16.dp),
             ) {
-                repeat(3) { DayIndicator(dayIndex = it, enabled = false) }
+                repeat(3) { DayIndicator(dayIndex = it, highlighted = false) }
             }
         }
     }
