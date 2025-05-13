@@ -18,6 +18,7 @@ rootProject.name = "LiftApp"
 
 include(
     ":app",
+    ":ui",
     ":core",
     ":data",
     ":domain",
