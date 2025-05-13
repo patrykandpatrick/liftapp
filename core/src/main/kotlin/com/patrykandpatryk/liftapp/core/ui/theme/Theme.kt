@@ -7,6 +7,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
+import com.patrykandpatrick.liftapp.ui.theme.LocalColorScheme
+import com.patrykandpatrick.liftapp.ui.theme.getLiftAppColorScheme
 import com.patrykandpatrick.vico.compose.m3.style.m3ChartStyle
 import com.patrykandpatrick.vico.compose.style.ChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
@@ -99,12 +101,14 @@ fun LiftAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     val dimens = if (isLandscape) LandscapeDimens else PortraitDimens
+    val liftAppColorScheme = getLiftAppColorScheme(darkTheme)
 
     MaterialTheme(colorScheme = colorScheme, typography = LiftAppTypography, shapes = Shapes) {
         val markupProcessor = rememberDefaultMarkupProcessor()
         CompositionLocalProvider(
             LocalDimens provides dimens,
             LocalMarkupProcessor provides markupProcessor,
+            LocalColorScheme provides liftAppColorScheme,
         ) {
             ProvideChartStyle(chartStyle = chartStyle, content = content)
         }
