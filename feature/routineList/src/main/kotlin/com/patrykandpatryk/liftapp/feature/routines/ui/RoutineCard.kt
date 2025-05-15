@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.RoutineCardShape
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable

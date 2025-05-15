@@ -33,11 +33,11 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.extension.horizontal
 import com.patrykandpatryk.liftapp.core.extension.vertical
-import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 
 private const val InputFieldAnimationDuration = 150
 

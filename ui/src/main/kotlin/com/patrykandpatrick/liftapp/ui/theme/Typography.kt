@@ -1,10 +1,11 @@
-package com.patrykandpatryk.liftapp.core.ui.theme
+package com.patrykandpatrick.liftapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import com.patrykandpatryk.liftapp.core.R
+import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.liftapp.ui.R
 
 private val lexendFontFamily =
     FontFamily(
@@ -41,10 +42,22 @@ val LiftAppTypography =
             bodySmall =
                 bodySmall.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Medium),
             labelLarge =
-                labelLarge.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Bold),
+                labelLarge.copy(
+                    fontFamily = manropeFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = .2.sp,
+                ),
             labelMedium =
-                labelMedium.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Bold),
+                labelMedium.copy(
+                    fontFamily = manropeFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = .2.sp,
+                ),
             labelSmall =
-                labelSmall.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Bold),
+                labelSmall.copy(
+                    fontFamily = manropeFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = .2.sp,
+                ),
         )
     }

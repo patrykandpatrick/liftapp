@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.core.ui.theme
+package com.patrykandpatrick.liftapp.ui.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme.colorScheme

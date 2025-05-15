@@ -1,5 +1,6 @@
-package com.patrykandpatryk.liftapp.core.ui.theme
+package com.patrykandpatrick.liftapp.ui.theme
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -7,17 +8,14 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
-import com.patrykandpatrick.liftapp.ui.theme.LocalColorScheme
-import com.patrykandpatrick.liftapp.ui.theme.getLiftAppColorScheme
+import com.patrykandpatrick.liftapp.ui.dimens.LandscapeDimens
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.PortraitDimens
+import com.patrykandpatrick.liftapp.ui.isLandscape
+import com.patrykandpatrick.liftapp.ui.modifier.ScaleIndication
 import com.patrykandpatrick.vico.compose.m3.style.m3ChartStyle
 import com.patrykandpatrick.vico.compose.style.ChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
-import com.patrykandpatryk.liftapp.core.extension.isLandscape
-import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
-import com.patrykandpatryk.liftapp.core.text.rememberDefaultMarkupProcessor
-import com.patrykandpatryk.liftapp.core.ui.dimens.LandscapeDimens
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.dimens.PortraitDimens
 
 private val LightColorScheme =
     lightColorScheme(
@@ -104,11 +102,10 @@ fun LiftAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
     val liftAppColorScheme = getLiftAppColorScheme(darkTheme)
 
     MaterialTheme(colorScheme = colorScheme, typography = LiftAppTypography, shapes = Shapes) {
-        val markupProcessor = rememberDefaultMarkupProcessor()
         CompositionLocalProvider(
             LocalDimens provides dimens,
-            LocalMarkupProcessor provides markupProcessor,
             LocalColorScheme provides liftAppColorScheme,
+            LocalIndication provides ScaleIndication(),
         ) {
             ProvideChartStyle(chartStyle = chartStyle, content = content)
         }

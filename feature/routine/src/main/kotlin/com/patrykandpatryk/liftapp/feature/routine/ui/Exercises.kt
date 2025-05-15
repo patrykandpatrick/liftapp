@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.gestures.onItemYRange
@@ -36,7 +37,6 @@ import com.patrykandpatryk.liftapp.core.gestures.reorderable
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.getPrettyStringLong
 import com.patrykandpatryk.liftapp.core.ui.ListItem
-import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeContainer
 import com.patrykandpatryk.liftapp.core.ui.swipe.SwipeableDeleteBackground
 import com.patrykandpatryk.liftapp.domain.extension.addOrSet

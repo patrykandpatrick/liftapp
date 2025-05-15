@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 
 @Composable

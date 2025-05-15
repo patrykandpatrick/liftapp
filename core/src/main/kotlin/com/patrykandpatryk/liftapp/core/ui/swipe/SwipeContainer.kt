@@ -31,10 +31,10 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.zIndex
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.pixels
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import kotlin.math.abs
 
 @Composable

@@ -11,6 +11,7 @@ import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -48,14 +49,16 @@ import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.plan.creator.ui.PlanCreatorScreen
 import com.patrykandpatrick.liftapp.plan.list.ui.PlanListScreen
+import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
+import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
+import com.patrykandpatryk.liftapp.core.text.rememberDefaultMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.animation.EXIT_ANIM_DURATION
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisEnterTransition
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisExitTransition
 import com.patrykandpatryk.liftapp.core.ui.animation.slideAndFadeIn
-import com.patrykandpatryk.liftapp.core.ui.theme.BottomSheetShape
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.feature.about.ui.About
@@ -92,52 +95,56 @@ fun Root(
     navigationCommander.HandleCommands(navController)
 
     LiftAppTheme(darkTheme = darkTheme) {
-        ModalBottomSheetLayout(
-            bottomSheetNavigator = bottomSheetNavigator,
-            sheetShape = BottomSheetShape,
-            sheetBackgroundColor = MaterialTheme.colorScheme.surface,
-        ) {
-            BottomAppBarNavigationHost(
-                navController = navController,
-                navigator = bottomAppBarNavigator,
-                navigationBar = {
-                    BottomNavigationBar(
-                        navController = navController,
-                        navigator = bottomAppBarNavigator,
-                        navItemRoutes = navigationBarItems,
-                    )
-                },
-                content = {
-                    NavHost(
-                        navController = navController,
-                        startDestination = Routes.Home,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                        enterTransition = { sharedXAxisEnterTransition() },
-                        exitTransition = { sharedXAxisExitTransition() },
-                        popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
-                        popExitTransition = { sharedXAxisExitTransition(forward = false) },
-                    ) {
-                        addAbout()
-                        addBodyMeasurementDetailDestination()
-                        addExercises()
-                        addExerciseDetails()
-                        addNestedHomeGraph()
-                        addNewBodyMeasurementDestination()
-                        addNewExercise()
-                        addPlanCreator()
-                        addPlanList()
-                        addPlanConfigurator()
-                        addNewRoutine()
-                        addOneRepMax()
-                        addRoutine()
-                        addRoutineList()
-                        addRoutineExerciseGoal()
-                        addSettings()
-                        addWorkout()
-                    }
-                },
-                modifier = modifier.background(MaterialTheme.colorScheme.background),
-            )
+        val markupProcessor = rememberDefaultMarkupProcessor()
+
+        CompositionLocalProvider(LocalMarkupProcessor provides markupProcessor) {
+            ModalBottomSheetLayout(
+                bottomSheetNavigator = bottomSheetNavigator,
+                sheetShape = BottomSheetShape,
+                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+            ) {
+                BottomAppBarNavigationHost(
+                    navController = navController,
+                    navigator = bottomAppBarNavigator,
+                    navigationBar = {
+                        BottomNavigationBar(
+                            navController = navController,
+                            navigator = bottomAppBarNavigator,
+                            navItemRoutes = navigationBarItems,
+                        )
+                    },
+                    content = {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Routes.Home,
+                            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                            enterTransition = { sharedXAxisEnterTransition() },
+                            exitTransition = { sharedXAxisExitTransition() },
+                            popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
+                            popExitTransition = { sharedXAxisExitTransition(forward = false) },
+                        ) {
+                            addAbout()
+                            addBodyMeasurementDetailDestination()
+                            addExercises()
+                            addExerciseDetails()
+                            addNestedHomeGraph()
+                            addNewBodyMeasurementDestination()
+                            addNewExercise()
+                            addPlanCreator()
+                            addPlanList()
+                            addPlanConfigurator()
+                            addNewRoutine()
+                            addOneRepMax()
+                            addRoutine()
+                            addRoutineList()
+                            addRoutineExerciseGoal()
+                            addSettings()
+                            addWorkout()
+                        }
+                    },
+                    modifier = modifier.background(MaterialTheme.colorScheme.background),
+                )
+            }
         }
     }
 }
@@ -159,6 +166,7 @@ private fun NavigationCommander.HandleCommands(navController: NavController) {
                             },
                     )
                 }
+
                 is NavigationCommand.PopBackStack -> {
                     val route = command.route
                     if (route != null) {

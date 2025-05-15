@@ -39,6 +39,8 @@ import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GoalInput
 import com.patrykandpatrick.feature.exercisegoal.model.SaveGoalUseCase
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
 import com.patrykandpatryk.liftapp.core.extension.prettyString
@@ -52,10 +54,8 @@ import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.Info
 import com.patrykandpatryk.liftapp.core.ui.InfoDefaults
 import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
-import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.wheel.DurationPicker
 import com.patrykandpatryk.liftapp.domain.Constants.Input.Increment
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType

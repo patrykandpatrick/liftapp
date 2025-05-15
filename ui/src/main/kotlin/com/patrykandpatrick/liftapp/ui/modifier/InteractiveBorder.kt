@@ -157,7 +157,7 @@ private class BorderNode(
                         center = touchOffset.value,
                         radius = size.maxDimension / 2,
                     ),
-                style = Stroke(width.toPx()),
+                style = Stroke(width.roundToPx().toFloat()),
             )
         }
     }

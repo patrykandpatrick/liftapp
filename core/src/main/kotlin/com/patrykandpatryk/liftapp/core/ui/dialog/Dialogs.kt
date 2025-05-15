@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 
 @Composable
 fun DialogButtons(

@@ -39,6 +39,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.patrykandpatrick.liftapp.ui.dimens.DialogDimens
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.time.text
@@ -46,9 +49,6 @@ import com.patrykandpatryk.liftapp.core.ui.SegmentedButton
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.VerticalSegmentedButtonContainer
 import com.patrykandpatryk.liftapp.core.ui.dialog.DialogButtons
-import com.patrykandpatryk.liftapp.core.ui.dimens.DialogDimens
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.extension.parseToIntOrNull
 import com.patrykandpatryk.liftapp.domain.extension.toIntOrZero
 import com.patrykandpatryk.liftapp.domain.time.TimeOfDay

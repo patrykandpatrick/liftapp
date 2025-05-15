@@ -7,34 +7,51 @@ import com.patrykandpatrick.liftapp.ui.modifier.InteractiveBorderColors
 
 data class ColorScheme(
     val primary: Color,
+    val primaryDisabled: Color,
+    val onPrimary: Color,
+    val onPrimaryHighlight: Color,
+    val onPrimaryHighlightActivated: Color,
     val secondary: Color,
+    val secondaryDisabled: Color,
     val background: Color,
     val surface: Color,
     val outline: Color,
     val highlight: Color = primary,
-    val interactiveBorderColors: InteractiveBorderColors =
-        getInteractiveBorderColors(highlight, outline),
+    val borderColors: InteractiveBorderColors = getInteractiveBorderColors(highlight, outline),
+    val isDarkColorScheme: Boolean,
 )
 
 private fun getInteractiveBorderColors(highlight: Color, outline: Color): InteractiveBorderColors =
     InteractiveBorderColors(outline, highlight, highlight)
 
-val LightColorScheme =
+private val LightColorScheme =
     ColorScheme(
-        primary = Color(0xFF3B3BE5),
+        primary = Color(0xFF3A3AFF),
+        primaryDisabled = Color(0x243A3AFF),
+        onPrimary = Color(0xFFF0F0FF),
+        onPrimaryHighlight = Color.Transparent,
+        onPrimaryHighlightActivated = Color(0xFF010162),
         secondary = Color(0xFF000000),
+        secondaryDisabled = Color(0xA8000000),
         background = Color(0xFFF0F0FF),
         surface = Color(0xFFF6F6FF),
-        outline = Color(0x320000B0),
+        outline = Color(0x4A0000B0),
+        isDarkColorScheme = false,
     )
 
-val DarkColorScheme =
+private val DarkColorScheme =
     ColorScheme(
         primary = Color(0xFF3B3BE5),
+        primaryDisabled = Color(0x323B3BE5),
+        onPrimary = Color(0xFFF0F0FF),
+        onPrimaryHighlight = Color(0x6FF0F0FF),
+        onPrimaryHighlightActivated = Color(0xFFF0F0FF),
         secondary = Color(0xFFFFFFFF),
+        secondaryDisabled = Color(0xC8FFFFFF),
         background = Color(0xFF0A0A0F),
         surface = Color(0xFF121216),
-        outline = Color(0xFF313138),
+        outline = Color(0x4FF0F0FF),
+        isDarkColorScheme = true,
     )
 
 fun getLiftAppColorScheme(isDarkTheme: Boolean): ColorScheme =

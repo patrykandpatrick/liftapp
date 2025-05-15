@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
-import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 
 @Composable
 fun OutlinedTextField(

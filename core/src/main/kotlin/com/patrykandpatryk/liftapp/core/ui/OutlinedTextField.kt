@@ -23,8 +23,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
-import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.domain.Constants.Input.TYPING_DEBOUNCE_MILLIS
 import kotlinx.coroutines.delay
 

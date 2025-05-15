@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.patrykandpatryk.liftapp.core.extension.isDarkMode
+import com.patrykandpatrick.liftapp.ui.isDarkMode
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModePublisher
 import com.patrykandpatryk.liftapp.domain.android.IsDarkModeReceiver
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander

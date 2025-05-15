@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.core.graphics
+package com.patrykandpatrick.liftapp.ui.graphics
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -9,10 +9,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import kotlin.math.roundToInt
 
-class BottomSinShape(
+class TopSinShape(
     private val sinPeriodLength: Dp,
     private val sinHeight: Dp,
     private val strokeWidth: Dp,
@@ -31,10 +31,9 @@ class BottomSinShape(
                         end = size.width.roundToInt() + strokeWidth / 2,
                         sinPeriodLength = sinPeriodLength.roundToPx(),
                         sinHeight = sinHeight.roundToPx(),
-                        verticalOffset = size.height - sinHeight.toPx(),
                     )
-                    lineTo(size.width, 0f)
-                    lineTo(0f, 0f)
+                    lineTo(size.width, size.height)
+                    lineTo(0f, size.height)
                     close()
                 }
             Outline.Generic(path)
@@ -42,11 +41,11 @@ class BottomSinShape(
 }
 
 @Composable
-fun rememberBottomSinShape(
+fun rememberTopSinShape(
     sinPeriodLength: Dp = LocalDimens.current.divider.sinPeriodLength,
     sinHeight: Dp = LocalDimens.current.divider.sinHeight,
     strokeWidth: Dp = LocalDimens.current.strokeWidth,
-): BottomSinShape =
+): TopSinShape =
     remember(sinPeriodLength, sinHeight, strokeWidth) {
-        BottomSinShape(sinPeriodLength, sinHeight, strokeWidth)
+        TopSinShape(sinPeriodLength, sinHeight, strokeWidth)
     }

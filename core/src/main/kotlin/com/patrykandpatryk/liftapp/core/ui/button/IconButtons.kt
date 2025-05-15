@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 
 @Composable
 fun IconButton(

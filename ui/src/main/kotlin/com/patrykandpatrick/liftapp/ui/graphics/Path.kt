@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.core.graphics
+package com.patrykandpatrick.liftapp.ui.graphics
 
 import androidx.compose.ui.graphics.Path
 import kotlin.math.ceil

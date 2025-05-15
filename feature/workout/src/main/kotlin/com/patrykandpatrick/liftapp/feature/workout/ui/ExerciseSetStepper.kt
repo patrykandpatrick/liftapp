@@ -34,15 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.vico.core.extension.forEachIndexedExtended
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.AddStep
 import com.patrykandpatryk.liftapp.core.ui.StepConnector
 import com.patrykandpatryk.liftapp.core.ui.StepperItem
 import com.patrykandpatryk.liftapp.core.ui.StepperItemLabel
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 
 @Composable
@@ -141,7 +141,7 @@ private fun EditButton(
                 .clip(MaterialTheme.shapes.small)
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
                 .clickable(onClick = { onChangeEditMode(!editMode) })
-                .padding(dimens.button.horizontalPadding, dimens.button.verticalPadding)
+                .padding(dimens.button.horizontalPaddingNarrow, dimens.button.verticalPaddingNarrow)
                 .animateContentSize(
                     spring(
                         Spring.DampingRatioHighBouncy,

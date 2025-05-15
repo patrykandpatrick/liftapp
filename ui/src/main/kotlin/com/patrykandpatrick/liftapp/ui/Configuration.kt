@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.core.extension
+package com.patrykandpatrick.liftapp.ui
 
 import android.content.Context
 import android.content.res.Configuration

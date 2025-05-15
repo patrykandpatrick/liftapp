@@ -40,18 +40,18 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.Alpha
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.PillShape
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.scaleCornerSize
 import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
-import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.ListItemTitle
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.getDefaultDescription
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.getDefaultIcon
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
-import com.patrykandpatryk.liftapp.core.ui.theme.Alpha
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
 import com.patrykandpatryk.liftapp.domain.extension.length
 
 @Composable

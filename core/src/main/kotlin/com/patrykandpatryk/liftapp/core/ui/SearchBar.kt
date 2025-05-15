@@ -33,9 +33,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.withColor
-import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
 
 @Composable
 fun SearchBar(

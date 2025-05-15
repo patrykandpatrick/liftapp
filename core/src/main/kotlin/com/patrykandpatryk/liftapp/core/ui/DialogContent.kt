@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 
 @Composable
 fun DialogContent(title: String, actions: @Composable () -> Unit, content: @Composable () -> Unit) {

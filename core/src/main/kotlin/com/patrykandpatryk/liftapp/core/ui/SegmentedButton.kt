@@ -35,11 +35,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.PillShape
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
-import com.patrykandpatryk.liftapp.core.ui.dimens.dimens
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.core.ui.theme.PillShape
 
 @Composable
 fun SegmentedButtonContainer(

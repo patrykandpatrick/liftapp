@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.plan.creator.model.Action
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
@@ -41,8 +42,7 @@ import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.DayIndicator
 import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
-import com.patrykandpatryk.liftapp.core.ui.SinHorizontalDivider
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 
 @Composable

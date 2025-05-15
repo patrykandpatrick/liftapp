@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.core.ui
+package com.patrykandpatrick.liftapp.ui.component
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,30 +16,28 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatryk.liftapp.core.graphics.addSinLine
-import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.graphics.addSinLine
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import kotlin.math.roundToInt
 
-private fun Modifier.sinDivider(color: Color, horizontalExtent: Dp) =
+private fun Modifier.sinDivider(color: Color, thickness: Dp, sinPeriodLength: Dp, horizontalExtent: Dp) =
     then(
         Modifier.composed {
-            val dimens = LocalDimens.current
-            val separator = dimens.divider
             val path = remember { Path() }
 
             drawWithCache {
                 onDrawBehind {
-                    val strokeWidth = dimens.strokeWidth.roundToPx()
+                    val strokeWidth = thickness.roundToPx()
                     path.addSinLine(
                         start = -strokeWidth / 2 - horizontalExtent.roundToPx(),
                         end =
                             size.width.roundToInt() +
                                 strokeWidth / 2 +
                                 horizontalExtent.roundToPx(),
-                        sinPeriodLength = separator.sinPeriodLength.roundToPx(),
-                        sinHeight = size.height.roundToInt() - dimens.strokeWidth.roundToPx(),
+                        sinPeriodLength = sinPeriodLength.roundToPx(),
+                        sinHeight = size.height.roundToInt() - thickness.roundToPx(),
                     )
                     path.translate(Offset(0f, strokeWidth / 2f))
                     drawPath(path, color, style = Stroke(strokeWidth.toFloat()))
@@ -53,14 +51,22 @@ private fun Modifier.sinDivider(color: Color, horizontalExtent: Dp) =
 fun SinHorizontalDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline,
+    thickness: Dp = dimens.strokeWidth,
+    sinHeight: Dp = dimens.divider.sinHeight,
+    sinPeriodLength: Dp = dimens.divider.sinPeriodLength,
     horizontalExtent: Dp = 0.dp,
 ) {
     Spacer(
         modifier =
             modifier
-                .height(LocalDimens.current.divider.sinHeight)
+                .height(sinHeight)
                 .fillMaxWidth()
-                .sinDivider(color, horizontalExtent)
+                .sinDivider(
+                    color = color,
+                    thickness = thickness,
+                    sinPeriodLength = sinPeriodLength,
+                    horizontalExtent = horizontalExtent,
+                )
     )
 }
 

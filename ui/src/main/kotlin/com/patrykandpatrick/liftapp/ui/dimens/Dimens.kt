@@ -1,4 +1,4 @@
-package com.patrykandpatryk.liftapp.core.ui.dimens
+package com.patrykandpatrick.liftapp.ui.dimens
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -113,8 +113,13 @@ data class Dimens(
     @Immutable
     data class Button(
         val iconPadding: Dp = 8.dp,
-        val horizontalPadding: Dp = 12.dp,
-        val verticalPadding: Dp = 8.dp,
+        val horizontalPadding: Dp = 16.dp,
+        val horizontalPaddingNarrow: Dp = 12.dp,
+        val verticalPadding: Dp = 10.dp,
+        val verticalPaddingNarrow: Dp = 8.dp,
+        val borderWidth: Dp = 1.dp,
+        val minContentHeight: Dp = 24.dp,
+        val underlineWidth: Dp = 1.5.dp,
     )
 
     @Immutable data class Elevation(val dragElevation: Dp = 2.dp)

@@ -28,9 +28,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
+import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.prettyString
-import com.patrykandpatryk.liftapp.core.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource.textFieldStateManager
 import com.patrykandpatryk.liftapp.core.text.DoubleTextFieldState
 import com.patrykandpatryk.liftapp.core.text.IntTextFieldState
@@ -39,10 +41,8 @@ import com.patrykandpatryk.liftapp.core.text.LongTextFieldState
 import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
-import com.patrykandpatryk.liftapp.core.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.ui.input.InputSuggestion
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
-import com.patrykandpatryk.liftapp.core.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.ui.wheel.DurationPicker
 import com.patrykandpatryk.liftapp.domain.Constants.Input.Increment
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
