@@ -22,7 +22,12 @@ import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import kotlin.math.roundToInt
 
-private fun Modifier.sinDivider(color: Color, thickness: Dp, sinPeriodLength: Dp, horizontalExtent: Dp) =
+private fun Modifier.sinDivider(
+    color: Color,
+    thickness: Dp,
+    sinPeriodLength: Dp,
+    horizontalExtent: Dp,
+) =
     then(
         Modifier.composed {
             val path = remember { Path() }

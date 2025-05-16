@@ -65,7 +65,9 @@ import com.patrykandpatrick.liftapp.feature.workout.model.getText
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.graphics.rememberTopSinShape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.copy
@@ -77,7 +79,6 @@ import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.AppBars
 import com.patrykandpatryk.liftapp.core.ui.Backdrop
-import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisTransition
 import com.patrykandpatryk.liftapp.core.ui.rememberBackdropState
 import com.patrykandpatryk.liftapp.core.ui.wheel.rememberWheelPickerState

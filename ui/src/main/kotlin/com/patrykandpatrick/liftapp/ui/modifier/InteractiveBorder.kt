@@ -19,6 +19,8 @@ import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.interaction.HoverInteraction
 import com.patrykandpatrick.liftapp.ui.state.animatedColorStateOf
 import kotlin.properties.Delegates
@@ -31,8 +33,8 @@ import kotlinx.coroutines.withContext
 fun Modifier.interactiveBorder(
     interactionSource: InteractionSource,
     colors: InteractiveBorderColors,
-    width: Dp,
     shape: Shape,
+    width: Dp = 1.dp,
     animationSpec: AnimationSpec<Color> = spring(),
 ): Modifier =
     this.then(
@@ -109,8 +111,8 @@ private class BorderNode(
 
                         is HoverInteraction.Enter -> {
                             touchOffset.value = interaction.position
-                            launch { borderPrimaryColor.animate(colors.hoverColor) }
-                            launch { borderSecondaryColor.animate(colors.color) }
+                            launch { borderPrimaryColor.animate(colors.hoverForegroundColor) }
+                            launch { borderSecondaryColor.animate(colors.hoverBackgroundColor) }
                         }
 
                         is PressInteraction.Release -> {

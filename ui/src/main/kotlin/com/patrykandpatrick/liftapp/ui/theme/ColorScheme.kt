@@ -15,6 +15,7 @@ data class ColorScheme(
     val secondaryDisabled: Color,
     val background: Color,
     val surface: Color,
+    val onSurface: Color,
     val outline: Color,
     val highlight: Color = primary,
     val borderColors: InteractiveBorderColors = getInteractiveBorderColors(highlight, outline),
@@ -35,6 +36,7 @@ private val LightColorScheme =
         secondaryDisabled = Color(0xA8000000),
         background = Color(0xFFF0F0FF),
         surface = Color(0xFFF6F6FF),
+        onSurface = Color(0xFF14143D),
         outline = Color(0x4A0000B0),
         isDarkColorScheme = false,
     )
@@ -50,6 +52,7 @@ private val DarkColorScheme =
         secondaryDisabled = Color(0xC8FFFFFF),
         background = Color(0xFF0A0A0F),
         surface = Color(0xFF121216),
+        onSurface = Color(0xFFE5E5FF),
         outline = Color(0x4FF0F0FF),
         isDarkColorScheme = true,
     )
