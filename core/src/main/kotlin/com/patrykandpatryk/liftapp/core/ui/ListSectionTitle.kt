@@ -6,15 +6,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
 fun ListSectionTitle(
@@ -31,7 +32,7 @@ fun ListSectionTitle(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.padding(paddingValues),
     ) {
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.primary) {
+        CompositionLocalProvider(LocalContentColor provides colorScheme.onBackground) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
@@ -47,6 +48,6 @@ fun ListSectionTitle(
 @Composable
 fun ListSectionTitlePreview() {
     LiftAppTheme {
-        Surface { ListSectionTitle(title = "Title", modifier = Modifier.fillMaxWidth()) }
+        LiftAppBackground { ListSectionTitle(title = "Title", modifier = Modifier.fillMaxWidth()) }
     }
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -20,9 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 
 @Composable
@@ -47,7 +48,7 @@ fun Error(
     onCloseClick: () -> Unit,
     message: String? = null,
 ) {
-    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+    CompositionLocalProvider(LocalContentColor provides colorScheme.onSurface) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -67,7 +68,7 @@ fun Error(
             }
 
             Spacer(Modifier.height(LocalDimens.current.padding.itemVertical))
-            Button(onCloseClick) { Text(text = stringResource(R.string.action_close)) }
+            LiftAppButton(onCloseClick) { Text(text = stringResource(R.string.action_close)) }
         }
     }
 }
@@ -79,7 +80,7 @@ private fun ErrorPreview() {
         Error(
             message = "An error occurred",
             onCloseClick = {},
-            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+            modifier = Modifier.background(colorScheme.background),
         )
     }
 }

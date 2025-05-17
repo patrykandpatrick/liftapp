@@ -15,6 +15,7 @@ import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -24,8 +25,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 
@@ -36,21 +39,34 @@ fun TopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    LargeTopAppBar(
-        scrollBehavior = scrollBehavior,
-        title = { Text(text = title) },
-        actions = actions,
-        navigationIcon = {
-            if (onBackClick != null) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = stringResource(id = R.string.action_close),
-                    )
+    Column {
+        LargeTopAppBar(
+            scrollBehavior = scrollBehavior,
+            title = { Text(text = title) },
+            actions = actions,
+            colors =
+                TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorScheme.surface,
+                    scrolledContainerColor = colorScheme.surface,
+                    navigationIconContentColor = colorScheme.onSurface,
+                    titleContentColor = colorScheme.onSurface,
+                    actionIconContentColor = colorScheme.onSurface,
+                    subtitleContentColor = colorScheme.onSurface,
+                ),
+            navigationIcon = {
+                if (onBackClick != null) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_arrow_back),
+                            contentDescription = stringResource(id = R.string.action_close),
+                        )
+                    }
                 }
-            }
-        },
-    )
+            },
+        )
+
+        LiftAppHorizontalDivider()
+    }
 }
 
 @Composable

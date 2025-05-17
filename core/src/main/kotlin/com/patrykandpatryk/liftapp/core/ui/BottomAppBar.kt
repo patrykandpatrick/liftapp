@@ -6,25 +6,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import com.patrykandpatryk.liftapp.core.R
 
 object BottomAppBar {
     @Composable
@@ -35,10 +34,9 @@ object BottomAppBar {
         @DrawableRes iconRes: Int? = null,
         enabled: Boolean = true,
     ) {
-        Button(modifier = modifier.fillMaxWidth(), onClick = onClick, enabled = enabled) {
+        LiftAppButton(modifier = modifier.fillMaxWidth(), onClick = onClick, enabled = enabled) {
             if (iconRes != null) {
                 Icon(painterResource(id = iconRes), null)
-                Spacer(modifier = Modifier.width(LocalDimens.current.button.iconPadding))
             }
             Text(text)
         }
@@ -69,11 +67,7 @@ fun BottomAppBar(
 ) {
     Box(
         contentAlignment = Alignment.TopCenter,
-        modifier =
-            modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxWidth()
-                .navigationBarsPadding(),
+        modifier = modifier.background(colorScheme.surface).fillMaxWidth().navigationBarsPadding(),
     ) {
         HorizontalDivider()
         Row(modifier = Modifier.padding(paddingValues), content = content)

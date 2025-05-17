@@ -143,7 +143,12 @@ data class Dimens(
         val spacing: Dp = 4.dp,
     )
 
-    @Immutable data class Divider(val sinPeriodLength: Dp = 3.dp, val sinHeight: Dp = 6.dp)
+    @Immutable
+    data class Divider(
+        val sinPeriodLength: Dp = 3.dp,
+        val sinHeight: Dp = 6.dp,
+        val thickness: Dp = 1.dp,
+    )
 }
 
 val PortraitDimens = Dimens()

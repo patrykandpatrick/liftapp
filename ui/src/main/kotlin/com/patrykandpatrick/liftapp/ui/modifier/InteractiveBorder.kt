@@ -164,9 +164,3 @@ private class BorderNode(
         }
     }
 }
-
-data class InteractiveBorderColors(
-    val color: Color,
-    val pressedColor: Color,
-    val hoverColor: Color,
-)

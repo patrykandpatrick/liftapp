@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -28,6 +30,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.interaction.extendedInteractions
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveBorder
@@ -73,17 +76,12 @@ object LiftAppButtonDefaults {
                 disabledContentColor = colorScheme.secondaryDisabled,
             )
 
-    val textButtonColors: ContainerColors
+    val plainButtonColors: ContainerColors
         @Composable
         get() =
             ContainerColors(
                 backgroundColor = Color.Transparent,
-                contentColor =
-                    if (colorScheme.isDarkColorScheme) {
-                        colorScheme.onPrimary
-                    } else {
-                        colorScheme.primary
-                    },
+                contentColor = colorScheme.onSurface,
                 interactiveBorderColors =
                     InteractiveBorderColors(
                         color = Color.Transparent,
@@ -122,7 +120,7 @@ fun LiftAppButton(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing),
+            horizontalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterHorizontally),
             modifier =
                 Modifier.interactiveBorder(
                         interactionSource = interactionSource,
@@ -141,6 +139,8 @@ fun LiftAppButton(
                         shape = shape,
                     )
                     .padding(contentPadding)
+                    .align(Alignment.Center)
+                    .fillMaxSize()
                     .heightIn(min = dimens.button.minContentHeight),
             content = content,
         )
@@ -153,7 +153,7 @@ fun PlainLiftAppButton(
     modifier: Modifier = Modifier,
     spacing: Dp = 6.dp,
     enabled: Boolean = true,
-    colors: ContainerColors = LiftAppButtonDefaults.textButtonColors,
+    colors: ContainerColors = LiftAppButtonDefaults.plainButtonColors,
     contentPadding: PaddingValues =
         PaddingValues(
             horizontal = dimens.button.horizontalPadding,

@@ -131,6 +131,8 @@
     <string name="action_work_out">Work out</string>
     <string name="action_add_set">Add set</string>
     <string name="action_remove_set">Remove set</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_show">Show</string>
 
     <string name="title_new_exercise">New Exercise</string>
     <string name="title_new_routine">New Routine</string>

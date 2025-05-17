@@ -12,6 +12,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import timber.log.Timber
 
 class MarkupProcessor(private val config: Config) {
@@ -113,7 +114,7 @@ val LocalMarkupProcessor: ProvidableCompositionLocal<MarkupProcessor> = staticCo
 
 @Composable
 fun rememberDefaultMarkupConfig(): MarkupProcessor.Config {
-    val colors = MaterialTheme.colorScheme
+    val colors = colorScheme
     val typography = MaterialTheme.typography
 
     return remember(colors, typography) {

@@ -3,8 +3,6 @@ package com.patrykandpatrick.liftapp.ui.component
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,6 +18,7 @@ import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.graphics.addSinLine
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlin.math.roundToInt
 
 private fun Modifier.sinDivider(
@@ -55,7 +54,7 @@ private fun Modifier.sinDivider(
 @Composable
 fun SinHorizontalDivider(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.outline,
+    color: Color = colorScheme.outline,
     thickness: Dp = dimens.strokeWidth,
     sinHeight: Dp = dimens.divider.sinHeight,
     sinPeriodLength: Dp = dimens.divider.sinPeriodLength,
@@ -78,5 +77,5 @@ fun SinHorizontalDivider(
 @LightAndDarkThemePreview
 @Composable
 fun SinHorizontalDividerPreview() {
-    LiftAppTheme { Surface { SinHorizontalDivider() } }
+    LiftAppTheme { LiftAppBackground { SinHorizontalDivider() } }
 }
