@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -28,25 +26,19 @@ private fun Modifier.sinDivider(
     horizontalExtent: Dp,
 ) =
     then(
-        Modifier.composed {
-            val path = remember { Path() }
-
-            drawWithCache {
-                onDrawBehind {
-                    val strokeWidth = thickness.roundToPx()
-                    path.addSinLine(
-                        start = -strokeWidth / 2 - horizontalExtent.roundToPx(),
-                        end =
-                            size.width.roundToInt() +
-                                strokeWidth / 2 +
-                                horizontalExtent.roundToPx(),
-                        sinPeriodLength = sinPeriodLength.roundToPx(),
-                        sinHeight = size.height.roundToInt() - thickness.roundToPx(),
-                    )
-                    path.translate(Offset(0f, strokeWidth / 2f))
-                    drawPath(path, color, style = Stroke(strokeWidth.toFloat()))
-                    path.rewind()
-                }
+        Modifier.drawWithCache {
+            val path = Path()
+            onDrawBehind {
+                val strokeWidth = thickness.roundToPx()
+                path.addSinLine(
+                    start = -strokeWidth / 2 - horizontalExtent.roundToPx(),
+                    end = size.width.roundToInt() + strokeWidth / 2 + horizontalExtent.roundToPx(),
+                    sinPeriodLength = sinPeriodLength.roundToPx(),
+                    sinHeight = size.height.roundToInt() - thickness.roundToPx(),
+                )
+                path.translate(Offset(0f, strokeWidth / 2f))
+                drawPath(path, color, style = Stroke(strokeWidth.toFloat()))
+                path.rewind()
             }
         }
     )
