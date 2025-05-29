@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.functionality.database.di
 
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutContract
+import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutsByDateContract
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutsContract
 import com.patrykandpatryk.liftapp.domain.workout.UpdateWorkoutContract
 import com.patrykandpatryk.liftapp.domain.workout.UpsertExerciseSetContract
@@ -24,5 +25,8 @@ interface WorkoutModule {
 
     @Binds fun bindUpdateWorkoutContract(repository: RoomWorkoutRepository): UpdateWorkoutContract
 
-    @Binds fun bindGetActiveWorkoutsContract(repository: RoomWorkoutRepository): GetWorkoutsContract
+    @Binds fun bindGetWorkoutsContract(repository: RoomWorkoutRepository): GetWorkoutsContract
+
+    @Binds
+    fun bindGetWorkoutsByDateContract(repository: RoomWorkoutRepository): GetWorkoutsByDateContract
 }

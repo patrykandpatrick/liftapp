@@ -126,10 +126,10 @@ private fun PlanItem(
                         else MaterialTheme.colorScheme.surface
                 )
             when (planItem) {
-                is Plan.Item.RestItem -> {
+                is Plan.Item.Rest -> {
                     OutlinedCard(modifier = Modifier.fillMaxWidth(), colors = colors) { RestCard() }
                 }
-                is Plan.Item.RoutineItem -> {
+                is Plan.Item.Routine -> {
                     OutlinedCard(
                         modifier = Modifier.fillMaxWidth(),
                         colors = colors,

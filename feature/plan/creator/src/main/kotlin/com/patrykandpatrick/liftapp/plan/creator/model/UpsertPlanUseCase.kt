@@ -18,8 +18,8 @@ class UpsertPlanUseCase @Inject constructor(private val upsertPlanContract: Upse
             items =
                 state.items.mapNotNull { item ->
                     when (item) {
-                        is ScreenState.Item.RoutineItem -> Plan.Item.RoutineItem(item.routine)
-                        is ScreenState.Item.RestItem -> Plan.Item.RestItem
+                        is ScreenState.Item.RoutineItem -> Plan.Item.Routine(item.routine)
+                        is ScreenState.Item.RestItem -> Plan.Item.Rest
                         is ScreenState.Item.PlaceholderItem -> null
                     }
                 },

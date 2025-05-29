@@ -129,6 +129,7 @@
     <string name="action_info">Additional information</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_work_out">Work out</string>
+    <string name="action_start_workout">Start Workout</string>
     <string name="action_add_set">Add set</string>
     <string name="action_remove_set">Remove set</string>
     <string name="action_continue">Continue</string>

@@ -5,11 +5,13 @@ import androidx.room.RoomRawQuery
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutContract
+import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutsByDateContract
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutsContract
 import com.patrykandpatryk.liftapp.domain.workout.UpdateWorkoutContract
 import com.patrykandpatryk.liftapp.domain.workout.UpsertExerciseSetContract
 import com.patrykandpatryk.liftapp.domain.workout.UpsertWorkoutGoalContract
 import com.patrykandpatryk.liftapp.domain.workout.Workout
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -41,7 +43,8 @@ constructor(
     UpsertWorkoutGoalContract,
     UpsertExerciseSetContract,
     UpdateWorkoutContract,
-    GetWorkoutsContract {
+    GetWorkoutsContract,
+    GetWorkoutsByDateContract {
     private val coroutineContext = dispatcher + coroutineExceptionHandler
 
     override fun getWorkout(routineID: Long, workoutID: Long?): Flow<Workout> =
@@ -171,6 +174,12 @@ constructor(
                     hasEndDate = type == GetWorkoutsContract.WorkoutType.PAST
                 )
             )
+            .map(workoutMapper::toDomain)
+            .flowOn(coroutineContext)
+
+    override fun getWorkouts(date: LocalDate): Flow<List<Workout>> =
+        workoutDao
+            .getWorkouts(WorkoutDao.getWorkoutsQuery(date))
             .map(workoutMapper::toDomain)
             .flowOn(coroutineContext)
 }

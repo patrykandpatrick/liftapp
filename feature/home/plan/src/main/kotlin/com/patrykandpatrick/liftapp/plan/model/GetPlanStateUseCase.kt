@@ -26,7 +26,7 @@ constructor(private val getActivePlanUseCase: GetActivePlanUseCase) {
                     currentPlanItemIndex = getCurrentItem(activePlan, plan),
                     cycleDates =
                         PlanState.getAllCycleDates(
-                            activePlan.startDate.plusDays(activePlan.dayOffset),
+                            activePlan.startDate,
                             activePlan.cycleCount,
                             plan.items.size.toLong(),
                         ),
@@ -35,7 +35,7 @@ constructor(private val getActivePlanUseCase: GetActivePlanUseCase) {
         }
 
     private fun getDayCountBetweenStartAndToday(activePlan: ActivePlan): Int {
-        val startDate = activePlan.startDate.plusDays(activePlan.dayOffset)
+        val startDate = activePlan.startDate
         val today = LocalDate.now()
         return ChronoUnit.DAYS.between(startDate, today).toInt()
     }

@@ -65,9 +65,9 @@ constructor(
     private fun onPlanItemClick(item: Plan.Item) {
         viewModelScope.launch {
             when (item) {
-                is Plan.Item.RoutineItem ->
+                is Plan.Item.Routine ->
                     navigationCommander.navigateTo(Routes.Routine.details(item.routine.id))
-                is Plan.Item.RestItem -> Unit
+                is Plan.Item.Rest -> Unit
             }
         }
     }

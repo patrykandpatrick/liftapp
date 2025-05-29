@@ -426,6 +426,7 @@ private fun WorkoutScreenPreview() {
                                 flowOf(
                                     Workout(
                                         id = 1,
+                                        routineID = 1,
                                         name = "Push",
                                         startDate = LocalDateTime.now(),
                                         endDate = null,

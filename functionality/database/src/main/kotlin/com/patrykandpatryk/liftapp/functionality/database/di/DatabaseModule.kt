@@ -13,7 +13,6 @@ import com.patrykandpatryk.liftapp.functionality.database.DatabaseCallback
 import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementDao
 import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementRepositoryImpl
 import com.patrykandpatryk.liftapp.functionality.database.converter.JsonConverters
-import com.patrykandpatryk.liftapp.functionality.database.converter.LocalDateTimeConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatryk.liftapp.functionality.database.exercise.RoomExerciseRepository
 import com.patrykandpatryk.liftapp.functionality.database.goal.GoalDao
@@ -62,13 +61,11 @@ interface DatabaseModule {
         fun provideDatabase(
             application: Application,
             jsonConverters: JsonConverters,
-            localDateTimeConverters: LocalDateTimeConverters,
             databaseCallback: DatabaseCallback,
         ): Database =
             Room.databaseBuilder(application, Database::class.java, Constants.Database.Name)
                 .addCallback(databaseCallback)
                 .addTypeConverter(jsonConverters)
-                .addTypeConverter(localDateTimeConverters)
                 .build()
 
         @Provides

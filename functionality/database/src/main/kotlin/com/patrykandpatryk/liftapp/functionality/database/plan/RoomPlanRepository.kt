@@ -2,10 +2,13 @@ package com.patrykandpatryk.liftapp.functionality.database.plan
 
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exception.PlanNotFoundException
+import com.patrykandpatryk.liftapp.domain.plan.AddPlanItemsScheduleContract
 import com.patrykandpatryk.liftapp.domain.plan.GetAllPlansContract
 import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
+import com.patrykandpatryk.liftapp.domain.plan.GetPlanItemContract
 import com.patrykandpatryk.liftapp.domain.plan.Plan
 import com.patrykandpatryk.liftapp.domain.plan.UpsertPlanContract
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +22,12 @@ constructor(
     private val dao: PlanDao,
     private val mapper: PlanMapper,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
-) : GetAllPlansContract, GetPlanContract, UpsertPlanContract {
+) :
+    GetAllPlansContract,
+    GetPlanContract,
+    UpsertPlanContract,
+    AddPlanItemsScheduleContract,
+    GetPlanItemContract {
     override fun getPlans(): Flow<List<Plan>> =
         dao.getAllPlans().map { plans -> mapper.toDomain(plans) }.flowOn(dispatcher)
 
@@ -49,7 +57,7 @@ constructor(
     private fun toPlanItems(plan: Plan): List<PlanItemEntity> {
         return plan.items.mapIndexedNotNull { index, item ->
             when (item) {
-                is Plan.Item.RoutineItem ->
+                is Plan.Item.Routine ->
                     PlanItemEntity(
                         planId = plan.id,
                         orderIndex = index,
@@ -59,4 +67,32 @@ constructor(
             }
         }
     }
+
+    override suspend fun addPlanItemsSchedule(plan: Plan, startDate: LocalDate, cycleCount: Int) {
+        var currentDate = startDate
+        val schedule = buildList {
+            repeat(cycleCount) {
+                plan.items.forEach { planItem ->
+                    if (planItem is Plan.Item.Routine) {
+                        add(
+                            PlanItemSchedule(
+                                planID = plan.id,
+                                routineID = planItem.routine.id,
+                                date = currentDate,
+                            )
+                        )
+                    } else {
+                        add(
+                            PlanItemSchedule(planID = plan.id, routineID = null, date = currentDate)
+                        )
+                    }
+                    currentDate = currentDate.plusDays(1)
+                }
+            }
+        }
+        dao.insertPlanItemSchedule(schedule)
+    }
+
+    override fun getPlanItem(date: LocalDate): Flow<Plan.Item?> =
+        dao.getScheduledRoutine(date).map(mapper::toDomain)
 }

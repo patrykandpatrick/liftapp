@@ -16,6 +16,7 @@ import com.patrykandpatryk.liftapp.functionality.database.goal.GoalEntity
 import com.patrykandpatryk.liftapp.functionality.database.plan.PlanDao
 import com.patrykandpatryk.liftapp.functionality.database.plan.PlanEntity
 import com.patrykandpatryk.liftapp.functionality.database.plan.PlanItemEntity
+import com.patrykandpatryk.liftapp.functionality.database.plan.PlanItemSchedule
 import com.patrykandpatryk.liftapp.functionality.database.routine.ExerciseWithRoutineEntity
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoutineEntity
@@ -41,6 +42,7 @@ import com.patrykandpatryk.liftapp.functionality.database.workout.WorkoutWithExe
             ExerciseSetEntity::class,
             PlanEntity::class,
             PlanItemEntity::class,
+            PlanItemSchedule::class,
         ],
     views = [BodyMeasurementWithLatestEntryViewResult::class, RoutineWithExerciseNamesView::class],
     version = 1,

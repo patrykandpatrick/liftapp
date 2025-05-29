@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +22,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.feature.plan.configurator.model.Action
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
@@ -30,6 +31,7 @@ import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.text.IntTextFieldState
 import com.patrykandpatryk.liftapp.core.text.LocalDateTextFieldState
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
+import com.patrykandpatryk.liftapp.core.text.rememberDefaultMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
@@ -53,7 +55,7 @@ fun PlanConfiguratorScreen(viewModel: PlanConfiguratorViewModel = hiltViewModel(
 
 @Composable
 private fun PlanConfiguratorScreen(state: ScreenState, onAction: (Action) -> Unit) {
-    Scaffold(
+    LiftAppScaffold(
         topBar = {
             CompactTopAppBar(
                 title = {
@@ -150,30 +152,32 @@ private fun getInfoText(state: ScreenState): AnnotatedString {
 @Composable
 private fun PlanConfiguratorPreview() {
     LiftAppTheme {
-        PlanConfiguratorScreen(
-            state =
-                ScreenState(
-                    plan =
-                        Plan(
-                            id = 0,
-                            name = "Push Pull Legs",
-                            description = "A training plan",
-                            items = emptyList(),
-                        ),
-                    startDate =
-                        LocalDateTextFieldState(
-                            formatter =
-                                DateTimeFormatter.ofPattern(
-                                    stringResource(R.string.date_format_edit)
-                                ),
-                            initialValue = "Sunday, 13 April 2025",
-                        ),
-                    cycleCount = IntTextFieldState(initialValue = "6"),
-                    endDate = LocalDate.now().plusDays(42),
-                    lengthWeeks = 6,
-                    lengthRemainingDays = 0,
-                ),
-            onAction = {},
-        )
+        CompositionLocalProvider(LocalMarkupProcessor provides rememberDefaultMarkupProcessor()) {
+            PlanConfiguratorScreen(
+                state =
+                    ScreenState(
+                        plan =
+                            Plan(
+                                id = 0,
+                                name = "Push Pull Legs",
+                                description = "A training plan",
+                                items = emptyList(),
+                            ),
+                        startDate =
+                            LocalDateTextFieldState(
+                                formatter =
+                                    DateTimeFormatter.ofPattern(
+                                        stringResource(R.string.date_format_edit)
+                                    ),
+                                initialValue = "Sunday, 13 April 2025",
+                            ),
+                        cycleCount = IntTextFieldState(initialValue = "6"),
+                        endDate = LocalDate.now().plusDays(42),
+                        lengthWeeks = 6,
+                        lengthRemainingDays = 0,
+                    ),
+                onAction = {},
+            )
+        }
     }
 }

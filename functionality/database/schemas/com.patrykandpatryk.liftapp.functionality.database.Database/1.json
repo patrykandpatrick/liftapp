@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bac81e7f79747bcdd6bd72d959b87a6e",
+    "identityHash": "4a456b3d39b4b1e75aed12a856531948",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -896,6 +896,65 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "plan_item_schedule",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`plan_item_schedule_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `plan_item_schedule_plan_id` INTEGER NOT NULL, `plan_item_routine_id` INTEGER, `plan_item_schedule_date` TEXT NOT NULL, FOREIGN KEY(`plan_item_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`plan_item_schedule_plan_id`) REFERENCES `plan`(`plan_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "plan_item_schedule_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planID",
+            "columnName": "plan_item_schedule_plan_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routineID",
+            "columnName": "plan_item_routine_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "plan_item_schedule_date",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "plan_item_schedule_id"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "routine",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plan_item_routine_id"
+            ],
+            "referencedColumns": [
+              "routine_id"
+            ]
+          },
+          {
+            "table": "plan",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plan_item_schedule_plan_id"
+            ],
+            "referencedColumns": [
+              "plan_id"
+            ]
+          }
+        ]
       }
     ],
     "views": [
@@ -910,7 +969,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bac81e7f79747bcdd6bd72d959b87a6e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4a456b3d39b4b1e75aed12a856531948')"
     ]
   }
 }

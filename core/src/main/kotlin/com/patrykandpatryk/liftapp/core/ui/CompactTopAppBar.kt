@@ -2,17 +2,16 @@ package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatryk.liftapp.core.R
 
 @Composable
@@ -23,8 +22,13 @@ fun CompactTopAppBar(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     Column(modifier) {
-        CenterAlignedTopAppBar(title = title, navigationIcon = navigationIcon, actions = actions)
-        HorizontalDivider()
+        CenterAlignedTopAppBar(
+            title = title,
+            navigationIcon = navigationIcon,
+            actions = actions,
+            colors = AppBars.colors,
+        )
+        LiftAppHorizontalDivider()
     }
 }
 
@@ -45,7 +49,7 @@ object CompactTopAppBarDefaults {
     fun BackIcon(onClick: () -> Unit) {
         IconButton(onClick = onClick) {
             Icon(
-                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                painter = painterResource(R.drawable.ic_arrow_back),
                 contentDescription = stringResource(id = R.string.action_go_back),
             )
         }

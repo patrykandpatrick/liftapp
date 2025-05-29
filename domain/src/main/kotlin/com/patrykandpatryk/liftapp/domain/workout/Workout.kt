@@ -11,6 +11,7 @@ import kotlin.time.Duration.Companion.minutes
 
 data class Workout(
     val id: Long,
+    val routineID: Long,
     val name: String,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime?,

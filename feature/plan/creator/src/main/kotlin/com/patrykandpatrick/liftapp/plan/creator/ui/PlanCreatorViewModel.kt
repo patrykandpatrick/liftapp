@@ -56,6 +56,9 @@ constructor(
 
     private val error = MutableStateFlow<ScreenState.Error?>(null)
 
+    private val name = textFieldStateManager.stringTextField()
+    private val description = textFieldStateManager.stringTextField()
+
     private val planOrNull: Flow<Plan?> =
         flow {
                 if (routeData.planID == ID_NOT_SET) {
@@ -82,14 +85,17 @@ constructor(
                 }
             }
             .combine(error) { (plan, items), error ->
+                if (name.text.isBlank()) {
+                    name.updateText(plan?.name.orEmpty())
+                }
+
+                if (description.text.isBlank()) {
+                    description.updateText(plan?.description.orEmpty())
+                }
                 ScreenState(
                     id = plan?.id ?: ID_NOT_SET,
-                    name =
-                        textFieldStateManager.stringTextField(initialValue = plan?.name.orEmpty()),
-                    description =
-                        textFieldStateManager.stringTextField(
-                            initialValue = plan?.description.orEmpty()
-                        ),
+                    name = name,
+                    description = description,
                     items = items,
                     error = error,
                 )
@@ -103,8 +109,8 @@ constructor(
 
     private fun List<Plan.Item>.toNewScreenStateItems(): List<ScreenState.Item> = map { item ->
         when (item) {
-            is Plan.Item.RoutineItem -> ScreenState.Item.RoutineItem(item.routine)
-            is Plan.Item.RestItem -> ScreenState.Item.RestItem()
+            is Plan.Item.Routine -> ScreenState.Item.RoutineItem(item.routine)
+            is Plan.Item.Rest -> ScreenState.Item.RestItem()
         }
     }
 

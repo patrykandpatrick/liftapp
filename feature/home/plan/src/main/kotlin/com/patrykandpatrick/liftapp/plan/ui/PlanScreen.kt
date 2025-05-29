@@ -91,7 +91,7 @@ internal val previewActivePlanState: PlanState.ActivePlan
                     description = "",
                     items =
                         listOf(
-                            Plan.Item.RoutineItem(
+                            Plan.Item.Routine(
                                 RoutineWithExercises(
                                     id = 1,
                                     name = "Push",
@@ -101,8 +101,8 @@ internal val previewActivePlanState: PlanState.ActivePlan
                                     tertiaryMuscles = emptyList(),
                                 )
                             ),
-                            Plan.Item.RestItem,
-                            Plan.Item.RoutineItem(
+                            Plan.Item.Rest,
+                            Plan.Item.Routine(
                                 RoutineWithExercises(
                                     id = 2,
                                     name = "Pull",
@@ -112,8 +112,8 @@ internal val previewActivePlanState: PlanState.ActivePlan
                                     tertiaryMuscles = emptyList(),
                                 )
                             ),
-                            Plan.Item.RestItem,
-                            Plan.Item.RoutineItem(
+                            Plan.Item.Rest,
+                            Plan.Item.Routine(
                                 RoutineWithExercises(
                                     id = 3,
                                     name = "Legs",
@@ -123,7 +123,7 @@ internal val previewActivePlanState: PlanState.ActivePlan
                                     tertiaryMuscles = emptyList(),
                                 )
                             ),
-                            Plan.Item.RestItem,
+                            Plan.Item.Rest,
                         ),
                 ),
             cycleNumber = 1,

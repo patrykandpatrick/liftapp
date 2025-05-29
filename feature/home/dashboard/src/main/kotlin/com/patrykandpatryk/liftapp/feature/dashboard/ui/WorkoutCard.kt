@@ -1,8 +1,6 @@
 package com.patrykandpatryk.liftapp.feature.dashboard.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -23,7 +21,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -43,8 +40,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun WorkoutCard(workout: Workout, onClick: (Workout) -> Unit, modifier: Modifier = Modifier) {
     val markupProcessor = LocalMarkupProcessor.current
-    val datePattern = stringResource(R.string.dashboard_workout_date_pattern)
-    val dateFormat = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
     LiftAppCard(
         modifier = modifier.fillMaxWidth(),
         onClick = { onClick(workout) },
@@ -52,41 +47,7 @@ fun WorkoutCard(workout: Workout, onClick: (Workout) -> Unit, modifier: Modifier
             if (workout.isCompleted) LiftAppCardDefaults.cardColors
             else LiftAppCardDefaults.tonalCardColors,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter =
-                    if (workout.isCompleted) {
-                        painterResource(R.drawable.ic_check_circle)
-                    } else {
-                        painterResource(R.drawable.ic_pending)
-                    },
-                contentDescription = null,
-                tint = colorScheme.onSurfaceVariant,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-        }
-
-        Text(
-            text =
-                markupProcessor.toAnnotatedString(
-                    workout.endDate?.let { date ->
-                        stringResource(
-                            R.string.dashboard_completed_workout_date_title,
-                            date.format(dateFormat),
-                        )
-                    }
-                        ?: stringResource(
-                            R.string.dashboard_active_workout_date_title,
-                            workout.startDate.format(dateFormat),
-                        )
-                ),
-            style = MaterialTheme.typography.labelSmall,
-            color = colorScheme.onSurfaceVariant,
-        )
+        WorkoutStatusWithDate(workout)
 
         Text(text = workout.name, style = MaterialTheme.typography.titleMedium)
 
@@ -131,6 +92,42 @@ fun WorkoutCard(workout: Workout, onClick: (Workout) -> Unit, modifier: Modifier
     }
 }
 
+@Composable
+fun ColumnScope.WorkoutStatusWithDate(workout: Workout) {
+    val markupProcessor = LocalMarkupProcessor.current
+    val datePattern = stringResource(R.string.dashboard_workout_date_pattern)
+    val dateFormat = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
+
+    Icon(
+        painter =
+            if (workout.isCompleted) {
+                painterResource(R.drawable.ic_check_circle)
+            } else {
+                painterResource(R.drawable.ic_pending)
+            },
+        contentDescription = null,
+        tint = colorScheme.onSurfaceVariant,
+    )
+
+    Text(
+        text =
+            markupProcessor.toAnnotatedString(
+                workout.endDate?.let { date ->
+                    stringResource(
+                        R.string.dashboard_completed_workout_date_title,
+                        date.format(dateFormat),
+                    )
+                }
+                    ?: stringResource(
+                        R.string.dashboard_active_workout_date_title,
+                        workout.startDate.format(dateFormat),
+                    )
+            ),
+        style = MaterialTheme.typography.labelSmall,
+        color = colorScheme.onSurfaceVariant,
+    )
+}
+
 @LightAndDarkThemePreview
 @Composable
 private fun CompletedWorkoutCardPreview() {
@@ -141,6 +138,7 @@ private fun CompletedWorkoutCardPreview() {
                     workout =
                         Workout(
                             id = 0L,
+                            routineID = 0L,
                             name = "Push",
                             startDate = LocalDateTime.now(),
                             endDate = LocalDateTime.now(),
@@ -165,6 +163,7 @@ private fun PendingWorkoutCardPreview() {
                     workout =
                         Workout(
                             id = 0L,
+                            routineID = 0L,
                             name = "Push",
                             startDate = LocalDateTime.now(),
                             endDate = null,

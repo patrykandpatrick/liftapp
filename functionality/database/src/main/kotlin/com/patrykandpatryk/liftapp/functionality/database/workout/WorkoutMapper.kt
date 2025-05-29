@@ -31,6 +31,7 @@ constructor(
 
         return Workout(
             id = workoutEntity.id,
+            routineID = workoutEntity.routineID,
             name = workoutEntity.name,
             startDate = workoutEntity.startDate,
             endDate = workoutEntity.endDate,

@@ -11,7 +11,9 @@ import androidx.room.Upsert
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.functionality.database.converter.LocalDateTimeConverters
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseEntity
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -118,6 +120,19 @@ interface WorkoutDao {
                     "WHERE w.workout_end_date IS %s ORDER BY w.workout_start_date DESC, order_index, workout_exercise_set_index"
                         .format(endDate)
             return RoomRawQuery(query)
+        }
+
+        fun getWorkoutsQuery(localDate: LocalDate): RoomRawQuery {
+            val query =
+                "SELECT w.*, exercise.*, workout_goal.*, exercise_set.* FROM workout AS w " +
+                    "LEFT JOIN workout_with_exercise AS wwe ON w.workout_id = wwe.workout_id " +
+                    "LEFT JOIN exercise ON exercise.exercise_id = wwe.exercise_id " +
+                    "LEFT JOIN workout_goal ON wwe.exercise_id = workout_goal_exercise_id AND workout_goal_workout_id = w.workout_id " +
+                    "LEFT JOIN exercise_set ON wwe.exercise_id = exercise_set_exercise_id AND exercise_set_workout_id = w.workout_id " +
+                    "WHERE w.workout_start_date LIKE ? ORDER BY w.workout_start_date DESC, order_index, workout_exercise_set_index"
+            return RoomRawQuery(query) {
+                it.bindText(1, "${LocalDateTimeConverters.toString(localDate)}T%")
+            }
         }
     }
 }

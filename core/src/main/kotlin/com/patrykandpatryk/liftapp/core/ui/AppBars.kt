@@ -15,6 +15,7 @@ import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -44,15 +45,7 @@ fun TopAppBar(
             scrollBehavior = scrollBehavior,
             title = { Text(text = title) },
             actions = actions,
-            colors =
-                TopAppBarDefaults.topAppBarColors(
-                    containerColor = colorScheme.surface,
-                    scrolledContainerColor = colorScheme.surface,
-                    navigationIconContentColor = colorScheme.onSurface,
-                    titleContentColor = colorScheme.onSurface,
-                    actionIconContentColor = colorScheme.onSurface,
-                    subtitleContentColor = colorScheme.onSurface,
-                ),
+            colors = AppBars.colors,
             navigationIcon = {
                 if (onBackClick != null) {
                     IconButton(onClick = onBackClick) {
@@ -188,6 +181,18 @@ object AppBars {
             )
         }
     }
+
+    val colors: TopAppBarColors
+        @Composable
+        get() =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = colorScheme.surface,
+                scrolledContainerColor = colorScheme.surface,
+                navigationIconContentColor = colorScheme.onSurface,
+                titleContentColor = colorScheme.onSurface,
+                actionIconContentColor = colorScheme.onSurface,
+                subtitleContentColor = colorScheme.onSurface,
+            )
 }
 
 @MultiDevicePreview

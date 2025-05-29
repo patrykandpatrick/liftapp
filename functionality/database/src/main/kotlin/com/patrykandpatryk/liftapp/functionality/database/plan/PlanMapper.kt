@@ -32,11 +32,27 @@ class PlanMapper @Inject constructor(private val routineMapper: RoutineMapper) {
                                             )
                                         },
                                     )
-                                Plan.Item.RoutineItem(routineWithExercises)
+                                Plan.Item.Routine(routineWithExercises)
                             } else {
-                                Plan.Item.RestItem
+                                Plan.Item.Rest
                             }
                         },
                 )
             }
+
+    fun toDomain(schedule: List<ScheduledRoutine>): Plan.Item? {
+        if (schedule.isEmpty()) return null
+        val routine = schedule.firstOrNull { it.routine != null }?.routine
+        if (routine == null) return Plan.Item.Rest
+
+        val routineWithExercises =
+            routineMapper.toDomain(
+                routine = routine,
+                exercises =
+                    schedule.mapNotNull { (_, exercise, goal) ->
+                        exercise?.let { ExerciseWithGoalDto(it, goal) }
+                    },
+            )
+        return Plan.Item.Routine(routineWithExercises)
+    }
 }
