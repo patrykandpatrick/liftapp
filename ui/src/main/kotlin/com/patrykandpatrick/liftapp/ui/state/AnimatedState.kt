@@ -8,6 +8,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.job
@@ -28,15 +29,19 @@ protected constructor(
 
     suspend fun animate(value: T, delay: Long = 0L) {
         targetValue = value
-        lastJob?.join()
+        lastJob?.cancelAndJoin()
         val job = Job(currentCoroutineContext().job)
         lastJob = job
 
         withContext(job) {
             delay(delay)
-            animate(typeColorState, this@AnimatedState.value, value, lastVelocity, animationSpec) {
-                newValue,
-                velocity ->
+            animate(
+                typeConverter = typeColorState,
+                initialValue = this@AnimatedState.value,
+                targetValue = value,
+                initialVelocity = lastVelocity,
+                animationSpec = animationSpec,
+            ) { newValue, velocity ->
                 this@AnimatedState.value = newValue
                 lastVelocity = velocity
             }

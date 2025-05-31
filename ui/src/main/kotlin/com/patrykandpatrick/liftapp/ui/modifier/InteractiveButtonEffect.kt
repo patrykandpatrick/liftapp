@@ -38,7 +38,11 @@ fun Modifier.interactiveButtonEffect(
             role = role,
             onClick = onClick,
         )
-        .extendedInteractions(interactionSource, scope)
+        .extendedInteractions(
+            enabled = enabled,
+            interactionSource = interactionSource,
+            coroutineScope = scope,
+        )
         .interactiveScale(interactionSource = interactionSource, animationSpec = scaleAnimationSpec)
         .interactiveBorder(
             interactionSource = interactionSource,

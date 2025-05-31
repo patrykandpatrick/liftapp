@@ -14,10 +14,8 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectorInfo
 import com.patrykandpatrick.liftapp.ui.interaction.HoverInteraction
 import com.patrykandpatrick.liftapp.ui.state.animatedFloatStateOf
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 fun Modifier.interactiveScale(
     interactionSource: InteractionSource,
@@ -72,15 +70,19 @@ private class ScaleNode(
                 when (interaction) {
                     is PressInteraction.Press -> currentScale.animate(scale.press)
                     is HoverInteraction.Enter -> currentScale.animate(scale.hover)
+                    is HoverInteraction.EnterFromRelease -> {
+                        currentScale.animate(scale.press)
+                        currentScale.animate(scale.hover)
+                    }
                     is PressInteraction.Release -> {
-                        withContext(NonCancellable) { currentScale.animate(scale.press) }
+                        currentScale.animate(scale.press)
                         currentScale.animate(scale.default)
                     }
                     is HoverInteraction.Exit,
                     is PressInteraction.Cancel -> {
                         currentScale.animate(scale.default)
                     }
-                    else -> {}
+                    else -> Unit
                 }
             }
         }

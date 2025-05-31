@@ -24,11 +24,9 @@ import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.interaction.HoverInteraction
 import com.patrykandpatrick.liftapp.ui.state.animatedColorStateOf
 import kotlin.properties.Delegates
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 fun Modifier.interactiveBorder(
     interactionSource: InteractionSource,
@@ -115,17 +113,25 @@ private class BorderNode(
                             launch { borderSecondaryColor.animate(colors.hoverBackgroundColor) }
                         }
 
+                        is HoverInteraction.EnterFromRelease -> {
+                            touchOffset.value = interaction.position
+                            launch {
+                                borderPrimaryColor.animate(colors.hoverForegroundColor)
+                                borderPrimaryColor.animate(colors.pressedColor)
+                            }
+                            launch {
+                                borderSecondaryColor.animate(colors.pressedColor)
+                                borderSecondaryColor.animate(colors.hoverBackgroundColor)
+                            }
+                        }
+
                         is PressInteraction.Release -> {
                             launch {
-                                withContext(NonCancellable) {
-                                    borderPrimaryColor.animate(colors.pressedColor)
-                                }
+                                borderPrimaryColor.animate(colors.pressedColor)
                                 borderPrimaryColor.animate(colors.color)
                             }
                             launch {
-                                withContext(NonCancellable) {
-                                    borderSecondaryColor.animate(colors.pressedColor)
-                                }
+                                borderSecondaryColor.animate(colors.pressedColor)
                                 borderSecondaryColor.animate(colors.color)
                             }
                         }
