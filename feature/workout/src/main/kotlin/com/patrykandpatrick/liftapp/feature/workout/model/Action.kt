@@ -1,8 +1,11 @@
 package com.patrykandpatrick.liftapp.feature.workout.model
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.ArrowForward
+import com.patrykandpatrick.liftapp.ui.icons.Check
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import java.time.LocalDate
@@ -44,10 +47,9 @@ fun Action.Button.getText(): String =
         is Action.FinishWorkout -> R.string.workout_summary_action_finish_workout
     }.let { stringResource(it) }
 
-@Composable
-fun Action.Button.getPainter() =
+fun Action.Button.getImageVector() =
     when (this) {
-        is Action.NextPage -> R.drawable.ic_arrow_forward
-        is Action.PreviousPage -> R.drawable.ic_arrow_back
-        is Action.FinishWorkout -> R.drawable.ic_check
-    }.let { painterResource(it) }
+        is Action.NextPage -> LiftAppIcons.ArrowForward
+        is Action.PreviousPage -> LiftAppIcons.ArrowBack
+        is Action.FinishWorkout -> LiftAppIcons.Check
+    }

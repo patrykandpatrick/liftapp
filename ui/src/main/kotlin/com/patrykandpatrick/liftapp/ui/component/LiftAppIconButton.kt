@@ -2,8 +2,6 @@ package com.patrykandpatrick.liftapp.ui.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -15,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.modifier.IndicationScale
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
@@ -64,7 +64,7 @@ private fun LiftAppIconButtonPreview() {
         LiftAppBackground {
             LiftAppIconButton(
                 onClick = {},
-                content = { Icon(imageVector = Icons.Outlined.Face, contentDescription = null) },
+                content = { Icon(imageVector = LiftAppIcons.ArrowBack, contentDescription = null) },
             )
         }
     }

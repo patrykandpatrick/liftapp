@@ -28,6 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
@@ -50,7 +52,7 @@ fun TopAppBar(
                 if (onBackClick != null) {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_arrow_back),
+                            imageVector = LiftAppIcons.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
                         )
                     }

@@ -60,7 +60,7 @@ import com.patrykandpatrick.liftapp.feature.workout.model.UpdateWorkoutUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
-import com.patrykandpatrick.liftapp.feature.workout.model.getPainter
+import com.patrykandpatrick.liftapp.feature.workout.model.getImageVector
 import com.patrykandpatrick.liftapp.feature.workout.model.getText
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
@@ -269,7 +269,7 @@ private fun BottomBar(
                                 bottomEnd = CornerSize(4.dp),
                             ),
                     ) {
-                        Icon(page.secondaryAction.getPainter(), page.secondaryAction.getText())
+                        Icon(page.secondaryAction.getImageVector(), page.secondaryAction.getText())
                     }
                     Button(
                         onClick = { onAction(page.primaryAction) },
@@ -282,7 +282,7 @@ private fun BottomBar(
                     ) {
                         Text(page.primaryAction.getText())
                         Spacer(Modifier.width(padding.itemHorizontalSmall))
-                        Icon(page.primaryAction.getPainter(), page.primaryAction.getText())
+                        Icon(page.primaryAction.getImageVector(), page.primaryAction.getText())
                     }
                 }
             }

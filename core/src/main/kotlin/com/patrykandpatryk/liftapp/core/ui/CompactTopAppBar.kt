@@ -8,10 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatryk.liftapp.core.R
 
 @Composable
@@ -49,7 +50,7 @@ object CompactTopAppBarDefaults {
     fun BackIcon(onClick: () -> Unit) {
         LiftAppIconButton(onClick = onClick) {
             Icon(
-                painter = painterResource(R.drawable.ic_arrow_back),
+                imageVector = LiftAppIcons.ArrowBack,
                 contentDescription = stringResource(id = R.string.action_go_back),
             )
         }
