@@ -7,18 +7,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -50,12 +46,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.InfoCard
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.animation.StiffnessForAppearance
@@ -68,14 +67,7 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun OneRepMaxScreen(modifier: Modifier = Modifier) {
     val viewModel = hiltViewModel<OneRepMaxViewModel>()
-    OneRepMaxScreen(
-        state = viewModel.state,
-        onAction = viewModel::onAction,
-        modifier =
-            modifier
-                .background(MaterialTheme.colorScheme.background)
-                .windowInsetsPadding(WindowInsets.displayCutout),
-    )
+    OneRepMaxScreen(state = viewModel.state, onAction = viewModel::onAction, modifier = modifier)
 }
 
 @Composable
@@ -100,18 +92,13 @@ private fun OneRepMaxScreenCompact(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
+    LiftAppScaffold(
         modifier = modifier,
         topBar = {
-            CenterAlignedTopAppBar(
+            CompactTopAppBar(
                 title = { Text(text = stringResource(id = R.string.route_one_rep_max)) },
                 navigationIcon = {
-                    IconButton(onClick = { onAction(Action.PopBackStack) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = stringResource(id = R.string.action_close),
-                        )
-                    }
+                    CompactTopAppBarDefaults.BackIcon { onAction(Action.PopBackStack) }
                 },
             )
         },
