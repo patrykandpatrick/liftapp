@@ -36,7 +36,7 @@ import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
-import com.patrykandpatryk.liftapp.core.ui.Info
+import com.patrykandpatryk.liftapp.core.ui.InfoCard
 import com.patrykandpatryk.liftapp.core.ui.input.DateInput
 import com.patrykandpatryk.liftapp.core.ui.input.DateInputDefaults
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
@@ -106,7 +106,7 @@ private fun Content(state: ScreenState, modifier: Modifier = Modifier) {
             hint = stringResource(R.string.training_plan_cycle_count),
         )
 
-        Info(text = getInfoText(state))
+        InfoCard(text = getInfoText(state))
     }
 }
 

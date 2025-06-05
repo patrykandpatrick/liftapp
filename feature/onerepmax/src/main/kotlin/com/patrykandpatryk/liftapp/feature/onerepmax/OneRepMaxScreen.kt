@@ -56,7 +56,7 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
-import com.patrykandpatryk.liftapp.core.ui.Info
+import com.patrykandpatryk.liftapp.core.ui.InfoCard
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.animation.StiffnessForAppearance
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -126,7 +126,7 @@ private fun OneRepMaxScreenCompact(
         ) {
             Calculator(state = state)
 
-            Info(
+            InfoCard(
                 text = stringResource(id = R.string.one_rep_max_description),
                 modifier = Modifier.padding(top = LocalDimens.current.verticalItemSpacing),
             )
@@ -207,7 +207,7 @@ fun OneRepMaxScreenLarge(
                 verticalArrangement = Arrangement.spacedBy(LocalDimens.current.verticalItemSpacing),
                 modifier = Modifier.fillMaxHeight().weight(1f),
             ) {
-                Info(text = stringResource(id = R.string.one_rep_max_description))
+                InfoCard(text = stringResource(id = R.string.one_rep_max_description))
 
                 History(history = history, removeHistory = state::clearHistory)
             }

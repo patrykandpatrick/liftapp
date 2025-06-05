@@ -52,7 +52,7 @@ import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
-import com.patrykandpatryk.liftapp.core.ui.Info
+import com.patrykandpatryk.liftapp.core.ui.InfoCard
 import com.patrykandpatryk.liftapp.core.ui.InfoDefaults
 import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
@@ -149,7 +149,7 @@ private fun LazyGridScope.content(
 ) {
     if (infoVisible) {
         item(key = "info", span = { GridItemSpan(maxLineSpan) }) {
-            Info(stringResource(id = R.string.goal_info), itemModifier) {
+            InfoCard(stringResource(id = R.string.goal_info), itemModifier) {
                 InfoDefaults.DismissButton(toggleInfoVisible)
             }
         }
