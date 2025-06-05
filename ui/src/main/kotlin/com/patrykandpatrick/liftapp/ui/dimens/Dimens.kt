@@ -52,7 +52,12 @@ data class Dimens(
         val exercisesControlsVertical: Dp = 8.dp,
     )
 
-    @Immutable data class IconButton(val minTouchTarget: Dp = 48.dp, val rippleRadius: Dp = 20.dp)
+    @Immutable
+    data class IconButton(
+        val minTouchTarget: Dp = 48.dp,
+        val size: Dp = 40.dp,
+        val rippleRadius: Dp = 20.dp,
+    )
 
     @Immutable
     data class Grid(val minCellWidthMedium: Dp = 164.dp, val minCellWidthLarge: Dp = 240.dp)

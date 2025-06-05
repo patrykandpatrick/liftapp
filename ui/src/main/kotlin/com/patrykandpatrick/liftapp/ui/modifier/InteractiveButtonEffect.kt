@@ -14,15 +14,17 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.interaction.extendedInteractions
 
 fun Modifier.interactiveButtonEffect(
     colors: InteractiveBorderColors,
-    borderWidth: Dp,
     onClick: () -> Unit,
+    borderWidth: Dp = 1.dp,
     enabled: Boolean = true,
     shape: Shape = RectangleShape,
+    indicationScale: IndicationScale = IndicationScale(),
     role: Role? = null,
     scaleAnimationSpec: AnimationSpec<Float> =
         spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow),
@@ -43,7 +45,11 @@ fun Modifier.interactiveButtonEffect(
             interactionSource = interactionSource,
             coroutineScope = scope,
         )
-        .interactiveScale(interactionSource = interactionSource, animationSpec = scaleAnimationSpec)
+        .interactiveScale(
+            interactionSource = interactionSource,
+            animationSpec = scaleAnimationSpec,
+            scale = indicationScale,
+        )
         .interactiveBorder(
             interactionSource = interactionSource,
             colors = colors,
