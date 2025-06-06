@@ -33,33 +33,30 @@ fun Modifier.interactiveBorder(
     colors: InteractiveBorderColors,
     shape: Shape,
     width: Dp = 1.dp,
+    checked: Boolean = false,
     animationSpec: AnimationSpec<Color> = spring(),
 ): Modifier =
     this.then(
-        InteractiveBorderElement(
-            interactionSource = interactionSource,
-            colors = colors,
-            width = width,
-            shape = shape,
-            animationSpec = animationSpec,
-        )
+        InteractiveBorderElement(interactionSource, colors, shape, width, checked, animationSpec)
     )
 
 private data class InteractiveBorderElement(
     private val interactionSource: InteractionSource,
     private val colors: InteractiveBorderColors,
-    private val width: Dp,
     private val shape: Shape,
+    private val width: Dp,
+    private val checked: Boolean,
     private val animationSpec: AnimationSpec<Color>,
 ) : ModifierNodeElement<BorderNode>() {
     override fun create(): BorderNode =
-        BorderNode(interactionSource, colors, width, shape, animationSpec)
+        BorderNode(interactionSource, colors, width, checked, shape, animationSpec)
 
     override fun update(node: BorderNode) {
         node.interactionSource = interactionSource
         node.colors = colors
-        node.width = width
         node.shape = shape
+        node.width = width
+        node.checked = checked
         node.animationSpec = animationSpec
     }
 
@@ -67,8 +64,9 @@ private data class InteractiveBorderElement(
         name = "Interactive Border"
         properties["interactionSource"] = interactionSource
         properties["colors"] = colors
-        properties["width"] = width
         properties["shape"] = shape
+        properties["width"] = width
+        properties["checked"] = checked
     }
 }
 
@@ -76,22 +74,26 @@ private class BorderNode(
     var interactionSource: InteractionSource,
     var colors: InteractiveBorderColors,
     var width: Dp,
+    var checked: Boolean,
     shape: Shape,
     animationSpec: AnimationSpec<Color>,
 ) : DrawModifierNode, Modifier.Node() {
+
+    private val idleColor: Color
+        get() = if (checked) colors.checkedColor else colors.color
 
     var shape: Shape by Delegates.observable(shape) { _, _, _ -> updateBorderColors() }
 
     var animationSpec: AnimationSpec<Color> by
         Delegates.observable(animationSpec) { _, _, _ -> updateBorderColors() }
 
-    private var borderPrimaryColor = animatedColorStateOf(colors.color, animationSpec)
+    private var borderPrimaryColor = animatedColorStateOf(idleColor, animationSpec)
 
-    private var borderSecondaryColor = animatedColorStateOf(colors.color, animationSpec)
+    private var borderSecondaryColor = animatedColorStateOf(idleColor, animationSpec)
 
     private fun updateBorderColors() {
-        borderPrimaryColor = animatedColorStateOf(colors.color, animationSpec)
-        borderSecondaryColor = animatedColorStateOf(colors.color, animationSpec)
+        borderPrimaryColor = animatedColorStateOf(idleColor, animationSpec)
+        borderSecondaryColor = animatedColorStateOf(idleColor, animationSpec)
     }
 
     private val touchOffset = mutableStateOf(Offset.Companion.Zero)
@@ -128,18 +130,18 @@ private class BorderNode(
                         is PressInteraction.Release -> {
                             launch {
                                 borderPrimaryColor.animate(colors.pressedColor)
-                                borderPrimaryColor.animate(colors.color)
+                                borderPrimaryColor.animate(idleColor)
                             }
                             launch {
                                 borderSecondaryColor.animate(colors.pressedColor)
-                                borderSecondaryColor.animate(colors.color)
+                                borderSecondaryColor.animate(idleColor)
                             }
                         }
 
                         is HoverInteraction.Exit,
                         is PressInteraction.Cancel -> {
-                            launch { borderPrimaryColor.animate(colors.color) }
-                            launch { borderSecondaryColor.animate(colors.color) }
+                            launch { borderPrimaryColor.animate(idleColor) }
+                            launch { borderSecondaryColor.animate(idleColor) }
                         }
                     }
                 }

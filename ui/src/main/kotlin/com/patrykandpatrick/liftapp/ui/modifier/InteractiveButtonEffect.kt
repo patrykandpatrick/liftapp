@@ -20,9 +20,10 @@ import com.patrykandpatrick.liftapp.ui.interaction.extendedInteractions
 
 fun Modifier.interactiveButtonEffect(
     colors: InteractiveBorderColors,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     borderWidth: Dp = 1.dp,
     enabled: Boolean = true,
+    checked: Boolean = false,
     shape: Shape = RectangleShape,
     indicationScale: IndicationScale = IndicationScale(),
     role: Role? = null,
@@ -33,12 +34,18 @@ fun Modifier.interactiveButtonEffect(
     val interactionSource = remember { MutableInteractionSource() }
     val scope = rememberCoroutineScope()
 
-    clickable(
-            interactionSource = null,
-            indication = null,
-            enabled = enabled,
-            role = role,
-            onClick = onClick,
+    then(
+            if (onClick != null) {
+                Modifier.clickable(
+                    interactionSource = null,
+                    indication = null,
+                    enabled = enabled,
+                    role = role,
+                    onClick = onClick,
+                )
+            } else {
+                Modifier
+            }
         )
         .extendedInteractions(
             enabled = enabled,
@@ -55,6 +62,7 @@ fun Modifier.interactiveButtonEffect(
             colors = colors,
             width = borderWidth,
             shape = shape,
+            checked = checked,
             animationSpec = colorAnimationSpec,
         )
 }

@@ -1,10 +1,6 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,12 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -30,9 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -40,15 +37,17 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
+import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.Alpha
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.PillShape
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.scaleCornerSize
-import com.patrykandpatryk.liftapp.core.extension.thenIfNotNull
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.ListItemTitle
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.getDefaultDescription
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.getDefaultIcon
@@ -62,6 +61,7 @@ fun ListItem(
     description: String? = null,
     trailing: String? = null,
     enabled: Boolean = true,
+    checked: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     titleHighlightPosition: IntRange = IntRange.EMPTY,
@@ -75,62 +75,9 @@ fun ListItem(
         icon = getDefaultIcon(iconPainter),
         actions = actions,
         enabled = enabled,
+        checked = checked,
         paddingValues = paddingValues,
         onClick = onClick,
-    )
-}
-
-@Composable
-fun CheckableListItem(
-    title: String,
-    modifier: Modifier = Modifier,
-    description: String? = null,
-    trailing: String? = null,
-    iconPainter: Painter? = null,
-    checked: Boolean,
-    enabled: Boolean = true,
-    paddingValues: PaddingValues = ListItemDefaults.paddingValues,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    val animationFraction by
-        animateFloatAsState(targetValue = if (checked) 1f else 0f, animationSpec = tween())
-
-    val shape = MaterialTheme.shapes.small.scaleCornerSize(animationFraction)
-
-    ListItem(
-        title = { Text(title) },
-        modifier =
-            modifier
-                .border(
-                    width = MaterialTheme.dimens.strokeWidth,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = animationFraction),
-                    shape = shape,
-                )
-                .clip(shape),
-        description = getDefaultDescription(description),
-        trailing = trailing,
-        icon = {
-            if (iconPainter != null) {
-                Icon(
-                    modifier =
-                        Modifier.size(MaterialTheme.dimens.list.itemIconBackgroundSize)
-                            .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = PillShape,
-                            )
-                            .padding(8.dp),
-                    painter = iconPainter,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
-        },
-        actions = {
-            Checkbox(checked = checked, onCheckedChange = if (enabled) onCheckedChange else null)
-        },
-        enabled = enabled,
-        paddingValues = paddingValues,
-        onClick = { onCheckedChange(checked.not()) },
     )
 }
 
@@ -144,6 +91,8 @@ fun ListItem(
     actions: @Composable (RowScope.() -> Unit) = {},
     enabled: Boolean = true,
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
+    checked: Boolean = false,
+    shape: Shape = MaterialTheme.shapes.medium,
     onClick: (() -> Unit)? = null,
 ) {
     Row(
@@ -153,7 +102,20 @@ fun ListItem(
             modifier
                 .alpha(Alpha.get(enabled))
                 .fillMaxWidth()
-                .thenIfNotNull(value = onClick) { clickable(onClick = it, enabled = enabled) }
+                .interactiveButtonEffect(
+                    colors =
+                        InteractiveBorderColors(
+                            color = Color.Transparent,
+                            pressedColor = colorScheme.primary,
+                            hoverForegroundColor = colorScheme.primary,
+                            hoverBackgroundColor = colorScheme.outline,
+                            checkedColor = colorScheme.outline.copy(alpha = Alpha.get(enabled)),
+                        ),
+                    onClick = onClick,
+                    enabled = enabled,
+                    checked = checked,
+                    shape = shape,
+                )
                 .padding(paddingValues),
     ) {
         icon?.invoke(this)
@@ -161,14 +123,14 @@ fun ListItem(
         Column(modifier = Modifier.weight(1f)) {
             CompositionLocalProvider(
                 LocalTextStyle provides MaterialTheme.typography.titleMedium,
-                LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+                LocalContentColor provides colorScheme.onSurface,
                 content = title,
             )
 
             if (description != null) {
                 CompositionLocalProvider(
                     LocalTextStyle provides MaterialTheme.typography.bodyMedium,
-                    LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant,
+                    LocalContentColor provides colorScheme.onSurfaceVariant,
                     content = description,
                 )
             }
@@ -178,7 +140,7 @@ fun ListItem(
             Text(
                 text = trailing,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = colorScheme.onSurfaceVariant,
             )
         }
 
@@ -203,14 +165,11 @@ object ListItemDefaults {
                 Icon(
                     modifier =
                         Modifier.size(40.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = PillShape,
-                            )
+                            .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
                             .padding(8.dp),
                     painter = painter,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    tint = colorScheme.surface,
                 )
             }
         } else null
@@ -219,11 +178,9 @@ object ListItemDefaults {
     fun ListItemTitle(title: String, titleHighlightPosition: IntRange) {
         if (!titleHighlightPosition.isEmpty()) {
             var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
-            val highlightColor = MaterialTheme.colorScheme.tertiaryContainer
+            val highlightColor = colorScheme.primary
             val highlightCornerRadiusPx =
-                with(LocalDensity.current) {
-                    MaterialTheme.dimens.list.itemTitleHighlightCornerRadius.toPx()
-                }
+                with(LocalDensity.current) { dimens.list.itemTitleHighlightCornerRadius.toPx() }
             ListItemTitle(
                 text = title,
                 modifier =
@@ -250,7 +207,7 @@ object ListItemDefaults {
                 spanStyles =
                     listOf(
                         AnnotatedString.Range(
-                            SpanStyle(MaterialTheme.colorScheme.onTertiaryContainer),
+                            SpanStyle(colorScheme.onPrimary),
                             titleHighlightPosition.first,
                             titleHighlightPosition.last,
                         )
@@ -272,7 +229,7 @@ object ListItemDefaults {
         Text(
             text = AnnotatedString(text, spanStyles),
             modifier = modifier,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = colorScheme.onSurface,
             onTextLayout = onTextLayout,
             style = MaterialTheme.typography.titleMedium,
         )
@@ -283,21 +240,36 @@ object ListItemDefaults {
             { Text(description) }
         } else null
     }
+
+    @Composable
+    fun Checkbox(checked: Boolean, modifier: Modifier = Modifier) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = null,
+            colors =
+                CheckboxDefaults.colors(
+                    checkedColor = colorScheme.primary,
+                    uncheckedColor = colorScheme.onSurface,
+                    checkmarkColor = colorScheme.onPrimary,
+                ),
+            modifier = modifier.padding(horizontal = dimens.padding.itemHorizontalSmall),
+        )
+    }
 }
 
 @LightAndDarkThemePreview
 @Composable
 fun PreviewTitleItem() {
-    LiftAppTheme { Surface { ListItem(title = { Text("This is a title") }) } }
+    LiftAppTheme { LiftAppBackground { ListItem(title = { Text("This is a title") }) } }
 }
 
 @LightAndDarkThemePreview
 @Composable
 fun PreviewTitleWithDescItem() {
     LiftAppTheme {
-        Surface {
+        LiftAppBackground {
             ListItem(
-                title = { Text("This is a title") },
+                title = { ListItemTitle("This is a title", titleHighlightPosition = 0..3) },
                 description = { Text("This is a description") },
             )
         }
@@ -308,7 +280,7 @@ fun PreviewTitleWithDescItem() {
 @Composable
 fun PreviewTitleWithDescAndIconItem() {
     LiftAppTheme {
-        Surface {
+        LiftAppBackground {
             ListItem(
                 title = "This is a title",
                 description = "This is a description",
@@ -322,7 +294,7 @@ fun PreviewTitleWithDescAndIconItem() {
 @Composable
 fun PreviewTitleWithLongDescAndIconItem() {
     LiftAppTheme {
-        Surface {
+        LiftAppBackground {
             ListItem(
                 title = "This is a title",
                 description = "This is a description with two lines",
@@ -351,7 +323,7 @@ fun PreviewTitleWithLongDescAndIconItem() {
 @Composable
 fun PreviewTitleWithLongDescTrailingAndIconItem() {
     LiftAppTheme {
-        Surface {
+        LiftAppBackground {
             ListItem(
                 title = "This is a title",
                 description = "This is a description with two lines",
@@ -374,7 +346,7 @@ fun PreviewTitleWithLongDescTrailingAndIconItem() {
 @Composable
 fun PreviewTitleWithIconItem() {
     LiftAppTheme {
-        Surface {
+        LiftAppBackground {
             ListItem(
                 title = "This is a title",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
@@ -385,33 +357,29 @@ fun PreviewTitleWithIconItem() {
 
 @LightAndDarkThemePreview
 @Composable
-fun PreviewCheckableListItemChecked() {
-    LiftAppTheme {
-        Surface {
-            val (checked, setChecked) = remember { mutableStateOf(true) }
-            CheckableListItem(
-                title = "This is a title",
-                description = "This is a description",
-                iconPainter = painterResource(id = R.drawable.ic_distance),
-                checked = checked,
-                onCheckedChange = setChecked,
-            )
-        }
-    }
+private fun PreviewCheckableListItemChecked() {
+    PreviewCheckableListItem(checked = true)
 }
 
 @LightAndDarkThemePreview
 @Composable
-fun PreviewCheckableListItemUnchecked() {
+private fun PreviewCheckableListItemUnchecked() {
+    PreviewCheckableListItem(checked = false)
+}
+
+@Composable
+private fun PreviewCheckableListItem(checked: Boolean) {
     LiftAppTheme {
-        Surface {
-            val (checked, setChecked) = remember { mutableStateOf(false) }
-            CheckableListItem(
+        LiftAppBackground {
+            val (checked, setChecked) = remember { mutableStateOf(checked) }
+            ListItem(
                 title = "This is a title",
+                titleHighlightPosition = 0..3,
                 description = "This is a description",
                 iconPainter = painterResource(id = R.drawable.ic_distance),
                 checked = checked,
-                onCheckedChange = setChecked,
+                onClick = { setChecked(!checked) },
+                modifier = Modifier.padding(8.dp),
             )
         }
     }

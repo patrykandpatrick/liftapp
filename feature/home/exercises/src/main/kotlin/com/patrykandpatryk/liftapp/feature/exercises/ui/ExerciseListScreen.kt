@@ -55,7 +55,6 @@ import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.ui.CheckableListItem
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults
@@ -162,7 +161,7 @@ private fun ListContent(
                             Modifier.animateItem()
                                 .padding(
                                     start =
-                                        MaterialTheme.dimens.list.itemIconBackgroundSize +
+                                        dimens.list.itemIconBackgroundSize +
                                             ListItemDefaults.paddingValues.calculateStartPadding()
                                 ),
                     )
@@ -179,18 +178,17 @@ private fun LazyItemScope.ExerciseItem(
     onAction: (Action) -> Unit,
 ) {
     if (state.pickingMode) {
-        CheckableListItem(
+        ListItem(
             title = item.name,
             description = item.muscles,
             iconPainter = painterResource(id = item.iconRes),
             modifier =
-                Modifier.padding(
-                        horizontal = MaterialTheme.dimens.list.checkedItemHorizontalPadding
-                    )
+                Modifier.padding(horizontal = dimens.list.checkedItemHorizontalPadding)
                     .animateItem(),
             checked = item.checked,
-            onCheckedChange = { checked -> onAction(Action.SetExerciseChecked(item.id, checked)) },
+            onClick = { onAction(Action.SetExerciseChecked(item.id, !item.checked)) },
             enabled = item.enabled,
+            actions = { ListItemDefaults.Checkbox(item.checked) },
         )
     } else {
         ListItem(
@@ -238,16 +236,14 @@ private fun TopBar(
             SearchBar(
                 value = state.query,
                 onValueChange = { onAction(Action.SetQuery(it)) },
-                modifier = Modifier.padding(all = MaterialTheme.dimens.padding.contentHorizontal),
+                modifier = Modifier.padding(all = dimens.padding.contentHorizontal),
             )
         }
     } else {
         SearchBar(
             value = state.query,
             onValueChange = { onAction(Action.SetQuery(it)) },
-            modifier =
-                Modifier.statusBarsPadding()
-                    .padding(all = MaterialTheme.dimens.padding.contentHorizontal),
+            modifier = Modifier.statusBarsPadding().padding(all = dimens.padding.contentHorizontal),
         )
     }
 }
@@ -276,22 +272,19 @@ private fun BottomBar(mode: ExerciseListRouteData.Mode.Pick, onAction: (Action) 
 
 @Composable
 private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
-    Column(
-        modifier =
-            Modifier.padding(vertical = MaterialTheme.dimens.padding.exercisesControlsVertical)
-    ) {
+    Column(modifier = Modifier.padding(vertical = dimens.padding.exercisesControlsVertical)) {
         Text(
             text = stringResource(id = R.string.generic_group_by),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = MaterialTheme.dimens.padding.contentHorizontal),
+            modifier = Modifier.padding(horizontal = dimens.padding.contentHorizontal),
         )
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
             modifier =
                 Modifier.horizontalScroll(state = rememberScrollState())
-                    .padding(horizontal = MaterialTheme.dimens.padding.contentHorizontal),
+                    .padding(horizontal = dimens.padding.contentHorizontal),
         ) {
             GroupBy.entries.forEach {
                 val selected = groupBy == it

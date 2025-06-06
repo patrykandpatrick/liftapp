@@ -10,6 +10,7 @@ data class InteractiveBorderColors(
     val pressedColor: Color,
     val hoverForegroundColor: Color,
     val hoverBackgroundColor: Color = color,
+    val checkedColor: Color = color,
 )
 
 fun lerp(
@@ -23,4 +24,5 @@ fun lerp(
         hoverForegroundColor =
             lerp(start.hoverForegroundColor, stop.hoverForegroundColor, fraction),
         hoverBackgroundColor = lerp(start.hoverBackgroundColor, stop.hoverBackgroundColor, fraction),
+        checkedColor = lerp(start.checkedColor, stop.checkedColor, fraction),
     )
