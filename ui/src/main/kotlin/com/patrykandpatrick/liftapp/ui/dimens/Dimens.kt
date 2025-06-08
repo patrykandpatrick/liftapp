@@ -16,6 +16,7 @@ data class Dimens(
     val dialog: Dialog = Dialog(),
     val divider: Divider = Divider(),
     val elevation: Elevation = Elevation(),
+    val fab: FAB = FAB(),
     val grid: Grid = Grid(),
     val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
@@ -125,6 +126,13 @@ data class Dimens(
         val borderWidth: Dp = 1.dp,
         val minContentHeight: Dp = 24.dp,
         val underlineWidth: Dp = 1.5.dp,
+    )
+
+    @Immutable
+    data class FAB(
+        val iconPadding: Dp = 12.dp,
+        val horizontalPadding: Dp = 20.dp,
+        val verticalPadding: Dp = 14.dp,
     )
 
     @Immutable data class Elevation(val dragElevation: Dp = 2.dp)

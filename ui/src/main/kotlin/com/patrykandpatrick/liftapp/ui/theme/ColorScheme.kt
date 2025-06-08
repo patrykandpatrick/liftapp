@@ -29,24 +29,24 @@ private fun getInteractiveBorderColors(highlight: Color, outline: Color): Intera
 
 private val LightColorScheme =
     ColorScheme(
-        primary = Color(0xFF3A3AFF),
+        primary = Color(0xFF5151FA),
         primaryDisabled = Color(0x243A3AFF),
-        onPrimary = Color(0xFFF0F0FF),
+        onPrimary = Color(0xFFE0E0FF),
         primaryHighlight = Color.Transparent,
-        primaryHighlightActivated = Color(0xFF010162),
+        primaryHighlightActivated = Color(0xFF2A2ADC),
         secondary = Color(0xFF000000),
         secondaryDisabled = Color(0xA8000000),
-        background = Color(0xFFF0F0FF),
+        background = Color(0xFFF2F2FF),
         surface = Color(0xFFF6F6FF),
         onSurface = Color(0xFF14143D),
         onSurfaceVariant = Color(0xFF171754),
-        outline = Color(0x4A0000B0),
+        outline = Color(0xFFA4A4DA),
         isDarkColorScheme = false,
     )
 
 private val DarkColorScheme =
     ColorScheme(
-        primary = Color(0xFF5252E5),
+        primary = Color(0xFF5C5CEE),
         primaryDisabled = Color(0x3D5252E5),
         onPrimary = Color(0xFFF0F0FF),
         primaryHighlight = Color(0x6FF0F0FF),

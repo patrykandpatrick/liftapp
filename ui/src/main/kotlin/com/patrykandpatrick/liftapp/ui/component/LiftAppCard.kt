@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
-import com.patrykandpatrick.liftapp.ui.modifier.interactiveBorder
+import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.GridPreviewSurface
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
@@ -60,18 +59,17 @@ fun LiftAppCard(
         enabled = enabled,
         colors = colors,
         interactionSource = interactionSource,
-        onClick = onClick,
-        role = role,
         modifier = modifier,
     ) { interactionSource ->
         Column(
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment,
             modifier =
-                Modifier.interactiveBorder(
-                        interactionSource = interactionSource,
+                Modifier.interactiveButtonEffect(
                         colors = colors.interactiveBorderColors,
-                        width = dimens.button.borderWidth,
+                        onClick = onClick,
+                        enabled = enabled,
+                        role = role,
                         shape = shape,
                     )
                     .clip(shape)
@@ -94,9 +92,7 @@ internal fun CardBase(
     enabled: Boolean,
     colors: ContainerColors,
     interactionSource: MutableInteractionSource?,
-    onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
-    role: Role? = null,
     textStyle: TextStyle = LocalTextStyle.current,
     content: @Composable BoxScope.(MutableInteractionSource) -> Unit,
 ) {
@@ -108,18 +104,7 @@ internal fun CardBase(
             if (enabled) colors.contentColor else colors.disabledContentColor,
         LocalTextStyle provides LocalTextStyle.current.merge(textStyle),
     ) {
-        Box(
-            modifier =
-                modifier
-                    .clickable(
-                        enabled = onClick != null && enabled,
-                        role = role,
-                        interactionSource = interactionSource,
-                        onClick = onClick ?: {},
-                    )
-                    .width(IntrinsicSize.Max)
-                    .height(IntrinsicSize.Max)
-        ) {
+        Box(modifier = modifier.width(IntrinsicSize.Max).height(IntrinsicSize.Max)) {
             content(interactionSource)
         }
     }

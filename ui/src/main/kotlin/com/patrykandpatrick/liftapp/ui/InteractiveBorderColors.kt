@@ -23,6 +23,7 @@ fun lerp(
         pressedColor = lerp(start.pressedColor, stop.pressedColor, fraction),
         hoverForegroundColor =
             lerp(start.hoverForegroundColor, stop.hoverForegroundColor, fraction),
-        hoverBackgroundColor = lerp(start.hoverBackgroundColor, stop.hoverBackgroundColor, fraction),
+        hoverBackgroundColor =
+            lerp(start.hoverBackgroundColor, stop.hoverBackgroundColor, fraction),
         checkedColor = lerp(start.checkedColor, stop.checkedColor, fraction),
     )

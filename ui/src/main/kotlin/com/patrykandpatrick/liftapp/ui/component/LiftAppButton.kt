@@ -17,7 +17,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
-import com.patrykandpatrick.liftapp.ui.interaction.extendedInteractions
-import com.patrykandpatrick.liftapp.ui.modifier.interactiveBorder
+import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.ComponentPreview
 import com.patrykandpatrick.liftapp.ui.preview.GridPreviewSurface
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -98,7 +96,7 @@ object LiftAppButtonDefaults {
 fun LiftAppButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    spacing: Dp = 8.dp,
+    spacing: Dp = dimens.button.iconPadding,
     enabled: Boolean = true,
     colors: ContainerColors = LiftAppButtonDefaults.primaryButtonColors,
     contentPadding: PaddingValues =
@@ -110,28 +108,20 @@ fun LiftAppButton(
         enabled = enabled,
         colors = colors,
         interactionSource = interactionSource,
-        onClick = onClick,
-        role = Role.Button,
         modifier = modifier,
         textStyle = MaterialTheme.typography.labelLarge,
     ) { interactionSource ->
-        val shape = MaterialTheme.shapes.small
-        val scope = rememberCoroutineScope()
-
+        val shape = MaterialTheme.shapes.medium
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterHorizontally),
             modifier =
-                Modifier.interactiveBorder(
-                        interactionSource = interactionSource,
+                Modifier.interactiveButtonEffect(
                         colors = colors.interactiveBorderColors,
-                        width = dimens.button.borderWidth,
-                        shape = shape,
-                    )
-                    .extendedInteractions(
+                        onClick = onClick,
                         enabled = enabled,
-                        interactionSource = interactionSource,
-                        coroutineScope = scope,
+                        role = Role.Button,
+                        shape = shape,
                     )
                     .background(
                         color =
@@ -166,13 +156,10 @@ fun PlainLiftAppButton(
         enabled = enabled,
         colors = colors,
         interactionSource = interactionSource,
-        onClick = onClick,
-        role = Role.Button,
         modifier = modifier,
         textStyle = MaterialTheme.typography.labelLarge,
     ) { interactionSource ->
         val shape = MaterialTheme.shapes.small
-        val scope = rememberCoroutineScope()
 
         Layout(
             content = {
@@ -192,16 +179,12 @@ fun PlainLiftAppButton(
                 }
             },
             modifier =
-                Modifier.interactiveBorder(
-                        interactionSource = interactionSource,
+                Modifier.interactiveButtonEffect(
                         colors = colors.interactiveBorderColors,
-                        width = dimens.button.borderWidth,
-                        shape = shape,
-                    )
-                    .extendedInteractions(
+                        onClick = onClick,
                         enabled = enabled,
-                        interactionSource = interactionSource,
-                        coroutineScope = scope,
+                        role = Role.Button,
+                        shape = shape,
                     )
                     .padding(contentPadding)
                     .fillMaxWidth()
@@ -310,7 +293,7 @@ private fun OutlinedButtonPreview() {
 
 @ComponentPreview
 @Composable
-private fun PlainButtonPreview() {
+private fun ButtonPreview() {
     GridPreviewSurface(
         content =
             listOf(
