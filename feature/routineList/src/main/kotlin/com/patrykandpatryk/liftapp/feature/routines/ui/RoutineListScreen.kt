@@ -9,19 +9,19 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
+import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -29,7 +29,8 @@ import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.routine.RoutineCard
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.feature.routines.model.Action
 import com.patrykandpatryk.liftapp.feature.routines.model.RoutineItem
@@ -51,21 +52,21 @@ private fun RoutineListScreen(
     modifier: Modifier = Modifier,
 ) {
     val dimensPadding = LocalDimens.current.padding
-    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Scaffold(
-        modifier =
-            modifier.fillMaxHeight().nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+    LiftAppScaffold(
+        modifier = modifier.fillMaxHeight(),
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = stringResource(id = R.string.action_new_routine),
-                icon = painterResource(id = R.drawable.ic_add),
+            LiftAppFAB(
+                content = {
+                    Icon(painterResource(id = R.drawable.ic_add), null)
+                    Text(stringResource(id = R.string.action_new_routine))
+                },
                 onClick = { onAction(Action.AddNewRoutine) },
             )
         },
         topBar = {
             loadableState.Unfold { state ->
-                CenterAlignedTopAppBar(
+                CompactTopAppBar(
                     title = {
                         if (state.isPickingRoutine) {
                             Text(stringResource(id = R.string.route_pick_routine))
@@ -73,9 +74,8 @@ private fun RoutineListScreen(
                             Text(stringResource(id = R.string.route_routines))
                         }
                     },
-                    scrollBehavior = topAppBarScrollBehavior,
                     navigationIcon = {
-                        IconButton(onClick = { onAction(Action.PopBackStack) }) {
+                        LiftAppIconButton(onClick = { onAction(Action.PopBackStack) }) {
                             if (state.isPickingRoutine) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_close),
@@ -108,11 +108,13 @@ private fun RoutineListScreen(
                 horizontalArrangement = Arrangement.spacedBy(dimensPadding.itemHorizontalSmall),
             ) {
                 items(items = state, key = { it.id }) { routine ->
-                    RoutineCard(
-                        title = routine.name,
-                        exercises = routine.exercises,
-                        onClick = { onAction(Action.RoutineClicked(routine.id)) },
-                    )
+                    LiftAppCard(onClick = { onAction(Action.RoutineClicked(routine.id)) }) {
+                        RoutineCard(
+                            routineName = routine.name,
+                            exerciseNames = routine.exercises,
+                            paddingValues = PaddingValues(0.dp),
+                        )
+                    }
                 }
             }
         }
