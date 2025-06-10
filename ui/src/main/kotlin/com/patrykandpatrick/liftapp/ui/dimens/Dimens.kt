@@ -18,7 +18,6 @@ data class Dimens(
     val elevation: Elevation = Elevation(),
     val fab: FAB = FAB(),
     val grid: Grid = Grid(),
-    val height: Height = Height(),
     val iconButton: IconButton = IconButton(),
     val input: Input = Input(),
     val list: List = List(),
@@ -62,8 +61,6 @@ data class Dimens(
 
     @Immutable
     data class Grid(val minCellWidthMedium: Dp = 164.dp, val minCellWidthLarge: Dp = 240.dp)
-
-    @Immutable data class Height(val searchBar: Dp = 48.dp)
 
     @Immutable
     data class Dialog(
@@ -114,7 +111,7 @@ data class Dimens(
 
     @Immutable data class Toolbar(val height: Dp = 56.dp)
 
-    @Immutable data class SearchBar(val tonalElevation: Dp = 3.dp)
+    @Immutable data class SearchBar(val verticalPadding: Dp = 12.dp)
 
     @Immutable
     data class Button(
