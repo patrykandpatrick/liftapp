@@ -79,7 +79,13 @@ data class Dimens(
         val contentPaddingVertical: Dp = 16.dp,
     )
 
-    @Immutable data class Chip(val iconSize: Dp = 18.dp)
+    @Immutable
+    data class Chip(
+        val iconSize: Dp = 18.dp,
+        val spacing: Dp = 8.dp,
+        val horizontalPadding: Dp = 12.dp,
+        val verticalPadding: Dp = 6.dp,
+    )
 
     @Immutable
     data class Input(
