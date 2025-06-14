@@ -73,11 +73,7 @@ fun LiftAppCard(
                         shape = shape,
                     )
                     .clip(shape)
-                    .background(
-                        color =
-                            if (enabled) colors.backgroundColor else colors.disabledBackgroundColor,
-                        shape = shape,
-                    )
+                    .background(color = colors.getBackgroundColor(enabled), shape = shape)
                     .padding(contentPadding)
                     .align(Alignment.Center)
                     .fillMaxSize()

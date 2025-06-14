@@ -82,11 +82,7 @@ fun LiftAppFAB(
                         radius = 4.dp.toPx()
                         spread = 1.dp.toPx()
                     }
-                    .background(
-                        color =
-                            if (enabled) colors.backgroundColor else colors.disabledBackgroundColor,
-                        shape = shape,
-                    )
+                    .background(color = colors.getBackgroundColor(enabled), shape = shape)
                     .innerShadow(shape) {
                         color = Color.White.copy(alpha = .5f)
                         spread = .5f.dp.toPx()

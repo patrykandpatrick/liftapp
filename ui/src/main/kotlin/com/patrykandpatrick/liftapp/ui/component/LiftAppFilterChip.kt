@@ -39,7 +39,7 @@ fun LiftAppFilterChip(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingIcon: (@Composable () -> Unit)? = null,
-    colors: LiftAppFilterChipColors = LiftAppFilterChipDefaults.colors,
+    colors: StatefulContainerColors = LiftAppFilterChipDefaults.colors,
     contentPadding: PaddingValues =
         PaddingValues(dimens.chip.horizontalPadding, dimens.chip.verticalPadding),
     interactionSource: MutableInteractionSource? = null,
@@ -97,21 +97,13 @@ fun LiftAppChipRow(modifier: Modifier = Modifier, content: @Composable () -> Uni
     }
 }
 
-data class LiftAppFilterChipColors(
-    val selectedColors: ContainerColors,
-    val unselectedColors: ContainerColors,
-) {
-    fun getColors(selected: Boolean): ContainerColors =
-        if (selected) selectedColors else unselectedColors
-}
-
 object LiftAppFilterChipDefaults {
-    val colors: LiftAppFilterChipColors
+    val colors: StatefulContainerColors
         @Composable
         get() =
-            LiftAppFilterChipColors(
-                selectedColors = LiftAppCardDefaults.tonalCardColors,
-                unselectedColors = LiftAppCardDefaults.outlinedColors,
+            StatefulContainerColors(
+                colors = LiftAppCardDefaults.outlinedColors,
+                checkedColors = LiftAppCardDefaults.tonalCardColors,
             )
 
     @Composable

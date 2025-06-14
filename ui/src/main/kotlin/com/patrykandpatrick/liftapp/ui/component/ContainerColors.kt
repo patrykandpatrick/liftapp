@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.ui.component
 
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
@@ -19,7 +20,10 @@ data class ContainerColors(
     val interactiveBorderColors: InteractiveBorderColors,
     val disabledBackgroundColor: Color,
     val disabledContentColor: Color,
-)
+) {
+    fun getBackgroundColor(enabled: Boolean): Color =
+        if (enabled) backgroundColor else disabledBackgroundColor
+}
 
 fun lerp(start: ContainerColors, end: ContainerColors, fraction: Float): ContainerColors =
     ContainerColors(
@@ -35,7 +39,7 @@ fun lerp(start: ContainerColors, end: ContainerColors, fraction: Float): Contain
 @Composable
 fun animateContainerColorsAsState(
     colors: ContainerColors,
-    animationSpec: AnimationSpec<Float> = spring(),
+    animationSpec: AnimationSpec<Float> = spring(stiffness = Spring.StiffnessLow),
 ): State<ContainerColors> {
     val oldColors = remember { mutableStateOf(colors) }
     val currentColors = remember { mutableStateOf(colors) }

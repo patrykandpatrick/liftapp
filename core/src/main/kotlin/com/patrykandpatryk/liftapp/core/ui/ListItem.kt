@@ -38,7 +38,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
+import com.patrykandpatrick.liftapp.ui.component.ContainerColors
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
+import com.patrykandpatrick.liftapp.ui.component.StatefulContainerColors
+import com.patrykandpatrick.liftapp.ui.component.animateContainerColorsAsState
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
@@ -63,6 +67,7 @@ fun ListItem(
     enabled: Boolean = true,
     checked: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
+    colors: StatefulContainerColors = ListItemDefaults.colors,
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     titleHighlightPosition: IntRange = IntRange.EMPTY,
     onClick: (() -> Unit)? = null,
@@ -76,6 +81,7 @@ fun ListItem(
         actions = actions,
         enabled = enabled,
         checked = checked,
+        colors = colors,
         paddingValues = paddingValues,
         onClick = onClick,
     )
@@ -90,11 +96,14 @@ fun ListItem(
     icon: @Composable (RowScope.() -> Unit)? = null,
     actions: @Composable (RowScope.() -> Unit) = {},
     enabled: Boolean = true,
+    colors: StatefulContainerColors = ListItemDefaults.colors,
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     checked: Boolean = false,
     shape: Shape = MaterialTheme.shapes.medium,
     onClick: (() -> Unit)? = null,
 ) {
+    val currentColors = animateContainerColorsAsState(colors.getColors(checked)).value
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
@@ -103,19 +112,13 @@ fun ListItem(
                 .alpha(Alpha.get(enabled))
                 .fillMaxWidth()
                 .interactiveButtonEffect(
-                    colors =
-                        InteractiveBorderColors(
-                            color = Color.Transparent,
-                            pressedColor = colorScheme.primary,
-                            hoverForegroundColor = colorScheme.primary,
-                            hoverBackgroundColor = colorScheme.outline,
-                            checkedColor = colorScheme.outline.copy(alpha = Alpha.get(enabled)),
-                        ),
+                    colors = currentColors.interactiveBorderColors,
                     onClick = onClick,
                     enabled = enabled,
                     checked = checked,
                     shape = shape,
                 )
+                .background(color = currentColors.getBackgroundColor(enabled), shape = shape)
                 .padding(paddingValues),
     ) {
         icon?.invoke(this)
@@ -149,6 +152,27 @@ fun ListItem(
 }
 
 object ListItemDefaults {
+    val colors: StatefulContainerColors
+        @Composable
+        get() =
+            StatefulContainerColors(
+                colors =
+                    ContainerColors(
+                        backgroundColor = Color.Transparent,
+                        contentColor = colorScheme.onSurface,
+                        interactiveBorderColors =
+                            InteractiveBorderColors(
+                                color = Color.Transparent,
+                                pressedColor = colorScheme.outline,
+                                hoverForegroundColor = colorScheme.primary,
+                                hoverBackgroundColor = colorScheme.outline,
+                            ),
+                        disabledBackgroundColor = Color.Transparent,
+                        disabledContentColor = colorScheme.secondaryDisabled,
+                    ),
+                checkedColors = LiftAppCardDefaults.tonalCardColors,
+            )
+
     val paddingValues: PaddingValues
         @Composable
         get() =
