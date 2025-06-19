@@ -43,18 +43,20 @@ import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.preview.PreviewResource
+import com.patrykandpatryk.liftapp.core.text.StringTextFieldState
 
 @Composable
-fun SearchBar(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
+fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifier) {
     var focused by remember { mutableStateOf(value = false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    val isValueNotEmpty = value.isNotEmpty()
+    val isValueNotEmpty = textFieldState.value.isNotEmpty()
 
     val clearFocusAndValue =
         {
                 focusManager.clearFocus()
-                if (value.isNotEmpty()) onValueChange("")
+                if (isValueNotEmpty) textFieldState.clear()
             }
             .also { BackHandler(enabled = focused, onBack = it) }
 
@@ -106,8 +108,8 @@ fun SearchBar(value: String, onValueChange: (String) -> Unit, modifier: Modifier
         }
         Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.weight(1f)) {
             BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
+                value = textFieldState.textFieldValue,
+                onValueChange = textFieldState::updateText,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = colorScheme.onSurface),
                 modifier =
                     Modifier.fillMaxWidth()
@@ -116,7 +118,7 @@ fun SearchBar(value: String, onValueChange: (String) -> Unit, modifier: Modifier
                 decorationBox = { textField ->
                     textField()
 
-                    if (value.isEmpty()) {
+                    if (!isValueNotEmpty) {
                         Text(
                             text = stringResource(id = R.string.generic_search),
                             style = MaterialTheme.typography.bodyLarge,
@@ -127,7 +129,7 @@ fun SearchBar(value: String, onValueChange: (String) -> Unit, modifier: Modifier
             )
         }
 
-        LiftAppIconButton(onClick = { onValueChange("") }, enabled = isValueNotEmpty) {
+        LiftAppIconButton(onClick = textFieldState::clear, enabled = isValueNotEmpty) {
             AnimatedContent(targetState = isValueNotEmpty, contentAlignment = Alignment.Center) {
                 isVisible ->
                 if (isVisible) {
@@ -147,8 +149,7 @@ private fun SearchBarInactivePreview() {
     LiftAppTheme {
         LiftAppBackground {
             SearchBar(
-                value = "",
-                onValueChange = {},
+                textFieldState = PreviewResource.textFieldStateManager().stringTextField(),
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
             )
         }
@@ -161,8 +162,7 @@ private fun SearchBarActivePreview() {
     LiftAppTheme {
         LiftAppBackground {
             SearchBar(
-                value = "Query",
-                onValueChange = {},
+                textFieldState = PreviewResource.textFieldStateManager().stringTextField(),
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
             )
         }

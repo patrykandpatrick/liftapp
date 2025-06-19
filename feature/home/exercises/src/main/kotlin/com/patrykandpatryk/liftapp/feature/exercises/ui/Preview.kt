@@ -1,12 +1,16 @@
 package com.patrykandpatryk.liftapp.feature.exercises.ui
 
+import androidx.compose.runtime.Composable
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.feature.exercises.model.ScreenState
 
+@Composable
 internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
     ScreenState(
         mode = mode,
+        query = PreviewResource.textFieldStateManager().stringTextField(),
         exercises =
             listOf(
                 ExercisesItem.Header("A"),

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
+import com.patrykandpatryk.liftapp.core.text.StringTextFieldState
+import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
@@ -31,30 +33,33 @@ constructor(
     private val routeData: ExerciseListRouteData,
     getExercisesItems: GetExercisesItemsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
+    private val textFieldStateManager: TextFieldStateManager,
     private val navigationCommander: NavigationCommander,
 ) : ViewModel() {
 
-    private val query = MutableStateFlow(value = "")
+    private val query: StringTextFieldState =
+        textFieldStateManager.stringTextField(onTextChange = { queryString.value = it })
+
+    private val queryString = MutableStateFlow<String>(value = query.text)
 
     private val groupBy = MutableStateFlow(value = GroupBy.Name)
 
     private val checkedExerciseIds = MutableStateFlow<Set<Long>>(emptySet())
 
     val exercises =
-        getExercisesItems(query = query, groupBy = groupBy)
+        getExercisesItems(query = queryString, groupBy = groupBy)
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     val state: StateFlow<Loadable<ScreenState>> =
         combine(
-                getExercisesItems(query = query, groupBy = groupBy),
-                query,
+                getExercisesItems(query = queryString, groupBy = groupBy),
                 groupBy,
                 checkedExerciseIds,
-            ) { exerciseItems, query, groupBy, checkedExerciseIds ->
+            ) { exerciseItems, groupBy, checkedExerciseIds ->
                 ScreenState(
                     mode = routeData.mode,
-                    exercises = exerciseItems.updateState(checkedExerciseIds),
                     query = query,
+                    exercises = exerciseItems.updateState(checkedExerciseIds),
                     groupBy = groupBy,
                     selectedItemCount = checkedExerciseIds.size,
                 )
@@ -64,7 +69,6 @@ constructor(
 
     fun handleAction(action: Action) =
         when (action) {
-            is Action.SetQuery -> setQuery(action.query)
             is Action.SetGroupBy -> setGroupBy(action.groupBy)
             is Action.SetExerciseChecked -> setExerciseChecked(action.exerciseId, action.checked)
             is Action.FinishPickingExercises -> finishPickingExercises(action.resultKey)
@@ -72,10 +76,6 @@ constructor(
             Action.GoToNewExercise -> goToNewExercise()
             Action.PopBackStack -> popBackStack()
         }
-
-    private fun setQuery(query: String) {
-        this.query.value = query
-    }
 
     private fun setGroupBy(groupBy: GroupBy) {
         this.groupBy.value = groupBy
