@@ -34,6 +34,7 @@ import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.ComponentPreview
 import com.patrykandpatrick.liftapp.ui.preview.GridPreviewSurface
+import com.patrykandpatrick.liftapp.ui.theme.Alpha
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 object LiftAppButtonDefaults {
@@ -50,28 +51,39 @@ object LiftAppButtonDefaults {
                         hoverForegroundColor = colorScheme.primaryHighlightActivated,
                     ),
                 disabledBackgroundColor = colorScheme.primaryDisabled,
-                disabledContentColor = colorScheme.secondaryDisabled,
+                disabledContentColor = colorScheme.primaryContainer,
+            )
+
+    val secondaryButtonColors: ContainerColors
+        @Composable
+        get() =
+            ContainerColors(
+                backgroundColor = colorScheme.secondary,
+                contentColor = colorScheme.onSecondary,
+                interactiveBorderColors =
+                    InteractiveBorderColors(
+                        color = colorScheme.primaryHighlightActivated,
+                        pressedColor = colorScheme.primaryHighlightActivated,
+                        hoverForegroundColor = colorScheme.primaryHighlightActivated,
+                    ),
+                disabledBackgroundColor = colorScheme.secondary.copy(Alpha.disabled),
+                disabledContentColor = colorScheme.onSecondaryDisabled,
             )
 
     val outlinedButtonColors: ContainerColors
         @Composable
         get() =
             ContainerColors(
-                backgroundColor = colorScheme.surface,
-                contentColor =
-                    if (colorScheme.isDarkColorScheme) {
-                        colorScheme.onPrimary
-                    } else {
-                        colorScheme.primary
-                    },
+                backgroundColor = Color.Transparent,
+                contentColor = colorScheme.onSurface,
                 interactiveBorderColors =
                     InteractiveBorderColors(
-                        color = colorScheme.outline,
+                        color = colorScheme.onSurface,
                         pressedColor = colorScheme.primary,
                         hoverForegroundColor = colorScheme.primary,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.secondaryDisabled,
+                disabledContentColor = colorScheme.onSurface.copy(Alpha.disabled),
             )
 
     val plainButtonColors: ContainerColors
@@ -88,7 +100,7 @@ object LiftAppButtonDefaults {
                         hoverBackgroundColor = colorScheme.outline,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.secondaryDisabled,
+                disabledContentColor = colorScheme.primaryContainer,
             )
 }
 
@@ -239,6 +251,46 @@ private fun PrimaryButtonPreview() {
                 "Button With Icon Disabled" to
                     {
                         LiftAppButton(onClick = {}, enabled = false) {
+                            Icon(Icons.TwoTone.Face, contentDescription = null)
+                            Text("LiftApp Button")
+                        }
+                    },
+            )
+    )
+}
+
+@ComponentPreview
+@Composable
+private fun SecondaryButtonPreview() {
+    GridPreviewSurface(
+        content =
+            listOf(
+                "Secondary Button" to
+                    {
+                        LiftAppButton(
+                            onClick = {},
+                            colors = LiftAppButtonDefaults.secondaryButtonColors,
+                        ) {
+                            Text(text = "LiftApp Button")
+                        }
+                    },
+                "Secondary Button With Icon" to
+                    {
+                        LiftAppButton(
+                            onClick = {},
+                            colors = LiftAppButtonDefaults.secondaryButtonColors,
+                        ) {
+                            Icon(Icons.TwoTone.Face, contentDescription = null)
+                            Text("LiftApp Button")
+                        }
+                    },
+                "Secondary Button With Icon Disabled" to
+                    {
+                        LiftAppButton(
+                            onClick = {},
+                            colors = LiftAppButtonDefaults.secondaryButtonColors,
+                            enabled = false,
+                        ) {
                             Icon(Icons.TwoTone.Face, contentDescription = null)
                             Text("LiftApp Button")
                         }

@@ -168,7 +168,7 @@ object ListItemDefaults {
                                 hoverBackgroundColor = colorScheme.outline,
                             ),
                         disabledBackgroundColor = Color.Transparent,
-                        disabledContentColor = colorScheme.secondaryDisabled,
+                        disabledContentColor = colorScheme.primaryContainer,
                     ),
                 checkedColors = LiftAppCardDefaults.tonalCardColors,
             )

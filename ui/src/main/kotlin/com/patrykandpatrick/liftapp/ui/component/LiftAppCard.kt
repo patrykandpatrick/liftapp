@@ -120,7 +120,7 @@ object LiftAppCardDefaults {
                         hoverForegroundColor = colorScheme.primary,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.secondaryDisabled,
+                disabledContentColor = colorScheme.primaryContainer,
             )
 
     val tonalCardColors: ContainerColors
@@ -136,7 +136,7 @@ object LiftAppCardDefaults {
                         hoverForegroundColor = colorScheme.primaryHighlightActivated,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.secondaryDisabled,
+                disabledContentColor = colorScheme.primaryContainer,
             )
 
     val outlinedColors: ContainerColors
@@ -152,7 +152,7 @@ object LiftAppCardDefaults {
                         hoverForegroundColor = colorScheme.primary,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.secondaryDisabled,
+                disabledContentColor = colorScheme.primaryContainer,
             )
 
     val deselectedColors: ContainerColors

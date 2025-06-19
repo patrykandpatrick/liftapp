@@ -42,6 +42,7 @@ fun LiftAppFAB(
     colors: ContainerColors = LiftAppFABDefaults.buttonColors,
     contentPadding: PaddingValues =
         PaddingValues(dimens.fab.horizontalPadding, dimens.fab.verticalPadding),
+    margins: PaddingValues = PaddingValues(0.dp),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -58,7 +59,8 @@ fun LiftAppFAB(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterHorizontally),
             modifier =
-                Modifier.interactiveButtonEffect(
+                Modifier.padding(margins)
+                    .interactiveButtonEffect(
                         colors = colors.interactiveBorderColors,
                         onClick = onClick,
                         enabled = enabled,
@@ -72,13 +74,13 @@ fun LiftAppFAB(
                         offset = Offset(0f, 1.dp.toPx())
                     }
                     .dropShadow(shape) {
-                        color = colors.backgroundColor.copy(alpha = .24f)
+                        color = colors.backgroundColor.copy(alpha = .12f)
                         radius = 8.dp.toPx()
                         spread = 2.dp.toPx()
                         offset = Offset(0f, 2.dp.toPx())
                     }
                     .dropShadow(shape) {
-                        color = colors.backgroundColor.copy(alpha = .16f)
+                        color = colors.backgroundColor.copy(alpha = .08f)
                         radius = 4.dp.toPx()
                         spread = 1.dp.toPx()
                     }
@@ -111,16 +113,16 @@ object LiftAppFABDefaults {
         @Composable
         get() =
             ContainerColors(
-                backgroundColor = colorScheme.primary,
-                contentColor = colorScheme.onPrimary,
+                backgroundColor = colorScheme.secondary,
+                contentColor = colorScheme.onSecondary,
                 interactiveBorderColors =
                     InteractiveBorderColors(
                         color = Color.Transparent,
                         pressedColor = colorScheme.primaryHighlightActivated,
                         hoverForegroundColor = colorScheme.primaryHighlightActivated,
                     ),
-                disabledBackgroundColor = colorScheme.primaryDisabled,
-                disabledContentColor = colorScheme.secondaryDisabled,
+                disabledBackgroundColor = colorScheme.secondary,
+                disabledContentColor = colorScheme.onSecondary,
             )
 }
 
