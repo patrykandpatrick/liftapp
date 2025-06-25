@@ -5,6 +5,11 @@ plugins { alias(libs.plugins.application) }
 android {
     namespace = "pl.patrykgoworowski.mintlift"
 
+    defaultConfig {
+        versionCode = 1
+        versionName = "1.0"
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
