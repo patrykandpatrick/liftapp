@@ -80,7 +80,8 @@ private fun RoutineScreen(
             TopAppBarWithTabs(
                 title = loadableState.valueOrNull()?.name.orEmpty(),
                 onBackClick = { onAction(Action.PopBackStack) },
-                selectedTabIndex = pagerState.currentPage,
+                selectedTabIndex = { pagerState.currentPage },
+                selectedTabOffset = { pagerState.currentPageOffsetFraction },
                 onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
                 tabs = tabs.tabItems,
             )

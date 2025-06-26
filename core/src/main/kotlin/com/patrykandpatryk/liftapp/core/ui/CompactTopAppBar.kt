@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ fun CompactTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
+    content: @Composable (ColumnScope.() -> Unit)? = null,
 ) {
     Column(modifier) {
         CenterAlignedTopAppBar(
@@ -32,6 +34,7 @@ fun CompactTopAppBar(
             colors = AppBars.colors,
             scrollBehavior = scrollBehavior,
         )
+        content?.invoke(this)
         LiftAppHorizontalDivider()
     }
 }

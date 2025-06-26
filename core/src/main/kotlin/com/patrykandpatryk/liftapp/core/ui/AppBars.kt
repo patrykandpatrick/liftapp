@@ -1,19 +1,17 @@
 package com.patrykandpatryk.liftapp.core.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -27,6 +25,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.tabs.LiftAppTabRow
+import com.patrykandpatrick.liftapp.ui.component.tabs.LiftAppTabRowItem
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -50,7 +51,7 @@ fun TopAppBar(
             colors = AppBars.colors,
             navigationIcon = {
                 if (onBackClick != null) {
-                    IconButton(onClick = onBackClick) {
+                    LiftAppIconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = LiftAppIcons.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
@@ -68,31 +69,38 @@ fun TopAppBar(
 fun TopAppBarWithTabs(
     modifier: Modifier = Modifier,
     title: String,
-    selectedTabIndex: Int,
+    selectedTabIndex: () -> Int,
+    selectedTabOffset: (() -> Float)? = null,
     onBackClick: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     tabs: @Composable () -> Unit,
 ) {
-    Column(modifier = modifier) {
-        androidx.compose.material3.TopAppBar(
-            title = { Text(text = title) },
-            actions = actions,
-            navigationIcon = {
-                if (onBackClick != null) {
-                    AppBars.BackArrow(onClick = onBackClick)
-                }
-            },
-        )
-
-        SecondaryTabRow(modifier = Modifier, selectedTabIndex = selectedTabIndex, tabs = tabs)
-    }
+    CompactTopAppBar(
+        title = { Text(text = title) },
+        actions = actions,
+        navigationIcon = {
+            if (onBackClick != null) {
+                AppBars.BackArrow(onClick = onBackClick)
+            }
+        },
+        content = {
+            LiftAppTabRow(
+                selectedTabIndex = selectedTabIndex(),
+                selectedTabOffset = selectedTabOffset?.invoke(),
+                modifier = modifier.background(colorScheme.surface),
+                tabs = tabs,
+            )
+        },
+        modifier = modifier,
+    )
 }
 
 @Composable
 fun TopAppBarWithTabs(
     modifier: Modifier = Modifier,
     title: String,
-    selectedTabIndex: Int,
+    selectedTabIndex: () -> Int,
+    selectedTabOffset: (() -> Float)? = null,
     onTabSelected: (index: Int) -> Unit,
     onBackClick: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
@@ -102,40 +110,36 @@ fun TopAppBarWithTabs(
         modifier = modifier,
         title = title,
         selectedTabIndex = selectedTabIndex,
+        selectedTabOffset = selectedTabOffset,
         onBackClick = onBackClick,
         actions = actions,
         tabs = {
             val tabDimens = LocalDimens.current.tab
 
             tabs.forEachIndexed { index, tabItem ->
-                Tab(
-                    selected = selectedTabIndex == index,
+                LiftAppTabRowItem(
+                    selected = selectedTabIndex() == index,
                     onClick = { onTabSelected(index) },
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ) {
-                    Column(modifier = Modifier.padding(vertical = tabDimens.verticalPadding)) {
-                        if (tabItem.icon != null) {
-                            Icon(
-                                modifier =
-                                    Modifier.align(Alignment.CenterHorizontally)
-                                        .padding(
-                                            bottom =
-                                                if (tabItem.text != null)
-                                                    tabDimens.iconToTextPadding
-                                                else 0.dp
-                                        ),
-                                painter = tabItem.icon,
-                                contentDescription = null,
-                            )
-                        }
+                    if (tabItem.icon != null) {
+                        Icon(
+                            modifier =
+                                Modifier.align(Alignment.CenterHorizontally)
+                                    .padding(
+                                        bottom =
+                                            if (tabItem.text != null) tabDimens.iconToTextPadding
+                                            else 0.dp
+                                    ),
+                            painter = tabItem.icon,
+                            contentDescription = null,
+                        )
+                    }
 
-                        if (tabItem.text != null) {
-                            Text(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                text = tabItem.text,
-                            )
-                        }
+                    if (tabItem.text != null) {
+                        Text(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            text = tabItem.text,
+                        )
                     }
                 }
             }
@@ -176,9 +180,9 @@ fun DialogTopBar(title: String, onCloseClick: () -> Unit, modifier: Modifier = M
 object AppBars {
     @Composable
     fun BackArrow(onClick: () -> Unit, modifier: Modifier = Modifier) {
-        IconButton(onClick = onClick, modifier = modifier) {
+        LiftAppIconButton(onClick = onClick, modifier = modifier) {
             Icon(
-                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                imageVector = LiftAppIcons.ArrowBack,
                 contentDescription = stringResource(id = R.string.action_close),
             )
         }
@@ -203,7 +207,7 @@ fun PreviewTopAppBarWithTextTabs() {
     LiftAppTheme {
         TopAppBarWithTabs(
             title = "Title",
-            selectedTabIndex = 0,
+            selectedTabIndex = { 0 },
             onTabSelected = {},
             tabs = listOf(TabItem(text = "First"), TabItem(text = "Second")),
         )
@@ -216,7 +220,7 @@ fun PreviewTopAppBarWithIconTabs() {
     LiftAppTheme {
         TopAppBarWithTabs(
             title = "Title",
-            selectedTabIndex = 0,
+            selectedTabIndex = { 0 },
             onTabSelected = {},
             tabs =
                 listOf(
@@ -233,7 +237,7 @@ fun PreviewTopAppBarWithTextIconTabs() {
     LiftAppTheme {
         TopAppBarWithTabs(
             title = "Title",
-            selectedTabIndex = 0,
+            selectedTabIndex = { 0 },
             onTabSelected = {},
             tabs =
                 listOf(

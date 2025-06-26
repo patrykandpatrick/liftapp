@@ -8,7 +8,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -22,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
@@ -76,13 +76,14 @@ private fun ExerciseDetailsScreen(
     val pagerState = rememberPagerState { tabs.size }
     val scope = rememberCoroutineScope()
 
-    Scaffold(
+    LiftAppScaffold(
         modifier = modifier.imePadding(),
         topBar = {
             TopAppBarWithTabs(
                 title = screenState.valueOrNull()?.name.orEmpty(),
                 onBackClick = { onAction(Action.PopBackStack) },
-                selectedTabIndex = pagerState.currentPage,
+                selectedTabIndex = { pagerState.currentPage },
+                selectedTabOffset = { pagerState.currentPageOffsetFraction },
                 onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
                 tabs = tabs.tabItems,
             )
