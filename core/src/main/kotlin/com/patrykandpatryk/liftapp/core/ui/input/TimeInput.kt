@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
-import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.button.OnClick
 import java.time.LocalTime
 
@@ -38,7 +38,7 @@ fun TimeInput(
 
     val interactionSource = remember { MutableInteractionSource() }
 
-    OutlinedTextField(
+    LiftAppTextFieldWithSupportingText(
         textFieldState = time,
         readOnly = true,
         interactionSource = interactionSource,

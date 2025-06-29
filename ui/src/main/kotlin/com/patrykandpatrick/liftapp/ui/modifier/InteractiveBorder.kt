@@ -35,29 +35,53 @@ fun Modifier.interactiveBorder(
     width: Dp = 1.dp,
     checked: Boolean = false,
     animationSpec: AnimationSpec<Color> = spring(),
+    maxWidth: Dp? = null,
+    maxHeight: Dp? = null,
 ): Modifier =
     this.then(
-        InteractiveBorderElement(interactionSource, colors, shape, width, checked, animationSpec)
+        InteractiveBorderElement(
+            interactionSource,
+            colors,
+            shape,
+            width,
+            checked,
+            animationSpec,
+            maxWidth,
+            maxHeight,
+        )
     )
 
 private data class InteractiveBorderElement(
     private val interactionSource: InteractionSource,
     private val colors: InteractiveBorderColors,
     private val shape: Shape,
-    private val width: Dp,
+    private val strokeWidth: Dp,
     private val checked: Boolean,
     private val animationSpec: AnimationSpec<Color>,
+    private val maxWidth: Dp?,
+    private val maxHeight: Dp?,
 ) : ModifierNodeElement<BorderNode>() {
     override fun create(): BorderNode =
-        BorderNode(interactionSource, colors, width, checked, shape, animationSpec)
+        BorderNode(
+            interactionSource,
+            colors,
+            strokeWidth,
+            checked,
+            shape,
+            animationSpec,
+            maxWidth,
+            maxHeight,
+        )
 
     override fun update(node: BorderNode) {
         node.interactionSource = interactionSource
         node.colors = colors
         node.shape = shape
-        node.width = width
+        node.strokeWidth = strokeWidth
         node.checked = checked
         node.animationSpec = animationSpec
+        node.maxWidth = maxWidth
+        node.maxHeight = maxHeight
     }
 
     override fun InspectorInfo.inspectableProperties() {
@@ -65,18 +89,22 @@ private data class InteractiveBorderElement(
         properties["interactionSource"] = interactionSource
         properties["colors"] = colors
         properties["shape"] = shape
-        properties["width"] = width
+        properties["width"] = strokeWidth
         properties["checked"] = checked
+        properties["maxWidth"] = maxWidth
+        properties["maxHeight"] = maxHeight
     }
 }
 
 private class BorderNode(
     var interactionSource: InteractionSource,
     var colors: InteractiveBorderColors,
-    var width: Dp,
+    var strokeWidth: Dp,
     var checked: Boolean,
     shape: Shape,
     animationSpec: AnimationSpec<Color>,
+    var maxWidth: Dp?,
+    var maxHeight: Dp?,
 ) : DrawModifierNode, Modifier.Node() {
 
     private val idleColor: Color
@@ -150,15 +178,22 @@ private class BorderNode(
     }
 
     override fun ContentDrawScope.draw() {
-        val borderWidth = width.toPx()
+        val borderWidth = strokeWidth.toPx()
+        val actualMaxWidth = size.width - borderWidth
+        val actualMaxHeight = size.height - borderWidth
+        val width = maxWidth?.toPx()?.coerceAtMost(actualMaxWidth) ?: actualMaxWidth
+        val height = maxHeight?.toPx()?.coerceAtMost(actualMaxHeight) ?: actualMaxHeight
         val outline =
             shape.createOutline(
-                size = Size(size.width - borderWidth, size.height - borderWidth),
+                size = Size(width, height),
                 layoutDirection = layoutDirection,
                 density = this,
             )
         drawContent()
-        translate(borderWidth / 2, borderWidth / 2) {
+        translate(
+            (borderWidth + size.width - width) / 2,
+            (borderWidth + size.height - height) / 2,
+        ) {
             drawOutline(
                 outline = outline,
                 brush =
@@ -167,7 +202,7 @@ private class BorderNode(
                         center = touchOffset.value,
                         radius = size.maxDimension / 2,
                     ),
-                style = Stroke(width.roundToPx().toFloat()),
+                style = Stroke(strokeWidth.roundToPx().toFloat()),
             )
         }
     }

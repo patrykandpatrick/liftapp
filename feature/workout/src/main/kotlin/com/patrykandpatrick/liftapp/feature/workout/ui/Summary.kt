@@ -35,9 +35,9 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.getDisplayName
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
-import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.button.OnFocusChanged
 import com.patrykandpatryk.liftapp.core.ui.input.DateInput
 import com.patrykandpatryk.liftapp.core.ui.input.TimeInput
@@ -112,7 +112,7 @@ private fun Name(
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
 
-    OutlinedTextField(
+    LiftAppTextFieldWithSupportingText(
         textFieldState = name,
         label = { Text(stringResource(R.string.workout_summary_edit_workout_name)) },
         maxLines = 1,
@@ -194,7 +194,7 @@ private fun Notes(
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
 
-    OutlinedTextField(
+    LiftAppTextFieldWithSupportingText(
         textFieldState = notes,
         label = { Text(stringResource(R.string.workout_summary_edit_workout_notes)) },
         minLines = 3,

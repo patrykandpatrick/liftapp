@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -31,6 +30,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -42,7 +42,7 @@ import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
-import com.patrykandpatryk.liftapp.core.ui.SupportingText
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.resource.getMusclePrettyName
 import com.patrykandpatryk.liftapp.core.ui.resource.prettyName
@@ -125,32 +125,30 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    Column {
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.displayName,
-            onValueChange = { onAction(Action.UpdateName(it)) },
-            label = { Text(text = stringResource(id = R.string.generic_name)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions =
-                KeyboardActions {
-                    keyboardController?.hide()
-                    focusManager.clearFocus(force = true)
-                },
-            isError = state.showNameError,
-        )
-
-        SupportingText(
-            visible = state.showNameError,
-            text =
-                stringResource(
-                    id = R.string.error_x_empty,
-                    stringResource(id = R.string.generic_name),
-                ),
-            isError = true,
-        )
-    }
+    LiftAppTextFieldWithSupportingText(
+        modifier = Modifier.fillMaxWidth(),
+        value = state.displayName,
+        onValueChange = { onAction(Action.UpdateName(it)) },
+        label = { Text(text = stringResource(id = R.string.generic_name)) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions =
+            KeyboardActions {
+                keyboardController?.hide()
+                focusManager.clearFocus(force = true)
+            },
+        errorText =
+            if (state.showNameError) {
+                AnnotatedString(
+                    stringResource(
+                        id = R.string.error_x_empty,
+                        stringResource(id = R.string.generic_name),
+                    )
+                )
+            } else {
+                null
+            },
+    )
 
     DropdownMenu(
         expanded = typeExpanded,

@@ -37,13 +37,7 @@ fun LiftAppIconButton(
                 .minimumInteractiveComponentSize()
                 .size(dimens.iconButton.size)
                 .interactiveButtonEffect(
-                    colors =
-                        InteractiveBorderColors(
-                            color = Color.Transparent,
-                            pressedColor = colorScheme.primary,
-                            hoverForegroundColor = colorScheme.primary,
-                            hoverBackgroundColor = colorScheme.outline,
-                        ),
+                    colors = LiftAppIconButtonDefaults.colors,
                     onClick = onClick,
                     enabled = enabled,
                     shape = PillShape,
@@ -55,6 +49,19 @@ fun LiftAppIconButton(
         val contentColor = color.copy(alpha = Alpha.get(enabled = enabled))
         CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
     }
+}
+
+object LiftAppIconButtonDefaults {
+
+    val colors: InteractiveBorderColors
+        @Composable
+        get() =
+            InteractiveBorderColors(
+                color = Color.Transparent,
+                pressedColor = colorScheme.primary,
+                hoverForegroundColor = colorScheme.primary,
+                hoverBackgroundColor = colorScheme.outline,
+            )
 }
 
 @LightAndDarkThemePreview

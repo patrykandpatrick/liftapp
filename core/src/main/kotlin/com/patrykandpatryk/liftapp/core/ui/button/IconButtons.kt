@@ -5,15 +5,18 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButtonDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.modifier.interactiveBorder
 
 @Composable
 fun IconButton(
@@ -43,11 +46,13 @@ fun IconButton(
                     enabled = enabled,
                     role = Role.Button,
                     interactionSource = interactionSource,
-                    indication =
-                        ripple(
-                            bounded = false,
-                            radius = LocalDimens.current.iconButton.rippleRadius,
-                        ),
+                )
+                .interactiveBorder(
+                    interactionSource = interactionSource,
+                    colors = LiftAppIconButtonDefaults.colors,
+                    shape = CircleShape,
+                    maxWidth = 40.dp,
+                    maxHeight = 40.dp,
                 ),
         contentAlignment = Alignment.Center,
     ) {

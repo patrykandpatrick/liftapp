@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +37,7 @@ import com.patrykandpatryk.liftapp.core.state.onClick
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.input.DatePicker
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
 import com.patrykandpatryk.liftapp.core.ui.input.TimePicker
@@ -123,7 +123,7 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
                     val dateInteractionSource =
                         remember { MutableInteractionSource() }.onClick(datePickerState::show)
 
-                    OutlinedTextField(
+                    LiftAppTextFieldWithSupportingText(
                         modifier = Modifier.weight(1f),
                         readOnly = true,
                         value = formattedDate.dateShort,
@@ -136,7 +136,7 @@ private fun NewBodyMeasurementEntryBottomSheetContent(
                         remember { MutableInteractionSource() }
                             .onClick { timePickerState.isShowing = true }
 
-                    OutlinedTextField(
+                    LiftAppTextFieldWithSupportingText(
                         modifier = Modifier.weight(1f),
                         readOnly = true,
                         value = formattedDate.timeShort,

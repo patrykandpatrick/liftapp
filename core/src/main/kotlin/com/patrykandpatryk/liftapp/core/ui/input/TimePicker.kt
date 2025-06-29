@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +44,7 @@ import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.time.text
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.SegmentedButton
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.VerticalSegmentedButtonContainer
@@ -191,7 +191,7 @@ private fun ColumnScope.TextField(
 
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    OutlinedTextField(
+    LiftAppTextFieldWithSupportingText(
         modifier = modifier.weight(weight = 1f),
         value = if (isFocused) focusedValue else unfocusedValue,
         onValueChange = onValueChange,

@@ -10,9 +10,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -23,13 +21,16 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
+import com.patrykandpatrick.liftapp.ui.component.LiftAppTextField
+import com.patrykandpatrick.liftapp.ui.component.LiftAppTextFieldDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.domain.Constants.Input.TYPING_DEBOUNCE_MILLIS
 import kotlinx.coroutines.delay
 
 @Composable
-fun <T : Any> OutlinedTextField(
+fun <T : Any> LiftAppTextFieldWithSupportingText(
     textFieldState: TextFieldState<T>,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -46,11 +47,10 @@ fun <T : Any> OutlinedTextField(
     minLines: Int = 1,
     maxLines: Int = minLines,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = OutlinedTextFieldDefaults.shape,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    shape: Shape = LiftAppTextFieldDefaults.shape,
     supportingText: AnnotatedString? = null,
 ) {
-    OutlinedTextField(
+    LiftAppTextFieldWithSupportingText(
         value = textFieldState.text,
         onValueChange = textFieldState::updateText,
         modifier = modifier,
@@ -69,14 +69,13 @@ fun <T : Any> OutlinedTextField(
         maxLines = maxLines,
         interactionSource = interactionSource,
         shape = shape,
-        colors = colors,
         supportingText = supportingText,
         errorText = textFieldState.errorMessage?.let(::AnnotatedString),
     )
 }
 
 @Composable
-fun OutlinedTextField(
+fun LiftAppTextFieldWithSupportingText(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -94,13 +93,12 @@ fun OutlinedTextField(
     minLines: Int = 1,
     maxLines: Int = minLines,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = OutlinedTextFieldDefaults.shape,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    shape: Shape = LiftAppTextFieldDefaults.shape,
     supportingText: AnnotatedString? = null,
     errorText: AnnotatedString? = null,
 ) {
     Column(modifier = modifier) {
-        androidx.compose.material3.OutlinedTextField(
+        LiftAppTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
@@ -121,7 +119,6 @@ fun OutlinedTextField(
             maxLines = maxLines,
             interactionSource = interactionSource,
             shape = shape,
-            colors = colors,
         )
 
         SupportingText(value = value, supportingText = supportingText, errorText = errorText)
@@ -151,8 +148,8 @@ fun SupportingText(
         Column(
             modifier =
                 modifier.padding(
-                    horizontal = MaterialTheme.dimens.padding.supportingTextHorizontal,
-                    vertical = MaterialTheme.dimens.padding.supportingTextVertical,
+                    horizontal = dimens.padding.supportingTextHorizontal,
+                    vertical = dimens.padding.supportingTextVertical,
                 )
         ) {
             AnimatedVisibility(visible = errorVisible) {
@@ -162,13 +159,13 @@ fun SupportingText(
                     }
                 }
                 if (cachedErrorText != null) {
-                    Text(text = cachedErrorText, color = MaterialTheme.colorScheme.error)
+                    Text(text = cachedErrorText, color = colorScheme.error)
                 }
             }
 
             AnimatedVisibility(visible = supportingText != null) {
                 if (supportingText != null) {
-                    Text(text = supportingText, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = supportingText, color = colorScheme.onSurfaceVariant)
                 }
             }
         }

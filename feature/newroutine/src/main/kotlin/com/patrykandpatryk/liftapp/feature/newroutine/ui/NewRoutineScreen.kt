@@ -48,9 +48,9 @@ import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.ErrorEffectState
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
-import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
 import com.patrykandpatryk.liftapp.core.ui.animateJump
 import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
@@ -124,7 +124,7 @@ private fun NewRoutineScreen(
         LazyColumn(modifier = modifier.padding(paddingValues)) {
             stickyHeader {
                 Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
-                    OutlinedTextField(
+                    LiftAppTextFieldWithSupportingText(
                         textFieldState = state.name,
                         label = { Text(text = stringResource(id = R.string.generic_name)) },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

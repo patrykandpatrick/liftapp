@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -33,7 +33,7 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.nonBlankOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.time.now
-import com.patrykandpatryk.liftapp.core.ui.SupportingText
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.dialog.DialogButtons
 import com.patrykandpatryk.liftapp.domain.date.day
 import com.patrykandpatryk.liftapp.domain.date.isValid
@@ -115,24 +115,23 @@ private fun DatePickerContent(
             style = MaterialTheme.typography.headlineMedium,
         )
 
-        OutlinedTextField(
+        LiftAppTextFieldWithSupportingText(
             value = state.input,
             onValueChange = state::updateInput,
             label = { Text(text = stringResource(id = R.string.picker_date_input_title)) },
             placeholder = { Text(text = stringResource(id = R.string.picker_date_example)) },
-            isError = state.hasError,
+            errorText =
+                if (state.hasError) {
+                    stringResource(
+                            id = R.string.picker_date_input_error,
+                            stringResource(id = R.string.picker_date_example),
+                            state.sampleDate,
+                        )
+                        .let(::AnnotatedString)
+                } else {
+                    null
+                },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        )
-
-        SupportingText(
-            text =
-                stringResource(
-                    id = R.string.picker_date_input_error,
-                    stringResource(id = R.string.picker_date_example),
-                    state.sampleDate,
-                ),
-            isError = state.hasError,
-            visible = state.hasError,
         )
 
         DialogButtons(

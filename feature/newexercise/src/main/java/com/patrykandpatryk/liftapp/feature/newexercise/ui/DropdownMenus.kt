@@ -1,13 +1,11 @@
 package com.patrykandpatryk.liftapp.feature.newexercise.ui
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,10 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.ui.SupportingText
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.resource.prettyName
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 
@@ -77,22 +76,17 @@ fun <T> DropdownMenu(
         expanded = expanded,
         onExpandedChange = onExpandedChange,
     ) {
-        Column {
-            OutlinedTextField(
-                modifier =
-                    Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                        .fillMaxWidth(),
-                readOnly = true,
-                value = getItemsText(selectedItems),
-                onValueChange = {},
-                label = { Text(text = label) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            )
-
-            if (errorText != null) {
-                SupportingText(visible = isError, text = errorText, isError = isError)
-            }
-        }
+        LiftAppTextFieldWithSupportingText(
+            modifier =
+                Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
+            readOnly = true,
+            value = getItemsText(selectedItems),
+            onValueChange = {},
+            label = { Text(text = label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            errorText = errorText.takeIf { isError }?.let(::AnnotatedString),
+        )
 
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { onExpandedChange(false) }) {
             items.forEach { item ->

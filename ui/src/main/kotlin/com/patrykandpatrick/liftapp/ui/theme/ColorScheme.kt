@@ -22,6 +22,8 @@ data class ColorScheme(
     val onSurfaceVariant: Color,
     val outline: Color,
     val highlight: Color = primary,
+    val error: Color,
+    val onError: Color,
     val isDarkColorScheme: Boolean,
     val borderColors: InteractiveBorderColors = getInteractiveBorderColors(highlight, outline),
     val onBackground: Color = onSurface,
@@ -47,12 +49,14 @@ private val LightColorScheme =
         onSurface = Color(0xFF00002F),
         onSurfaceVariant = Color(0xFF171754),
         outline = Color(0xFFA4A4DA),
+        error = Color(color = 0xff880000),
+        onError = Color(color = 0xffffdddd),
         isDarkColorScheme = false,
     )
 
 private val DarkColorScheme =
     ColorScheme(
-        primary = Color(0xFF5C5CEE),
+        primary = Color(0xFF7878EF),
         primaryDisabled = Color(0x3D5252E5),
         onPrimary = Color(0xFFF0F0FF),
         primaryHighlight = Color(0x6FF0F0FF),
@@ -67,6 +71,8 @@ private val DarkColorScheme =
         onSurface = Color(0xFFE5E5FF),
         onSurfaceVariant = Color(0xFFC8C8EC),
         outline = Color(0x4FF0F0FF),
+        error = Color(color = 0xffff4444),
+        onError = Color(color = 0xff660000),
         isDarkColorScheme = true,
     )
 

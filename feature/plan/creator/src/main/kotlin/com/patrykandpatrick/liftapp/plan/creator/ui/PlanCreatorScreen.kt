@@ -42,7 +42,7 @@ import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.DayIndicator
-import com.patrykandpatryk.liftapp.core.ui.OutlinedTextField
+import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 
 @Composable
@@ -168,14 +168,14 @@ private fun EditableDetails(state: ScreenState, modifier: Modifier = Modifier) {
     ) {
         val focusManager = LocalFocusManager.current
 
-        OutlinedTextField(
+        LiftAppTextFieldWithSupportingText(
             textFieldState = state.name,
             label = { Text(stringResource(R.string.generic_name)) },
             placeholder = { Text(stringResource(R.string.training_plan_name_placeholder)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
 
-        OutlinedTextField(
+        LiftAppTextFieldWithSupportingText(
             textFieldState = state.description,
             label = { Text(stringResource(R.string.generic_description)) },
             maxLines = 4,

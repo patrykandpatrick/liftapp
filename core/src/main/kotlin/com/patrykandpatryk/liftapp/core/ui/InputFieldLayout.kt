@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
@@ -33,6 +32,7 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.component.LiftAppTextFieldDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
@@ -56,7 +56,7 @@ fun InputFieldLayout(
     label: (@Composable RowScope.() -> Unit)? = null,
     isError: Boolean = false,
     enabled: Boolean = true,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    colors: TextFieldColors = LiftAppTextFieldDefaults.colors(),
     content: @Composable RowScope.() -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
