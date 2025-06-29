@@ -23,6 +23,7 @@ data class Dimens(
     val list: List = List(),
     val muscle: Muscle = Muscle(),
     val padding: Padding = Padding(),
+    val radioButton: RadioButton = RadioButton(),
     val routine: Routine = Routine(),
     val searchBar: SearchBar = SearchBar(),
     val strokeWidth: Dp = 1.dp,
@@ -110,6 +111,8 @@ data class Dimens(
         val gridCellMinSize: Dp = 164.dp,
         val listItemHorizontalMargin: Dp = 16.dp,
     )
+
+    @Immutable data class RadioButton(val size: Dp = 20.dp)
 
     @Immutable data class Routine(val minCardWidth: Dp = 140.dp)
 

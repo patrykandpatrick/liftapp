@@ -8,6 +8,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.liftapp.ui.dimens.LandscapeDimens
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.PortraitDimens
@@ -93,6 +94,12 @@ data object Alpha {
             else -> standard
         }
 }
+
+val Color.disabled: Color
+    get() = copy(alpha = Alpha.disabled)
+
+val Color.unfocused: Color
+    get() = copy(alpha = Alpha.unfocused)
 
 @Composable
 fun LiftAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
