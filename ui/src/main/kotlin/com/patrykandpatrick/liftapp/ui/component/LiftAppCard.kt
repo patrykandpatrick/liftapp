@@ -42,8 +42,8 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
 fun LiftAppCard(
-    onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     colors: ContainerColors = LiftAppCardDefaults.cardColors,
     contentPadding: PaddingValues =

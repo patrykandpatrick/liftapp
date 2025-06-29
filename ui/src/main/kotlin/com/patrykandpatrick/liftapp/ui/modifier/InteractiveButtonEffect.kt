@@ -20,7 +20,7 @@ import com.patrykandpatrick.liftapp.ui.interaction.extendedInteractions
 
 fun Modifier.interactiveButtonEffect(
     colors: InteractiveBorderColors,
-    onClick: (() -> Unit)?,
+    onClick: (() -> Unit)? = null,
     borderWidth: Dp = 1.dp,
     enabled: Boolean = true,
     checked: Boolean = false,
@@ -48,7 +48,7 @@ fun Modifier.interactiveButtonEffect(
             }
         )
         .extendedInteractions(
-            enabled = enabled,
+            enabled = enabled && onClick != null,
             interactionSource = interactionSource,
             coroutineScope = scope,
         )
