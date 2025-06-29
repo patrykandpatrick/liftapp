@@ -1,12 +1,17 @@
 package com.patrykandpatryk.liftapp.core.preview
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
+import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.opto.domain.Preference
+import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatryk.liftapp.core.text.rememberDefaultMarkupProcessor
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import kotlinx.coroutines.flow.Flow
@@ -51,6 +56,18 @@ object PreviewResource {
             override suspend fun update(function: (T) -> T) {
                 flow.update(function)
             }
+        }
+    }
+}
+
+@Composable
+fun PreviewTheme(content: @Composable () -> Unit) {
+    LiftAppTheme {
+        LiftAppBackground {
+            CompositionLocalProvider(
+                LocalMarkupProcessor provides rememberDefaultMarkupProcessor(),
+                content = content,
+            )
         }
     }
 }

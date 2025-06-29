@@ -24,7 +24,7 @@ fun CompactTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    content: @Composable (ColumnScope.() -> Unit)? = null,
+    content: @Composable (ColumnScope.() -> Unit)? = { LiftAppHorizontalDivider() },
 ) {
     Column(modifier) {
         CenterAlignedTopAppBar(
@@ -35,7 +35,6 @@ fun CompactTopAppBar(
             scrollBehavior = scrollBehavior,
         )
         content?.invoke(this)
-        LiftAppHorizontalDivider()
     }
 }
 

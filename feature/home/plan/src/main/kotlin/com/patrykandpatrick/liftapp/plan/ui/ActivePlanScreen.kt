@@ -12,12 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,14 +22,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.plan.model.Action
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.graphics.rememberBottomSinShape
-import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatrick.liftapp.ui.theme.getHighlightedColorScheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.date.formatDateRange
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.DayIndicator
 import com.patrykandpatryk.liftapp.core.ui.routine.RestCard
@@ -116,27 +113,32 @@ private fun PlanItem(
     ) {
         DayIndicator(dayIndex = dayIndex, highlighted = highlighted)
 
-        val colorScheme = if (highlighted) getHighlightedColorScheme() else colorScheme
+        val colors =
+            if (highlighted) {
+                LiftAppCardDefaults.tonalCardColors
+            } else {
+                LiftAppCardDefaults.outlinedColors
+            }
 
-        MaterialTheme(colorScheme = colorScheme) {
-            val colors =
-                CardDefaults.outlinedCardColors(
-                    containerColor =
-                        if (highlighted) MaterialTheme.colorScheme.primaryContainer
-                        else MaterialTheme.colorScheme.surface
-                )
-            when (planItem) {
-                is Plan.Item.Rest -> {
-                    OutlinedCard(modifier = Modifier.fillMaxWidth(), colors = colors) { RestCard() }
+        when (planItem) {
+            is Plan.Item.Rest -> {
+                LiftAppCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = colors,
+                    contentPadding = PaddingValues(0.dp),
+                ) {
+                    RestCard()
                 }
-                is Plan.Item.Routine -> {
-                    OutlinedCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = colors,
-                        onClick = { (onAction(Action.OnPlanItemClick(planItem))) },
-                    ) {
-                        RoutineCard(planItem.routine)
-                    }
+            }
+
+            is Plan.Item.Routine -> {
+                LiftAppCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = colors,
+                    onClick = { (onAction(Action.OnPlanItemClick(planItem))) },
+                    contentPadding = PaddingValues(0.dp),
+                ) {
+                    RoutineCard(planItem.routine)
                 }
             }
         }
@@ -146,5 +148,5 @@ private fun PlanItem(
 @MultiDevicePreview
 @Composable
 private fun ActivePlanScreenPreview() {
-    LiftAppTheme { Surface { ActivePlanScreen(planState = previewActivePlanState, onAction = {}) } }
+    PreviewTheme { ActivePlanScreen(planState = previewActivePlanState, onAction = {}) }
 }

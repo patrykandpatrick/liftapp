@@ -90,6 +90,7 @@ fun TopAppBarWithTabs(
                 modifier = modifier.background(colorScheme.surface),
                 tabs = tabs,
             )
+            LiftAppHorizontalDivider()
         },
         modifier = modifier,
     )

@@ -194,8 +194,8 @@
     <string name="time_minutes_medium">min</string>
     <string name="time_seconds_medium">sec</string>
     <string name="date_range_format_separator">–</string>
-    <string name="date_range_format_day">d</string>
-    <string name="date_range_format_day_month">d MMMM</string>
+    <string name="date_range_format_day">EEE d</string>
+    <string name="date_range_format_day_month">EEE d MMMM</string>
 
     <string name="content_description_remove_set">Remove set</string>
 

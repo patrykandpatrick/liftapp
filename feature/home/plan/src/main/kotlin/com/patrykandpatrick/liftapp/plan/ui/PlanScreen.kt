@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -15,10 +14,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.plan.model.Action
-import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
@@ -45,7 +45,7 @@ private fun PlanScreen(
 ) {
     val (isEditVisible, setEditVisible) = rememberSaveable { mutableStateOf(false) }
 
-    Scaffold(
+    LiftAppScaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             CompactTopAppBar(
@@ -142,11 +142,11 @@ private val exercisesPreview =
 @MultiDevicePreview
 @Composable
 private fun PlanScreenPreview() {
-    LiftAppTheme { PlanScreen(state = Loadable.Success(previewActivePlanState), onAction = {}) }
+    PreviewTheme { PlanScreen(state = Loadable.Success(previewActivePlanState), onAction = {}) }
 }
 
 @MultiDevicePreview
 @Composable
 private fun NoActivePlanScreenPreview() {
-    LiftAppTheme { PlanScreen(Loadable.Success(PlanState.NoActivePlan), {}) }
+    PreviewTheme { PlanScreen(Loadable.Success(PlanState.NoActivePlan), {}) }
 }
