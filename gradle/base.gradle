@@ -38,7 +38,7 @@ android {
         freeCompilerArgs += [
                 "-Xjvm-default=all-compatibility",
                 "-opt-in=kotlin.RequiresOptIn",
-                "-Xcontext-receivers",
+                "-Xcontext-parameters",
                 "-opt-in=kotlin.time.ExperimentalTime",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
