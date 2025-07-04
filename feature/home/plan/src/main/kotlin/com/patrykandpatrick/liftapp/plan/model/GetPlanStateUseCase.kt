@@ -19,18 +19,23 @@ constructor(private val getActivePlanUseCase: GetActivePlanUseCase) {
                 PlanState.NoActivePlan
             } else {
                 val (activePlan, plan) = pair
-                PlanState.ActivePlan(
-                    plan = plan,
-                    cycleNumber = getCycleNumber(activePlan, plan),
-                    cycleCount = activePlan.cycleCount,
-                    currentPlanItemIndex = getCurrentItem(activePlan, plan),
-                    cycleDates =
-                        PlanState.getAllCycleDates(
-                            activePlan.startDate,
-                            activePlan.cycleCount,
-                            plan.items.size.toLong(),
-                        ),
-                )
+                val cycleDates =
+                    PlanState.getAllCycleDates(
+                        activePlan.startDate,
+                        activePlan.cycleCount,
+                        plan.items.size.toLong(),
+                    )
+                if (LocalDate.now() in activePlan.startDate..cycleDates.last().second) {
+                    PlanState.ActivePlan(
+                        plan = plan,
+                        cycleNumber = getCycleNumber(activePlan, plan),
+                        cycleCount = activePlan.cycleCount,
+                        currentPlanItemIndex = getCurrentItem(activePlan, plan),
+                        cycleDates = cycleDates,
+                    )
+                } else {
+                    PlanState.NoActivePlan
+                }
             }
         }
 
