@@ -1,9 +1,8 @@
 [versions]
 activity = "1.10.1"
 appcompat = "1.7.1"
-compose = "1.9.0-beta01"
-composeBom = "2025.06.01"
-composeNavigation = "2.9.0"
+composeBom = "2025.06.02"
+composeNavigation = "2.9.1"
 coroutines = "1.10.2"
 datastore = "1.1.7"
 documentfile = "1.1.0"
@@ -14,11 +13,11 @@ immutableCollections = "0.4.0"
 junit = "4.13.2"
 jupiter = "5.13.2"
 kotlin = "2.2.0"
-kotlinxSerialization = "1.8.1"
+kotlinxSerialization = "1.9.0"
 kotlinxSerializationConverter = "1.0.0"
-landscapist = "2.5.0"
+landscapist = "2.5.1"
 lifecycle = "2.9.1"
-m3 = "1.4.0-alpha16"
+m3 = "1.4.0-alpha17"
 opto = "1.2.0"
 retrofit = "3.0.0"
 room = "2.7.2"
@@ -34,7 +33,7 @@ kspPlugin = "2.2.0-2.0.2"
 activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 compose-bom = { group = "androidx.compose", name = "compose-bom-alpha", version.ref = "composeBom" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
