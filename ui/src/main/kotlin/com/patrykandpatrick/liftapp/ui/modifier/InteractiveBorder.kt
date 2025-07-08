@@ -178,7 +178,7 @@ private class BorderNode(
     }
 
     override fun ContentDrawScope.draw() {
-        val borderWidth = strokeWidth.toPx()
+        val borderWidth = strokeWidth.roundToPx()
         val actualMaxWidth = size.width - borderWidth
         val actualMaxHeight = size.height - borderWidth
         val width = maxWidth?.toPx()?.coerceAtMost(actualMaxWidth) ?: actualMaxWidth
@@ -190,10 +190,7 @@ private class BorderNode(
                 density = this,
             )
         drawContent()
-        translate(
-            (borderWidth + size.width - width) / 2,
-            (borderWidth + size.height - height) / 2,
-        ) {
+        translate((size.width - width) / 2, (size.height - height) / 2) {
             drawOutline(
                 outline = outline,
                 brush =
