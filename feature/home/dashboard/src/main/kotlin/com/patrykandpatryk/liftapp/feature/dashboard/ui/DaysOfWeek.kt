@@ -84,7 +84,7 @@ internal fun DayOfWeek(
         Box(
             modifier =
                 Modifier.graphicsLayer { alpha = if (isToday) 1f else 0f }
-                    .background(color = colorScheme.primaryHighlightActivated, shape = PillShape)
+                    .background(color = colorScheme.onPrimaryOutline, shape = PillShape)
                     .size(8.dp)
         )
 

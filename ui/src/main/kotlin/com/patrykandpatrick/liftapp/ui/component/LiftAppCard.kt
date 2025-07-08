@@ -132,8 +132,8 @@ object LiftAppCardDefaults {
                 interactiveBorderColors =
                     InteractiveBorderColors(
                         color = colorScheme.primary,
-                        pressedColor = colorScheme.primaryHighlightActivated,
-                        hoverForegroundColor = colorScheme.primaryHighlightActivated,
+                        pressedColor = colorScheme.onPrimaryOutline,
+                        hoverForegroundColor = colorScheme.onPrimaryOutline,
                     ),
                 disabledBackgroundColor = Color.Transparent,
                 disabledContentColor = colorScheme.primaryContainer,

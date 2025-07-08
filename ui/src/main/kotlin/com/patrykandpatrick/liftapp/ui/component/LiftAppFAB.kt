@@ -118,8 +118,8 @@ object LiftAppFABDefaults {
                 interactiveBorderColors =
                     InteractiveBorderColors(
                         color = Color.Transparent,
-                        pressedColor = colorScheme.primaryHighlightActivated,
-                        hoverForegroundColor = colorScheme.primaryHighlightActivated,
+                        pressedColor = Color.Transparent,
+                        hoverForegroundColor = Color.Transparent,
                     ),
                 disabledBackgroundColor = colorScheme.secondary,
                 disabledContentColor = colorScheme.onSecondary,
