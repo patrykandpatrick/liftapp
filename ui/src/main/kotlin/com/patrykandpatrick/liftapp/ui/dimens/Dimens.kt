@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 data class Dimens(
     val button: Button = Button(),
     val card: Card = Card(),
+    val checkbox: Checkbox = Checkbox(),
     val chip: Chip = Chip(),
     val dialog: Dialog = Dialog(),
     val divider: Divider = Divider(),
@@ -110,6 +111,13 @@ data class Dimens(
         val tileCornerSize: Dp = 6.dp,
         val gridCellMinSize: Dp = 164.dp,
         val listItemHorizontalMargin: Dp = 16.dp,
+    )
+
+    @Immutable
+    data class Checkbox(
+        val size: Dp = 20.dp,
+        val cornerSize: Dp = 4.dp,
+        val strokeWidth: Dp = 2.dp,
     )
 
     @Immutable data class RadioButton(val size: Dp = 20.dp)
