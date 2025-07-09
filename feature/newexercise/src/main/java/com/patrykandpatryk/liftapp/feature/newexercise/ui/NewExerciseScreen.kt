@@ -2,21 +2,14 @@ package com.patrykandpatryk.liftapp.feature.newexercise.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -28,11 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.isLandscape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
@@ -41,9 +34,10 @@ import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
 import com.patrykandpatryk.liftapp.core.extension.thenIf
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.ui.ExtendedFloatingActionButton
+import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
-import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.resource.getMusclePrettyName
 import com.patrykandpatryk.liftapp.core.ui.resource.prettyName
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
@@ -75,28 +69,20 @@ private fun NewExerciseScreen(
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    Scaffold(
+    LiftAppScaffold(
         modifier =
             modifier
                 .thenIf(isLandscape) { navigationBarsPadding() }
                 .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = stringResource(id = R.string.title_new_exercise),
-                scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = { onAction(Action.PopBackStack) },
+            CompactTopAppBar(
+                title = { Text(stringResource(id = R.string.title_new_exercise)) },
+                navigationIcon = {
+                    CompactTopAppBarDefaults.BackIcon(onClick = { onAction(Action.PopBackStack) })
+                },
             )
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                modifier =
-                    Modifier.consumeWindowInsets(insets = WindowInsets.navigationBars).imePadding(),
-                text = stringResource(id = R.string.action_save),
-                icon = painterResource(id = R.drawable.ic_save),
-                onClick = { onAction(Action.Save) },
-            )
-        },
-        floatingActionButtonPosition = FabPosition.Center,
+        bottomBar = { BottomAppBar.Save(onClick = { onAction(Action.Save) }) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         Column(
@@ -105,10 +91,10 @@ private fun NewExerciseScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(paddingValues)
                     .padding(
-                        horizontal = MaterialTheme.dimens.padding.contentHorizontal,
-                        vertical = MaterialTheme.dimens.padding.contentVertical,
+                        horizontal = dimens.padding.contentHorizontal,
+                        vertical = dimens.padding.contentVertical,
                     ),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.verticalItemSpacing),
+            verticalArrangement = Arrangement.spacedBy(dimens.verticalItemSpacing),
         ) {
             Content(state = state, onAction = onAction)
         }
@@ -150,7 +136,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
             },
     )
 
-    DropdownMenu(
+    ListTextField(
         expanded = typeExpanded,
         onExpandedChange = setTypeExpanded,
         selectedItem = state.type,
@@ -160,7 +146,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         onClick = { onAction(Action.UpdateExerciseType(it)) },
     )
 
-    DropdownMenu(
+    ListTextField(
         expanded = mainMusclesExpanded,
         onExpandedChange = setMainMusclesExpanded,
         selectedItems = state.primaryMuscles.value,
@@ -168,13 +154,14 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
         label = stringResource(id = R.string.generic_main_muscles),
-        onClick = { onAction(Action.ToggleMainMuscle(it)) },
+        onClick = { onAction(Action.MainMuscleListAction(Action.ListAction.ToggleMuscle(it))) },
+        onClear = { onAction(Action.MainMuscleListAction(Action.ListAction.Clear)) },
         disabledItems = state.disabledMainMuscles,
         isError = state.showMainMusclesError,
         errorText = stringResource(id = R.string.error_pick_main_muscles),
     )
 
-    DropdownMenu(
+    ListTextField(
         expanded = secondaryMusclesExpanded,
         onExpandedChange = setSecondaryMusclesExpanded,
         selectedItems = state.secondaryMuscles,
@@ -182,11 +169,14 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
         label = stringResource(id = R.string.generic_secondary_muscles),
-        onClick = { onAction(Action.ToggleSecondaryMuscle(it)) },
+        onClick = {
+            onAction(Action.SecondaryMuscleListAction(Action.ListAction.ToggleMuscle(it)))
+        },
+        onClear = { onAction(Action.SecondaryMuscleListAction(Action.ListAction.Clear)) },
         disabledItems = state.disabledSecondaryMuscles,
     )
 
-    DropdownMenu(
+    ListTextField(
         expanded = tertiaryMusclesExpanded,
         onExpandedChange = setTertiaryMusclesExpanded,
         selectedItems = state.tertiaryMuscles,
@@ -194,7 +184,8 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         getItemText = getMusclePrettyName,
         getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
         label = stringResource(id = R.string.generic_tertiary_muscles),
-        onClick = { onAction(Action.ToggleTertiaryMuscle(it)) },
+        onClick = { onAction(Action.TertiaryMuscleListAction(Action.ListAction.ToggleMuscle(it))) },
+        onClear = { onAction(Action.TertiaryMuscleListAction(Action.ListAction.Clear)) },
         disabledItems = state.disabledTertiaryMuscles,
     )
 }

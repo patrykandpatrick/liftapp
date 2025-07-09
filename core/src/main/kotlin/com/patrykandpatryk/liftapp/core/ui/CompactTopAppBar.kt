@@ -10,6 +10,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
@@ -48,6 +49,17 @@ object CompactTopAppBarDefaults {
     fun IconButton(painter: Painter, contentDescription: String? = null, onClick: () -> Unit) {
         LiftAppIconButton(onClick = onClick) {
             Icon(painter = painter, contentDescription = contentDescription)
+        }
+    }
+
+    @Composable
+    fun IconButton(
+        imageVector: ImageVector,
+        contentDescription: String? = null,
+        onClick: () -> Unit,
+    ) {
+        LiftAppIconButton(onClick = onClick) {
+            Icon(imageVector = imageVector, contentDescription = contentDescription)
         }
     }
 

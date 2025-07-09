@@ -19,7 +19,6 @@ import com.patrykandpatryk.liftapp.domain.exercise.UpdateExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.extension.toggle
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.Name
-import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.validation.Validatable
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
@@ -60,9 +59,9 @@ constructor(
         when (action) {
             is Action.UpdateName -> updateName(action.name)
             is Action.UpdateExerciseType -> updateExerciseType(action.exerciseType)
-            is Action.ToggleMainMuscle -> updateMainMuscles(action.muscle)
-            is Action.ToggleSecondaryMuscle -> updateSecondaryMuscles(action.muscle)
-            is Action.ToggleTertiaryMuscle -> updateTertiaryMuscles(action.muscle)
+            is Action.MainMuscleListAction -> updateMainMuscles(action.listAction)
+            is Action.SecondaryMuscleListAction -> updateSecondaryMuscles(action.listAction)
+            is Action.TertiaryMuscleListAction -> updateTertiaryMuscles(action.listAction)
             Action.Save -> save()
             Action.PopBackStack -> popBackStack()
         }
@@ -86,23 +85,38 @@ constructor(
         state = state.copyState(type = type)
     }
 
-    private fun updateMainMuscles(muscle: Muscle) {
-        val updatedMuscle = state.primaryMuscles.value.toggle(muscle)
+    private fun updateMainMuscles(action: Action.ListAction) {
+        val updatedMuscles =
+            when (action) {
+                Action.ListAction.Clear -> emptyList()
+                is Action.ListAction.ToggleMuscle ->
+                    state.primaryMuscles.value.toggle(action.muscle)
+            }
         val mainMusclesValidatable =
-            if (updatedMuscle.isEmpty()) {
-                updatedMuscle.toInvalid()
+            if (updatedMuscles.isEmpty()) {
+                updatedMuscles.toInvalid()
             } else {
-                updatedMuscle.toValid()
+                updatedMuscles.toValid()
             }
         state = state.copyState(mainMuscles = mainMusclesValidatable)
     }
 
-    private fun updateSecondaryMuscles(muscle: Muscle) {
-        state = state.copyState(secondaryMuscles = state.secondaryMuscles.toggle(muscle))
+    private fun updateSecondaryMuscles(action: Action.ListAction) {
+        val updatedMuscles =
+            when (action) {
+                Action.ListAction.Clear -> emptyList()
+                is Action.ListAction.ToggleMuscle -> state.secondaryMuscles.toggle(action.muscle)
+            }
+        state = state.copyState(secondaryMuscles = updatedMuscles)
     }
 
-    private fun updateTertiaryMuscles(muscle: Muscle) {
-        state = state.copyState(tertiaryMuscles = state.tertiaryMuscles.toggle(muscle))
+    private fun updateTertiaryMuscles(action: Action.ListAction) {
+        val updatedMuscles =
+            when (action) {
+                Action.ListAction.Clear -> emptyList()
+                is Action.ListAction.ToggleMuscle -> state.tertiaryMuscles.toggle(action.muscle)
+            }
+        state = state.copyState(tertiaryMuscles = updatedMuscles)
     }
 
     private fun save() {

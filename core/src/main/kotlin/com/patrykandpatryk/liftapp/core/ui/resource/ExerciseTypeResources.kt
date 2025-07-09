@@ -31,7 +31,7 @@ val ExerciseType.nameRes: Int
             ExerciseType.Calisthenics -> R.string.exercise_type_calisthenics
             ExerciseType.Reps -> R.string.exercise_type_reps
             ExerciseType.Cardio -> R.string.exercise_type_cardio
-            ExerciseType.Time -> R.string.exercise_type_calisthenics
+            ExerciseType.Time -> R.string.exercise_type_time
         }
 
 val ExerciseType.prettyName: String

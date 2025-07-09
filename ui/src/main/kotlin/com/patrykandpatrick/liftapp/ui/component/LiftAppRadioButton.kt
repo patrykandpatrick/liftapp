@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +40,6 @@ fun LiftAppRadioButton(
 ) {
     val radioButtonSize = dimens.radioButton.size
     val animatedColor = animateColorAsState(colors.getColor(selected, enabled))
-    val minSize = LocalMinimumInteractiveComponentSize.current
     val innerCircleSize =
         animateDpAsState(
             targetValue = if (selected) 0.dp else radioButtonSize - 4.dp,
@@ -51,11 +49,12 @@ fun LiftAppRadioButton(
         )
     val outerCircleSize =
         animateDpAsState(
-            targetValue = radioButtonSize - if (selected) 10.dp else 0.dp,
-            animationSpec =
-                if (selected) tween(delayMillis = 100, easing = FastOutSlowInEasing)
-                else tween(easing = FastOutSlowInEasing),
-        )
+                targetValue = radioButtonSize - if (selected) 10.dp else 0.dp,
+                animationSpec =
+                    if (selected) tween(delayMillis = 100, easing = FastOutSlowInEasing)
+                    else tween(easing = FastOutSlowInEasing),
+            )
+            .value
 
     Canvas(
         modifier =
@@ -67,11 +66,11 @@ fun LiftAppRadioButton(
                     onClick = onClick,
                     interactionSource = interactionSource ?: remember { MutableInteractionSource() },
                 )
-                .defaultMinSize(minSize, minSize)
+                .defaultMinSize(radioButtonSize, radioButtonSize)
     ) {
         drawContext.graphicsLayer?.compositingStrategy = CompositingStrategy.Offscreen
 
-        drawCircle(color = animatedColor.value, radius = outerCircleSize.value.toPx() / 2)
+        drawCircle(color = animatedColor.value, radius = outerCircleSize.toPx() / 2)
 
         drawCircle(
             color = Color.Black,

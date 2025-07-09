@@ -5,6 +5,7 @@ import androidx.compose.animation.animateBounds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -87,10 +88,17 @@ fun LiftAppFilterChip(
 }
 
 @Composable
-fun LiftAppChipRow(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
+fun LiftAppChipRow(
+    modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical =
+        Arrangement.spacedBy(dimens.padding.itemVerticalMedium),
+    horizontalArrangement: Arrangement.Horizontal =
+        Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
+    content: @Composable () -> Unit,
+) {
+    FlowRow(
+        verticalArrangement = verticalArrangement,
+        horizontalArrangement = horizontalArrangement,
         modifier = modifier,
     ) {
         LookaheadScope { content() }

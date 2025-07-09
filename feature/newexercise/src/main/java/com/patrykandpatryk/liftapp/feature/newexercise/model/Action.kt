@@ -8,13 +8,19 @@ sealed interface Action {
 
     data class UpdateExerciseType(val exerciseType: ExerciseType) : Action
 
-    data class ToggleMainMuscle(val muscle: Muscle) : Action
+    data class MainMuscleListAction(val listAction: ListAction) : Action
 
-    data class ToggleSecondaryMuscle(val muscle: Muscle) : Action
+    data class SecondaryMuscleListAction(val listAction: ListAction) : Action
 
-    data class ToggleTertiaryMuscle(val muscle: Muscle) : Action
+    data class TertiaryMuscleListAction(val listAction: ListAction) : Action
 
     data object Save : Action
 
     data object PopBackStack : Action
+
+    sealed interface ListAction {
+        data class ToggleMuscle(val muscle: Muscle) : ListAction
+
+        data object Clear : ListAction
+    }
 }
