@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.derivedStateOf
@@ -55,12 +56,12 @@ fun rememberBackdropState(initialState: BackdropValue = BackdropValue.Closed) =
 
 @Composable
 fun Backdrop(
-    backContent: @Composable () -> Unit,
+    backContent: @Composable BoxScope.() -> Unit,
     backPeekHeight: Density.() -> Dp,
     contentPeekHeight: Density.() -> Dp,
     modifier: Modifier = Modifier,
     state: BackdropState = rememberBackdropState(),
-    content: @Composable () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val flingBehavior =
         AnchoredDraggableDefaults.flingBehavior(
@@ -71,8 +72,8 @@ fun Backdrop(
         remember(state, flingBehavior) { BackdropNestedScrollConnection(state, flingBehavior) }
     Layout(
         content = {
-            Box { backContent() }
-            Box(Modifier.nestedScroll(scrollConnection).pointerInput(Unit) {}) { content() }
+            Box(content = backContent)
+            Box(Modifier.nestedScroll(scrollConnection).pointerInput(Unit) {}, content = content)
         },
         measurePolicy = { measurables, constraints ->
             val backdrop = measurables[0].measure(constraints)
@@ -142,10 +143,11 @@ private class BackdropNestedScrollConnection(
 
     override suspend fun onPreFling(available: Velocity) =
         if (available.y < 0 && state.isNotClosed) {
-            with(flingBehavior) { scrollScope.performFling(available.y) }
-            Velocity(0f, available.y)
+            state.anchoredDraggableState
+            val consumed = with(flingBehavior) { scrollScope.performFling(available.y) }
+            Velocity(0f, consumed)
         } else {
-            Velocity.Zero
+            available
         }
 
     override suspend fun onPostFling(consumed: Velocity, available: Velocity) =
@@ -154,9 +156,9 @@ private class BackdropNestedScrollConnection(
                 lastUpwardScrollSource != null &&
                 lastUpwardScrollSource == NestedScrollSource.UserInput
         ) {
-            with(flingBehavior) { scrollScope.performFling(available.y) }
-            Velocity(0f, available.y)
+            val consumed = with(flingBehavior) { scrollScope.performFling(available.y) }
+            Velocity(0f, consumed)
         } else {
-            Velocity.Zero
+            available
         }
 }
