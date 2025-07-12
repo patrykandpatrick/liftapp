@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.domain.validation.Validatable
 @Stable
 data class NewRoutineState(
     val id: Long,
+    val routineName: String,
     val name: StringTextFieldState,
     val exercises: Validatable<List<RoutineExerciseItem>>,
     val isEdit: Boolean,

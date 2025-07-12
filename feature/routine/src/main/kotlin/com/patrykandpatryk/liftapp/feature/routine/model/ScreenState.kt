@@ -9,7 +9,6 @@ import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 @Immutable
 data class ScreenState(
     val name: String,
-    val showDeleteDialog: Boolean,
     val exercises: List<RoutineExerciseItem>,
     override val primaryMuscles: List<Muscle>,
     override val secondaryMuscles: List<Muscle>,

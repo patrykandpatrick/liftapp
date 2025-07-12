@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.functionality.database.routine
 
+import androidx.room.RoomRawQuery
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
@@ -35,9 +36,11 @@ constructor(
     override fun getRoutinesWithExerciseNames(): Flow<List<RoutineWithExerciseNames>> =
         routineDao.getRoutinesWithExerciseNames().map(routineMapper::toDomain).flowOn(dispatcher)
 
-    override fun getRoutineWithExerciseIDs(routineID: Long): Flow<RoutineWithExerciseIds?> =
-        routineDao
-            .getRoutineWithExerciseIds(routineID)
+    override fun getRoutineWithExerciseIDs(routineID: Long): Flow<RoutineWithExerciseIds?> {
+        val query = RoomRawQuery(GET_ROUTINE_WITH_EXERCISE_IDS_QUERY) { it.bindLong(1, routineID) }
+
+        return routineDao
+            .getRoutineWithExerciseIds(query)
             .map { routine ->
                 routine ?: return@map null
                 RoutineWithExerciseIds(
@@ -47,6 +50,7 @@ constructor(
                 )
             }
             .flowOn(dispatcher)
+    }
 
     override fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?> =
         combine(routineDao.getRoutine(routineId), routineDao.getRoutineExercises(routineId)) {
@@ -72,7 +76,7 @@ constructor(
         }
 
     override suspend fun reorderExercises(routineId: Long, exerciseIds: List<Long>) {
-        upsertOrderedExercises(routineId, exerciseIds)
+        withContext(dispatcher) { upsertOrderedExercises(routineId, exerciseIds) }
     }
 
     private suspend fun upsertOrderedExercises(routineId: Long, exerciseIds: List<Long>) {
@@ -88,10 +92,17 @@ constructor(
     }
 
     override suspend fun delete(routineId: Long) {
-        routineDao.delete(routineId)
+        withContext(dispatcher) { routineDao.delete(routineId) }
     }
 
     override suspend fun deleteExerciseWithRoutine(routineId: Long, exerciseId: Long) {
-        routineDao.deleteExerciseWithRoutine(routineId, exerciseId)
+        withContext(dispatcher) { routineDao.deleteExerciseWithRoutine(routineId, exerciseId) }
+    }
+
+    private companion object {
+        const val GET_ROUTINE_WITH_EXERCISE_IDS_QUERY =
+            "SELECT r.routine_id, r.routine_name, GROUP_CONCAT(ewr.exercise_id ORDER BY ewr.order_index, ',') as " +
+                "exercise_ids FROM routine r LEFT JOIN exercise_with_routine ewr on ewr.routine_id = r.routine_id " +
+                "WHERE r.routine_id = ? GROUP BY r.routine_id"
     }
 }

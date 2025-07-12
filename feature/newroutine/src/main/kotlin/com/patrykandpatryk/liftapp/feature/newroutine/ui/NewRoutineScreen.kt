@@ -2,57 +2,65 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
+import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialog
+import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialogDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.Delete
+import com.patrykandpatrick.liftapp.ui.icons.DragHandle
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.Colors.IllustrationAlpha
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.ErrorEffectState
 import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.animateJump
-import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
@@ -62,6 +70,10 @@ import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
 import com.patrykandpatryk.liftapp.domain.validation.toInvalid
 import com.patrykandpatryk.liftapp.domain.validation.toValid
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Action
+import kotlinx.coroutines.suspendCancellableCoroutine
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.ReorderableLazyListState
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun NewRoutineScreen(modifier: Modifier = Modifier) {
@@ -80,11 +92,23 @@ private fun NewRoutineScreen(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val windowWidthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    Scaffold(
+    val isAtLeastMediumWidth =
+        currentWindowAdaptiveInfo()
+            .windowSizeClass
+            .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val isDeleteDialogVisible = rememberSaveable { mutableStateOf(false) }
+
+    DeleteRoutineDialog(
+        isVisible = isDeleteDialogVisible.value,
+        routineName = state.name.value,
+        onDismissRequest = { isDeleteDialogVisible.value = false },
+        onConfirm = { onAction(Action.DeleteRoutine(state.id)) },
+    )
+
+    LiftAppScaffold(
         modifier = modifier,
         topBar = {
-            CenterAlignedTopAppBar(
+            CompactTopAppBar(
                 title = {
                     Text(
                         text =
@@ -95,20 +119,20 @@ private fun NewRoutineScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onAction(Action.PopBackStack) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = stringResource(id = R.string.action_close),
-                        )
-                    }
+                    CompactTopAppBarDefaults.BackIcon { onAction(Action.PopBackStack) }
                 },
                 actions = {
-                    if (windowWidthSizeClass != WindowWidthSizeClass.COMPACT) {
-                        TextButton(onClick = { onAction(Action.SaveRoutine(state)) }) {
-                            Icon(painterResource(id = R.drawable.ic_save), null)
-                            Spacer(
-                                modifier = Modifier.width(LocalDimens.current.button.iconPadding)
+                    if (state.isEdit) {
+                        LiftAppIconButton(onClick = { isDeleteDialogVisible.value = true }) {
+                            Icon(
+                                imageVector = LiftAppIcons.Delete,
+                                contentDescription = stringResource(id = R.string.action_delete),
                             )
+                        }
+                    }
+
+                    if (isAtLeastMediumWidth) {
+                        PlainLiftAppButton(onClick = { onAction(Action.SaveRoutine(state)) }) {
                             Text(text = stringResource(id = R.string.action_save))
                         }
                     }
@@ -116,21 +140,32 @@ private fun NewRoutineScreen(
             )
         },
         bottomBar = {
-            if (windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+            if (!isAtLeastMediumWidth) {
                 BottomAppBar.Save(onClick = { onAction(Action.SaveRoutine(state)) })
             }
         },
     ) { paddingValues ->
-        LazyColumn(modifier = modifier.padding(paddingValues)) {
-            stickyHeader {
-                Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+        val lazyListState = rememberLazyListState()
+        val reorderableLazyListState =
+            rememberReorderableLazyListState(lazyListState) { from, to ->
+                suspendCancellableCoroutine { continuation ->
+                    onAction(Action.ReorderExercise(from.index - 1, to.index - 1, continuation))
+                }
+            }
+
+        LazyColumn(
+            state = lazyListState,
+            modifier = modifier.padding(paddingValues).fillMaxSize(),
+        ) {
+            item {
+                Column(modifier = Modifier.padding(top = dimens.padding.contentVertical)) {
                     LiftAppTextFieldWithSupportingText(
                         textFieldState = state.name,
                         label = { Text(text = stringResource(id = R.string.generic_name)) },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions =
                             KeyboardActions(onDone = { onAction(Action.SaveRoutine(state)) }),
-                        maxLines = LocalDimens.current.input.nameMaxLines,
+                        maxLines = dimens.input.nameMaxLines,
                         modifier =
                             Modifier.fillMaxWidth()
                                 .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
@@ -139,7 +174,7 @@ private fun NewRoutineScreen(
                     ListSectionTitle(
                         title = stringResource(R.string.title_exercises),
                         trailingIcon = {
-                            TextButton(
+                            PlainLiftAppButton(
                                 modifier =
                                     Modifier.animateJump(
                                         state.errorEffectState,
@@ -147,14 +182,6 @@ private fun NewRoutineScreen(
                                     ),
                                 onClick = { onAction(Action.PickExercises(state.exerciseIds)) },
                             ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_add_circle),
-                                    contentDescription = null,
-                                )
-                                Spacer(
-                                    modifier =
-                                        Modifier.width(LocalDimens.current.button.iconPadding)
-                                )
                                 Text(text = stringResource(id = R.string.action_add_exercise))
                             }
                         },
@@ -167,30 +194,83 @@ private fun NewRoutineScreen(
                 }
             }
 
-            exercises(state = state, onAction = onAction)
+            exercises(
+                state = state,
+                reorderableLazyListState = reorderableLazyListState,
+                onAction = onAction,
+            )
         }
     }
 }
 
-private fun LazyListScope.exercises(state: NewRoutineState, onAction: (Action) -> Unit) {
+@Composable
+private fun DeleteRoutineDialog(
+    isVisible: Boolean,
+    routineName: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (isVisible) {
+        LiftAppAlertDialog(
+            onDismissRequest = onDismissRequest,
+            icon = { Icon(LiftAppIcons.Delete, null) },
+            title = {
+                Text(text = stringResource(id = R.string.generic_delete_something, routineName))
+            },
+            text = { Text(text = stringResource(id = R.string.routine_delete_message)) },
+            dismissButton = {
+                LiftAppAlertDialogDefaults.DismissButton(
+                    onDismissRequest,
+                    stringResource(id = android.R.string.cancel),
+                )
+            },
+            confirmButton = {
+                PlainLiftAppButton(onClick = onConfirm) {
+                    Text(text = stringResource(id = R.string.action_delete))
+                }
+            },
+        )
+    }
+}
+
+private fun LazyListScope.exercises(
+    state: NewRoutineState,
+    reorderableLazyListState: ReorderableLazyListState,
+    onAction: (Action) -> Unit,
+) {
     if (state.exercises.isInvalid) {
         item { EmptyState(state) }
     } else {
         items(items = state.exercises.value, key = { it.id }, contentType = { it::class }) { item ->
-            ListItem(
-                modifier = Modifier.animateItem(),
-                title = item.name,
-                description = item.muscles,
-                iconPainter = painterResource(id = item.type.iconRes),
-                actions = {
-                    IconButton(onClick = { onAction(Action.RemoveExercise(item.id)) }) {
+            ReorderableItem(state = reorderableLazyListState, key = item.id) { isDragging ->
+                val interactionSource = remember { MutableInteractionSource() }
+                ListItem(
+                    modifier =
+                        Modifier.background(colorScheme.background)
+                            .longPressDraggableHandle(interactionSource = interactionSource),
+                    icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_remove_circle),
-                            contentDescription = stringResource(id = R.string.list_remove),
+                            imageVector = LiftAppIcons.DragHandle,
+                            contentDescription = null,
+                            modifier =
+                                Modifier.draggableHandle(interactionSource = interactionSource),
                         )
-                    }
-                },
-            )
+                    },
+                    title = {
+                        Text(text = item.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    description = { Text(text = item.muscles) },
+                    actions = {
+                        LiftAppIconButton(onClick = { onAction(Action.RemoveExercise(item.id)) }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_remove_circle),
+                                contentDescription = stringResource(id = R.string.list_remove),
+                            )
+                        }
+                    },
+                    interactionSource = interactionSource,
+                )
+            }
         }
     }
 }
@@ -243,6 +323,7 @@ private fun NewRoutinePreviewInternal(
             state =
                 NewRoutineState(
                     id = routineID,
+                    routineName = "",
                     name =
                         textFieldStateManager.stringTextField(
                             initialValue = routineName,
@@ -283,6 +364,13 @@ private fun EditRoutinePreview() {
                     3,
                     "Deadlift",
                     "Hamstrings, Glutes",
+                    ExerciseType.Weight,
+                    Goal.default,
+                ),
+                RoutineExerciseItem(
+                    4,
+                    "Seated Overhead Dumbbell Press The Longest Name Ever",
+                    "Shoulders, Chest",
                     ExerciseType.Weight,
                     Goal.default,
                 ),

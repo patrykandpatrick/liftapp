@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.ui.modifier
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.runtime.mutableStateOf
@@ -166,6 +167,13 @@ private class BorderNode(
                             }
                         }
 
+                        is DragInteraction.Start -> {
+                            launch { borderPrimaryColor.animate(colors.draggedColor) }
+                            launch { borderSecondaryColor.animate(colors.draggedColor) }
+                        }
+
+                        is DragInteraction.Stop,
+                        is DragInteraction.Cancel,
                         is HoverInteraction.Exit,
                         is PressInteraction.Cancel -> {
                             launch { borderPrimaryColor.animate(idleColor) }

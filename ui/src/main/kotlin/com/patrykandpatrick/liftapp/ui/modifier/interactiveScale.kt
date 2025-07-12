@@ -3,6 +3,7 @@ package com.patrykandpatrick.liftapp.ui.modifier
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.IndicationNodeFactory
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ fun Modifier.interactiveScale(
 data class IndicationScale(
     val hover: Float = 1.02f,
     val press: Float = .95f,
+    val drag: Float = press,
     val default: Float = 1f,
 )
 
@@ -78,6 +80,9 @@ private class ScaleNode(
                         currentScale.animate(scale.press)
                         currentScale.animate(scale.default)
                     }
+                    is DragInteraction.Start -> currentScale.animate(scale.drag)
+                    is DragInteraction.Stop,
+                    is DragInteraction.Cancel,
                     is HoverInteraction.Exit,
                     is PressInteraction.Cancel -> {
                         currentScale.animate(scale.default)

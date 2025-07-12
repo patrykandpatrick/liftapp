@@ -3,6 +3,8 @@ package com.patrykandpatryk.liftapp.functionality.database.routine
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.RoomRawQuery
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.patrykandpatryk.liftapp.functionality.database.exercise.ExerciseWithGoalDto
@@ -25,12 +27,8 @@ interface RoutineDao {
     )
     fun getRoutineExercises(routineId: Long): Flow<List<ExerciseWithGoalDto>>
 
-    @Query(
-        "SELECT r.routine_id, r.routine_name, GROUP_CONCAT(ewr.exercise_id, ',') exercise_ids FROM routine r " +
-            "LEFT JOIN exercise_with_routine ewr on ewr.routine_id = r.routine_id " +
-            "WHERE r.routine_id = :routineID GROUP BY r.routine_id"
-    )
-    fun getRoutineWithExerciseIds(routineID: Long): Flow<RoutineWithExerciseIdsEntity?>
+    @RawQuery(observedEntities = [RoutineEntity::class, ExerciseWithRoutineEntity::class])
+    fun getRoutineWithExerciseIds(query: RoomRawQuery): Flow<RoutineWithExerciseIdsEntity?>
 
     @Query("SELECT * FROM routine WHERE routine_id = :routineID")
     fun getRoutine(routineID: Long): Flow<RoutineEntity?>

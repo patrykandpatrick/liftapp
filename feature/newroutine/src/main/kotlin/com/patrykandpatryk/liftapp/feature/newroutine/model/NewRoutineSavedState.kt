@@ -23,6 +23,20 @@ class NewRoutineSavedState @Inject constructor(private val savedStateHandle: Sav
         }
     }
 
+    fun reorderExerciseIDs(from: Int, to: Int) {
+        savedStateHandle.update<List<Long>>(EXERCISE_IDS) { exerciseIDs ->
+            val indexRange = 0 until (exerciseIDs?.size ?: return)
+            if (from in indexRange && to in indexRange) {
+                exerciseIDs.toMutableList().apply {
+                    val item = removeAt(from)
+                    add(to, item)
+                }
+            } else {
+                return
+            }
+        }
+    }
+
     private companion object {
         const val EXERCISE_IDS = "exercise_ids"
     }

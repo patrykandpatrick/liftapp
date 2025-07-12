@@ -6,3 +6,5 @@ plugins {
 }
 
 android { namespace = "com.patrykandpatryk.liftapp.feature.newroutine" }
+
+dependencies { implementation(libs.reorderable) }

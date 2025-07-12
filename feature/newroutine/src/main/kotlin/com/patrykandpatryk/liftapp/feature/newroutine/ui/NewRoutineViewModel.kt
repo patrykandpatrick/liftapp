@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
+import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.ui.ErrorEffectState
 import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
 import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
@@ -19,9 +21,13 @@ import com.patrykandpatryk.liftapp.feature.newroutine.model.NewRoutineSavedState
 import com.patrykandpatryk.liftapp.feature.newroutine.model.UpsertRoutineUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,6 +45,7 @@ constructor(
         NonEmptyCollectionValidator<RoutineExerciseItem, List<RoutineExerciseItem>>,
     private val upsertRoutine: UpsertRoutineUseCase,
     private val navigationCommander: NavigationCommander,
+    private val deleteRoutineUseCase: DeleteRoutineUseCase,
 ) : ViewModel(viewModelScope) {
     private val name = textFieldStateManager.stringTextField(validators = { nonEmpty() })
 
@@ -54,6 +61,7 @@ constructor(
                 if (routine != null) loadRoutineData(routine)
                 NewRoutineState(
                     id = routine?.id ?: ID_NOT_SET,
+                    routineName = routine?.name.orEmpty(),
                     name = name,
                     exercises = listValidator.validate(exercises),
                     isEdit = routine != null,
@@ -82,6 +90,9 @@ constructor(
             is Action.SaveRoutine -> save(action.state)
             is Action.PopBackStack -> popBackStack()
             is Action.PickExercises -> pickExercises(action.disabledExerciseIDs)
+            is Action.ReorderExercise ->
+                reorderExercise(action.fromIndex, action.toIndex, action.continuation)
+            is Action.DeleteRoutine -> deleteRoutine(action.id)
         }
     }
 
@@ -91,6 +102,13 @@ constructor(
 
     private fun removeExerciseID(exerciseID: Long) {
         newRoutineSavedState.removeExerciseIDs(exerciseID)
+    }
+
+    private fun deleteRoutine(id: Long) {
+        viewModelScope.launch {
+            deleteRoutineUseCase(id)
+            navigationCommander.popBackStack()
+        }
     }
 
     private fun save(state: NewRoutineState) {
@@ -126,6 +144,19 @@ constructor(
             .getResults<List<Long>>(KEY_EXERCISE_IDS)
             .onEach { newRoutineSavedState.addExerciseIDs(it) }
             .launchIn(viewModelScope)
+    }
+
+    private fun reorderExercise(fromIndex: Int, toIndex: Int, continuation: Continuation<Unit>) {
+        newRoutineSavedState.reorderExerciseIDs(fromIndex, toIndex)
+        viewModelScope.launch {
+            val expectedExerciseIds = newRoutineSavedState.exerciseIDs.value
+            state
+                .filter { state ->
+                    state.valueOrNull()?.exercises?.value?.map { it.id } == expectedExerciseIds
+                }
+                .first()
+            continuation.resume(Unit)
+        }
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -70,6 +71,7 @@ fun ListItem(
     colors: StatefulContainerColors = ListItemDefaults.colors,
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     titleHighlightPosition: IntRange = IntRange.EMPTY,
+    interactionSource: MutableInteractionSource? = null,
     onClick: (() -> Unit)? = null,
 ) {
     ListItem(
@@ -83,6 +85,7 @@ fun ListItem(
         checked = checked,
         colors = colors,
         paddingValues = paddingValues,
+        interactionSource = interactionSource,
         onClick = onClick,
     )
 }
@@ -100,6 +103,7 @@ fun ListItem(
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     checked: Boolean = false,
     shape: Shape = MaterialTheme.shapes.medium,
+    interactionSource: MutableInteractionSource? = null,
     onClick: (() -> Unit)? = null,
 ) {
     val currentColors = animateContainerColorsAsState(colors.getColors(checked)).value
@@ -117,6 +121,7 @@ fun ListItem(
                     enabled = enabled,
                     checked = checked,
                     shape = shape,
+                    interactionSource = interactionSource,
                 )
                 .background(color = currentColors.getBackgroundColor(enabled), shape = shape)
                 .padding(paddingValues),

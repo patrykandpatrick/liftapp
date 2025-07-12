@@ -30,8 +30,9 @@ fun Modifier.interactiveButtonEffect(
     scaleAnimationSpec: AnimationSpec<Float> =
         spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow),
     colorAnimationSpec: AnimationSpec<Color> = spring(stiffness = Spring.StiffnessLow),
+    interactionSource: MutableInteractionSource? = null,
 ): Modifier = composed {
-    val interactionSource = remember { MutableInteractionSource() }
+    val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
     val scope = rememberCoroutineScope()
 
     then(

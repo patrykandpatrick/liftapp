@@ -14,25 +14,19 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.image.MuscleImage
+import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 
 @Composable
-internal fun Details(modifier: Modifier = Modifier) {
-    val viewModel: RoutineViewModel = hiltViewModel()
-
-    val loadableState by viewModel.screenState.collectAsState()
-
+internal fun Details(loadableState: Loadable<ScreenState>, modifier: Modifier = Modifier) {
     loadableState.Unfold { state -> Details(modifier = modifier, state = state) }
 }
 
