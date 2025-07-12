@@ -136,6 +136,7 @@ fun PlainLiftAppButton(
     modifier: Modifier = Modifier,
     spacing: Dp = 6.dp,
     enabled: Boolean = true,
+    showDivider: Boolean = true,
     colors: ContainerColors = LiftAppButtonDefaults.plainButtonColors,
     contentPadding: PaddingValues =
         PaddingValues(
@@ -162,7 +163,7 @@ fun PlainLiftAppButton(
                         Arrangement.spacedBy(spacing, Alignment.CenterHorizontally),
                     content = content,
                 )
-                if (enabled) {
+                if (enabled && showDivider) {
                     SinHorizontalDivider(
                         color = LocalContentColor.current,
                         sinHeight = 4.dp,

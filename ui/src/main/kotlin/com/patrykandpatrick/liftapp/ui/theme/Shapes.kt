@@ -13,3 +13,5 @@ val Shapes = Shapes(extraSmall = RoundedCornerShape(8.dp), small = RoundedCorner
 val ButtonShape = RoundedCornerShape(12.dp)
 
 val ButtonBorderShape = RoundedCornerShape(11.dp)
+
+val AlertDialogShape = RoundedCornerShape(16.dp)
