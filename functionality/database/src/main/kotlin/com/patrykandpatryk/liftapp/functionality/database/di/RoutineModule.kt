@@ -1,9 +1,10 @@
 package com.patrykandpatryk.liftapp.functionality.database.di
 
-import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
+import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutinesWithExerciseNamesContract
-import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsContract
+import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsUseCase
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoomRoutineRepository
 import dagger.Binds
 import dagger.Module
@@ -19,17 +20,19 @@ interface RoutineModule {
     ): GetRoutineWithExercisesContract
 
     @Binds
-    fun bindGetRoutineNameContract(
+    fun bindGetRoutineWithExerciseIDsUseCase(
         repository: RoomRoutineRepository
-    ): GetRoutineWithExerciseIDsContract
+    ): GetRoutineWithExerciseIDsUseCase
 
     @Binds
-    fun bindUpsertRoutineWithExerciseIdsContract(
+    fun bindUpsertRoutineWithExerciseIdsUseCase(
         repository: RoomRoutineRepository
-    ): UpsertRoutineWithExerciseIdsContract
+    ): UpsertRoutineWithExerciseIdsUseCase
 
     @Binds
     fun bindGetRoutinesWithExerciseNamesContract(
         repository: RoomRoutineRepository
     ): GetRoutinesWithExerciseNamesContract
+
+    @Binds fun bindDeleteRoutineContract(repository: RoomRoutineRepository): DeleteRoutineUseCase
 }

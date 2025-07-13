@@ -2,7 +2,8 @@ package com.patrykandpatryk.liftapp.functionality.database.routine
 
 import androidx.room.RoomRawQuery
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
-import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
+import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutinesWithExerciseNamesContract
 import com.patrykandpatryk.liftapp.domain.routine.Routine
@@ -10,7 +11,7 @@ import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseNames
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
-import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsContract
+import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
@@ -25,13 +26,14 @@ class RoomRoutineRepository
 constructor(
     private val routineDao: RoutineDao,
     private val routineMapper: RoutineMapper,
-    @IODispatcher private val dispatcher: CoroutineDispatcher,
+    @param:IODispatcher private val dispatcher: CoroutineDispatcher,
 ) :
     RoutineRepository,
     GetRoutineWithExercisesContract,
-    GetRoutineWithExerciseIDsContract,
-    UpsertRoutineWithExerciseIdsContract,
-    GetRoutinesWithExerciseNamesContract {
+    GetRoutineWithExerciseIDsUseCase,
+    UpsertRoutineWithExerciseIdsUseCase,
+    GetRoutinesWithExerciseNamesContract,
+    DeleteRoutineUseCase {
 
     override fun getRoutinesWithExerciseNames(): Flow<List<RoutineWithExerciseNames>> =
         routineDao.getRoutinesWithExerciseNames().map(routineMapper::toDomain).flowOn(dispatcher)
@@ -89,6 +91,10 @@ constructor(
                 )
             }
             .also { exerciseWithRoutineEntities -> routineDao.upsert(exerciseWithRoutineEntities) }
+    }
+
+    override suspend fun deleteRoutine(routineID: Long) {
+        withContext(dispatcher + NonCancellable) { routineDao.delete(routineID) }
     }
 
     override suspend fun delete(routineId: Long) {

@@ -35,7 +35,8 @@ object Routes {
     object Routine {
         fun details(routineID: Long) = RoutineDetailsRouteData(routineID)
 
-        fun edit(routineID: Long) = NewRoutineRouteData(routineID)
+        fun edit(routineID: Long, deleteResultKey: String) =
+            NewRoutineRouteData(routineID, deleteResultKey)
 
         fun list() = RoutineListRouteData(isPickingRoutine = false)
 

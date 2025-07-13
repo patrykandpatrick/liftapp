@@ -3,33 +3,40 @@ package com.patrykandpatryk.liftapp.feature.newroutine.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.core.ui.ErrorEffectState
 import com.patrykandpatryk.liftapp.core.validation.NonEmptyCollectionValidator
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatryk.liftapp.domain.exception.RoutineNotFoundException
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsUseCase
+import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
+import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsUseCase
+import com.patrykandpatryk.liftapp.domain.routine.invoke
 import com.patrykandpatryk.liftapp.domain.validation.nonEmpty
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Action
 import com.patrykandpatryk.liftapp.feature.newroutine.model.GetExerciseItemsUseCase
-import com.patrykandpatryk.liftapp.feature.newroutine.model.GetRoutineWithExerciseIDsUseCase
 import com.patrykandpatryk.liftapp.feature.newroutine.model.NewRoutineSavedState
-import com.patrykandpatryk.liftapp.feature.newroutine.model.UpsertRoutineUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -37,13 +44,14 @@ class NewRoutineViewModel
 @Inject
 constructor(
     viewModelScope: CoroutineScope,
-    getRoutineWithExerciseIDsUseCase: GetRoutineWithExerciseIDsUseCase,
+    private val getRoutineWithExerciseIDsUseCase: GetRoutineWithExerciseIDsUseCase,
     getExerciseItemsUseCase: GetExerciseItemsUseCase,
     textFieldStateManager: TextFieldStateManager,
+    private val routeData: NewRoutineRouteData,
     private val newRoutineSavedState: NewRoutineSavedState,
     private val listValidator:
         NonEmptyCollectionValidator<RoutineExerciseItem, List<RoutineExerciseItem>>,
-    private val upsertRoutine: UpsertRoutineUseCase,
+    private val upsertRoutine: UpsertRoutineWithExerciseIdsUseCase,
     private val navigationCommander: NavigationCommander,
     private val deleteRoutineUseCase: DeleteRoutineUseCase,
 ) : ViewModel(viewModelScope) {
@@ -54,7 +62,7 @@ constructor(
     private val showErrors = MutableStateFlow(false)
 
     val state =
-        combine(getRoutineWithExerciseIDsUseCase(), getExerciseItemsUseCase(), showErrors) {
+        combine(getRoutineWithExerciseIDs(), getExerciseItemsUseCase(), showErrors) {
                 routine,
                 exercises,
                 showErrors ->
@@ -74,6 +82,19 @@ constructor(
     init {
         observePickedExercises()
     }
+
+    private fun getRoutineWithExerciseIDs(): Flow<RoutineWithExerciseIds?> =
+        if (routeData.routineID == ID_NOT_SET) {
+            flowOf(null)
+        } else {
+            getRoutineWithExerciseIDsUseCase(routeData.routineID).transform { routine ->
+                if (routine == null) {
+                    throw RoutineNotFoundException(routeData.routineID)
+                } else {
+                    emit(routine)
+                }
+            }
+        }
 
     private fun loadRoutineData(routineWithExerciseIds: RoutineWithExerciseIds) {
         if (!newRoutineSavedState.isInitialized) {
@@ -107,6 +128,7 @@ constructor(
     private fun deleteRoutine(id: Long) {
         viewModelScope.launch {
             deleteRoutineUseCase(id)
+            routeData.deleteResultKey?.also { navigationCommander.publishResult(it, true) }
             navigationCommander.popBackStack()
         }
     }
@@ -121,7 +143,7 @@ constructor(
             }
 
             viewModelScope.launch {
-                upsertRoutine(name.value, exerciseIds)
+                upsertRoutine(Routine(name.value, routeData.routineID), exerciseIds)
                 navigationCommander.popBackStack()
             }
         }

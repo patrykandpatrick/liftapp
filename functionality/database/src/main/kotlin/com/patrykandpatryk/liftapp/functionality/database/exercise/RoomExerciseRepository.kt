@@ -5,7 +5,7 @@ import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
-import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesContract
+import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.functionality.database.appendSQLOrderByCase
 import javax.inject.Inject
@@ -20,8 +20,8 @@ class RoomExerciseRepository
 constructor(
     private val exerciseDao: ExerciseDao,
     private val exerciseMapper: ExerciseMapper,
-    @IODispatcher private val dispatcher: CoroutineDispatcher,
-) : ExerciseRepository, GetRoutineExercisesContract {
+    @param:IODispatcher private val dispatcher: CoroutineDispatcher,
+) : ExerciseRepository, GetRoutineExercisesUseCase {
 
     override fun getAllExercises(): Flow<List<Exercise>> =
         exerciseDao.getAllExercises().map(exerciseMapper::toDomain).flowOn(dispatcher)
@@ -53,6 +53,7 @@ constructor(
         return exerciseDao
             .getExercises(SimpleSQLiteQuery(query))
             .map(exerciseMapper::exerciseEntityToRoutineExerciseItem)
+            .flowOn(dispatcher)
     }
 
     override suspend fun insert(exercise: Exercise.Insert): Long =

@@ -15,7 +15,10 @@ import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -45,6 +48,10 @@ constructor(
             }
             .toLoadableStateFlow(viewModelScope)
 
+    init {
+        observeRoutineDeleteResult()
+    }
+
     fun handleAction(action: Action) {
         when (action) {
             Action.Edit -> handleEdit()
@@ -57,7 +64,9 @@ constructor(
 
     private fun handleEdit() {
         viewModelScope.launch {
-            navigationCommander.navigateTo(Routes.Routine.edit(routeData.routineID))
+            navigationCommander.navigateTo(
+                Routes.Routine.edit(routeData.routineID, ROUTINE_DELETE_RESULT_KEY)
+            )
         }
     }
 
@@ -81,5 +90,17 @@ constructor(
         viewModelScope.launch {
             navigationCommander.navigateTo(Routes.Exercise.goal(routeData.routineID, exerciseID))
         }
+    }
+
+    private fun observeRoutineDeleteResult() {
+        navigationCommander
+            .getResults<Boolean>(ROUTINE_DELETE_RESULT_KEY)
+            .filter { it }
+            .onEach { navigationCommander.popBackStack() }
+            .launchIn(viewModelScope)
+    }
+
+    private companion object {
+        const val ROUTINE_DELETE_RESULT_KEY = "routine_delete_result_key"
     }
 }

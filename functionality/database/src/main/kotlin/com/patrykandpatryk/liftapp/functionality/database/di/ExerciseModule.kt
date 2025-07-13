@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.functionality.database.di
 
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseNameAndTypeContract
-import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesContract
+import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesUseCase
 import com.patrykandpatryk.liftapp.functionality.database.exercise.RoomExerciseRepository
 import dagger.Binds
 import dagger.Module
@@ -17,7 +17,7 @@ interface ExerciseModule {
     ): GetExerciseNameAndTypeContract
 
     @Binds
-    fun bindGetRoutineExercisesContract(
+    fun bindGetRoutineExercisesUseCase(
         repository: RoomExerciseRepository
-    ): GetRoutineExercisesContract
+    ): GetRoutineExercisesUseCase
 }

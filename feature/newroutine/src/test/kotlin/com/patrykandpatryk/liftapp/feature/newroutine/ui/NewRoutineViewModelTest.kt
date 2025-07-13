@@ -13,14 +13,13 @@ import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsContract
+import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsUseCase
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExerciseIds
 import com.patrykandpatryk.liftapp.feature.newroutine.model.Action
 import com.patrykandpatryk.liftapp.feature.newroutine.model.GetExerciseItemsUseCase
-import com.patrykandpatryk.liftapp.feature.newroutine.model.GetRoutineWithExerciseIDsUseCase
 import com.patrykandpatryk.liftapp.feature.newroutine.model.NewRoutineSavedState
-import com.patrykandpatryk.liftapp.feature.newroutine.model.UpsertRoutineUseCase
 import com.patrykandpatryk.liftapp.testing.TestStringProvider
 import com.patrykandpatryk.liftapp.testing.expectMostRecentErrorThrowable
 import com.patrykandpatryk.liftapp.testing.expectMostRecentSuccessData
@@ -47,13 +46,15 @@ class NewRoutineViewModelTest {
 
     private val savedStateHandle = SavedStateHandle()
 
-    private val getRoutineWithExerciseIDsContract = GetRoutineWithExerciseIDsContract { id ->
+    private val getRoutineWithExerciseIDsUseCase = GetRoutineWithExerciseIDsUseCase { id ->
         if (id == EXISTING_ROUTINE_ID) {
             flowOf(RoutineWithExerciseIds(id, "name", exerciseItems.map { it.id }))
         } else {
             flowOf(null)
         }
     }
+
+    private val deleteRoutineUseCase: DeleteRoutineUseCase = DeleteRoutineUseCase { routineID -> }
 
     private val textFieldStateManager =
         TextFieldStateManager(TestStringProvider, formatter, savedStateHandle)
@@ -63,20 +64,21 @@ class NewRoutineViewModelTest {
     private val navigationCommander = NavigationCommander()
 
     private fun getSut(routineID: Long): NewRoutineViewModel {
-        val routeData = Routes.Routine.edit(routineID)
+        val routeData = Routes.Routine.edit(routineID, "")
         return NewRoutineViewModel(
             viewModelScope = coroutineScope,
-            getRoutineWithExerciseIDsUseCase =
-                GetRoutineWithExerciseIDsUseCase(routeData, getRoutineWithExerciseIDsContract),
+            getRoutineWithExerciseIDsUseCase = getRoutineWithExerciseIDsUseCase,
             getExerciseItemsUseCase =
                 GetExerciseItemsUseCase(newRoutineSavedState) { ids, _ ->
                     flowOf(exerciseItems.filter { ids.contains(it.id) })
                 },
             textFieldStateManager = textFieldStateManager,
+            routeData = routeData,
             newRoutineSavedState = newRoutineSavedState,
             listValidator = NonEmptyCollectionValidator(TestStringProvider),
-            upsertRoutine = UpsertRoutineUseCase(routeData) { _, _ -> 1L },
+            upsertRoutine = { _, _ -> 1L },
             navigationCommander = navigationCommander,
+            deleteRoutineUseCase = deleteRoutineUseCase,
         )
     }
 

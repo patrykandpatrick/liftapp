@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.newroutine.model
 
-import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesContract
+import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesUseCase
+import com.patrykandpatryk.liftapp.domain.exercise.invoke
 import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -11,12 +12,12 @@ class GetExerciseItemsUseCase
 @Inject
 constructor(
     private val newRoutineSavedState: NewRoutineSavedState,
-    private val getRoutineExercisesContract: GetRoutineExercisesContract,
+    private val getRoutineExercisesUseCase: GetRoutineExercisesUseCase,
 ) {
     operator fun invoke(): Flow<List<RoutineExerciseItem>> =
         newRoutineSavedState.exerciseIDs.flatMapLatest { ids ->
             if (ids.isNotEmpty()) {
-                getRoutineExercisesContract.getRoutineExerciseItems(ids, true)
+                getRoutineExercisesUseCase(ids, true)
             } else {
                 flowOf(emptyList())
             }
