@@ -68,25 +68,25 @@ fun LiftAppFAB(
                         shape = shape,
                     )
                     .dropShadow(shape) {
-                        color = Color.Black.copy(alpha = .24f)
+                        color = Color.Black.copy(alpha = .08f)
                         radius = 2.dp.toPx()
                         spread = 1.dp.toPx()
                         offset = Offset(0f, 1.dp.toPx())
                     }
                     .dropShadow(shape) {
-                        color = colors.backgroundColor.copy(alpha = .12f)
+                        color = colors.backgroundColor.copy(alpha = .16f)
                         radius = 8.dp.toPx()
                         spread = 2.dp.toPx()
                         offset = Offset(0f, 2.dp.toPx())
                     }
                     .dropShadow(shape) {
-                        color = colors.backgroundColor.copy(alpha = .08f)
-                        radius = 4.dp.toPx()
+                        color = colors.backgroundColor.copy(alpha = .16f)
+                        radius = 2.dp.toPx()
                         spread = 1.dp.toPx()
                     }
                     .background(color = colors.getBackgroundColor(enabled), shape = shape)
                     .innerShadow(shape) {
-                        color = Color.White.copy(alpha = .5f)
+                        color = Color.White.copy(alpha = .8f)
                         spread = .5f.dp.toPx()
                         radius = .5f.dp.toPx()
                         offset = Offset(0f, 1.dp.toPx())
