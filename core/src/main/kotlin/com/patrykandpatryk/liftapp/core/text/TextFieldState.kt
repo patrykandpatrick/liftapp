@@ -45,12 +45,7 @@ abstract class TextFieldState<T : Any>(
     val hasError by derivedStateOf { _errorMessage.value != null }
 
     val isValid: Boolean
-        get() = validationResult is ValidationResult.Valid
-
-    private val validationResult
-        get() =
-            textValidator?.validate(value, text.ifEmpty { emptyTextReplacement })
-                ?: ValidationResult.Valid(value)
+        get() = getValidationResult() is ValidationResult.Valid
 
     abstract fun toValue(text: String): T?
 
@@ -68,24 +63,30 @@ abstract class TextFieldState<T : Any>(
         val text = toText(value)
         updateText(
             textFieldValue = textFieldValue.copy(text = text, selection = TextRange(text.length)),
+            value = value,
             fromUser = true,
         )
     }
 
-    private fun updateText(textFieldValue: TextFieldValue, fromUser: Boolean) {
-        val convertedValue = toValue(textFieldValue.text) ?: return
+    private fun updateText(textFieldValue: TextFieldValue, value: T? = null, fromUser: Boolean) {
+        val convertedValue = value ?: toValue(textFieldValue.text) ?: return
         if (veto(convertedValue)) return
         this.textFieldValue = textFieldValue
-        updateErrorMessages()
+        updateErrorMessages(value)
         if (fromUser) {
             onTextChange(text)
             onValueChange(convertedValue)
         }
     }
 
-    fun updateErrorMessages() {
+    private fun getValidationResult(value: T? = null) =
+        textValidator?.validate(value ?: this.value, text.ifEmpty { emptyTextReplacement })
+            ?: ValidationResult.Valid(value)
+
+    fun updateErrorMessages(value: T? = null) {
         _errorMessage.value =
-            if (enabled(this)) validationResult.errorMessages()?.first()?.toString() else null
+            if (enabled(this)) getValidationResult(value).errorMessages()?.first()?.toString()
+            else null
     }
 
     fun <T> getCondition(validatorClass: Class<T>): T? =

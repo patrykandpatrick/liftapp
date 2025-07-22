@@ -1,33 +1,39 @@
 package com.patrykandpatryk.liftapp.core.mapper
 
-import com.patrykandpatrick.vico.core.entry.ChartEntry
-import com.patrykandpatrick.vico.core.entry.entryOf
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
-import com.patrykandpatryk.liftapp.domain.extension.getOrPut
+import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
 import javax.inject.Inject
 
-class BodyMeasurementEntryToChartEntryMapper @Inject constructor() {
+class BodyMeasurementEntryToChartEntryMapper
+@Inject
+constructor(private val unitConverter: UnitConverter) {
 
-    operator fun invoke(input: List<BodyMeasurementEntry>): List<List<ChartEntry>> =
-        input.foldIndexed(ArrayList<ArrayList<ChartEntry>>()) { index, chartEntries, entry ->
-            val reversedIndex = input.lastIndex - index
+    suspend operator fun invoke(
+        input: List<BodyMeasurementEntry>
+    ): List<Pair<List<Double>, List<Double>>> {
+        val x = mutableListOf<Double>()
+        val y1 = mutableListOf<Double>()
+        val y2 = mutableListOf<Double>()
 
+        input.forEachIndexed { index, entry ->
+            x += entry.formattedDate.localDateTime.toLocalDate().toEpochDay().toDouble()
             when (val value = entry.value) {
                 is BodyMeasurementValue.DoubleValue -> {
-                    chartEntries.getOrPut(0) { ArrayList() }.add(entryOf(reversedIndex, value.left))
-
-                    chartEntries
-                        .getOrPut(1) { ArrayList() }
-                        .add(entryOf(reversedIndex, value.right))
+                    y1 += unitConverter.convertToPreferredUnit(value.unit, value.left)
+                    y2 += unitConverter.convertToPreferredUnit(value.unit, value.right)
                 }
+
                 is BodyMeasurementValue.SingleValue -> {
-                    chartEntries
-                        .getOrPut(0) { ArrayList() }
-                        .add(entryOf(reversedIndex, value.value))
+                    y1 += unitConverter.convertToPreferredUnit(value.unit, value.value)
                 }
             }
-
-            chartEntries
         }
+
+        return if (y2.isEmpty()) {
+            listOf(x to y1)
+        } else {
+            listOf(x to y1, x to y2)
+        }
+    }
 }

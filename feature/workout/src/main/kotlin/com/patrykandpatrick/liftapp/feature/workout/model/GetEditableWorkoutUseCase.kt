@@ -12,7 +12,8 @@ import com.patrykandpatryk.liftapp.domain.validation.validNumberHigherThanZero
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.GetWorkoutContract
 import com.patrykandpatryk.liftapp.domain.workout.Workout
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -85,19 +86,17 @@ constructor(
 
         return WorkoutPage.Summary(
             name = textFieldStateManager.stringTextField(name, validators = { nonEmpty() }),
-            startDate =
-                textFieldStateManager.localDateField(dateFormat, dateFormat.format(startDate)),
-            startTime =
-                textFieldStateManager.localTimeField(timeFormat, timeFormat.format(startDate)),
+            startDate = textFieldStateManager.localDateField(dateFormat, startDate.toLocalDate()),
+            startTime = textFieldStateManager.localTimeField(timeFormat, startDate.toLocalTime()),
             endDate =
                 textFieldStateManager.localDateField(
                     dateFormat,
-                    dateFormat.format(endDate ?: LocalDateTime.now()),
+                    endDate?.toLocalDate() ?: LocalDate.now(),
                 ),
             endTime =
                 textFieldStateManager.localTimeField(
                     timeFormat,
-                    timeFormat.format(endDate ?: LocalDateTime.now()),
+                    endDate?.toLocalTime() ?: LocalTime.now(),
                 ),
             notes = textFieldStateManager.stringTextField(notes),
             is24H = formatter.is24H(),

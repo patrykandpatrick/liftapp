@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.zIndex
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.vico.core.extension.orZero
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.pixels
 import kotlin.math.abs
@@ -45,7 +45,7 @@ fun SwipeContainer(
     onDismiss: () -> Unit,
 ) {
     val anchoredDraggableState = remember { AnchoredDraggableState(SwipeContainerState.Idle) }
-    val swipeOffset = anchoredDraggableState.offset.takeIf { it.isFinite() }.orZero
+    val swipeOffset = anchoredDraggableState.offset.takeIf { it.isFinite() } ?: 0f
     var containerWidth by remember { mutableFloatStateOf(1f) }
     val swipeProgress = swipeOffset / containerWidth
     val isDismissed = abs(swipeProgress) == 1f
@@ -110,8 +110,8 @@ fun SwipeableDeleteBackground(swipeProgress: Float, swipeOffset: Float) {
 fun SwipeableBackground(
     swipeProgress: Float,
     swipeOffset: Float,
-    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = colorScheme.onSurface,
+    backgroundColor: Color = colorScheme.background,
     content: @Composable BoxScope.(swipeProgress: Float, swipeOffset: Float) -> Unit,
 ) {
     Box(modifier = Modifier.background(backgroundColor)) {
@@ -134,22 +134,19 @@ fun BoxScope.SwipeableBackgroundContent(
             if (swipeProgress > 0f) Alignment.CenterStart else Alignment.CenterEnd
         }
 
-    val backgroundVisibilityThreshold =
-        LocalDimens.current.swipe.backgroundVisibilityThreshold.pixels
+    val backgroundVisibilityThreshold = dimens.swipe.backgroundVisibilityThreshold.pixels
 
     val scaleAndAlpha = (abs(swipeOffset) / backgroundVisibilityThreshold).coerceAtMost(1f)
 
     Spacer(
         modifier =
-            Modifier.background(
-                    color = MaterialTheme.colorScheme.scrim.copy(alpha = 1f - scaleAndAlpha)
-                )
-                .fillMaxSize()
+            Modifier.background(color = colorScheme.error.copy(alpha = scaleAndAlpha)).fillMaxSize()
     )
 
     Icon(
         painter = icon,
         contentDescription = contentDescription,
+        tint = colorScheme.onError,
         modifier =
             modifier
                 .graphicsLayer {

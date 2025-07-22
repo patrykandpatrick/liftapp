@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -24,11 +25,11 @@ interface BodyMeasurementDao {
     fun getBodyMeasurementEntries(bodyMeasurementID: Long): Flow<List<BodyMeasurementEntryEntity>>
 
     @Query("SELECT * FROM body_measurement_entries WHERE id = :id LIMIT 1")
-    suspend fun getBodyMeasurementEntry(id: Long): BodyMeasurementEntryEntity?
+    fun getBodyMeasurementEntry(id: Long): Flow<BodyMeasurementEntryEntity?>
 
     @Insert suspend fun insertBodyMeasurement(bodyMeasurement: BodyMeasurementEntity)
 
-    @Insert suspend fun insertBodyMeasurementEntry(bodyMeasurementEntry: BodyMeasurementEntryEntity)
+    @Upsert suspend fun insertBodyMeasurementEntry(bodyMeasurementEntry: BodyMeasurementEntryEntity)
 
     @Update suspend fun updateBodyMeasurementEntry(bodyMeasurementEntry: BodyMeasurementEntryEntity)
 

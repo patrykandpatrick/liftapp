@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.feature.exercises.usecase
 
-import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatryk.liftapp.core.search.SearchAlgorithm
 import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
@@ -22,7 +21,7 @@ class GetExercisesItemsUseCase
 constructor(
     private val collator: Collator,
     private val repository: ExerciseRepository,
-    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
+    @param:DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val searchAlgorithm: SearchAlgorithm,
     private val stringProvider: StringProvider,
 ) {
@@ -105,11 +104,9 @@ constructor(
                     elements =
                         exercises.mapIndexed { index, exercise ->
                             val occurrenceIndex =
-                                idToIndexOfLast
-                                    .get(key = exercise.id)
-                                    ?.let { it + 1 }
-                                    .orZero
-                                    .also { idToIndexOfLast[exercise.id] = it }
+                                (idToIndexOfLast.get(key = exercise.id)?.let { it + 1 } ?: 0).also {
+                                    idToIndexOfLast[exercise.id] = it
+                                }
                             toExerciseItem(
                                 exercise = exercise,
                                 key = "${exercise.id}-$occurrenceIndex",

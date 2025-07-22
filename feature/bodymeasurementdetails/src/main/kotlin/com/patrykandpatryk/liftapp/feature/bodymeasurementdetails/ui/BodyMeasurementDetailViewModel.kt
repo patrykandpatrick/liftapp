@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatryk.liftapp.core.mapper.BodyMeasurementEntryToChartEntryMapper
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
@@ -15,15 +16,15 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.DeleteBodyMeasurementE
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.FormatBodyMeasurementValueToStringUseCase
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatryk.liftapp.domain.text.StringProvider
+import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseCase
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.Action
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -38,18 +39,17 @@ constructor(
     private val deleteBodyMeasurementEntryUseCase: DeleteBodyMeasurementEntryUseCase,
     private val formatBodyMeasurementValueToStringUseCase:
         FormatBodyMeasurementValueToStringUseCase,
+    private val getUnitForBodyMeasurementTypeUseCase: GetUnitForBodyMeasurementTypeUseCase,
+    private val stringProvider: StringProvider,
     private val navigationCommander: NavigationCommander,
 ) : ViewModel() {
 
-    val chartEntryModelProducer = ChartEntryModelProducer()
-
-    private val expandedItemId = MutableStateFlow<Long?>(null)
+    private val chartModelProducer = CartesianChartModelProducer()
 
     val state: StateFlow<Loadable<ScreenState>> =
         combine(
                 repository.getBodyMeasurement(routeData.bodyMeasurementID),
                 repository.getBodyMeasurementEntries(routeData.bodyMeasurementID),
-                expandedItemId,
                 transform = ::mapPopulatedState,
             )
             .toLoadableStateFlow(viewModelScope)
@@ -57,10 +57,15 @@ constructor(
     private suspend fun mapPopulatedState(
         bodyMeasurement: BodyMeasurement,
         entries: List<BodyMeasurementEntry>,
-        expandedItemId: Long?,
     ): ScreenState =
         withContext(exceptionHandler) {
-            chartEntryModelProducer.setEntries(chartEntryMapper(entries))
+            val preferredValueUnit = getUnitForBodyMeasurementTypeUseCase(bodyMeasurement.type)
+            if (entries.isNotEmpty()) {
+                val mappedEntries = chartEntryMapper(entries)
+                chartModelProducer.runTransaction {
+                    lineSeries { mappedEntries.forEach { (x, y) -> series(x, y) } }
+                }
+            }
 
             ScreenState(
                 bodyMeasurementID = bodyMeasurement.id,
@@ -71,25 +76,20 @@ constructor(
                             id = entry.id,
                             value = formatBodyMeasurementValueToStringUseCase(entry.value),
                             date = entry.formattedDate.dateShort,
-                            isExpanded = entry.id == expandedItemId,
                         )
                     },
-                chartEntryModelProducer = chartEntryModelProducer,
+                modelProducer = chartModelProducer,
+                valueUnit = stringProvider.getDisplayUnit(preferredValueUnit),
             )
         }
 
     fun onAction(action: Action) {
         when (action) {
-            is Action.ExpandItem -> expandItem(action.id)
             is Action.DeleteBodyMeasurementEntry -> deleteBodyMeasurementEntry(action.id)
             is Action.PopBackStack -> popBackStack()
             is Action.EditBodyMeasurement -> addNewBodyMeasurement(action.bodyEntryMeasurementId)
             is Action.AddBodyMeasurement -> addNewBodyMeasurement()
         }
-    }
-
-    private fun expandItem(id: Long) {
-        expandedItemId.update { currentId -> if (currentId == id) null else id }
     }
 
     private fun deleteBodyMeasurementEntry(id: Long) {

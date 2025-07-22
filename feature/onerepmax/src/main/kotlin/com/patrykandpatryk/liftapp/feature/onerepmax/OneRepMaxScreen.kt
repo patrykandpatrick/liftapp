@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,13 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.LiftAppTextField
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
+import com.patrykandpatryk.liftapp.core.isCompactWidth
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
@@ -76,10 +75,7 @@ private fun OneRepMaxScreen(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (
-        currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass ==
-            WindowWidthSizeClass.COMPACT
-    ) {
+    if (isCompactWidth) {
         OneRepMaxScreenCompact(state = state, onAction = onAction, modifier = modifier)
     } else {
         OneRepMaxScreenLarge(state = state, onAction = onAction, modifier = modifier)

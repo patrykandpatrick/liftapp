@@ -1,48 +1,76 @@
 package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsets.Companion
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
-import com.patrykandpatrick.vico.core.scroll.InitialScroll
+import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.Delete
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.insets
+import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
+import com.patrykandpatrick.vico.core.cartesian.Zoom
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.chart.rememberAdaptiveCartesianLayerRangeProvider
+import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarker
+import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarkerValueFormatter
+import com.patrykandpatryk.liftapp.core.chart.rememberEpochDayCartesianValueFormatter
+import com.patrykandpatryk.liftapp.core.chart.rememberLine
+import com.patrykandpatryk.liftapp.core.chart.rememberStartAxisValueFormatter
+import com.patrykandpatryk.liftapp.core.chart.rememberTextComponent
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
+import com.patrykandpatryk.liftapp.core.isCompactWidth
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.ListItem
-import com.patrykandpatryk.liftapp.core.ui.ListItemWithOptions
-import com.patrykandpatryk.liftapp.core.ui.OptionItem
-import com.patrykandpatryk.liftapp.core.ui.TopAppBar
+import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.Action
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.ScreenState
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun BodyMeasurementDetailScreen(modifier: Modifier = Modifier) {
@@ -50,132 +78,208 @@ fun BodyMeasurementDetailScreen(modifier: Modifier = Modifier) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    BodyMeasurementDetailScreen(
-        state = state,
-        onAction = viewModel::onAction,
-        modelProducer = viewModel.chartEntryModelProducer,
-        modifier = modifier,
-    )
+    BodyMeasurementDetailScreen(state = state, onAction = viewModel::onAction, modifier = modifier)
 }
 
 @Composable
 private fun BodyMeasurementDetailScreen(
     state: Loadable<ScreenState>,
     onAction: (Action) -> Unit,
-    modelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
-    Scaffold(
-        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+    LiftAppScaffold(
+        modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = state.valueOrNull()?.name.orEmpty(),
-                scrollBehavior = topAppBarScrollBehavior,
-                onBackClick = { onAction(Action.PopBackStack) },
+            CompactTopAppBar(
+                title = { Text(state.valueOrNull()?.name.orEmpty()) },
+                navigationIcon = {
+                    CompactTopAppBarDefaults.BackIcon { onAction(Action.PopBackStack) }
+                },
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                modifier = Modifier.navigationBarsPadding(),
-                text = { Text(text = stringResource(id = R.string.action_new_entry)) },
-                icon = {
+            LiftAppFAB(
+                content = {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
                         contentDescription = null,
                     )
+
+                    Text(text = stringResource(id = R.string.action_new_entry))
                 },
                 onClick = { onAction(Action.AddBodyMeasurement) },
+                modifier = Modifier.navigationBarsPadding(),
             )
         },
+        contentWindowInsets = WindowInsets.statusBars.union(WindowInsets.displayCutout),
     ) { paddingValues ->
         state.Unfold { state ->
-            ListContent(
-                state = state,
-                modelProducer = modelProducer,
-                onAction = onAction,
-                modifier = Modifier.padding(paddingValues),
-            )
+            if (isCompactWidth) {
+                CompactContent(
+                    state = state,
+                    onAction = onAction,
+                    modifier = Modifier.padding(paddingValues),
+                )
+            } else {
+                LargeContent(
+                    state = state,
+                    onAction = onAction,
+                    modifier = Modifier.padding(paddingValues),
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ListContent(
+private fun CompactContent(
     state: ScreenState,
-    modelProducer: ChartEntryModelProducer,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier, contentPadding = Companion.navigationBars.toPaddingValues()) {
-        item {
-            Chart(
-                modifier =
-                    Modifier.padding(
-                        top = LocalDimens.current.padding.itemVertical,
-                        bottom = LocalDimens.current.padding.itemVertical,
-                        start = LocalDimens.current.padding.contentHorizontal,
-                    ),
-                chart =
-                    lineChart(
-                        axisValuesOverrider = AxisValuesOverrider.adaptiveYValues(yFraction = 1.1f)
-                    ),
-                chartModelProducer = modelProducer,
-                startAxis =
-                    rememberStartAxis(
-                        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }
-                    ),
-                bottomAxis = rememberBottomAxis(),
-                chartScrollSpec =
-                    rememberChartScrollSpec(
-                        initialScroll = InitialScroll.End,
-                        autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,
-                    ),
-            )
-        }
+        item { Chart(state.modelProducer, state.valueUnit) }
+        journalItems(state.entries, onAction)
+    }
+}
 
-        item {
-            Text(
-                modifier =
-                    Modifier.padding(
-                        vertical = LocalDimens.current.padding.itemVertical,
-                        horizontal = LocalDimens.current.padding.contentHorizontal,
-                    ),
-                text = stringResource(id = R.string.generic_journal),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
+@Composable
+private fun LargeContent(
+    state: ScreenState,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier.fillMaxSize()) {
+        Chart(
+            state.modelProducer,
+            state.valueUnit,
+            modifier = Modifier.weight(1f).fillMaxHeight().navigationBarsPadding(),
+        )
 
-        items(items = state.entries, key = { it.id }) { entry ->
-            ListItemWithOptions(
-                mainContent = {
-                    ListItem(
-                        title = { Text(entry.value) },
-                        modifier = Modifier.animateItem(),
-                        description = { Text(entry.date) },
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            contentPadding = WindowInsets.navigationBars.toPaddingValues(),
+        ) {
+            journalItems(state.entries, onAction)
+        }
+    }
+}
+
+private fun LazyListScope.journalItems(
+    entries: List<ScreenState.Entry>,
+    onAction: (Action) -> Unit,
+) {
+    item { ListSectionTitle(stringResource(id = R.string.generic_journal)) }
+
+    items(items = entries, key = { it.id }) { entry ->
+        ListItem(
+            title = { Text(entry.value) },
+            modifier = Modifier.animateItem(),
+            description = { Text(entry.date) },
+            paddingValues =
+                PaddingValues(
+                    horizontal = dimens.padding.contentHorizontal,
+                    vertical = dimens.padding.itemVerticalMedium,
+                ),
+            actions = {
+                LiftAppIconButton(onClick = { onAction(Action.EditBodyMeasurement(entry.id)) }) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_edit),
+                        stringResource(id = R.string.action_edit),
                     )
-                },
-                optionItems =
-                    listOf(
-                        OptionItem(
-                            iconPainter = painterResource(id = R.drawable.ic_edit),
-                            label = stringResource(id = R.string.action_edit),
-                            onClick = {
-                                onAction(
-                                    Action.EditBodyMeasurement(bodyEntryMeasurementId = entry.id)
-                                )
-                            },
+                }
+
+                LiftAppIconButton(
+                    onClick = { onAction(Action.DeleteBodyMeasurementEntry(entry.id)) }
+                ) {
+                    Icon(LiftAppIcons.Delete, stringResource(id = R.string.action_delete))
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun Chart(
+    modelProducer: CartesianChartModelProducer,
+    valueUnit: String,
+    modifier: Modifier = Modifier,
+) {
+    CartesianChartHost(
+        modifier =
+            modifier.padding(
+                top = dimens.padding.itemVertical,
+                bottom = dimens.padding.itemVertical,
+                start = dimens.padding.contentHorizontal,
+            ),
+        chart =
+            rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    lineProvider =
+                        LineCartesianLayer.LineProvider.series(
+                            LineCartesianLayer.rememberLine(colorScheme.primary),
+                            LineCartesianLayer.rememberLine(colorScheme.secondary),
                         ),
-                        OptionItem(
-                            iconPainter = painterResource(id = R.drawable.ic_delete),
-                            label = stringResource(id = R.string.action_delete),
-                            onClick = { onAction(Action.DeleteBodyMeasurementEntry(entry.id)) },
-                        ),
+                    rangeProvider = rememberAdaptiveCartesianLayerRangeProvider(),
+                ),
+                startAxis =
+                    VerticalAxis.rememberStart(
+                        label =
+                            rememberTextComponent(
+                                textStyle = MaterialTheme.typography.titleSmall,
+                                margins = insets(end = 4.dp),
+                            ),
+                        valueFormatter = rememberStartAxisValueFormatter(valueUnit),
                     ),
-                isExpanded = entry.isExpanded,
-                setExpanded = { onAction(Action.ExpandItem(id = entry.id)) },
-            )
-        }
+                bottomAxis =
+                    HorizontalAxis.rememberBottom(
+                        valueFormatter = rememberEpochDayCartesianValueFormatter(),
+                        label =
+                            rememberTextComponent(
+                                textStyle = MaterialTheme.typography.titleSmall,
+                                margins = insets(top = 2.dp, start = 4.dp, end = 4.dp),
+                            ),
+                    ),
+                marker = rememberCartesianMarker(rememberCartesianMarkerValueFormatter(valueUnit)),
+            ),
+        modelProducer = modelProducer,
+        scrollState =
+            rememberVicoScrollState(autoScrollCondition = AutoScrollCondition.OnModelGrowth),
+        zoomState = rememberVicoZoomState(initialZoom = Zoom.Content),
+    )
+}
+
+@MultiDevicePreview
+@Composable
+private fun BodyMeasurementDetailScreenPreview() {
+    PreviewTheme {
+        val modelProducer = remember { CartesianChartModelProducer() }
+
+        val weights = listOf(70f, 71f, 70.5f, 70.7f, 71.3f, 72f)
+
+        runBlocking { modelProducer.runTransaction { lineSeries { series(weights) } } }
+
+        BodyMeasurementDetailScreen(
+            state =
+                Loadable.Success(
+                    ScreenState(
+                        bodyMeasurementID = 1L,
+                        name = "Weight",
+                        entries =
+                            weights
+                                .mapIndexed { index, weight ->
+                                    ScreenState.Entry(
+                                        index.toLong(),
+                                        "$weight kg",
+                                        "${index + 1} January",
+                                    )
+                                }
+                                .reversed(),
+                        modelProducer = modelProducer,
+                        valueUnit = "kg",
+                    )
+                ),
+            onAction = {},
+        )
     }
 }

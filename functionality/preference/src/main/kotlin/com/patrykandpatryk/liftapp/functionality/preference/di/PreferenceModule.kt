@@ -17,6 +17,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 private const val PREFERENCES_NAME = "preferences"
 
@@ -53,5 +54,10 @@ interface PreferenceModule {
         fun provideActivePlanIDPreference(
             repository: PreferenceRepository
         ): Preference<ActivePlan?> = repository.activePlan
+
+        @Provides
+        @PreferenceQualifier.Is24H
+        fun provideIs24HPreference(repository: PreferenceRepository): Flow<Boolean> =
+            repository.is24H
     }
 }

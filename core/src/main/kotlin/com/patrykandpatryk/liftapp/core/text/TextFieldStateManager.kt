@@ -115,7 +115,7 @@ constructor(
 
     fun localDateField(
         formatter: DateTimeFormatter,
-        initialValue: String = "",
+        initialValue: LocalDate = LocalDate.now(),
         validators: TextValidationElementProvider<LocalDate>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
@@ -125,7 +125,7 @@ constructor(
     ): LocalDateTextFieldState =
         LocalDateTextFieldState(
                 formatter = formatter,
-                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                initialValue = savedStateHandle[savedStateKey] ?: formatter.format(initialValue),
                 textValidator = validator(validators),
                 onTextChange = {
                     savedStateHandle[savedStateKey] = it
@@ -139,7 +139,7 @@ constructor(
 
     fun localTimeField(
         formatter: DateTimeFormatter,
-        initialValue: String = "",
+        initialValue: LocalTime = LocalTime.now(),
         validators: TextValidationElementProvider<LocalTime>.() -> Unit = {},
         savedStateKey: String = generateSavedStateKey(),
         onTextChange: (String) -> Unit = {},
@@ -149,7 +149,7 @@ constructor(
     ): LocalTimeTextFieldState =
         LocalTimeTextFieldState(
                 formatter = formatter,
-                initialValue = savedStateHandle[savedStateKey] ?: initialValue,
+                initialValue = savedStateHandle[savedStateKey] ?: formatter.format(initialValue),
                 textValidator = validator(validators),
                 onTextChange = {
                     savedStateHandle[savedStateKey] = it

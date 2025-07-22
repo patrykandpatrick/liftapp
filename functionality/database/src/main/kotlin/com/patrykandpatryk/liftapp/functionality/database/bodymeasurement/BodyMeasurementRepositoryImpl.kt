@@ -5,6 +5,9 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntryUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementWithLatestEntryUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.UpsertBodyMeasurementUseCase
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -18,9 +21,13 @@ class BodyMeasurementRepositoryImpl
 @Inject
 constructor(
     private val dao: BodyMeasurementDao,
-    @IODispatcher private val dispatcher: CoroutineDispatcher,
+    @param:IODispatcher private val dispatcher: CoroutineDispatcher,
     private val bodyMeasurementMapper: BodyMeasurementMapper,
-) : BodyMeasurementRepository {
+) :
+    BodyMeasurementRepository,
+    UpsertBodyMeasurementUseCase,
+    GetBodyMeasurementEntryUseCase,
+    GetBodyMeasurementWithLatestEntryUseCase {
 
     override fun getBodyMeasurement(id: Long): Flow<BodyMeasurement> =
         dao.getBodyMeasurement(id).map(bodyMeasurementMapper::toDomain).flowOn(dispatcher)
@@ -43,10 +50,10 @@ constructor(
             .map { entries -> entries.map { entry -> bodyMeasurementMapper.toDomain(entry) } }
             .flowOn(dispatcher)
 
-    override suspend fun getBodyMeasurementEntry(id: Long): BodyMeasurementEntry? =
-        withContext(dispatcher) {
-            dao.getBodyMeasurementEntry(id)?.let { entry -> bodyMeasurementMapper.toDomain(entry) }
-        }
+    override fun getBodyMeasurementEntry(id: Long): Flow<BodyMeasurementEntry?> =
+        dao.getBodyMeasurementEntry(id)
+            .map { entry -> entry?.let { bodyMeasurementMapper.toDomain(it) } }
+            .flowOn(dispatcher)
 
     override suspend fun insertBodyMeasurement(bodyMeasurement: BodyMeasurement.Insert) =
         withContext(dispatcher) {
@@ -63,27 +70,12 @@ constructor(
         bodyMeasurementID: Long,
         value: BodyMeasurementValue,
         time: LocalDateTime,
+        entryID: Long,
     ) =
         withContext(dispatcher) {
             dao.insertBodyMeasurementEntry(
                 BodyMeasurementEntryEntity(
-                    bodyMeasurementID = bodyMeasurementID,
-                    value = value,
-                    time = time,
-                )
-            )
-        }
-
-    override suspend fun updateBodyMeasurementEntry(
-        id: Long,
-        bodyMeasurementID: Long,
-        value: BodyMeasurementValue,
-        time: LocalDateTime,
-    ) =
-        withContext(dispatcher) {
-            dao.updateBodyMeasurementEntry(
-                BodyMeasurementEntryEntity(
-                    id = id,
+                    id = entryID,
                     bodyMeasurementID = bodyMeasurementID,
                     value = value,
                     time = time,

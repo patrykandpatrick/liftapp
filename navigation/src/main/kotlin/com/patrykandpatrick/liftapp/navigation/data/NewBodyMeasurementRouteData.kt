@@ -3,5 +3,7 @@ package com.patrykandpatrick.liftapp.navigation.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NewBodyMeasurementRouteData
-internal constructor(val bodyMeasurementID: Long, val bodyMeasurementEntryID: Long)
+data class NewBodyMeasurementRouteData(
+    val bodyMeasurementID: Long,
+    val bodyMeasurementEntryID: Long,
+)

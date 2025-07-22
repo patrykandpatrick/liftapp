@@ -1,18 +1,11 @@
 package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 
-class GetBodyMeasurementWithLatestEntryUseCase
-@AssistedInject
-constructor(@Assisted private val id: Long, private val repository: BodyMeasurementRepository) {
-    suspend fun invoke(): BodyMeasurementWithLatestEntry =
-        repository.getBodyMeasurementWithLatestEntry(id).first()
-
-    @AssistedFactory
-    interface Factory {
-        fun create(id: Long): GetBodyMeasurementWithLatestEntryUseCase
-    }
+fun interface GetBodyMeasurementWithLatestEntryUseCase {
+    fun getBodyMeasurementWithLatestEntry(id: Long): Flow<BodyMeasurementWithLatestEntry>
 }
+
+operator fun GetBodyMeasurementWithLatestEntryUseCase.invoke(
+    id: Long
+): Flow<BodyMeasurementWithLatestEntry> = getBodyMeasurementWithLatestEntry(id)

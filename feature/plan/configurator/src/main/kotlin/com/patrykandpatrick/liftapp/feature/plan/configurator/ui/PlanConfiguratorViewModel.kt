@@ -16,7 +16,6 @@ import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import com.patrykandpatryk.liftapp.domain.validation.validNumberHigherThanZero
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +42,6 @@ constructor(
     private val startDate =
         textFieldStateManager.localDateField(
             formatter = dateFormat,
-            initialValue = dateFormat.format(LocalDate.now()),
             onValueChange = { refreshState() },
         )
 

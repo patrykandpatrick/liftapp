@@ -8,4 +8,6 @@ object PreferenceQualifier {
     @Qualifier annotation class LongDistanceUnit
 
     @Qualifier annotation class ActivePlan
+
+    @Qualifier annotation class Is24H
 }

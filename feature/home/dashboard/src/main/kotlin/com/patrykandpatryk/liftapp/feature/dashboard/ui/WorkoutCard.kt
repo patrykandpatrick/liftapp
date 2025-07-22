@@ -24,7 +24,6 @@ import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatrick.vico.core.extension.forEachIndexedExtended
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.getDisplayName
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
@@ -54,7 +53,7 @@ fun WorkoutCard(workout: Workout, onClick: (Workout) -> Unit, modifier: Modifier
         Text(
             text =
                 buildAnnotatedString {
-                    workout.exercises.forEachIndexedExtended { _, _, isLast, exercise ->
+                    workout.exercises.forEachIndexed { index, exercise ->
                         append("• ")
                         append(exercise.name.getDisplayName())
                         append(" • ")
@@ -68,7 +67,7 @@ fun WorkoutCard(workout: Workout, onClick: (Workout) -> Unit, modifier: Modifier
                                 )
                             )
                         )
-                        if (!isLast) append("\n")
+                        if (index < workout.exercises.lastIndex) append("\n")
                     }
                 },
             style = MaterialTheme.typography.bodySmall.copy(lineHeight = 20.sp),

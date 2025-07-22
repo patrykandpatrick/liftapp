@@ -1,162 +1,145 @@
 package com.patrykandpatryk.liftapp.newbodymeasuremententry.ui
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
-import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.Cross
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
+import com.patrykandpatryk.liftapp.core.model.Unfold
+import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
-import com.patrykandpatryk.liftapp.core.state.onClick
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.core.text.updateValueBy
-import com.patrykandpatryk.liftapp.core.ui.DialogTopBar
-import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
-import com.patrykandpatryk.liftapp.core.ui.input.DatePicker
+import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
+import com.patrykandpatryk.liftapp.core.ui.input.DateInput
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
-import com.patrykandpatryk.liftapp.core.ui.input.TimePicker
-import com.patrykandpatryk.liftapp.core.ui.input.rememberDatePickerState
-import com.patrykandpatryk.liftapp.core.ui.input.rememberTimePickerState
+import com.patrykandpatryk.liftapp.core.ui.input.TimeInput
 import com.patrykandpatryk.liftapp.domain.Constants.Input.Increment
-import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
-import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
-import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
-import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.model.Loadable
+import com.patrykandpatryk.liftapp.domain.model.toLoadable
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import com.patrykandpatryk.liftapp.newbodymeasuremententry.model.Action
-import java.time.LocalDateTime
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.model.NewBodyMeasurementState
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun NewBodyMeasurementEntryBottomSheet(modifier: Modifier = Modifier) {
+fun NewBodyMeasurementEntryScreen(modifier: Modifier = Modifier) {
     val viewModel: NewBodyMeasurementEntryViewModel = hiltViewModel()
-    val entrySaved = viewModel.state.entrySaved.value
 
-    BackHandler(onBack = { viewModel.onAction(Action.PopBackStack) })
-
-    LaunchedEffect(entrySaved) { if (entrySaved) viewModel.onAction(Action.PopBackStack) }
-
-    NewBodyMeasurementEntryBottomSheetContent(
-        state = viewModel.state,
+    NewBodyMeasurementEntryScreen(
+        loadableState = viewModel.state.collectAsStateWithLifecycle().value,
         onAction = viewModel::onAction,
         modifier = modifier,
     )
 }
 
 @Composable
-private fun NewBodyMeasurementEntryBottomSheetContent(
+private fun NewBodyMeasurementEntryScreen(
+    loadableState: Loadable<NewBodyMeasurementState>,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LiftAppScaffold(
+        topBar = {
+            CompactTopAppBar(
+                title = {
+                    Text(
+                        text =
+                            if (loadableState.valueOrNull()?.isEdit == true) {
+                                stringResource(id = R.string.route_edit_body_measurement)
+                            } else {
+                                stringResource(id = R.string.route_new_body_measurement)
+                            }
+                    )
+                },
+                navigationIcon = {
+                    CompactTopAppBarDefaults.IconButton(
+                        imageVector = LiftAppIcons.Cross,
+                        contentDescription = stringResource(id = R.string.action_close),
+                        onClick = { onAction(Action.PopBackStack) },
+                    )
+                },
+            )
+        },
+        bottomBar = {
+            loadableState.valueOrNull()?.also { state ->
+                BottomAppBar.Save(onClick = { onAction(Action.Save(state)) })
+            }
+        },
+        modifier = modifier,
+    ) { contentPadding ->
+        loadableState.Unfold(
+            modifier =
+                Modifier.imePadding()
+                    .padding(contentPadding)
+                    .padding(horizontal = dimens.padding.contentHorizontal)
+                    .padding(top = dimens.padding.itemVertical)
+        ) { state ->
+            Content(state, onAction)
+        }
+    }
+}
+
+@Composable
+private fun Content(
     state: NewBodyMeasurementState,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val dimens = LocalDimens.current
-    val formattedDate = state.formattedDate.collectAsStateWithLifecycle().value
-    val data = state.inputData.value
-
-    val timePickerState =
-        rememberTimePickerState(
-            is24h = state.is24H.value,
-            hour = formattedDate.hour,
-            minute = formattedDate.minute,
-        )
-
-    val datePickerState = rememberDatePickerState(time = formattedDate.localDateTime)
-
-    TimePicker(state = timePickerState, onTimePicked = state::setTime)
-
-    DatePicker(state = datePickerState, onTimePicked = state::setDate)
-
-    Column(
-        modifier =
-            modifier.navigationBarsPadding().padding(vertical = dimens.padding.contentVertical)
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(dimens.grid.minCellWidthLarge),
+        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
+        verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
+        modifier = modifier,
     ) {
-        DialogTopBar(title = state.name.value, onCloseClick = { onAction(Action.PopBackStack) })
-
-        Column(
-            modifier =
-                modifier
-                    .navigationBarsPadding()
-                    .padding(horizontal = dimens.padding.contentHorizontal)
-                    .padding(top = dimens.padding.itemVertical),
-            verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
-        ) {
-            if (data != null) {
-                data.forEachTextField { textFieldState, isLast ->
-                    NumberInput(
-                        textFieldState = textFieldState,
-                        unit = data.unit,
-                        isLast = isLast,
-                        onSave = { state.save(data) },
-                    )
-                }
-
-                Row(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(space = dimens.padding.itemHorizontal)
-                ) {
-                    val dateInteractionSource =
-                        remember { MutableInteractionSource() }.onClick(datePickerState::show)
-
-                    LiftAppTextFieldWithSupportingText(
-                        modifier = Modifier.weight(1f),
-                        readOnly = true,
-                        value = formattedDate.dateShort,
-                        onValueChange = {},
-                        label = { Text(text = stringResource(id = R.string.picker_date)) },
-                        interactionSource = dateInteractionSource,
-                    )
-
-                    val timeInteractionSource =
-                        remember { MutableInteractionSource() }
-                            .onClick { timePickerState.isShowing = true }
-
-                    LiftAppTextFieldWithSupportingText(
-                        modifier = Modifier.weight(1f),
-                        readOnly = true,
-                        value = formattedDate.timeShort,
-                        onValueChange = {},
-                        label = { Text(text = stringResource(id = R.string.picker_time)) },
-                        interactionSource = timeInteractionSource,
-                    )
-                }
-
-                FilledTonalButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { state.save(data) },
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.action_save),
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                }
+        state.inputData.forEachTextField { textFieldState, hintRes, isLast ->
+            item {
+                NumberInput(
+                    textFieldState = textFieldState,
+                    unit = state.unit,
+                    isLast = isLast,
+                    onSave = { onAction(Action.Save(state)) },
+                    hint = stringResource(hintRes),
+                )
             }
+        }
+
+        item {
+            DateInput(
+                date = state.dateTextFieldState,
+                label = stringResource(id = R.string.picker_date),
+            )
+        }
+
+        item {
+            TimeInput(
+                time = state.timeTextFieldState,
+                is24H = state.is24H,
+                label = stringResource(id = R.string.picker_time),
+            )
         }
     }
 }
@@ -168,11 +151,12 @@ private fun NumberInput(
     isLast: Boolean,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
+    hint: String = stringResource(id = R.string.value),
 ) {
     NumberInput(
         modifier = modifier,
         textFieldState = textFieldState,
-        hint = stringResource(id = R.string.value),
+        hint = hint,
         suffix = stringResource(id = unit.stringResourceId),
         onMinusClick = { long -> textFieldState.updateValueBy(-Increment.getBodyWeight(long)) },
         onPlusClick = { long -> textFieldState.updateValueBy(Increment.getBodyWeight(long)) },
@@ -185,54 +169,88 @@ private fun NumberInput(
     )
 }
 
+inline fun NewBodyMeasurementState.InputData.forEachTextField(
+    action: (textFieldState: TextFieldState<Double>, hintRes: Int, isLast: Boolean) -> Unit
+) {
+    when (this) {
+        is NewBodyMeasurementState.InputData.DoubleValue -> {
+            action(leftTextFieldState, R.string.body_measurement_left, false)
+            action(rightTextFieldState, R.string.body_measurement_right, true)
+        }
+
+        is NewBodyMeasurementState.InputData.SingleValue -> {
+            action(textFieldState, R.string.value, true)
+        }
+    }
+}
+
 @MultiDevicePreview
 @Composable
-fun NewBodyMeasurementEntryBottomSheetContentPreview() {
-    LiftAppTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            Surface(
-                modifier = Modifier.padding(horizontal = 16.dp).padding(top = 16.dp),
-                shape = BottomSheetShape,
-                shadowElevation = 8.dp,
-            ) {
-                val formatter = PreviewResource.formatter()
-                val savedStateHandle = SavedStateHandle()
-                val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
-                val coroutineScope = rememberCoroutineScope()
+fun NewBodyMeasurementEntryScreenWeightPreview() {
+    PreviewTheme {
+        val stringProvider = PreviewResource.stringProvider
+        val savedStateHandle = SavedStateHandle()
+        val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
 
-                NewBodyMeasurementEntryBottomSheetContent(
-                    state =
-                        remember {
-                            NewBodyMeasurementState(
-                                getFormattedDate = { formatter.getFormattedDate(it) },
-                                getBodyMeasurementWithLatestEntry = {
-                                    BodyMeasurementWithLatestEntry(
-                                        0,
-                                        "Weight",
-                                        BodyMeasurementType.Weight,
-                                        BodyMeasurementEntry(
-                                            id = 0,
-                                            value =
-                                                BodyMeasurementValue.SingleValue(
-                                                    85.0,
-                                                    MassUnit.Kilograms,
-                                                ),
-                                            formattedDate =
-                                                formatter.getFormattedDate(LocalDateTime.now()),
-                                        ),
-                                    )
-                                },
-                                getBodyMeasurementEntry = { null },
-                                upsertBodyMeasurementEntry = { _, _ -> },
-                                textFieldStateManager = textFieldStateManager,
-                                getUnitForBodyMeasurementType = { MassUnit.Kilograms },
-                                coroutineScope = coroutineScope,
-                                savedStateHandle = savedStateHandle,
-                            )
-                        },
-                    onAction = {},
-                )
-            }
-        }
+        NewBodyMeasurementEntryScreen(
+            loadableState =
+                NewBodyMeasurementState(
+                        name = "Weight",
+                        inputData =
+                            NewBodyMeasurementState.InputData.SingleValue(
+                                textFieldStateManager.doubleTextField(),
+                                MassUnit.Kilograms,
+                            ),
+                        dateTextFieldState =
+                            textFieldStateManager.localDateField(
+                                DateTimeFormatter.ofPattern(stringProvider.dateFormatEdit)
+                            ),
+                        timeTextFieldState =
+                            textFieldStateManager.localTimeField(
+                                formatter = DateTimeFormatter.ofPattern("HH:mm")
+                            ),
+                        is24H = true,
+                        unit = MassUnit.Kilograms,
+                        isEdit = false,
+                    )
+                    .toLoadable(),
+            onAction = {},
+        )
+    }
+}
+
+@MultiDevicePreview
+@Composable
+fun NewBodyMeasurementEntryScreenForearmsPreview() {
+    PreviewTheme {
+        val stringProvider = PreviewResource.stringProvider
+        val savedStateHandle = SavedStateHandle()
+        val textFieldStateManager = PreviewResource.textFieldStateManager(savedStateHandle)
+
+        NewBodyMeasurementEntryScreen(
+            loadableState =
+                NewBodyMeasurementState(
+                        name = "Forearm Circumference",
+                        inputData =
+                            NewBodyMeasurementState.InputData.DoubleValue(
+                                textFieldStateManager.doubleTextField(),
+                                textFieldStateManager.doubleTextField(),
+                                ShortDistanceUnit.Centimeter,
+                            ),
+                        dateTextFieldState =
+                            textFieldStateManager.localDateField(
+                                DateTimeFormatter.ofPattern(stringProvider.dateFormatEdit)
+                            ),
+                        timeTextFieldState =
+                            textFieldStateManager.localTimeField(
+                                formatter = DateTimeFormatter.ofPattern("hh:mm a")
+                            ),
+                        is24H = false,
+                        unit = ShortDistanceUnit.Centimeter,
+                        isEdit = false,
+                    )
+                    .toLoadable(),
+            onAction = {},
+        )
     }
 }

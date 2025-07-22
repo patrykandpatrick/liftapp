@@ -75,7 +75,7 @@ import com.patrykandpatryk.liftapp.navigation.BottomAppBarNavigationHost
 import com.patrykandpatryk.liftapp.navigation.bottomAppBarComposable
 import com.patrykandpatryk.liftapp.navigation.navigationBarItems
 import com.patrykandpatryk.liftapp.navigation.rememberBottomAppBarNavigator
-import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryBottomSheet
+import com.patrykandpatryk.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryScreen
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -246,7 +246,7 @@ fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
 }
 
 fun NavGraphBuilder.addNewBodyMeasurementDestination() {
-    bottomSheet<NewBodyMeasurementRouteData> { NewBodyMeasurementEntryBottomSheet() }
+    composable<NewBodyMeasurementRouteData> { NewBodyMeasurementEntryScreen() }
 }
 
 fun NavGraphBuilder.addAbout() {

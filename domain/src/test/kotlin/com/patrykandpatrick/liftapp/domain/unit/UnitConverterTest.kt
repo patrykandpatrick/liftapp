@@ -1,6 +1,5 @@
-package com.patrykandpatryk.liftapp.unit
+package com.patrykandpatrick.liftapp.domain.unit
 
-import com.patrykandpatry.liftapp.data.unit.UnitConverterImpl
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -18,7 +17,7 @@ class UnitConverterTest {
     private val preferenceRepository = TestPreferenceRepository()
 
     private var converter: UnitConverter =
-        UnitConverterImpl(
+        UnitConverter(
             formatter = Formatter(TestStringProvider, preferenceRepository),
             stringProvider = TestStringProvider,
             preferences = preferenceRepository,

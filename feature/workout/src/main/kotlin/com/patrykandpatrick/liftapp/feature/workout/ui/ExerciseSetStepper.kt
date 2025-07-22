@@ -37,7 +37,6 @@ import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatrick.vico.core.extension.forEachIndexedExtended
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.AddStep
 import com.patrykandpatryk.liftapp.core.ui.StepConnector
@@ -79,14 +78,15 @@ fun ExerciseSetStepper(
             contentPadding = contentPadding,
             horizontalArrangement = Arrangement.spacedBy(dimens.stepper.spacing),
         ) {
-            sets.forEachIndexedExtended { index, isFirst, isLast, set ->
+            sets.forEachIndexed { index, set ->
+                val isLast = index == sets.lastIndex
                 item(key = index, contentType = "step") {
                     StepperItem(
                         setIndex = index,
                         selected = index == selectedSet,
                         completed = set.isCompleted,
                         onClick = { onSelectSet(index) },
-                        enabled = isFirst || sets[index - 1].isCompleted,
+                        enabled = index == 0 || sets[index - 1].isCompleted,
                         label = stepLabel,
                         removeEnabled = isLast && editMode,
                         onRemoveClick = onRemoveSetClick,

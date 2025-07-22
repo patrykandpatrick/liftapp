@@ -3,6 +3,8 @@
     <string name="route_dashboard">This Week</string>
     <string name="route_more">More</string>
     <string name="route_body">Body</string>
+    <string name="route_new_body_measurement">New Body Measurement</string>
+    <string name="route_edit_body_measurement">Edit Body Measurement</string>
     <string name="route_exercises">Exercises</string>
     <string name="route_settings">Settings</string>
     <string name="route_about">About</string>
@@ -55,6 +57,9 @@
     <string name="exercise_set_format_cardio">%1$s ꞏ %2$s ꞏ %3$s</string>
     <!-- Example: 3 of 4 sets -->
     <string name="workout_exercise_list_set_format">&lt;b-surface>%1$d&lt;/b-surface> of &lt;b-surface>%2$d&lt;/b-surface> %3$s</string>
+
+    <string name="body_measurement_left">Left</string>
+    <string name="body_measurement_right">Right</string>
 
     <string name="muscle_abductors">Abductors</string>
     <string name="muscle_abs">Abs</string>
@@ -188,6 +193,7 @@
     <string name="date_format_long">EEEE, d MMMM</string>
     <string name="date_format_full">dd.MM.yyyy</string>
     <string name="date_format_edit">EEEE, d MMMM yyyy</string>
+    <string name="date_format_chart">d MMM</string>
     <string name="time_hours_short">h</string>
     <string name="time_minutes_short">m</string>
     <string name="time_seconds_short">s</string>

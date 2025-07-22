@@ -20,6 +20,7 @@ dependencies {
 
     implementation libs.hilt.core
     implementation libs.opto.domain
+    testImplementation project(':domain-testing')
 
     ksp libs.hilt.compiler
 

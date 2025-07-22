@@ -8,15 +8,15 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.liftapp.ui.dimens.LandscapeDimens
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.PortraitDimens
 import com.patrykandpatrick.liftapp.ui.isLandscape
 import com.patrykandpatrick.liftapp.ui.modifier.ScaleIndication
-import com.patrykandpatrick.vico.compose.m3.style.m3ChartStyle
-import com.patrykandpatrick.vico.compose.style.ChartStyle
-import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.common.VicoTheme
 
 private val LightColorScheme =
     lightColorScheme(
@@ -78,8 +78,24 @@ private val DarkColorScheme =
         inversePrimary = Colors.Dark.inversePrimary,
     )
 
-val chartStyle: ChartStyle
-    @Composable get() = m3ChartStyle()
+val ChartTheme: VicoTheme
+    @Composable
+    get() {
+        val colorScheme = LocalColorScheme.current
+        return remember(colorScheme) {
+            VicoTheme(
+                candlestickCartesianLayerColors =
+                    VicoTheme.CandlestickCartesianLayerColors(
+                        colorScheme.primary,
+                        neutral = colorScheme.outline,
+                        bearish = colorScheme.error,
+                    ),
+                columnCartesianLayerColors = listOf(colorScheme.primary, colorScheme.secondary),
+                lineColor = colorScheme.outline,
+                textColor = colorScheme.onSurface,
+            )
+        }
+    }
 
 data object Alpha {
     const val disabled: Float = 0.38f
@@ -114,7 +130,7 @@ fun LiftAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
             LocalColorScheme provides liftAppColorScheme,
             LocalIndication provides ScaleIndication(),
         ) {
-            ProvideChartStyle(chartStyle = chartStyle, content = content)
+            ProvideVicoTheme(theme = ChartTheme, content = content)
         }
     }
 }
