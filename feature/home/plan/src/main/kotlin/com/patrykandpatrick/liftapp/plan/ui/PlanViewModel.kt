@@ -42,6 +42,7 @@ constructor(
             Action.ChooseExistingPlan -> chooseExistingPlan()
             Action.CreateNewPlan -> createNewPlan()
             is Action.OnPlanItemClick -> onPlanItemClick(action.item)
+            is Action.StartWorkout -> onStartWorkoutClick(action.item)
         }
     }
 
@@ -69,6 +70,12 @@ constructor(
                     navigationCommander.navigateTo(Routes.Routine.details(item.routine.id))
                 is Plan.Item.Rest -> Unit
             }
+        }
+    }
+
+    fun onStartWorkoutClick(item: Plan.Item.Routine) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Workout.new(item.routine.id))
         }
     }
 

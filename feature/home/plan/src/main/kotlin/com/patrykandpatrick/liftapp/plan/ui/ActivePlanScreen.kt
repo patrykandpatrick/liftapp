@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
+import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.graphics.rememberBottomSinShape
@@ -56,7 +57,12 @@ internal fun ActivePlanScreen(
         stickyHeader { Header(planState) }
 
         itemsIndexed(planState.plan.items) { index, item ->
-            PlanItem(item, index, index == planState.currentPlanItemIndex, onAction)
+            PlanItem(
+                planItem = item,
+                dayIndex = index,
+                isActive = index == planState.currentPlanItemIndex,
+                onAction = onAction,
+            )
         }
     }
 
@@ -103,7 +109,7 @@ private fun Header(planState: PlanState.ActivePlan, modifier: Modifier = Modifie
 private fun PlanItem(
     planItem: Plan.Item,
     dayIndex: Int,
-    highlighted: Boolean,
+    isActive: Boolean,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -111,10 +117,10 @@ private fun PlanItem(
         modifier = modifier.fillMaxWidth().padding(horizontal = dimens.padding.contentHorizontal),
         horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
     ) {
-        DayIndicator(dayIndex = dayIndex, highlighted = highlighted)
+        DayIndicator(dayIndex = dayIndex, highlighted = isActive)
 
         val colors =
-            if (highlighted) {
+            if (isActive) {
                 LiftAppCardDefaults.tonalCardColors
             } else {
                 LiftAppCardDefaults.outlinedColors
@@ -138,7 +144,18 @@ private fun PlanItem(
                     onClick = { (onAction(Action.OnPlanItemClick(planItem))) },
                     contentPadding = PaddingValues(0.dp),
                 ) {
-                    RoutineCard(planItem.routine)
+                    RoutineCard(
+                        routineWithExercises = planItem.routine,
+                        actionsRow = {
+                            if (isActive) {
+                                PlainLiftAppButton(
+                                    onClick = { onAction(Action.StartWorkout(planItem)) }
+                                ) {
+                                    Text(stringResource(R.string.action_start_workout))
+                                }
+                            }
+                        },
+                    )
                 }
             }
         }
