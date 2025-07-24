@@ -5,6 +5,7 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.runIf
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
@@ -37,7 +38,7 @@ constructor(
             endDate = workoutEntity.endDate,
             notes = workoutEntity.notes,
             exercises =
-                exercises.groupByExerciseAndGoal().map { (exerciseWithGoal, sets) ->
+                exercises.groupByExerciseAndGoal().map { (exerciseWithGoal, currentAndLastSets) ->
                     val goal =
                         exerciseWithGoal.second?.toDomain()
                             ?: exerciseWithGoal.first.goal.toWorkoutGoal()
@@ -48,7 +49,16 @@ constructor(
                             toDomain(
                                 exerciseType = exerciseWithGoal.first.exerciseType,
                                 setCount = goal.sets,
-                                sets = sets,
+                                sets = currentAndLastSets.mapValues { it.value.first },
+                                massUnit = massUnit,
+                                distanceUnit = distanceUnit,
+                                bodyWeight = bodyWeight,
+                            ),
+                        lastSets =
+                            toDomain(
+                                exerciseType = exerciseWithGoal.first.exerciseType,
+                                setCount = goal.sets,
+                                sets = currentAndLastSets.mapValues { it.value.second },
                                 massUnit = massUnit,
                                 distanceUnit = distanceUnit,
                                 bodyWeight = bodyWeight,
@@ -64,23 +74,28 @@ constructor(
             .map { (workout, model) ->
                 toDomain(
                     workout,
-                    model.map { (_, exercise, goal, set) ->
-                        WorkoutExerciseDto(exercise, goal, set)
+                    model.map { (_, exercise, goal, currentSet, lastSet) ->
+                        WorkoutExerciseDto(exercise, goal, currentSet, lastSet)
                     },
                 )
             }
 
     private fun List<WorkoutExerciseDto>.groupByExerciseAndGoal():
-        Map<Pair<ExerciseEntity, WorkoutGoalEntity?>, MutableMap<Int, ExerciseSetEntity>> =
-        fold(
-            mutableMapOf<
-                Pair<ExerciseEntity, WorkoutGoalEntity?>,
-                MutableMap<Int, ExerciseSetEntity>,
-            >()
-        ) { map, dto ->
+        Map<
+            Pair<ExerciseEntity, WorkoutGoalEntity?>,
+            MutableMap<Int, Pair<ExerciseSetEntity?, ExerciseSetEntity?>>,
+        > =
+        fold(mutableMapOf()) { map, dto ->
             val key = dto.exercise to dto.goal
             val sets = map[key] ?: mutableMapOf()
-            dto.set?.also { set -> sets[set.setIndex] = set }
+
+            dto.currentExerciseSet?.also { set ->
+                sets[set.setIndex] = set to sets[set.setIndex]?.second
+            }
+            dto.lastExerciseSet?.also { set ->
+                sets[set.setIndex] = sets[set.setIndex]?.first to set
+            }
+
             map[key] = sets
             map
         }
@@ -89,6 +104,7 @@ constructor(
         exercise: ExerciseEntity,
         goal: Workout.Goal,
         sets: List<ExerciseSet>,
+        lastSets: List<ExerciseSet>,
     ): Workout.Exercise =
         Workout.Exercise(
             id = exercise.id,
@@ -99,38 +115,46 @@ constructor(
             tertiaryMuscles = exercise.tertiaryMuscles,
             goal = goal,
             sets = sets,
+            lastSets = lastSets,
         )
 
     private fun toDomain(
         exerciseType: ExerciseType,
         setCount: Int,
-        sets: Map<Int, ExerciseSetEntity>,
+        sets: Map<Int, ExerciseSetEntity?>,
         massUnit: MassUnit,
         distanceUnit: LongDistanceUnit,
         bodyWeight: BodyMeasurementValue.SingleValue?,
+        fillWithEmptySets: Boolean = true,
     ): List<ExerciseSet> =
-        (0 until setCount).map { setIndex ->
+        (0 until setCount).mapNotNull { setIndex ->
             val set = sets[setIndex]
             when (exerciseType) {
                 ExerciseType.Weight ->
-                    set?.toWeightSet(massUnit) ?: ExerciseSet.Weight.empty(massUnit)
+                    set?.toWeightSet(massUnit)
+                        ?: runIf(fillWithEmptySets) { ExerciseSet.Weight.empty(massUnit) }
 
                 ExerciseType.Calisthenics ->
                     set?.toCalisthenicsSet(massUnit, bodyWeight)
-                        ?: ExerciseSet.Calisthenics.empty(
-                            bodyWeight =
-                                bodyWeight?.let {
-                                    converter.convert(it.unit as MassUnit, massUnit, it.value)
-                                } ?: 0.0,
-                            massUnit = massUnit,
-                        )
+                        ?: runIf(fillWithEmptySets) {
+                            ExerciseSet.Calisthenics.empty(
+                                bodyWeight =
+                                    bodyWeight?.let {
+                                        converter.convert(it.unit as MassUnit, massUnit, it.value)
+                                    } ?: 0.0,
+                                massUnit = massUnit,
+                            )
+                        }
 
-                ExerciseType.Reps -> set?.toRepsSet() ?: ExerciseSet.Reps.empty
+                ExerciseType.Reps ->
+                    set?.toRepsSet() ?: runIf(fillWithEmptySets) { ExerciseSet.Reps.empty }
 
                 ExerciseType.Cardio ->
-                    set?.toCardioSet(distanceUnit) ?: ExerciseSet.Cardio.empty(distanceUnit)
+                    set?.toCardioSet(distanceUnit)
+                        ?: runIf(fillWithEmptySets) { ExerciseSet.Cardio.empty(distanceUnit) }
 
-                ExerciseType.Time -> set?.toTimeSet() ?: ExerciseSet.Time.empty
+                ExerciseType.Time ->
+                    set?.toTimeSet() ?: runIf(fillWithEmptySets) { ExerciseSet.Time.empty }
             }
         }
 

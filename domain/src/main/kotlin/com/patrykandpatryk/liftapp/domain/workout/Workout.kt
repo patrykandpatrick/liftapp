@@ -30,6 +30,7 @@ data class Workout(
         val tertiaryMuscles: List<Muscle>,
         val goal: Goal,
         val sets: List<ExerciseSet>,
+        val lastSets: List<ExerciseSet> = emptyList(),
     ) : Serializable {
         val completedSets = sets.count { it.isCompleted }
         val totalSets = sets.size

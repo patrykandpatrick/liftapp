@@ -57,6 +57,7 @@ constructor(
                                 exerciseId = exercise.id,
                                 setIndex = index,
                                 previousSet = exercise.sets.getOrNull(index - 1),
+                                lastSet = exercise.lastSets.getOrNull(index),
                             )
                         },
                 )
@@ -110,20 +111,48 @@ constructor(
         exerciseId: Long,
         setIndex: Int,
         previousSet: ExerciseSet?,
+        lastSet: ExerciseSet?,
     ): EditableExerciseSet<ExerciseSet> =
         when (this) {
             is ExerciseSet.Weight ->
-                editable(exerciseId, setIndex, previousSet as? ExerciseSet.Weight)
+                editable(
+                    exerciseId = exerciseId,
+                    setIndex = setIndex,
+                    previousSet = previousSet as? ExerciseSet.Weight,
+                    lastSet = lastSet as? ExerciseSet.Weight,
+                )
 
             is ExerciseSet.Calisthenics ->
-                editable(exerciseId, setIndex, previousSet as? ExerciseSet.Calisthenics)
+                editable(
+                    exerciseId = exerciseId,
+                    setIndex = setIndex,
+                    previousSet = previousSet as? ExerciseSet.Calisthenics,
+                    lastSet = lastSet as? ExerciseSet.Calisthenics,
+                )
 
-            is ExerciseSet.Reps -> editable(exerciseId, setIndex, previousSet as? ExerciseSet.Reps)
+            is ExerciseSet.Reps ->
+                editable(
+                    exerciseId = exerciseId,
+                    setIndex = setIndex,
+                    previousSet = previousSet as? ExerciseSet.Reps,
+                    lastSet = lastSet as? ExerciseSet.Reps,
+                )
 
             is ExerciseSet.Cardio ->
-                editable(exerciseId, setIndex, previousSet as? ExerciseSet.Cardio)
+                editable(
+                    exerciseId = exerciseId,
+                    setIndex = setIndex,
+                    previousSet = previousSet as? ExerciseSet.Cardio,
+                    lastSet = lastSet as? ExerciseSet.Cardio,
+                )
 
-            is ExerciseSet.Time -> editable(exerciseId, setIndex, previousSet as? ExerciseSet.Time)
+            is ExerciseSet.Time ->
+                editable(
+                    exerciseId = exerciseId,
+                    setIndex = setIndex,
+                    previousSet = previousSet as? ExerciseSet.Time,
+                    lastSet = lastSet as? ExerciseSet.Time,
+                )
         }
             as EditableExerciseSet<ExerciseSet>
 
@@ -131,6 +160,7 @@ constructor(
         exerciseId: Long,
         setIndex: Int,
         previousSet: ExerciseSet.Weight?,
+        lastSet: ExerciseSet.Weight?,
     ): EditableExerciseSet.Weight =
         EditableExerciseSet.Weight(
             weight = weight,
@@ -148,21 +178,14 @@ constructor(
                     validators = { validNumberHigherThanZero() },
                 ),
             weightUnit = weightUnit,
-            suggestions =
-                listOfNotNull(
-                    previousSet?.let { set ->
-                        EditableExerciseSet.SetSuggestion(
-                            set,
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    }
-                ),
+            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Calisthenics.editable(
         exerciseId: Long,
         setIndex: Int,
         previousSet: ExerciseSet.Calisthenics?,
+        lastSet: ExerciseSet.Calisthenics?,
     ): EditableExerciseSet.Calisthenics =
         EditableExerciseSet.Calisthenics(
             weight = weight,
@@ -183,21 +206,14 @@ constructor(
                     validators = { validNumberHigherThanZero() },
                 ),
             weightUnit = weightUnit,
-            suggestions =
-                listOfNotNull(
-                    previousSet?.let { set ->
-                        EditableExerciseSet.SetSuggestion(
-                            set,
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    }
-                ),
+            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Reps.editable(
         exerciseId: Long,
         setIndex: Int,
         previousSet: ExerciseSet.Reps?,
+        lastSet: ExerciseSet.Reps?,
     ): EditableExerciseSet.Reps =
         EditableExerciseSet.Reps(
             reps = reps,
@@ -207,21 +223,14 @@ constructor(
                     savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
                     validators = { validNumberHigherThanZero() },
                 ),
-            suggestions =
-                listOfNotNull(
-                    previousSet?.let { set ->
-                        EditableExerciseSet.SetSuggestion(
-                            set,
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    }
-                ),
+            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Cardio.editable(
         exerciseId: Long,
         setIndex: Int,
         previousSet: ExerciseSet.Cardio?,
+        lastSet: ExerciseSet.Cardio?,
     ): EditableExerciseSet.Cardio =
         EditableExerciseSet.Cardio(
             duration = duration,
@@ -246,21 +255,14 @@ constructor(
                     validators = { validNumberHigherThanZero() },
                 ),
             distanceUnit = distanceUnit,
-            suggestions =
-                listOfNotNull(
-                    previousSet?.let { set ->
-                        EditableExerciseSet.SetSuggestion(
-                            set,
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    }
-                ),
+            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Time.editable(
         exerciseId: Long,
         setIndex: Int,
         previousSet: ExerciseSet.Time?,
+        lastSet: ExerciseSet.Time?,
     ): EditableExerciseSet.Time =
         EditableExerciseSet.Time(
             duration = duration,
@@ -270,15 +272,26 @@ constructor(
                     savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
                     validators = { higherThanZero() },
                 ),
-            suggestions =
-                listOfNotNull(
-                    previousSet?.let { set ->
-                        EditableExerciseSet.SetSuggestion(
-                            set,
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    }
-                ),
+            suggestions = createSuggestions(previousSet, lastSet),
+        )
+
+    private fun <T : ExerciseSet> createSuggestions(
+        previousSet: T?,
+        lastSet: T?,
+    ): List<EditableExerciseSet.SetSuggestion<T>> =
+        listOfNotNull(
+            previousSet?.let { set ->
+                EditableExerciseSet.SetSuggestion(
+                    set,
+                    EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                )
+            },
+            lastSet?.let { set ->
+                EditableExerciseSet.SetSuggestion(
+                    set,
+                    EditableExerciseSet.SetSuggestion.Type.PreviousWorkout,
+                )
+            },
         )
 
     private fun formatDecimal(value: Double): String =

@@ -7,5 +7,6 @@ data class WorkoutWithWorkoutExerciseDto(
     @Embedded val workout: WorkoutEntity,
     @Embedded val exercise: ExerciseEntity,
     @Embedded val goal: WorkoutGoalEntity?,
-    @Embedded val set: ExerciseSetEntity?,
+    @Embedded(prefix = "current_") val currentExerciseSet: ExerciseSetEntity?,
+    @Embedded(prefix = "last_") val lastExerciseSet: ExerciseSetEntity?,
 )

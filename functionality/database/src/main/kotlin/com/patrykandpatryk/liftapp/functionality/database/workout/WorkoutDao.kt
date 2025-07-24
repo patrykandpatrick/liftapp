@@ -37,14 +37,45 @@ interface WorkoutDao {
     @Transaction
     @Query(
         value =
-            "SELECT exercise.*, workout_goal.*, exercise_set.* FROM workout_with_exercise AS wwe " +
+            "SELECT exercise.*, workout_goal.*, " +
+                "current_exercise_set.exercise_set_id as current_exercise_set_id, " +
+                "current_exercise_set.exercise_set_workout_id as current_exercise_set_workout_id, " +
+                "current_exercise_set.exercise_set_exercise_id as current_exercise_set_exercise_id, " +
+                "current_exercise_set.exercise_set_weight as current_exercise_set_weight, " +
+                "current_exercise_set.exercise_set_weight_unit as current_exercise_set_weight_unit, " +
+                "current_exercise_set.exercise_set_reps as current_exercise_set_reps, " +
+                "current_exercise_set.exercise_set_time as current_exercise_set_time, " +
+                "current_exercise_set.exercise_set_distance as current_exercise_set_distance, " +
+                "current_exercise_set.exercise_set_distance_unit as current_exercise_set_distance_unit, " +
+                "current_exercise_set.exercise_set_kcal as current_exercise_set_kcal, " +
+                "current_exercise_set.workout_exercise_set_index as current_workout_exercise_set_index, " +
+                "last_exercise_set.exercise_set_id as last_exercise_set_id, " +
+                "last_exercise_set.exercise_set_workout_id as last_exercise_set_workout_id, " +
+                "last_exercise_set.exercise_set_exercise_id as last_exercise_set_exercise_id, " +
+                "last_exercise_set.exercise_set_weight as last_exercise_set_weight, " +
+                "last_exercise_set.exercise_set_weight_unit as last_exercise_set_weight_unit, " +
+                "last_exercise_set.exercise_set_reps as last_exercise_set_reps, " +
+                "last_exercise_set.exercise_set_time as last_exercise_set_time, " +
+                "last_exercise_set.exercise_set_distance as last_exercise_set_distance, " +
+                "last_exercise_set.exercise_set_distance_unit as last_exercise_set_distance_unit, " +
+                "last_exercise_set.exercise_set_kcal as last_exercise_set_kcal, " +
+                "last_exercise_set.workout_exercise_set_index as last_workout_exercise_set_index " +
+                "FROM workout_with_exercise AS wwe " +
                 "LEFT JOIN exercise ON wwe.exercise_id = exercise.exercise_id " +
                 "LEFT JOIN workout_goal " +
                 "ON wwe.exercise_id = workout_goal_exercise_id AND workout_goal_workout_id = :workoutID " +
-                "LEFT JOIN exercise_set ON exercise_set_workout_id = :workoutID AND exercise_set_exercise_id = wwe.exercise_id " +
-                "WHERE wwe.workout_id = :workoutID ORDER BY order_index, workout_exercise_set_index"
+                "LEFT JOIN exercise_set AS current_exercise_set " +
+                "ON current_exercise_set.exercise_set_workout_id = :workoutID " +
+                "AND current_exercise_set.exercise_set_exercise_id = wwe.exercise_id " +
+                "LEFT JOIN exercise_set AS last_exercise_set " +
+                "ON last_exercise_set.exercise_set_workout_id = (SELECT workout_id FROM workout " +
+                "WHERE workout_routine_id = :routineID AND workout_start_date < " +
+                "(SELECT workout_start_date FROM workout WHERE workout_id = :workoutID) " +
+                "ORDER BY workout_start_date DESC LIMIT 1) " +
+                "AND last_exercise_set.exercise_set_exercise_id = wwe.exercise_id " +
+                "WHERE wwe.workout_id = :workoutID ORDER BY order_index, current_exercise_set.workout_exercise_set_index"
     )
-    fun getWorkoutExercises(workoutID: Long): Flow<List<WorkoutExerciseDto>>
+    fun getWorkoutExercises(workoutID: Long, routineID: Long): Flow<List<WorkoutExerciseDto>>
 
     @RawQuery(
         observedEntities =
@@ -112,7 +143,19 @@ interface WorkoutDao {
         fun getWorkoutsQuery(hasEndDate: Boolean): RoomRawQuery {
             val endDate = if (hasEndDate) "NOT NULL" else "NULL"
             val query =
-                "SELECT w.*, exercise.*, workout_goal.*, exercise_set.* FROM workout AS w " +
+                "SELECT w.*, exercise.*, workout_goal.*, " +
+                    "exercise_set.exercise_set_id as current_exercise_set_id, " +
+                    "exercise_set.exercise_set_workout_id as current_exercise_set_workout_id, " +
+                    "exercise_set.exercise_set_exercise_id as current_exercise_set_exercise_id, " +
+                    "exercise_set.exercise_set_weight as current_exercise_set_weight, " +
+                    "exercise_set.exercise_set_weight_unit as current_exercise_set_weight_unit, " +
+                    "exercise_set.exercise_set_reps as current_exercise_set_reps, " +
+                    "exercise_set.exercise_set_time as current_exercise_set_time, " +
+                    "exercise_set.exercise_set_distance as current_exercise_set_distance, " +
+                    "exercise_set.exercise_set_distance_unit as current_exercise_set_distance_unit, " +
+                    "exercise_set.exercise_set_kcal as current_exercise_set_kcal, " +
+                    "exercise_set.workout_exercise_set_index as current_workout_exercise_set_index " +
+                    "FROM workout AS w " +
                     "LEFT JOIN workout_with_exercise AS wwe ON w.workout_id = wwe.workout_id " +
                     "LEFT JOIN exercise ON exercise.exercise_id = wwe.exercise_id " +
                     "LEFT JOIN workout_goal ON wwe.exercise_id = workout_goal_exercise_id AND workout_goal_workout_id = w.workout_id " +

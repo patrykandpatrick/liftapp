@@ -50,7 +50,8 @@ constructor(
     override fun getWorkout(routineID: Long, workoutID: Long?): Flow<Workout> =
         getWorkoutEntity(routineID, workoutID)
             .flatMapLatest { workoutEntity ->
-                workoutDao.getWorkoutExercises(workoutEntity.id).map { exercises ->
+                workoutDao.getWorkoutExercises(workoutEntity.id, workoutEntity.routineID).map {
+                    exercises ->
                     workoutEntity to exercises
                 }
             }
