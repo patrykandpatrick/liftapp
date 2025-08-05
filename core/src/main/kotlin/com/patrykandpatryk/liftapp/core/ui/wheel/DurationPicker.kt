@@ -1,16 +1,14 @@
 package com.patrykandpatryk.liftapp.core.ui.wheel
 
 import android.icu.text.DecimalFormat
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -79,20 +77,8 @@ fun DurationPicker(
     }
 
     Box(modifier = modifier) {
-        Box(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .4f),
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    .padding(16.dp)
-                    .align(Alignment.Center)
+        WheelPickerDefaults.Highlight(
+            modifier = Modifier.fillMaxWidth().height(44.dp).align(Alignment.Center)
         )
 
         Row(
@@ -101,7 +87,7 @@ fun DurationPicker(
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (includeHours) {
-                WheelPicker(state = hourState, itemExtent = 1) {
+                WheelPicker(state = hourState, itemExtent = 1, highlight = null) {
                     allHours.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
                 }
 
@@ -112,7 +98,7 @@ fun DurationPicker(
                 )
             }
 
-            WheelPicker(state = minuteState, itemExtent = 1) {
+            WheelPicker(state = minuteState, itemExtent = 1, highlight = null) {
                 allMinutes.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
             }
 
@@ -122,7 +108,7 @@ fun DurationPicker(
                 modifier = Modifier.offset(y = (-1).dp),
             )
 
-            WheelPicker(state = secondState, itemExtent = 1) {
+            WheelPicker(state = secondState, itemExtent = 1, highlight = null) {
                 allSeconds.forEach { index -> WheelPickerItem(timeFormat.format(index)) }
             }
 

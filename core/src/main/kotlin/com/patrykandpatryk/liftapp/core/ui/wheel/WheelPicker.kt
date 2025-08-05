@@ -8,6 +8,7 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.DraggableState
 import androidx.compose.foundation.gestures.Orientation
@@ -20,18 +21,13 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
@@ -41,10 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
@@ -57,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -73,7 +67,7 @@ fun WheelPicker(
     itemExtent: Int = 3,
     scrollAnimationSpec: AnimationSpec<Float> =
         spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow),
-    highlight: @Composable () -> Unit = {},
+    highlight: (@Composable () -> Unit)? = { WheelPickerDefaults.Highlight() },
     items: @Composable WheelPickerScope.() -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -81,7 +75,7 @@ fun WheelPicker(
     state.scrollAnimationSpec = scrollAnimationSpec
 
     Layout(
-        contents = listOf(highlight) + { items(scope) },
+        contents = listOf(highlight ?: {}) + { items(scope) },
         measurePolicy =
             remember(state, itemExtent) {
                 WheelPickerMeasurePolicy(state = state, itemExtent = itemExtent)
@@ -209,6 +203,26 @@ private class WheelPickerMeasurePolicy(
                 }
             }
         }
+    }
+}
+
+object WheelPickerDefaults {
+
+    @Composable
+    fun Highlight(modifier: Modifier = Modifier) {
+        Box(
+            modifier =
+                modifier
+                    .border(
+                        width = 1.dp,
+                        color = colorScheme.primary,
+                        shape = RoundedCornerShape(8.dp),
+                    )
+                    .background(
+                        color = colorScheme.primaryDisabled,
+                        shape = RoundedCornerShape(8.dp),
+                    )
+        )
     }
 }
 
@@ -402,73 +416,7 @@ fun WheelPickerPreview() {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp),
             ) {
-                WheelPicker(
-                    items = {
-                        val deselectedColor = MaterialTheme.colorScheme.onSurface
-                        val selectedColor = MaterialTheme.colorScheme.primary
-
-                        List(10) { it.toString() }
-                            .forEach {
-                                val positionOffset = remember { mutableFloatStateOf(1f) }
-                                val textColor = remember { mutableStateOf(deselectedColor) }
-                                Text(
-                                    text = it,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = textColor.value,
-                                    modifier =
-                                        Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                                            .onPositionChange { offset, viewPortOffset ->
-                                                positionOffset.floatValue = abs(viewPortOffset)
-                                                textColor.value =
-                                                    lerp(
-                                                        selectedColor,
-                                                        deselectedColor,
-                                                        abs(offset),
-                                                    )
-                                            }
-                                            .graphicsLayer {
-                                                alpha =
-                                                    0f + (1 - positionOffset.floatValue) // * .75f
-                                                scaleY = .5f + (1 - positionOffset.floatValue) * .5f
-                                            },
-                                )
-                            }
-                    },
-                    highlight = {
-                        Box(
-                            Modifier.border(
-                                2.dp,
-                                MaterialTheme.colorScheme.outline,
-                                RoundedCornerShape(8.dp),
-                            )
-                        )
-                    },
-                )
-
-                WheelPicker(
-                    items = {
-                        listOf("\uD83D\uDCAA", "\uD83D\uDC7E", "\uD83E\uDEF5").forEach { Text(it) }
-                    },
-                    state = rememberWheelPickerState(1),
-                    highlight = {
-                        Box(
-                            Modifier.height(44.dp)
-                                .aspectRatio(2f)
-                                .border(
-                                    width = 1.dp,
-                                    brush =
-                                        Brush.verticalGradient(
-                                            listOf(
-                                                MaterialTheme.colorScheme.primary.copy(alpha = .3f),
-                                                MaterialTheme.colorScheme.primary.copy(alpha = .1f),
-                                            )
-                                        ),
-                                    shape = RoundedCornerShape(12.dp),
-                                )
-                                .padding(horizontal = 4.dp)
-                        )
-                    },
-                )
+                WheelPicker(items = { repeat(10) { WheelPickerItem(it.toString()) } })
             }
         }
     }

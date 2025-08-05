@@ -1,6 +1,5 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -36,6 +35,7 @@ import com.patrykandpatryk.liftapp.core.model.getDisplayName
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.BackdropState
 import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPicker
+import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerDefaults
 import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerState
 import com.patrykandpatryk.liftapp.domain.math.subFraction
 import kotlin.math.roundToInt
@@ -49,12 +49,8 @@ fun ExerciseListPicker(
 ) {
     WheelPicker(
         highlight = {
-            Box(
-                Modifier.graphicsLayer { alpha = backdropState.offsetFraction }
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        RoundedCornerShape(8.dp),
-                    )
+            WheelPickerDefaults.Highlight(
+                modifier = Modifier.graphicsLayer { alpha = backdropState.offsetFraction }
             )
         },
         state = wheelPickerState,

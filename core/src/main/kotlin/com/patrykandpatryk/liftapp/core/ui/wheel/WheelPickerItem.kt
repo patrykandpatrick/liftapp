@@ -11,12 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlin.math.abs
 
 @Composable
 fun WheelPickerScope.WheelPickerItem(value: String, modifier: Modifier = Modifier) {
-    val deselectedColor = MaterialTheme.colorScheme.onSurface
-    val selectedColor = MaterialTheme.colorScheme.primary
+    val deselectedColor = colorScheme.onSurface
+    val selectedColor = colorScheme.primary
 
     val positionOffset = remember { mutableFloatStateOf(1f) }
 
