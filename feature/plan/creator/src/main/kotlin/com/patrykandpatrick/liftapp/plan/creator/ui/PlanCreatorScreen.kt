@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -34,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.plan.creator.model.Action
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.R
@@ -218,7 +218,7 @@ private fun PlanCreatorItem(
         if (item is ScreenState.Item.PlaceholderItem) {
             Spacer(Modifier.width(LocalDimens.current.iconButton.minTouchTarget))
         } else {
-            IconButton(
+            LiftAppIconButton(
                 onClick = { onAction(Action.RemoveItem(index)) },
                 modifier =
                     Modifier.align(

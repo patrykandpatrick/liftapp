@@ -123,7 +123,7 @@ private fun PlanItem(
             if (isActive) {
                 LiftAppCardDefaults.tonalCardColors
             } else {
-                LiftAppCardDefaults.outlinedColors
+                LiftAppCardDefaults.cardColors
             }
 
         when (planItem) {

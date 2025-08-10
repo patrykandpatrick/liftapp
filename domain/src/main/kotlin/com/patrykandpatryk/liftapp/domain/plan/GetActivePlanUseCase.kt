@@ -13,7 +13,7 @@ class GetActivePlanUseCase
 @Inject
 constructor(
     private val getPlanContract: GetPlanContract,
-    @PreferenceQualifier.ActivePlan private val activePlan: Preference<ActivePlan?>,
+    @param:PreferenceQualifier.ActivePlan private val activePlan: Preference<ActivePlan?>,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<Pair<ActivePlan, Plan>?> =
