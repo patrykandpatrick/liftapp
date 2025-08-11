@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -36,6 +35,7 @@ import com.patrykandpatrick.liftapp.plan.creator.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
@@ -92,8 +92,8 @@ private fun PlanCreatorScreen(
                         ),
                 ) { snackbarData ->
                     Snackbar(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError,
+                        containerColor = colorScheme.error,
+                        contentColor = colorScheme.onError,
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(

@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 
@@ -90,7 +91,7 @@ fun RoutineCard(
                     }
                 },
             style = MaterialTheme.typography.bodySmall.copy(lineHeight = 20.sp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = colorScheme.onSurfaceVariant,
         )
 
         Row(

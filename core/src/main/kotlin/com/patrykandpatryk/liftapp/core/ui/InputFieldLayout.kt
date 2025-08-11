@@ -36,6 +36,7 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppTextFieldDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.extension.horizontal
 import com.patrykandpatryk.liftapp.core.extension.vertical
 
@@ -198,7 +199,7 @@ private fun InputFieldLayoutPreview() {
                     Text(
                         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = colorScheme.onSurface,
                     )
                 },
             )

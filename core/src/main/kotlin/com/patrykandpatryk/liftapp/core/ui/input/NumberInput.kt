@@ -27,6 +27,7 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppTextField
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
@@ -89,7 +90,7 @@ fun NumberInput(
                             Modifier.align(Alignment.CenterVertically)
                                 .padding(start = LocalDimens.current.padding.contentHorizontal),
                         text = prefix,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -104,7 +105,7 @@ fun NumberInput(
                             Modifier.align(Alignment.CenterVertically)
                                 .padding(end = LocalDimens.current.padding.contentHorizontal),
                         text = suffix,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = colorScheme.onSurfaceVariant,
                     )
                 }
 
@@ -124,7 +125,7 @@ fun NumberInput(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
                         contentDescription = stringResource(id = R.string.action_increase),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = colorScheme.onSurfaceVariant,
                     )
                 }
             }

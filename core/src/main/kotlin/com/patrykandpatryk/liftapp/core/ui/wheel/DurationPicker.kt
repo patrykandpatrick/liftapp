@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -94,6 +95,7 @@ fun DurationPicker(
                 Text(
                     text = stringResource(R.string.time_hours_medium),
                     style = MaterialTheme.typography.bodyLarge,
+                    color = colorScheme.onSurfaceVariant,
                     modifier = Modifier.offset(y = (-1).dp),
                 )
             }
@@ -105,6 +107,7 @@ fun DurationPicker(
             Text(
                 text = stringResource(R.string.time_minutes_medium),
                 style = MaterialTheme.typography.bodyLarge,
+                color = colorScheme.onSurfaceVariant,
                 modifier = Modifier.offset(y = (-1).dp),
             )
 
@@ -115,7 +118,7 @@ fun DurationPicker(
             Text(
                 text = stringResource(R.string.time_seconds_medium),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = colorScheme.onSurfaceVariant,
                 modifier = Modifier.offset(y = (-1).dp),
             )
         }

@@ -47,6 +47,7 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.LiftAppTextField
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.isCompactWidth
@@ -214,7 +215,7 @@ private fun Calculator(state: OneRepMaxState, modifier: Modifier = Modifier) {
         Text(
             text = stringResource(id = R.string.one_rep_max),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 4.dp),
         )
 

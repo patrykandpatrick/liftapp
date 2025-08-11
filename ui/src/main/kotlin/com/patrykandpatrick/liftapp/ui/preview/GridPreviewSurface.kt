@@ -35,7 +35,7 @@ internal fun GridPreviewSurface(
                             Text(
                                 text = title,
                                 style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = colorScheme.onSurface,
                             )
                             content()
                         }

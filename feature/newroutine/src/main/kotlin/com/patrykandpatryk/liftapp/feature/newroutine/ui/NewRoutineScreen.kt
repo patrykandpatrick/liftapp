@@ -277,8 +277,8 @@ private fun LazyListScope.exercises(
 
 @Composable
 private fun EmptyState(state: NewRoutineState, modifier: Modifier = Modifier) {
-    val normalColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val errorColor = MaterialTheme.colorScheme.error
+    val normalColor = colorScheme.onSurfaceVariant
+    val errorColor = colorScheme.error
 
     val showErrors = state.showErrors
     val color = animateColorAsState(if (showErrors) errorColor else normalColor, label = "color")

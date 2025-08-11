@@ -52,7 +52,7 @@ private val LightColorScheme =
         onSurfaceVariant = Color(0xFF171754),
         outline = Color(0xFF9595A6),
         error = Color(color = 0xff880000),
-        onError = Color(color = 0xffffdddd),
+        onError = Color(color = 0xFFFFF1F1),
         isDarkColorScheme = false,
     )
 
@@ -75,7 +75,7 @@ private val DarkColorScheme =
         onSurfaceVariant = Color(0xFFC8C8EC),
         outline = Color(0x4FE1E1F8),
         error = Color(color = 0xffff4444),
-        onError = Color(color = 0xff660000),
+        onError = Color(color = 0xFF330000),
         isDarkColorScheme = true,
     )
 

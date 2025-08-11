@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -51,6 +50,7 @@ import com.patrykandpatrick.liftapp.plan.creator.ui.PlanCreatorScreen
 import com.patrykandpatrick.liftapp.plan.list.ui.PlanListScreen
 import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
@@ -101,7 +101,7 @@ fun Root(
             ModalBottomSheetLayout(
                 bottomSheetNavigator = bottomSheetNavigator,
                 sheetShape = BottomSheetShape,
-                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+                sheetBackgroundColor = colorScheme.surface,
             ) {
                 BottomAppBarNavigationHost(
                     navController = navController,
@@ -117,7 +117,7 @@ fun Root(
                         NavHost(
                             navController = navController,
                             startDestination = Routes.Home,
-                            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                            modifier = Modifier.background(colorScheme.background),
                             enterTransition = { sharedXAxisEnterTransition() },
                             exitTransition = { sharedXAxisExitTransition() },
                             popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
@@ -142,7 +142,7 @@ fun Root(
                             addWorkout()
                         }
                     },
-                    modifier = modifier.background(MaterialTheme.colorScheme.background),
+                    modifier = modifier.background(colorScheme.background),
                 )
             }
         }

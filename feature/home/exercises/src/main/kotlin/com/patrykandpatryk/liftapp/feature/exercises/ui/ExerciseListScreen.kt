@@ -237,7 +237,7 @@ private fun TopBar(
                         Icon(
                             imageVector = Icons.Outlined.Close,
                             contentDescription = stringResource(id = R.string.action_close),
-                            tint = MaterialTheme.colorScheme.onSurface,
+                            tint = colorScheme.onSurface,
                         )
                     }
                 },

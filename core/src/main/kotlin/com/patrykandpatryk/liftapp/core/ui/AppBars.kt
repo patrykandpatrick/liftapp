@@ -2,16 +2,10 @@ package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -150,34 +144,6 @@ fun TopAppBarWithTabs(
 
 @Immutable data class TabItem(val text: String? = null, val icon: Painter? = null)
 
-@Composable
-fun DialogTopBar(title: String, onCloseClick: () -> Unit, modifier: Modifier = Modifier) {
-    Row(modifier = modifier) {
-        Text(
-            modifier =
-                Modifier.weight(1f)
-                    .align(Alignment.CenterVertically)
-                    .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-        )
-
-        IconButton(
-            modifier = Modifier.padding(end = LocalDimens.current.padding.contentHorizontalSmall),
-            onClick = onCloseClick,
-        ) {
-            Icon(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                imageVector = Icons.Outlined.Close,
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = stringResource(id = R.string.action_close),
-            )
-        }
-    }
-}
-
 object AppBars {
     @Composable
     fun BackArrow(onClick: () -> Unit, modifier: Modifier = Modifier) {
@@ -247,10 +213,4 @@ fun PreviewTopAppBarWithTextIconTabs() {
                 ),
         )
     }
-}
-
-@MultiDevicePreview
-@Composable
-fun PreviewDialogTopBar() {
-    Surface { DialogTopBar(title = "Title", onCloseClick = {}) }
 }
