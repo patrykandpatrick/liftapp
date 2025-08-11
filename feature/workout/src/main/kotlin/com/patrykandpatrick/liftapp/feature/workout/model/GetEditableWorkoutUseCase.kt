@@ -287,6 +287,7 @@ constructor(
                 )
             },
             lastSet?.let { set ->
+                if (!set.isCompleted) return@let null
                 EditableExerciseSet.SetSuggestion(
                     set,
                     EditableExerciseSet.SetSuggestion.Type.PreviousWorkout,

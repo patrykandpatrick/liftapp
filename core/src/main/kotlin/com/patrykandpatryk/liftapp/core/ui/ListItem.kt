@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.core.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.component.ContainerColors
@@ -173,7 +175,7 @@ object ListItemDefaults {
                                 hoverBackgroundColor = colorScheme.outline,
                             ),
                         disabledBackgroundColor = Color.Transparent,
-                        disabledContentColor = colorScheme.primaryContainer,
+                        disabledContentColor = colorScheme.onPrimaryDisabled,
                     ),
                 checkedColors = LiftAppCardDefaults.tonalCardColors,
             )
@@ -202,6 +204,26 @@ object ListItemDefaults {
                 )
             }
         } else null
+
+    @Composable
+    fun LeadingText(text: String) {
+        Box(
+            modifier =
+                Modifier.size(40.dp)
+                    .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
+                    .padding(8.dp)
+        ) {
+            val modifiedDensity = Density(LocalDensity.current.density)
+            CompositionLocalProvider(LocalDensity provides modifiedDensity) {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = colorScheme.surface,
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            }
+        }
+    }
 
     @Composable
     fun ListItemTitle(title: String, titleHighlightPosition: IntRange) {

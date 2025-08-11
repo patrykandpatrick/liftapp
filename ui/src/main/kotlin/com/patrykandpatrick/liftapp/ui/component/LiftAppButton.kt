@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
@@ -53,14 +54,14 @@ object LiftAppButtonDefaults {
                         hoverForegroundColor = colorScheme.onPrimaryOutline,
                     ),
                 disabledBackgroundColor = colorScheme.primaryDisabled,
-                disabledContentColor = colorScheme.primaryContainer,
+                disabledContentColor = colorScheme.onPrimaryDisabled,
             )
 
     val outlinedButtonColors: ContainerColors
         @Composable
         get() =
             ContainerColors(
-                backgroundColor = Color.Transparent,
+                backgroundColor = colorScheme.surface,
                 contentColor = colorScheme.onSurface,
                 interactiveBorderColors =
                     InteractiveBorderColors(
@@ -72,7 +73,7 @@ object LiftAppButtonDefaults {
                 disabledContentColor = colorScheme.onSurface.copy(Alpha.disabled),
             )
 
-    val plainButtonColors: ContainerColors
+    val noBackgroundColors: ContainerColors
         @Composable
         get() =
             ContainerColors(
@@ -86,7 +87,7 @@ object LiftAppButtonDefaults {
                         hoverBackgroundColor = colorScheme.outline,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.primaryContainer,
+                disabledContentColor = colorScheme.onPrimaryDisabled,
             )
 }
 
@@ -100,6 +101,8 @@ fun LiftAppButton(
     contentPadding: PaddingValues =
         PaddingValues(dimens.button.horizontalPadding, dimens.button.verticalPadding),
     interactionSource: MutableInteractionSource? = null,
+    shape: Shape = ButtonShape,
+    borderShape: Shape = ButtonBorderShape,
     content: @Composable RowScope.() -> Unit,
 ) {
     CardBase(
@@ -118,9 +121,9 @@ fun LiftAppButton(
                         onClick = onClick,
                         enabled = enabled,
                         role = Role.Button,
-                        shape = ButtonBorderShape,
+                        shape = borderShape,
                     )
-                    .background(color = colors.getBackgroundColor(enabled), shape = ButtonShape)
+                    .background(color = colors.getBackgroundColor(enabled), shape = shape)
                     .padding(contentPadding)
                     .align(Alignment.Center)
                     .fillMaxSize()
@@ -137,7 +140,7 @@ fun PlainLiftAppButton(
     spacing: Dp = 6.dp,
     enabled: Boolean = true,
     showDivider: Boolean = true,
-    colors: ContainerColors = LiftAppButtonDefaults.plainButtonColors,
+    colors: ContainerColors = LiftAppButtonDefaults.noBackgroundColors,
     contentPadding: PaddingValues =
         PaddingValues(
             horizontal = dimens.button.horizontalPadding,

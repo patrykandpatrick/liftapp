@@ -1,6 +1,5 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
@@ -21,20 +20,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +41,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.innerShadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,22 +62,27 @@ import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
 import com.patrykandpatrick.liftapp.feature.workout.model.getImageVector
 import com.patrykandpatrick.liftapp.feature.workout.model.getText
-import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
 import com.patrykandpatrick.liftapp.navigation.Routes
-import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
+import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.graphics.rememberTopSinShape
-import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
-import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.theme.ButtonBorderShape
+import com.patrykandpatrick.liftapp.ui.theme.ButtonShape
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.copy
 import com.patrykandpatryk.liftapp.core.extension.getBottom
 import com.patrykandpatryk.liftapp.core.extension.interfaceStub
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
-import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.ui.AppBars
 import com.patrykandpatryk.liftapp.core.ui.Backdrop
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisTransition
 import com.patrykandpatryk.liftapp.core.ui.rememberBackdropState
 import com.patrykandpatryk.liftapp.core.ui.wheel.rememberWheelPickerState
@@ -110,12 +115,12 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
 
     RestTimerEffect(viewModel, restTimerService)
 
-    Scaffold(
+    LiftAppScaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            CompactTopAppBar(
                 title = {
                     Text(
-                        text = workout?.name.orEmpty(),
+                        text = stringResource(R.string.route_workout),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -126,7 +131,9 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
             )
         },
         bottomBar = {
-            workout?.pages?.get(selectedPage)?.also { page -> BottomBar(page, viewModel::onAction) }
+            workout?.run {
+                pages[selectedPage].also { page -> BottomBar(page, viewModel::onAction) }
+            }
         },
         modifier = modifier,
     ) { paddingValues ->
@@ -136,8 +143,6 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
                 page = selectedPage,
                 setPage = viewModel::selectPage,
                 restTimerService = restTimerService.value,
-                onAddSetClick = viewModel::increaseSetCount,
-                onRemoveSetClick = viewModel::decreaseSetCount,
                 onSaveSet = viewModel::saveSet,
                 onAction = viewModel::onAction,
                 modifier =
@@ -165,20 +170,21 @@ private fun Content(
     page: Int,
     setPage: (Int) -> Unit,
     restTimerService: RestTimerService?,
-    onAddSetClick: (EditableWorkout.Exercise) -> Unit,
-    onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
     onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet<ExerciseSet>, Int) -> Unit,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val wheelPickerState = rememberWheelPickerState(workout.firstIncompleteExerciseIndex)
     val backdropState = rememberBackdropState()
+
     LaunchedEffect(page) { launch { wheelPickerState.animateScrollTo(page) } }
+
     LaunchedEffect(wheelPickerState) {
         wheelPickerState.interactionSource.interactions
             .filter { it is DragInteraction.Stop || it is PressInteraction.Release }
             .collect { setPage(wheelPickerState.getTargetScrollItem()) }
     }
+
     Box(modifier = modifier.imePadding()) {
         Backdrop(
             backContent = { ExerciseListPicker(workout, wheelPickerState, backdropState) },
@@ -187,30 +193,53 @@ private fun Content(
             state = backdropState,
             modifier = Modifier,
         ) {
-            Box(contentAlignment = Alignment.TopCenter) {
+            val outline = colorScheme.outline
+            val shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
+                modifier =
+                    Modifier.background(
+                            brush =
+                                Brush.verticalGradient(
+                                    listOf(colorScheme.surface, colorScheme.background)
+                                ),
+                            shape = shape,
+                        )
+                        .innerShadow(shape) {
+                            spread = 0.5.dp.toPx()
+                            color = outline
+                            offset = Offset(0f, 1.dp.toPx())
+                            blendMode = BlendMode.SrcOver
+                        }
+                        .padding(top = dimens.padding.contentVertical),
+            ) {
+                Spacer(
+                    modifier =
+                        Modifier.background(color = colorScheme.outline, shape = CircleShape)
+                            .width(32.dp)
+                            .height(6.dp)
+                            .align(Alignment.CenterHorizontally)
+                )
+
                 AnimatedContent(
                     targetState = workout.pages[page],
                     transitionSpec = sharedXAxisTransition(),
                     contentKey = { it.index },
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .clip(rememberTopSinShape())
-                            .background(MaterialTheme.colorScheme.background),
+                    modifier = Modifier.fillMaxSize(),
                     label = "page",
                 ) { page ->
                     when (page) {
                         is WorkoutPage.Exercise ->
                             Page(
                                 exercise = page.exercise,
-                                onAddSetClick = onAddSetClick,
-                                onRemoveSetClick = onRemoveSetClick,
+                                onAddSet = { onAction(Action.AddSet(page.exercise)) },
+                                onRemoveSet = { onAction(Action.RemoveSet(page.exercise)) },
                                 onSaveSet = onSaveSet,
                             )
+
                         is WorkoutPage.Summary -> Summary(page, onAction)
                     }
                 }
-
-                SinHorizontalDivider()
             }
         }
 
@@ -246,13 +275,10 @@ private fun BottomBar(
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier =
-            modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxWidth()
-                .navigationBarsPadding(),
+            modifier.background(colorScheme.background).fillMaxWidth().navigationBarsPadding(),
     ) {
         Column {
-            HorizontalDivider()
+            LiftAppHorizontalDivider()
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -261,27 +287,38 @@ private fun BottomBar(
                 modifier = Modifier.fillMaxWidth().padding(vertical = padding.itemVerticalSmall),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Button(
+                    LiftAppButton(
                         onClick = { onAction(page.secondaryAction) },
+                        colors = LiftAppButtonDefaults.outlinedButtonColors,
                         shape =
-                            MaterialTheme.shapes.small.copy(
-                                topEnd = CornerSize(4.dp),
-                                bottomEnd = CornerSize(4.dp),
+                            ButtonShape.copy(
+                                topEnd = CornerSize(6.dp),
+                                bottomEnd = CornerSize(6.dp),
+                            ),
+                        borderShape =
+                            ButtonBorderShape.copy(
+                                topEnd = CornerSize(5.dp),
+                                bottomEnd = CornerSize(5.dp),
                             ),
                     ) {
                         Icon(page.secondaryAction.getImageVector(), page.secondaryAction.getText())
                     }
-                    Button(
+                    LiftAppButton(
                         onClick = { onAction(page.primaryAction) },
+                        colors = LiftAppButtonDefaults.outlinedButtonColors,
                         shape =
-                            MaterialTheme.shapes.small.copy(
-                                topStart = CornerSize(4.dp),
-                                bottomStart = CornerSize(4.dp),
+                            ButtonShape.copy(
+                                topStart = CornerSize(6.dp),
+                                bottomStart = CornerSize(6.dp),
+                            ),
+                        borderShape =
+                            ButtonBorderShape.copy(
+                                topStart = CornerSize(5.dp),
+                                bottomStart = CornerSize(5.dp),
                             ),
                         modifier = Modifier,
                     ) {
                         Text(page.primaryAction.getText())
-                        Spacer(Modifier.width(padding.itemHorizontalSmall))
                         Icon(page.primaryAction.getImageVector(), page.primaryAction.getText())
                     }
                 }
@@ -332,8 +369,8 @@ private fun RestTimerContainer(restTimerService: RestTimerService, modifier: Mod
 @Composable
 private fun Page(
     exercise: EditableWorkout.Exercise,
-    onAddSetClick: (EditableWorkout.Exercise) -> Unit,
-    onRemoveSetClick: (EditableWorkout.Exercise) -> Unit,
+    onAddSet: () -> Unit,
+    onRemoveSet: () -> Unit,
     onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet<ExerciseSet>, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -353,14 +390,10 @@ private fun Page(
             sets = exercise.sets,
             selectedSet = selectedSet,
             onSelectSet = onSelectSet,
-            onAddSetClick = { onAddSetClick(exercise) },
-            contentPadding =
-                PaddingValues(
-                    horizontal = LocalDimens.current.padding.contentHorizontal,
-                    vertical = LocalDimens.current.padding.itemVertical,
-                ),
-            onRemoveSetClick = { onRemoveSetClick(exercise) },
-            modifier = Modifier,
+            onAddSet = onAddSet,
+            onRemoveSet = onRemoveSet,
+            contentPadding = PaddingValues(start = dimens.padding.contentHorizontal),
+            modifier = Modifier.padding(end = dimens.padding.contentHorizontalSmall),
         )
 
         AnimatedContent(
@@ -381,22 +414,9 @@ private fun Page(
             ) {
                 val set = exercise.sets.getOrNull(setIndex) ?: return@Column
 
-                Text(
-                    text =
-                        LocalMarkupProcessor.current.toAnnotatedString(
-                            stringResource(
-                                R.string.workout_exercise_set_info,
-                                setIndex + 1,
-                                set.prettyString(),
-                            )
-                        ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
                 SetEditorContent(set)
 
-                Button(
+                LiftAppButton(
                     onClick = { onSaveSet(exercise, set, setIndex) },
                     enabled = set.isInputValid,
                     modifier = Modifier.fillMaxWidth(),
@@ -408,11 +428,10 @@ private fun Page(
     }
 }
 
-@SuppressLint("ViewModelConstructorInComposable")
-@LightAndDarkThemePreview
+@MultiDevicePreview
 @Composable
 private fun WorkoutScreenPreview() {
-    LiftAppTheme {
+    PreviewTheme {
         val savedStateHandle = remember { SavedStateHandle() }
         val textFieldStateManager =
             PreviewResource.textFieldStateManager(savedStateHandle = savedStateHandle)

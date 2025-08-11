@@ -22,6 +22,8 @@ fun Modifier.interactiveButtonEffect(
     colors: InteractiveBorderColors,
     onClick: (() -> Unit)? = null,
     borderWidth: Dp = 1.dp,
+    maxBorderWidth: Dp? = null,
+    maxBorderHeight: Dp? = null,
     enabled: Boolean = true,
     checked: Boolean = false,
     shape: Shape = RectangleShape,
@@ -65,5 +67,7 @@ fun Modifier.interactiveButtonEffect(
             shape = shape,
             checked = checked,
             animationSpec = colorAnimationSpec,
+            maxWidth = maxBorderWidth,
+            maxHeight = maxBorderHeight,
         )
 }

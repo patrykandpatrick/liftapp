@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
@@ -29,6 +30,8 @@ fun LiftAppIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     color: Color = LocalContentColor.current,
+    colors: InteractiveBorderColors = LiftAppIconButtonDefaults.colors,
+    maxBorderSize: Dp? = null,
     content: @Composable () -> Unit,
 ) {
     Box(
@@ -37,12 +40,14 @@ fun LiftAppIconButton(
                 .minimumInteractiveComponentSize()
                 .size(dimens.iconButton.size)
                 .interactiveButtonEffect(
-                    colors = LiftAppIconButtonDefaults.colors,
+                    colors = colors,
                     onClick = onClick,
                     enabled = enabled,
                     shape = PillShape,
                     indicationScale = IndicationScale(hover = 1.15f, press = .8f),
                     role = Role.Button,
+                    maxBorderWidth = maxBorderSize,
+                    maxBorderHeight = maxBorderSize,
                 ),
         contentAlignment = Alignment.Center,
     ) {
@@ -58,6 +63,16 @@ object LiftAppIconButtonDefaults {
         get() =
             InteractiveBorderColors(
                 color = Color.Transparent,
+                pressedColor = colorScheme.primary,
+                hoverForegroundColor = colorScheme.primary,
+                hoverBackgroundColor = colorScheme.outline,
+            )
+
+    val outlinedColors: InteractiveBorderColors
+        @Composable
+        get() =
+            InteractiveBorderColors(
+                color = colorScheme.outline,
                 pressedColor = colorScheme.primary,
                 hoverForegroundColor = colorScheme.primary,
                 hoverBackgroundColor = colorScheme.outline,

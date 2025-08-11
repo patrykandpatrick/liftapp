@@ -13,13 +13,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.lerp
+import com.patrykandpatrick.liftapp.ui.theme.disabled
 
 data class ContainerColors(
     val backgroundColor: Color,
     val contentColor: Color,
     val interactiveBorderColors: InteractiveBorderColors,
-    val disabledBackgroundColor: Color,
-    val disabledContentColor: Color,
+    val disabledBackgroundColor: Color = backgroundColor.disabled,
+    val disabledContentColor: Color = contentColor,
 ) {
     fun getBackgroundColor(enabled: Boolean): Color =
         if (enabled) backgroundColor else disabledBackgroundColor

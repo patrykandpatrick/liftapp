@@ -1,7 +1,5 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +7,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,17 +27,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.prettyString
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource.textFieldStateManager
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.text.DoubleTextFieldState
 import com.patrykandpatryk.liftapp.core.text.IntTextFieldState
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.LongTextFieldState
 import com.patrykandpatryk.liftapp.core.text.updateValueBy
+import com.patrykandpatryk.liftapp.core.ui.InfoCard
 import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
 import com.patrykandpatryk.liftapp.core.ui.input.InputSuggestion
@@ -126,19 +130,25 @@ private fun <T : ExerciseSet> Suggestions(
     onClick: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_suggestion),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-        )
+    LiftAppCard(modifier = modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_suggestion),
+                contentDescription = null,
+                tint = colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
+
+            Text(text = "Smart suggestions", style = MaterialTheme.typography.titleSmall)
+        }
 
         Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            modifier =
+                Modifier.padding(top = dimens.padding.itemVerticalSmall)
+                    .horizontalScroll(rememberScrollState()),
             horizontalArrangement =
                 Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
             verticalAlignment = Alignment.CenterVertically,
@@ -158,12 +168,13 @@ private fun <T : ExerciseSet> InputSuggestion(
 ) {
     InputSuggestion(
         text = suggestion.set.prettyString(),
-        icon =
+        label =
             when (suggestion.type) {
                 EditableExerciseSet.SetSuggestion.Type.PreviousSet ->
-                    painterResource(R.drawable.ic_previous_set)
+                    stringResource(R.string.workout_set_suggestion_previous_set)
+
                 EditableExerciseSet.SetSuggestion.Type.PreviousWorkout ->
-                    painterResource(R.drawable.ic_history)
+                    stringResource(R.string.workout_set_suggestion_previous_workout)
             },
         onClick = { onClick(suggestion.set) },
         modifier = modifier,
@@ -172,41 +183,13 @@ private fun <T : ExerciseSet> InputSuggestion(
 
 @Composable
 private fun BodyWeightInfo(bodyWeight: String, modifier: Modifier = Modifier) {
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .background(
-                    MaterialTheme.colorScheme.surfaceContainerLow,
-                    MaterialTheme.shapes.extraSmall,
-                )
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = MaterialTheme.shapes.extraSmall,
-                )
-                .padding(
-                    LocalDimens.current.padding.itemHorizontal,
-                    LocalDimens.current.padding.itemVerticalMedium,
-                ),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
-    ) {
-        Icon(
-            painterResource(R.drawable.ic_info),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Text(
-            text =
-                LocalMarkupProcessor.current.toAnnotatedString(
-                    stringResource(R.string.workout_calisthenics_set_body_weight, bodyWeight)
-                ),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+    InfoCard(
+        text =
+            LocalMarkupProcessor.current.toAnnotatedString(
+                stringResource(R.string.workout_calisthenics_set_body_weight, bodyWeight)
+            ),
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -296,77 +279,83 @@ private fun <T : ExerciseSet> SetEditorPreview(editableExerciseSet: EditableExer
 @LightAndDarkThemePreview
 @Composable
 private fun SetEditorWeightExercisePreview() {
-    val textFieldStateManager = textFieldStateManager()
-    SetEditorPreview(
-        editableExerciseSet =
-            EditableExerciseSet.Weight(
-                weight = 100.0,
-                reps = 10,
-                weightInput = textFieldStateManager.doubleTextField(initialValue = "100"),
-                repsInput = textFieldStateManager.intTextField(initialValue = "10"),
-                weightUnit = MassUnit.Kilograms,
-                suggestions =
-                    listOf(
-                        EditableExerciseSet.SetSuggestion(
-                            ExerciseSet.Weight(100.0, 12, MassUnit.Kilograms),
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    ),
-            )
-    )
+    PreviewTheme {
+        val textFieldStateManager = textFieldStateManager()
+        SetEditorPreview(
+            editableExerciseSet =
+                EditableExerciseSet.Weight(
+                    weight = 100.0,
+                    reps = 10,
+                    weightInput = textFieldStateManager.doubleTextField(initialValue = "100"),
+                    repsInput = textFieldStateManager.intTextField(initialValue = "10"),
+                    weightUnit = MassUnit.Kilograms,
+                    suggestions =
+                        listOf(
+                            EditableExerciseSet.SetSuggestion(
+                                ExerciseSet.Weight(100.0, 12, MassUnit.Kilograms),
+                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                            )
+                        ),
+                )
+        )
+    }
 }
 
 @LightAndDarkThemePreview
 @Composable
 private fun SetEditorCalisthenicsExercisePreview() {
-    val textFieldStateManager = textFieldStateManager()
-    SetEditorPreview(
-        editableExerciseSet =
-            EditableExerciseSet.Calisthenics(
-                bodyWeight = 80.0,
-                weight = 20.0,
-                reps = 10,
-                formattedBodyWeight = "80 kg",
-                weightInput = textFieldStateManager.doubleTextField(initialValue = "20"),
-                repsInput = textFieldStateManager.intTextField(initialValue = "10"),
-                weightUnit = MassUnit.Kilograms,
-                suggestions =
-                    listOf(
-                        EditableExerciseSet.SetSuggestion(
-                            ExerciseSet.Calisthenics(20.0, 80.0, 10, MassUnit.Kilograms),
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    ),
-            )
-    )
+    PreviewTheme {
+        val textFieldStateManager = textFieldStateManager()
+        SetEditorPreview(
+            editableExerciseSet =
+                EditableExerciseSet.Calisthenics(
+                    bodyWeight = 80.0,
+                    weight = 20.0,
+                    reps = 10,
+                    formattedBodyWeight = "80 kg",
+                    weightInput = textFieldStateManager.doubleTextField(initialValue = "20"),
+                    repsInput = textFieldStateManager.intTextField(initialValue = "10"),
+                    weightUnit = MassUnit.Kilograms,
+                    suggestions =
+                        listOf(
+                            EditableExerciseSet.SetSuggestion(
+                                ExerciseSet.Calisthenics(20.0, 80.0, 10, MassUnit.Kilograms),
+                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                            )
+                        ),
+                )
+        )
+    }
 }
 
 @LightAndDarkThemePreview
 @Composable
 private fun SetEditorTimeExercisePreview() {
-    val textFieldStateManager = textFieldStateManager()
-    SetEditorPreview(
-        editableExerciseSet =
-            EditableExerciseSet.Cardio(
-                duration = 1.hours + 30.minutes + 15.seconds,
-                durationInput = textFieldStateManager.longTextField(),
-                distance = 5.0,
-                distanceInput = textFieldStateManager.doubleTextField(initialValue = "5"),
-                distanceUnit = LongDistanceUnit.Kilometer,
-                kcal = 458.0,
-                kcalInput = textFieldStateManager.doubleTextField(initialValue = "458"),
-                suggestions =
-                    listOf(
-                        EditableExerciseSet.SetSuggestion(
-                            ExerciseSet.Cardio(
-                                1.hours + 30.minutes + 10.seconds,
-                                4.75,
-                                432.0,
-                                LongDistanceUnit.Kilometer,
-                            ),
-                            EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                        )
-                    ),
-            )
-    )
+    PreviewTheme {
+        val textFieldStateManager = textFieldStateManager()
+        SetEditorPreview(
+            editableExerciseSet =
+                EditableExerciseSet.Cardio(
+                    duration = 1.hours + 30.minutes + 15.seconds,
+                    durationInput = textFieldStateManager.longTextField(),
+                    distance = 5.0,
+                    distanceInput = textFieldStateManager.doubleTextField(initialValue = "5"),
+                    distanceUnit = LongDistanceUnit.Kilometer,
+                    kcal = 458.0,
+                    kcalInput = textFieldStateManager.doubleTextField(initialValue = "458"),
+                    suggestions =
+                        listOf(
+                            EditableExerciseSet.SetSuggestion(
+                                ExerciseSet.Cardio(
+                                    1.hours + 30.minutes + 10.seconds,
+                                    4.75,
+                                    432.0,
+                                    LongDistanceUnit.Kilometer,
+                                ),
+                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                            )
+                        ),
+                )
+        )
+    }
 }

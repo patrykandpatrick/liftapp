@@ -36,6 +36,10 @@ sealed interface Action {
 
     data class UpdateWorkoutNotes(val notes: TextFieldState<String>) : Action
 
+    data class AddSet(val exercise: EditableWorkout.Exercise) : Action
+
+    data class RemoveSet(val exercise: EditableWorkout.Exercise) : Action
+
     data object PopBackStack : Action
 }
 

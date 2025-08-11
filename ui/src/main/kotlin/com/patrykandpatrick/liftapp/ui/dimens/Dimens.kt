@@ -160,13 +160,9 @@ data class Dimens(
 
     @Immutable
     data class Stepper(
-        val stepSize: Dp = 48.dp,
-        val stepBorderWidth: Dp = 2.dp,
-        val stepBorderPadding: Dp = 6.dp,
-        val stepIconSize: Dp = 20.dp,
-        val stepLabelPadding: Dp = 8.dp,
-        val connectorWidth: Dp = 20.dp,
-        val connectorHeight: Dp = 2.dp,
+        val stepBorderPaddingVertical: Dp = 6.dp,
+        val stepBorderPaddingHorizontal: Dp = 10.dp,
+        val stepIconSize: Dp = 12.dp,
         val spacing: Dp = 4.dp,
     )
 

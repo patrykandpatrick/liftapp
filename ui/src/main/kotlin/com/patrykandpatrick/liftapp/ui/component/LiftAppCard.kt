@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -53,6 +54,7 @@ fun LiftAppCard(
     shape: Shape = MaterialTheme.shapes.medium,
     interactionSource: MutableInteractionSource? = null,
     role: Role? = null,
+    minSize: DpSize = DpSize(0.dp, dimens.button.minContentHeight),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     CardBase(
@@ -77,7 +79,7 @@ fun LiftAppCard(
                     .padding(contentPadding)
                     .align(Alignment.Center)
                     .fillMaxSize()
-                    .heightIn(min = dimens.button.minContentHeight),
+                    .defaultMinSize(minSize.width, minSize.height),
             content = content,
         )
     }
@@ -120,7 +122,7 @@ object LiftAppCardDefaults {
                         hoverForegroundColor = colorScheme.primary,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.primaryContainer,
+                disabledContentColor = colorScheme.onPrimaryDisabled,
             )
 
     val tonalCardColors: ContainerColors
@@ -136,7 +138,7 @@ object LiftAppCardDefaults {
                         hoverForegroundColor = colorScheme.onPrimaryOutline,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.primaryContainer,
+                disabledContentColor = colorScheme.onPrimaryDisabled,
             )
 
     val outlinedColors: ContainerColors
@@ -152,7 +154,7 @@ object LiftAppCardDefaults {
                         hoverForegroundColor = colorScheme.primary,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.primaryContainer,
+                disabledContentColor = colorScheme.onPrimaryDisabled,
             )
 
     val deselectedColors: ContainerColors

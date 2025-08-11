@@ -91,6 +91,8 @@ constructor(
                 updateWorkoutStartDateTime(action.date, action.time)
             is Action.UpdateWorkoutEndDateTime -> updateWorkoutEndDateTime(action.date, action.time)
             is Action.UpdateWorkoutNotes -> updateWorkoutNotes(action.notes)
+            is Action.AddSet -> updateSetCount(exercise = action.exercise, delta = 1)
+            is Action.RemoveSet -> updateSetCount(exercise = action.exercise, delta = -1)
             is Action.PopBackStack -> popBackStack()
         }
     }
@@ -119,12 +121,10 @@ constructor(
         viewModelScope.launch { customPage.emit(page) }
     }
 
-    fun increaseSetCount(exercise: EditableWorkout.Exercise) {
-        viewModelScope.launch { upsertGoalSets(getWorkout().id, exercise, 1) }
-    }
-
-    fun decreaseSetCount(exercise: EditableWorkout.Exercise) {
-        viewModelScope.launch { upsertGoalSets(getWorkout().id, exercise, -1) }
+    private fun updateSetCount(exercise: EditableWorkout.Exercise, delta: Int) {
+        viewModelScope.launch {
+            upsertGoalSets(getWorkout().id, exercise, exercise.sets.size + delta)
+        }
     }
 
     private suspend fun getWorkout(): EditableWorkout = workout.filterNotNull().first()
