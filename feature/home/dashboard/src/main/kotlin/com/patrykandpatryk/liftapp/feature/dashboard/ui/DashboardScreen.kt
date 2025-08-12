@@ -29,12 +29,17 @@ import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.increaseBy
 import com.patrykandpatryk.liftapp.core.model.Unfold
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
 import com.patrykandpatryk.liftapp.core.ui.routine.RestCard
 import com.patrykandpatryk.liftapp.core.ui.routine.RoutineCard
+import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.feature.dashboard.model.Action
 import com.patrykandpatryk.liftapp.feature.dashboard.model.DashboardState
 import com.patrykandpatryk.liftapp.feature.dashboard.model.PlanScheduleItem
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -42,8 +47,22 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val loadableState = viewModel.state.collectAsState().value
+
+    DashboardScreen(
+        loadableState = loadableState,
+        onAction = viewModel::onAction,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun DashboardScreen(
+    loadableState: Loadable<DashboardState>,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LiftAppScaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -58,7 +77,7 @@ fun DashboardScreen(
         loadableState.Unfold { state ->
             Content(
                 state = state,
-                onAction = viewModel::onAction,
+                onAction = onAction,
                 contentPadding =
                     paddingValues.increaseBy(
                         horizontal = LocalDimens.current.padding.contentHorizontal,
@@ -80,11 +99,11 @@ private fun Content(
         verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemVertical),
         modifier = Modifier.fillMaxSize(),
     ) {
-        item {
+        item(key = "days_of_week") {
             DaysOfWeek(dateItems = state.dayItems, onClick = { onAction(Action.SelectDate(it)) })
         }
 
-        item {
+        item(key = "selected_date") {
             val datePattern = stringResource(R.string.date_format_long)
             val dateFormatter = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
             AnimatedContent(
@@ -233,4 +252,27 @@ private fun RoutinePlanItem(
             },
         )
     }
+}
+
+@MultiDevicePreview
+@Composable
+private fun DashboardScreenPreview() {
+    PreviewTheme {
+        DashboardScreen(loadableState = Loadable.Success(getPreviewDashboardState()), onAction = {})
+    }
+}
+
+private fun getPreviewDashboardState(): DashboardState {
+    val today = LocalDate.now()
+    return DashboardState(
+        dayItems = DashboardViewModel.getWeekDays(today),
+        selectedDate = today,
+        activeWorkouts = emptyList(),
+        pastWorkouts = emptyList(),
+        planScheduleItem =
+            PlanScheduleItem.Routine(
+                routine = PreviewRoutineWithExercises.routines.first(),
+                workout = null,
+            ),
+    )
 }

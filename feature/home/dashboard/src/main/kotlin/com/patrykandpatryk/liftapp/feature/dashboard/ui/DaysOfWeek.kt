@@ -1,8 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.dashboard.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
+import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.component.animateContainerColorsAsState
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatrick.liftapp.ui.theme.PillShape
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.feature.dashboard.model.DashboardState
 import java.time.LocalDate
@@ -40,7 +40,7 @@ internal fun DaysOfWeek(
     onClick: (LocalDate) -> Unit,
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
         modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
     ) {
         dateItems.forEach { dateItem ->
@@ -72,27 +72,33 @@ internal fun DayOfWeek(
                 )
                 .value,
         horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = PaddingValues(vertical = dimens.padding.itemVerticalSmall),
+        contentPadding = PaddingValues(vertical = dimens.padding.itemVerticalMedium),
+        shape = CircleShape,
+        verticalArrangement = Arrangement.Center,
         modifier = modifier,
     ) {
         Text(
             text = date.dayOfWeek.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.labelLarge,
+            color = colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(top = 4.dp),
         )
+        Column(modifier = Modifier.width(IntrinsicSize.Min)) {
+            Text(
+                text = date.dayOfMonth.toString(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+            )
 
-        Box(
-            modifier =
-                Modifier.graphicsLayer { alpha = if (isToday) 1f else 0f }
-                    .background(color = colorScheme.onPrimaryOutline, shape = PillShape)
-                    .size(8.dp)
-        )
-
-        Text(
-            text = date.dayOfMonth.toString(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleLarge,
-        )
+            SinHorizontalDivider(
+                sinHeight = 4.dp,
+                sinPeriodLength = 1.5.dp,
+                color = colorScheme.onSurfaceVariant,
+                thickness = dimens.button.underlineWidth,
+                modifier = Modifier.graphicsLayer { alpha = if (isToday) 1f else 0f },
+            )
+        }
     }
 }
 

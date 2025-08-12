@@ -18,15 +18,12 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
-import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
-import com.patrykandpatryk.liftapp.domain.goal.Goal
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.plan.Plan
-import com.patrykandpatryk.liftapp.domain.routine.RoutineExerciseItem
-import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 import java.time.LocalDate
 
 @Composable
@@ -91,38 +88,11 @@ internal val previewActivePlanState: PlanState.ActivePlan
                     description = "",
                     items =
                         listOf(
-                            Plan.Item.Routine(
-                                RoutineWithExercises(
-                                    id = 1,
-                                    name = "Push",
-                                    exercises = exercisesPreview,
-                                    primaryMuscles = emptyList(),
-                                    secondaryMuscles = emptyList(),
-                                    tertiaryMuscles = emptyList(),
-                                )
-                            ),
+                            Plan.Item.Routine(PreviewRoutineWithExercises.routines[0]),
                             Plan.Item.Rest,
-                            Plan.Item.Routine(
-                                RoutineWithExercises(
-                                    id = 2,
-                                    name = "Pull",
-                                    exercises = exercisesPreview,
-                                    primaryMuscles = emptyList(),
-                                    secondaryMuscles = emptyList(),
-                                    tertiaryMuscles = emptyList(),
-                                )
-                            ),
+                            Plan.Item.Routine(PreviewRoutineWithExercises.routines[1]),
                             Plan.Item.Rest,
-                            Plan.Item.Routine(
-                                RoutineWithExercises(
-                                    id = 3,
-                                    name = "Legs",
-                                    exercises = exercisesPreview,
-                                    primaryMuscles = emptyList(),
-                                    secondaryMuscles = emptyList(),
-                                    tertiaryMuscles = emptyList(),
-                                )
-                            ),
+                            Plan.Item.Routine(PreviewRoutineWithExercises.routines[2]),
                             Plan.Item.Rest,
                         ),
                 ),
@@ -131,13 +101,6 @@ internal val previewActivePlanState: PlanState.ActivePlan
             currentPlanItemIndex = 2,
             cycleDates = PlanState.getAllCycleDates(LocalDate.now().minusDays(7), 6, 6L),
         )
-
-private val exercisesPreview =
-    listOf(
-        RoutineExerciseItem(0L, "Bench Press", "Chest", ExerciseType.Weight, Goal.default),
-        RoutineExerciseItem(1L, "Squat", "Legs", ExerciseType.Weight, Goal.default),
-        RoutineExerciseItem(2L, "Deadlift", "Back", ExerciseType.Weight, Goal.default),
-    )
 
 @MultiDevicePreview
 @Composable
