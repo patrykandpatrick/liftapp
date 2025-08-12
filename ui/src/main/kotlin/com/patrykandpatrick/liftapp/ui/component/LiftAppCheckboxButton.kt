@@ -40,7 +40,7 @@ import com.patrykandpatrick.liftapp.ui.theme.disabled
 @Composable
 fun LiftAppCheckbox(
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     colors: LiftAppCheckboxColors = LiftAppCheckboxDefaults.primaryColors,
@@ -86,12 +86,19 @@ fun LiftAppCheckbox(
     Canvas(
         modifier =
             modifier
-                .selectable(
-                    selected = checked,
-                    enabled = enabled,
-                    role = Role.RadioButton,
-                    onClick = { onCheckedChange(!checked) },
-                    interactionSource = interactionSource ?: remember { MutableInteractionSource() },
+                .then(
+                    if (onCheckedChange != null) {
+                        Modifier.selectable(
+                            selected = checked,
+                            enabled = enabled,
+                            role = Role.RadioButton,
+                            onClick = { onCheckedChange(!checked) },
+                            interactionSource =
+                                interactionSource ?: remember { MutableInteractionSource() },
+                        )
+                    } else {
+                        Modifier
+                    }
                 )
                 .defaultMinSize(checkboxSize, checkboxSize)
     ) {

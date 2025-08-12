@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -44,6 +42,7 @@ import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.component.ContainerColors
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
 import com.patrykandpatrick.liftapp.ui.component.StatefulContainerColors
 import com.patrykandpatrick.liftapp.ui.component.animateContainerColorsAsState
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
@@ -294,15 +293,9 @@ object ListItemDefaults {
 
     @Composable
     fun Checkbox(checked: Boolean, modifier: Modifier = Modifier) {
-        Checkbox(
+        LiftAppCheckbox(
             checked = checked,
             onCheckedChange = null,
-            colors =
-                CheckboxDefaults.colors(
-                    checkedColor = colorScheme.primary,
-                    uncheckedColor = colorScheme.onSurface,
-                    checkmarkColor = colorScheme.onPrimary,
-                ),
             modifier = modifier.padding(horizontal = dimens.padding.itemHorizontalSmall),
         )
     }
