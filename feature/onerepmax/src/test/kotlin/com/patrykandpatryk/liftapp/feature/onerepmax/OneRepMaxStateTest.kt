@@ -1,6 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.onerepmax
 
 import androidx.lifecycle.SavedStateHandle
+import com.patrykandpatryk.liftapp.domain.exerciseset.OneRepMaxCalculator
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.testing.TestStringProvider
@@ -35,24 +36,24 @@ class OneRepMaxStateTest {
     @Test
     fun `Given just mass is updated, 1RM is not calculated`() {
         sut.updateMass("100")
-        assertEquals(formatter.formatWeight(0f, MassUnit.Kilograms), sut.oneRepMax.value)
+        assertEquals(formatter.formatWeight(0.0, MassUnit.Kilograms), sut.oneRepMax.value)
     }
 
     @Test
     fun `Given just reps is updated, 1RM is not calculated`() {
         sut.updateReps("5")
-        assertEquals(formatter.formatWeight(0f, MassUnit.Kilograms), sut.oneRepMax.value)
+        assertEquals(formatter.formatWeight(0.0, MassUnit.Kilograms), sut.oneRepMax.value)
     }
 
     @Test
     fun `Given both mass and reps are updated, 1RM is calculated`() {
-        val mass = 100f
+        val mass = 100.0
         val reps = 5
         sut.updateMass(mass.toString())
         sut.updateReps(reps.toString())
         assertEquals(
             formatter.formatWeight(
-                OneRepMaxState.calculateOneRepMax(mass, reps),
+                OneRepMaxCalculator.getOneRepMax(mass, reps),
                 MassUnit.Kilograms,
             ),
             sut.oneRepMax.value,

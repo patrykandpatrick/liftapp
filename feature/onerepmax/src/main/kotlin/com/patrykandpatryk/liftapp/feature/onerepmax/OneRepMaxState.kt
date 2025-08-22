@@ -5,8 +5,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
-import com.patrykandpatryk.liftapp.core.extension.smartToFloatOrNull
+import com.patrykandpatryk.liftapp.core.extension.smartToDoubleOrNull
 import com.patrykandpatryk.liftapp.core.extension.update
+import com.patrykandpatryk.liftapp.domain.exerciseset.OneRepMaxCalculator
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.unit.GetPreferredMassUnitUseCase
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
@@ -32,20 +33,20 @@ import kotlinx.coroutines.launch
 class OneRepMaxState(
     getMassUnit: () -> Flow<MassUnit>,
     private val savedStateHandle: SavedStateHandle,
-    private val formatWeight: (Float, MassUnit) -> String,
+    private val formatWeight: (Double, MassUnit) -> String,
     private val coroutineScope: CoroutineScope,
 ) {
     private val _mass: MutableState<String> = mutableStateOf("")
 
     private val _reps: MutableState<String> = mutableStateOf("")
 
-    private val massValue = MutableStateFlow(0f)
+    private val massValue = MutableStateFlow(0.0)
 
     private val repsValue = MutableStateFlow(0)
 
     private val oneRepMaxValue =
-        combine(massValue, repsValue, ::calculateOneRepMax)
-            .stateIn(coroutineScope, SharingStarted.Eagerly, 0f)
+        combine(massValue, repsValue, OneRepMaxCalculator::getOneRepMax)
+            .stateIn(coroutineScope, SharingStarted.Eagerly, 0.0)
 
     private var historyUpdateJob: Job? = null
 
@@ -94,8 +95,8 @@ class OneRepMaxState(
     fun updateMass(mass: String) {
         massValue.value =
             when {
-                mass.isEmpty() -> 0f
-                else -> mass.smartToFloatOrNull() ?: return
+                mass.isEmpty() -> 0.0
+                else -> mass.smartToDoubleOrNull() ?: return
             }
 
         _mass.value = mass
@@ -108,7 +109,7 @@ class OneRepMaxState(
 
     private fun addToHistory() {
         historyUpdateJob?.cancel()
-        if (oneRepMaxValue.value == 0f) return
+        if (oneRepMaxValue.value == 0.0) return
         val historyEntry =
             HistoryEntryModel(
                 reps = repsValue.value,
@@ -139,14 +140,6 @@ class OneRepMaxState(
 
     companion object {
         internal const val HISTORY_KEY = "history"
-        private const val EPLEY_REP_COUNT_DIVISOR = 30f
         private const val HISTORY_UPDATE_DELAY = 1000L
-
-        fun calculateOneRepMax(mass: Float, reps: Int) =
-            when {
-                reps == 0 || mass == 0f -> 0f
-                reps == 1 -> mass
-                else -> mass * (1f + reps.toFloat() / EPLEY_REP_COUNT_DIVISOR)
-            }
     }
 }

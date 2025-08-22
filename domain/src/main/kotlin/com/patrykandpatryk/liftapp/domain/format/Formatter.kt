@@ -36,7 +36,7 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: F
 
     private val decimalNumberRegex = """-?\d+${decimalSymbols.decimalSeparator}?\d*""".toRegex()
 
-    private suspend fun formatDate(localDateTime: LocalDateTime, dateFormat: DateFormat): String =
+    suspend fun formatDate(localDateTime: LocalDateTime, dateFormat: DateFormat): String =
         localDateTime.format(DateTimeFormatter.ofPattern(dateFormat.getPattern()))
 
     private suspend fun DateFormat.getPattern(): String =
@@ -84,7 +84,7 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: F
             }
         }
 
-    fun formatWeight(weight: Float, massUnit: MassUnit): String =
+    fun formatWeight(weight: Double, massUnit: MassUnit): String =
         "${formatNumber(weight, format = NumberFormat.Decimal)}${stringProvider.getDisplayUnit(massUnit)}"
 
     fun toDoubleOrNull(value: String): Double? =
