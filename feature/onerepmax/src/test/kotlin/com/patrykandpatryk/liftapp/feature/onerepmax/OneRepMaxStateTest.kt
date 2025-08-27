@@ -8,6 +8,7 @@ import com.patrykandpatryk.liftapp.testing.TestStringProvider
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -19,7 +20,7 @@ class OneRepMaxStateTest {
 
     private val testScheduler = TestCoroutineScheduler()
 
-    private val formatter = Formatter(TestStringProvider, flowOf(true))
+    private val formatter = Formatter(TestStringProvider, MutableStateFlow(true))
 
     private val coroutineContext = UnconfinedTestDispatcher(testScheduler)
 

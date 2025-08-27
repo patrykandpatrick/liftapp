@@ -29,6 +29,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -46,7 +47,7 @@ class NewBodyMeasurementStateTest {
 
     private val testScheduler = TestCoroutineScheduler()
 
-    private val formatter = Formatter(TestStringProvider, flowOf(true))
+    private val formatter = Formatter(TestStringProvider, MutableStateFlow(true))
 
     private val savedStateHandle = SavedStateHandle()
 

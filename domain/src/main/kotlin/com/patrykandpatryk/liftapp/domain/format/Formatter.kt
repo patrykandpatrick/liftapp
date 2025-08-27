@@ -14,10 +14,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.StateFlow
 
-class Formatter(private val stringProvider: StringProvider, private val is24H: Flow<Boolean>) {
+class Formatter(private val stringProvider: StringProvider, private val is24H: StateFlow<Boolean>) {
     @Inject
     constructor(
         stringProvider: StringProvider,
@@ -36,10 +35,10 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: F
 
     private val decimalNumberRegex = """-?\d+${decimalSymbols.decimalSeparator}?\d*""".toRegex()
 
-    suspend fun formatDate(localDateTime: LocalDateTime, dateFormat: DateFormat): String =
+    fun formatDate(localDateTime: LocalDateTime, dateFormat: DateFormat): String =
         localDateTime.format(DateTimeFormatter.ofPattern(dateFormat.getPattern()))
 
-    private suspend fun DateFormat.getPattern(): String =
+    private fun DateFormat.getPattern(): String =
         when (this) {
             DateFormat.MinutesSeconds -> MINUTES_SECONDS
             DateFormat.HoursMinutes -> if (is24H()) HOURS_MINUTES_24H else HOURS_MINUTES_12H
@@ -51,7 +50,7 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: F
             DateFormat.DateEdit -> stringProvider.dateFormatEdit
         }
 
-    suspend fun getFormattedDate(localDateTime: LocalDateTime): FormattedDate =
+    fun getFormattedDate(localDateTime: LocalDateTime): FormattedDate =
         FormattedDate(
             formatDate(localDateTime, DateFormat.DateShort),
             formatDate(localDateTime, DateFormat.DateLong),
@@ -60,11 +59,11 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: F
             localDateTime,
         )
 
-    suspend fun getFormattedDuration(duration: Duration, dateFormat: DateFormat): String =
+    fun getFormattedDuration(duration: Duration, dateFormat: DateFormat): String =
         SimpleDateFormat(dateFormat.getPattern(), Locale.getDefault())
             .format(duration.inWholeMilliseconds)
 
-    suspend fun is24H(): Boolean = is24H.first()
+    fun is24H(): Boolean = is24H.value
 
     fun formatNumber(
         vararg numbers: Number,
@@ -101,7 +100,7 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: F
     fun round(value: Double): Double =
         decimalInputFormat.parse(decimalInputFormat.format(value)).toDouble()
 
-    suspend fun getLocalTimeFormatter(): DateTimeFormatter =
+    fun getLocalTimeFormatter(): DateTimeFormatter =
         DateTimeFormatter.ofPattern(if (is24H()) HOURS_MINUTES_24H else HOURS_MINUTES_12H)
 
     enum class DateFormat {

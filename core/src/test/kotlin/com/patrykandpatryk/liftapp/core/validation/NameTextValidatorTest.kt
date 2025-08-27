@@ -10,7 +10,7 @@ import com.patrykandpatryk.liftapp.testing.TestStringProvider
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Test
 
 private const val BASE_NAME = "A name"
@@ -20,7 +20,7 @@ class NameTextValidatorTest {
     private val textFieldStateManager =
         TextFieldStateManager(
             stringProvider,
-            Formatter(stringProvider, flowOf(false)),
+            Formatter(stringProvider, MutableStateFlow(false)),
             SavedStateHandle(),
         )
     private val textField =

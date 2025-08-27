@@ -52,6 +52,7 @@ import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
+import com.patrykandpatryk.liftapp.core.format.LocalFormatter
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.rememberDefaultMarkupProcessor
@@ -97,7 +98,10 @@ fun Root(
     LiftAppTheme(darkTheme = darkTheme) {
         val markupProcessor = rememberDefaultMarkupProcessor()
 
-        CompositionLocalProvider(LocalMarkupProcessor provides markupProcessor) {
+        CompositionLocalProvider(
+            LocalMarkupProcessor provides markupProcessor,
+            LocalFormatter provides viewModel.formatter,
+        ) {
             ModalBottomSheetLayout(
                 bottomSheetNavigator = bottomSheetNavigator,
                 sheetShape = BottomSheetShape,

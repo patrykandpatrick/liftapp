@@ -10,6 +10,7 @@ import com.patrykandpatrick.opto.core.PreferenceImpl
 import com.patrykandpatrick.opto.core.PreferenceManager
 import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
+import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
@@ -18,9 +19,15 @@ import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import javax.inject.Inject
+import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.encodeToString
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.json.Json
 
 private const val KEY_MASS_UNIT = "mass_unit"
@@ -29,14 +36,17 @@ private const val KEY_HOUR_FORMAT = "hour_format"
 private const val KEY_GOAL_INFO_VISIBLE = "goal_info_visible"
 private const val KEY_ACTIVE_PLAN_ID = "active_plan_id"
 
+@Singleton
 class PreferenceRepositoryImpl
 @Inject
 constructor(
     override val dataStore: DataStore<Preferences>,
     private val application: Application,
     private val json: Json,
+    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
 ) : PreferenceRepository, PreferenceManager {
 
+    private val coroutineScope = CoroutineScope(dispatcher + SupervisorJob())
     override val massUnit = enumPreference(KEY_MASS_UNIT, MassUnit.Kilograms)
 
     override val longDistanceUnit = enumPreference(KEY_DISTANCE_UNIT, LongDistanceUnit.Kilometer)
@@ -64,15 +74,17 @@ constructor(
             deserialize = { json.decodeFromString(it) },
         )
 
-    override val is24H: Flow<Boolean>
-        get() =
-            hourFormat.get().map { preferenceHourFormat ->
+    override val is24H: StateFlow<Boolean> =
+        hourFormat
+            .get()
+            .map { preferenceHourFormat ->
                 when (preferenceHourFormat) {
                     HourFormat.Auto -> DateFormat.is24HourFormat(application)
                     HourFormat.H12 -> false
                     HourFormat.H24 -> true
                 }
             }
+            .stateIn(coroutineScope, SharingStarted.Eagerly, getDefaultIs24H())
 
     override val allPreferences =
         dataStore.data.map { preferences ->
@@ -86,6 +98,8 @@ constructor(
                 hourFormat = hourFormat.get(preferences),
             )
         }
+
+    private fun getDefaultIs24H(): Boolean = DateFormat.is24HourFormat(application)
 }
 
 private inline fun <reified E : Enum<E>> PreferenceManager.enumPreference(

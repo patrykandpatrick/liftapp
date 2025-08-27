@@ -27,6 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -42,7 +43,7 @@ class NewRoutineViewModelTest {
 
     private val coroutineScope = CoroutineScope(coroutineContext)
 
-    private val formatter = Formatter(TestStringProvider, flowOf(true))
+    private val formatter = Formatter(TestStringProvider, MutableStateFlow(true))
 
     private val savedStateHandle = SavedStateHandle()
 

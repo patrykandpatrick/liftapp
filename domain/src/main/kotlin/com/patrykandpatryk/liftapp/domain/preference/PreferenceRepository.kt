@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface PreferenceRepository {
 
@@ -21,7 +22,7 @@ interface PreferenceRepository {
 
     val activePlan: Preference<ActivePlan?>
 
-    val is24H: Flow<Boolean>
+    val is24H: StateFlow<Boolean>
 
     val allPreferences: Flow<AllPreferences>
 }

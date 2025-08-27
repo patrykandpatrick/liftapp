@@ -9,13 +9,20 @@ import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class TestPreferenceRepository : PreferenceRepository {
+class TestPreferenceRepository(
+    coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext)
+) : PreferenceRepository {
 
     override val massUnit: Preference<MassUnit> = preference(MassUnit.Kilograms)
 
@@ -34,14 +41,17 @@ class TestPreferenceRepository : PreferenceRepository {
 
     override val hourFormat: Preference<HourFormat> = preference(HourFormat.H24)
 
-    override val is24H: Flow<Boolean> =
-        hourFormat.get().map { hourFormat ->
-            when (hourFormat) {
-                HourFormat.H12 -> false
-                HourFormat.Auto,
-                HourFormat.H24 -> true
+    override val is24H: StateFlow<Boolean> =
+        hourFormat
+            .get()
+            .map { hourFormat ->
+                when (hourFormat) {
+                    HourFormat.H12 -> false
+                    HourFormat.Auto,
+                    HourFormat.H24 -> true
+                }
             }
-        }
+            .stateIn(coroutineScope, SharingStarted.Eagerly, true)
 
     override val goalInfoVisible: Preference<Boolean> = preference(true)
 

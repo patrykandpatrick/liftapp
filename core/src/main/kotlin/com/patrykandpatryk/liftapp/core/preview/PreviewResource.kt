@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.opto.domain.Preference
+import com.patrykandpatryk.liftapp.core.format.LocalFormatter
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.StringProviderImpl
 import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
@@ -16,7 +17,6 @@ import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 
 object PreviewResource {
@@ -30,7 +30,7 @@ object PreviewResource {
     @Composable
     fun formatter(is24H: Boolean = true): Formatter {
         val stringProvider = stringProvider
-        return remember(is24H) { Formatter(stringProvider, flowOf(is24H)) }
+        return remember(is24H) { Formatter(stringProvider, MutableStateFlow(is24H)) }
     }
 
     @Composable
@@ -66,6 +66,7 @@ fun PreviewTheme(content: @Composable () -> Unit) {
         LiftAppBackground {
             CompositionLocalProvider(
                 LocalMarkupProcessor provides rememberDefaultMarkupProcessor(),
+                LocalFormatter provides PreviewResource.formatter(),
                 content = content,
             )
         }
