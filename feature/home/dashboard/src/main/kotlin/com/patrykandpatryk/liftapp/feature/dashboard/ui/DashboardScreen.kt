@@ -104,7 +104,7 @@ private fun Content(
         }
 
         item(key = "selected_date") {
-            val datePattern = stringResource(R.string.date_format_long)
+            val datePattern = stringResource(R.string.date_weekday_day_month)
             val dateFormatter = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
             AnimatedContent(
                 targetState = dateFormatter.format(state.selectedDate),

@@ -1,9 +1,9 @@
 package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
-import com.patrykandpatryk.liftapp.domain.format.FormattedDate
+import java.time.LocalDateTime
 
 data class BodyMeasurementEntry(
     val id: Long,
     val value: BodyMeasurementValue,
-    val formattedDate: FormattedDate,
+    val localDateTime: LocalDateTime,
 )

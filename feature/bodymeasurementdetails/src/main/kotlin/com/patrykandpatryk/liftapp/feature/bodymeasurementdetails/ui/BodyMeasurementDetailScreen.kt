@@ -58,6 +58,7 @@ import com.patrykandpatryk.liftapp.core.chart.rememberLine
 import com.patrykandpatryk.liftapp.core.chart.rememberStartAxisValueFormatter
 import com.patrykandpatryk.liftapp.core.chart.rememberTextComponent
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
+import com.patrykandpatryk.liftapp.core.format.format
 import com.patrykandpatryk.liftapp.core.isCompactWidth
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
@@ -67,9 +68,11 @@ import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
+import com.patrykandpatryk.liftapp.domain.format.Formatter
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.Action
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.ScreenState
+import java.time.LocalDate
 import kotlinx.coroutines.runBlocking
 
 @Composable
@@ -175,7 +178,7 @@ private fun LazyListScope.journalItems(
         ListItem(
             title = { Text(entry.value) },
             modifier = Modifier.animateItem(),
-            description = { Text(entry.date) },
+            description = { Text(entry.date.format(Formatter.DateFormat.WeekdayDayMonth)) },
             paddingValues =
                 PaddingValues(
                     horizontal = dimens.padding.contentHorizontal,
@@ -271,7 +274,7 @@ private fun BodyMeasurementDetailScreenPreview() {
                                     ScreenState.Entry(
                                         index.toLong(),
                                         "$weight kg",
-                                        "${index + 1} January",
+                                        LocalDate.now().withDayOfMonth(index + 1).atStartOfDay(),
                                     )
                                 }
                                 .reversed(),

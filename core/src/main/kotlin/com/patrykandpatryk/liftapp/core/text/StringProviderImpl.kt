@@ -22,20 +22,23 @@ class StringProviderImpl @Inject constructor(private val context: Context) : Str
     override val list: String
         get() = string(string.generic_list)
 
-    override val dateFormatShort: String
-        get() = string(string.date_format_short)
+    override val dateFormatDay: String
+        get() = string(string.date_day)
 
-    override val dateFormatLong: String
-        get() = string(string.date_format_long)
+    override val dateFormatDayMonth: String
+        get() = string(string.date_day_month)
+
+    override val dateFormatWeekdayDayMonth: String
+        get() = string(string.date_weekday_day_month)
 
     override val errorMustBeHigherThanZero: String
         get() = string(string.error_must_be_higher_than_zero)
 
-    override val dateFormatFull: String
-        get() = string(string.date_format_full)
+    override val dateFormatDayMonthYear: String
+        get() = string(string.date_day_month_year)
 
-    override val dateFormatEdit: String
-        get() = string(string.date_format_edit)
+    override val dateWeekdayDayMonthYear: String
+        get() = string(string.date_weekday_day_month_year)
 
     override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
         string(unit.stringResourceId).let { displayUnit ->
@@ -78,8 +81,8 @@ class StringProviderImpl @Inject constructor(private val context: Context) : Str
     override fun fieldMustBeHigherOrEqualTo(value: String): String =
         string(string.error_must_be_higher_than_or_equal_to, value)
 
-    override fun doesNotEqual(actual: String, expected: String): String =
-        string(string.error_does_not_equal, actual, expected)
+    override fun doesNotEqual(formula: String, actual: String): String =
+        string(string.error_does_not_equal, formula, actual)
 
     private fun string(@StringRes id: Int, vararg formatArgs: Any): String =
         if (formatArgs.isNotEmpty()) context.getString(id, *formatArgs) else context.getString(id)

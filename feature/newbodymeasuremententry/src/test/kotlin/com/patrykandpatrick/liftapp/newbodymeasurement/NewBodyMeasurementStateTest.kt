@@ -70,11 +70,11 @@ class NewBodyMeasurementStateTest {
             latestEntry = null,
         )
 
-    private suspend fun getLatestEntry() =
+    private fun getLatestEntry() =
         BodyMeasurementEntry(
             id = 1,
             value = BodyMeasurementValue.SingleValue(75.0, MassUnit.Kilograms),
-            formattedDate = formatter.getFormattedDate(LocalDateTime.now()),
+            localDateTime = LocalDateTime.now(),
         )
 
     private val coroutineScope = CoroutineScope(UnconfinedTestDispatcher(testScheduler))
@@ -85,7 +85,6 @@ class NewBodyMeasurementStateTest {
         upsertBodyMeasurementEntry: UpsertBodyMeasurementUseCase =
             UpsertBodyMeasurementUseCase { _, _, _, _ ->
             },
-        coroutineScope: CoroutineScope = this.coroutineScope,
     ): NewBodyMeasurementEntryViewModel =
         NewBodyMeasurementEntryViewModel(
             routeData =

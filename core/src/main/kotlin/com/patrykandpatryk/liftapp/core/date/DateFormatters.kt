@@ -1,10 +1,12 @@
 package com.patrykandpatryk.liftapp.core.date
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.format.format
+import com.patrykandpatryk.liftapp.domain.format.Formatter
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun formatDateRange(startDate: LocalDate, endDate: LocalDate): String {
@@ -13,18 +15,18 @@ fun formatDateRange(startDate: LocalDate, endDate: LocalDate): String {
 
     val separator = stringResource(R.string.date_range_format_separator)
 
-    val startFormatter: DateTimeFormatter
-    val endFormatter: DateTimeFormatter
+    val startFormatter: Formatter.DateFormat
+    val endFormatter: Formatter.DateFormat
 
     val dayPattern = stringResource(R.string.date_range_format_day)
     val dayMonthPattern = stringResource(R.string.date_range_format_day_month)
 
     if (sameMonth && sameYear) {
-        startFormatter = DateTimeFormatter.ofPattern(dayPattern)
-        endFormatter = DateTimeFormatter.ofPattern(dayMonthPattern)
+        startFormatter = dayFormat
+        endFormatter = dayMonthFormat
     } else {
-        startFormatter = DateTimeFormatter.ofPattern(dayMonthPattern)
-        endFormatter = DateTimeFormatter.ofPattern(dayMonthPattern)
+        startFormatter = dayMonthFormat
+        endFormatter = dayMonthFormat
     }
 
     return "${startDate.format(startFormatter)}$separator${endDate.format(endFormatter)}"

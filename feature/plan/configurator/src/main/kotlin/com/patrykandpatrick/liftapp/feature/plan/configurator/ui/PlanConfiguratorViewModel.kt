@@ -37,7 +37,7 @@ constructor(
     private val setActivePlanUseCase: SetActivePlanUseCase,
     coroutineScope: CoroutineScope,
 ) : ViewModel(coroutineScope) {
-    private val dateFormat = DateTimeFormatter.ofPattern(stringProvider.dateFormatEdit)
+    private val dateFormat = DateTimeFormatter.ofPattern(stringProvider.dateWeekdayDayMonthYear)
 
     private val startDate =
         textFieldStateManager.localDateField(

@@ -190,11 +190,13 @@
     <string name="error_value_not_valid_number">The value is not a valid number.</string>
     <string name="error_does_not_equal">%1$s does not equal %2$s</string>
 
-    <string name="date_format_short">d MMMM</string>
-    <string name="date_format_long">EEEE, d MMMM</string>
-    <string name="date_format_full">dd.MM.yyyy</string>
-    <string name="date_format_edit">EEEE, d MMMM yyyy</string>
-    <string name="date_format_chart">d MMM</string>
+    <string name="date_day">d</string>
+    <string name="date_day_month">d MMMM</string>
+    <string name="date_day_month_s">d MMM</string>
+    <string name="date_weekday_day">EEEE, d</string>
+    <string name="date_weekday_day_month">EEEE, d MMMM</string>
+    <string name="date_day_month_year">d MMMM yyyy</string>
+    <string name="date_weekday_day_month_year">EEEE, d MMMM yyyy</string>
     <string name="time_hours_short">h</string>
     <string name="time_minutes_short">m</string>
     <string name="time_seconds_short">s</string>

@@ -11,10 +11,11 @@ interface StringProvider {
 
     val list: String
 
-    val dateFormatShort: String
-    val dateFormatLong: String
-    val dateFormatFull: String
-    val dateFormatEdit: String
+    val dateFormatDay: String
+    val dateFormatDayMonth: String
+    val dateFormatWeekdayDayMonth: String
+    val dateFormatDayMonthYear: String
+    val dateWeekdayDayMonthYear: String
 
     val errorMustBeHigherThanZero: String
 

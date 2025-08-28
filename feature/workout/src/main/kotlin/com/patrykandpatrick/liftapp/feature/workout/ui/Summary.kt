@@ -142,7 +142,7 @@ private fun StartDateTime(
             date = startDate,
             label = stringResource(R.string.workout_summary_edit_workout_start_date),
             onDateSelected = { onDateTimeSelected(it, startTime) },
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(2f),
         )
 
         TimeInput(
@@ -172,7 +172,7 @@ private fun EndDateTime(
             date = endDate,
             label = stringResource(R.string.workout_summary_edit_workout_end_date),
             onDateSelected = { onDateTimeSelected(it, endTime) },
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(2f),
         )
 
         TimeInput(

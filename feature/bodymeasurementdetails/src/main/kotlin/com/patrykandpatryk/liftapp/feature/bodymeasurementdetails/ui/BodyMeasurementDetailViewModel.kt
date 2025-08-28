@@ -75,7 +75,7 @@ constructor(
                         ScreenState.Entry(
                             id = entry.id,
                             value = formatBodyMeasurementValueToStringUseCase(entry.value),
-                            date = entry.formattedDate.dateShort,
+                            date = entry.localDateTime,
                         )
                     },
                 modelProducer = chartModelProducer,

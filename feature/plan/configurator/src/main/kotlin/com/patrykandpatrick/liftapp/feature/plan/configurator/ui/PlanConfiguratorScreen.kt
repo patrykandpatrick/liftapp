@@ -112,7 +112,7 @@ private fun Content(state: ScreenState, modifier: Modifier = Modifier) {
 
 @Composable
 private fun getInfoText(state: ScreenState): AnnotatedString {
-    val datePattern = stringResource(R.string.date_format_long)
+    val datePattern = stringResource(R.string.date_weekday_day_month)
     val dateFormatter = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
 
     val startDate = state.startDate.value
@@ -167,7 +167,7 @@ private fun PlanConfiguratorPreview() {
                             LocalDateTextFieldState(
                                 formatter =
                                     DateTimeFormatter.ofPattern(
-                                        stringResource(R.string.date_format_edit)
+                                        stringResource(R.string.date_weekday_day_month_year)
                                     ),
                                 initialValue = "Sunday, 13 April 2025",
                             ),

@@ -8,12 +8,11 @@ import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.ParseException
-import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.time.Duration
 import kotlinx.coroutines.flow.StateFlow
 
 class Formatter(private val stringProvider: StringProvider, private val is24H: StateFlow<Boolean>) {
@@ -38,30 +37,21 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: S
     fun formatDate(localDateTime: LocalDateTime, dateFormat: DateFormat): String =
         localDateTime.format(DateTimeFormatter.ofPattern(dateFormat.getPattern()))
 
+    fun formatDate(localDate: LocalDate, dateFormat: DateFormat): String =
+        localDate.format(DateTimeFormatter.ofPattern(dateFormat.getPattern()))
+
     private fun DateFormat.getPattern(): String =
         when (this) {
             DateFormat.MinutesSeconds -> MINUTES_SECONDS
             DateFormat.HoursMinutes -> if (is24H()) HOURS_MINUTES_24H else HOURS_MINUTES_12H
             DateFormat.HoursMinutesSeconds ->
                 if (is24H()) HOURS_MINUTES_SECONDS_24H else HOURS_MINUTES_SECONDS_12H
-            DateFormat.DateShort -> stringProvider.dateFormatShort
-            DateFormat.DateLong -> stringProvider.dateFormatLong
-            DateFormat.DateFull -> stringProvider.dateFormatFull
-            DateFormat.DateEdit -> stringProvider.dateFormatEdit
+            DateFormat.Day -> stringProvider.dateFormatDay
+            DateFormat.DayMonth -> stringProvider.dateFormatDayMonth
+            DateFormat.WeekdayDayMonth -> stringProvider.dateFormatWeekdayDayMonth
+            DateFormat.DayMonthYear -> stringProvider.dateFormatDayMonthYear
+            DateFormat.WeekdayDayMonthYear -> stringProvider.dateWeekdayDayMonthYear
         }
-
-    fun getFormattedDate(localDateTime: LocalDateTime): FormattedDate =
-        FormattedDate(
-            formatDate(localDateTime, DateFormat.DateShort),
-            formatDate(localDateTime, DateFormat.DateLong),
-            formatDate(localDateTime, DateFormat.HoursMinutes),
-            formatDate(localDateTime, DateFormat.HoursMinutesSeconds),
-            localDateTime,
-        )
-
-    fun getFormattedDuration(duration: Duration, dateFormat: DateFormat): String =
-        SimpleDateFormat(dateFormat.getPattern(), Locale.getDefault())
-            .format(duration.inWholeMilliseconds)
 
     fun is24H(): Boolean = is24H.value
 
@@ -107,10 +97,11 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: S
         HoursMinutes,
         HoursMinutesSeconds,
         MinutesSeconds,
-        DateShort,
-        DateLong,
-        DateFull,
-        DateEdit,
+        Day,
+        DayMonth,
+        WeekdayDayMonth,
+        DayMonthYear,
+        WeekdayDayMonthYear,
     }
 
     enum class NumberFormat {

@@ -78,11 +78,11 @@ constructor(
         )
     }
 
-    private suspend fun Workout.getSummaryPage(
+    private fun Workout.getSummaryPage(
         exercises: List<EditableWorkout.Exercise>,
         index: Int,
     ): WorkoutPage.Summary {
-        val dateFormat = DateTimeFormatter.ofPattern(stringProvider.dateFormatFull)
+        val dateFormat = DateTimeFormatter.ofPattern(stringProvider.dateFormatDayMonthYear)
         val timeFormat = formatter.getLocalTimeFormatter()
 
         return WorkoutPage.Summary(

@@ -24,7 +24,7 @@ private class EpochDayCartesianValueFormatter(private val dateTimeFormatter: Dat
 
 @Composable
 fun rememberEpochDayCartesianValueFormatter(): CartesianValueFormatter {
-    val datePattern = stringResource(R.string.date_format_chart)
+    val datePattern = stringResource(R.string.date_day_month_s)
     return remember(datePattern) {
         EpochDayCartesianValueFormatter(DateTimeFormatter.ofPattern(datePattern))
     }

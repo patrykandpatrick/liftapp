@@ -54,7 +54,7 @@ constructor(
 
     private val dateTextFieldState =
         textFieldStateManager.localDateField(
-            formatter = DateTimeFormatter.ofPattern(stringProvider.dateFormatEdit)
+            formatter = DateTimeFormatter.ofPattern(stringProvider.dateWeekdayDayMonthYear)
         )
 
     private val timeTextFieldState = flow {
@@ -70,12 +70,8 @@ constructor(
                 getBodyMeasurementEntryUseCase(routeData.bodyMeasurementEntryID),
             ) { is24H, timeTextFieldState, measurementWithLatestEntry, measurementEntry ->
                 if (measurementEntry != null) {
-                    dateTextFieldState.updateValue(
-                        measurementEntry.formattedDate.localDateTime.toLocalDate()
-                    )
-                    timeTextFieldState.updateValue(
-                        measurementEntry.formattedDate.localDateTime.toLocalTime()
-                    )
+                    dateTextFieldState.updateValue(measurementEntry.localDateTime.toLocalDate())
+                    timeTextFieldState.updateValue(measurementEntry.localDateTime.toLocalTime())
                 }
                 NewBodyMeasurementState(
                     name = measurementWithLatestEntry.name,

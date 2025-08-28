@@ -203,7 +203,7 @@ fun NewBodyMeasurementEntryScreenWeightPreview() {
                             ),
                         dateTextFieldState =
                             textFieldStateManager.localDateField(
-                                DateTimeFormatter.ofPattern(stringProvider.dateFormatEdit)
+                                DateTimeFormatter.ofPattern(stringProvider.dateWeekdayDayMonthYear)
                             ),
                         timeTextFieldState =
                             textFieldStateManager.localTimeField(
@@ -239,7 +239,7 @@ fun NewBodyMeasurementEntryScreenForearmsPreview() {
                             ),
                         dateTextFieldState =
                             textFieldStateManager.localDateField(
-                                DateTimeFormatter.ofPattern(stringProvider.dateFormatEdit)
+                                DateTimeFormatter.ofPattern(stringProvider.dateWeekdayDayMonthYear)
                             ),
                         timeTextFieldState =
                             textFieldStateManager.localTimeField(

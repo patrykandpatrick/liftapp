@@ -17,7 +17,7 @@ constructor(private val unitConverter: UnitConverter) {
         val y2 = mutableListOf<Double>()
 
         input.forEachIndexed { index, entry ->
-            x += entry.formattedDate.localDateTime.toLocalDate().toEpochDay().toDouble()
+            x += entry.localDateTime.toLocalDate().toEpochDay().toDouble()
             when (val value = entry.value) {
                 is BodyMeasurementValue.DoubleValue -> {
                     y1 += unitConverter.convertToPreferredUnit(value.unit, value.left)

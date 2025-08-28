@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.model
 
-import android.icu.text.DecimalFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.res.pluralStringResource
@@ -8,16 +7,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import com.patrykandpatryk.liftapp.core.R.plurals
 import com.patrykandpatryk.liftapp.core.R.string
-import com.patrykandpatryk.liftapp.core.extension.prettyString
+import com.patrykandpatryk.liftapp.core.format.LocalFormatter
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.text.MarkupProcessor
-import com.patrykandpatryk.liftapp.core.time.getShortFormattedTime
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.unit.EnergyUnit
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import kotlin.time.Duration
-
-private val decimalFormat = DecimalFormat("#.##")
 
 @Stable
 @Composable
@@ -61,22 +58,24 @@ fun getCardioPrettyString(
     duration: Duration,
     calories: Double,
 ): String = buildString {
+    val formatter = LocalFormatter.current
+
     if (distance > 0) {
         append(
             MarkupProcessor.Type.BoldSurfaceColor.wrap(
-                "${decimalFormat.format(distance)} ${distanceUnit.prettyString()}"
+                formatter.formatValue(distance, distanceUnit)
             )
         )
     }
     if (duration.inWholeMilliseconds > 0) {
         if (isNotBlank()) append(" ${stringResource(string.goal_format_time_separator)} ")
-        append(MarkupProcessor.Type.BoldSurfaceColor.wrap(duration.getShortFormattedTime()))
+        append(MarkupProcessor.Type.BoldSurfaceColor.wrap(formatter.formatDuration(duration)))
     }
     if (calories > 0) {
         if (isNotBlank()) append(" ${stringResource(string.point_separator)} ")
         append(
             MarkupProcessor.Type.BoldSurfaceColor.wrap(
-                "${decimalFormat.format(calories)} ${stringResource(string.energy_unit_kcal)}"
+                formatter.formatValue(calories, EnergyUnit.KiloCalorie)
             )
         )
     }
@@ -84,4 +83,4 @@ fun getCardioPrettyString(
 
 @Composable
 fun getTimePrettyString(duration: Duration): String =
-    MarkupProcessor.Type.BoldSurfaceColor.wrap(duration.getShortFormattedTime())
+    MarkupProcessor.Type.BoldSurfaceColor.wrap(LocalFormatter.current.formatDuration(duration))

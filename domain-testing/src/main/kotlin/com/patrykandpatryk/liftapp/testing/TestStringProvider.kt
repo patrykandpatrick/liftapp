@@ -14,14 +14,20 @@ import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 object TestStringProvider : StringProvider {
 
     override val andInAList: String = "&"
+
     override val name: String = "Name"
 
     override val list: String = "List"
 
-    override val dateFormatShort: String = "d MMMM"
-    override val dateFormatLong: String = "EEEE, d MMMM"
-    override val dateFormatEdit: String = "dd.MM.yyyy"
-    override val dateFormatFull: String = "d MMMM YYYY"
+    override val dateFormatDay: String = "d"
+
+    override val dateFormatDayMonth: String = "d MMMM"
+
+    override val dateFormatWeekdayDayMonth: String = "EEEE, d MMMM"
+
+    override val dateWeekdayDayMonthYear: String = "dd.MM.yyyy"
+
+    override val dateFormatDayMonthYear: String = "d MMMM YYYY"
 
     override val errorMustBeHigherThanZero: String = "The value must be higher than zero."
 

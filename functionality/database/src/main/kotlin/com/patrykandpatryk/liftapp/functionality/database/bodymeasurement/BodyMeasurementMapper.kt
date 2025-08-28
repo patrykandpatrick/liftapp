@@ -19,11 +19,7 @@ constructor(private val formatter: Formatter, private val stringProvider: String
         )
 
     fun toDomain(entry: BodyMeasurementEntryEntity) =
-        BodyMeasurementEntry(
-            id = entry.id,
-            value = entry.value,
-            formattedDate = formatter.getFormattedDate(entry.time),
-        )
+        BodyMeasurementEntry(id = entry.id, value = entry.value, localDateTime = entry.time)
 
     fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
         BodyMeasurementWithLatestEntry(
