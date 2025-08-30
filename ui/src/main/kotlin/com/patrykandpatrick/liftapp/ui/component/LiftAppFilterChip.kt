@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Check
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -40,9 +44,9 @@ fun LiftAppFilterChip(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
     colors: StatefulContainerColors = LiftAppFilterChipDefaults.colors,
-    contentPadding: PaddingValues =
-        PaddingValues(dimens.chip.horizontalPadding, dimens.chip.verticalPadding),
+    contentPadding: PaddingValues = LiftAppFilterChipDefaults.contentPadding(),
     interactionSource: MutableInteractionSource? = null,
 ) {
     val containerColors = animateContainerColorsAsState(colors.getColors(selected)).value
@@ -52,13 +56,15 @@ fun LiftAppFilterChip(
         colors = containerColors,
         interactionSource = interactionSource,
         modifier = modifier,
-        textStyle = MaterialTheme.typography.labelLarge,
+        textStyle = MaterialTheme.typography.labelMedium,
     ) { interactionSource ->
         val shape = CircleShape
         LookaheadScope {
+            val spacing = dimens.chip.spacing
+            val horizontalPadding = dimens.chip.horizontalPadding
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimens.chip.spacing),
+                horizontalArrangement = Arrangement.spacedBy(spacing),
                 modifier =
                     Modifier.animateBounds(this)
                         .interactiveButtonEffect(
@@ -76,12 +82,23 @@ fun LiftAppFilterChip(
                             shape = shape,
                         )
                         .padding(contentPadding)
+                        .defaultMinSize(0.dp, dimens.chip.minHeight)
                         .align(Alignment.Center)
                         .fillMaxWidth(),
             ) {
-                leadingIcon?.invoke()
+                if (leadingIcon != null) {
+                    leadingIcon()
+                } else {
+                    Spacer(Modifier.width(horizontalPadding - spacing))
+                }
 
                 label()
+
+                if (trailingIcon != null) {
+                    trailingIcon()
+                } else {
+                    Spacer(Modifier.width(horizontalPadding - spacing))
+                }
             }
         }
     }
@@ -126,6 +143,10 @@ object LiftAppFilterChipDefaults {
             modifier = modifier.size(dimens.chip.iconSize),
         )
     }
+
+    @Composable
+    fun contentPadding(): PaddingValues =
+        PaddingValues(dimens.chip.horizontalPadding, dimens.chip.verticalPadding)
 }
 
 @ComponentPreview

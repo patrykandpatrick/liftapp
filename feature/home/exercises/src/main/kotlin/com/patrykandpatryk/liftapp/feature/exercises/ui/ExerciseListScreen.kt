@@ -297,11 +297,12 @@ private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
                 LiftAppFilterChip(
                     selected = selected,
                     onClick = { onGroupBySelection(it) },
-                    leadingIcon = {
+                    leadingIcon =
                         if (selected) {
-                            LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.Check)
-                        }
-                    },
+                            { LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.Check) }
+                        } else {
+                            null
+                        },
                     label = { Text(text = stringResource(id = it.labelResourceId)) },
                 )
             }

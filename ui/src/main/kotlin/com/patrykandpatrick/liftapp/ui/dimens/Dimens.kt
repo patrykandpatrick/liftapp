@@ -84,9 +84,11 @@ data class Dimens(
     @Immutable
     data class Chip(
         val iconSize: Dp = 18.dp,
-        val spacing: Dp = 8.dp,
-        val horizontalPadding: Dp = 12.dp,
+        val spacing: Dp = 4.dp,
+        val horizontalPadding: Dp = 6.dp,
+        val endPadding: Dp = 12.dp,
         val verticalPadding: Dp = 6.dp,
+        val minHeight: Dp = 20.dp,
     )
 
     @Immutable
