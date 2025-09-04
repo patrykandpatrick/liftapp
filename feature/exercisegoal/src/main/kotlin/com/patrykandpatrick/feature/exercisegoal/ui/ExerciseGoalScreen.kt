@@ -11,17 +11,15 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.twotone.Info
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -39,6 +37,8 @@ import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GoalInput
 import com.patrykandpatrick.feature.exercisegoal.model.SaveGoalUseCase
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
@@ -52,6 +52,8 @@ import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.InfoCard
 import com.patrykandpatryk.liftapp.core.ui.InfoDefaults
 import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
@@ -76,22 +78,24 @@ fun ExerciseGoalScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val dimens = LocalDimens.current
+    val lazyGridState = rememberLazyGridState()
 
-    Scaffold(
+    LaunchedEffect(state?.goalInfoVisible) {
+        if (state?.goalInfoVisible == true) {
+            lazyGridState.animateScrollToItem(0)
+        }
+    }
+
+    LiftAppScaffold(
         modifier = modifier,
         topBar = {
-            CenterAlignedTopAppBar(
+            CompactTopAppBar(
                 title = { Text(text = state?.exerciseName?.getDisplayName().orEmpty()) },
                 navigationIcon = {
-                    IconButton(onClick = { viewModel.onAction(Action.PopBackStack) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = stringResource(id = R.string.action_close),
-                        )
-                    }
+                    CompactTopAppBarDefaults.BackIcon { viewModel.onAction(Action.PopBackStack) }
                 },
                 actions = {
-                    IconButton(
+                    LiftAppIconButton(
                         onClick = {
                             viewModel.onAction(
                                 Action.SetGoalInfoVisible(state?.goalInfoVisible != true)
@@ -123,6 +127,7 @@ fun ExerciseGoalScreen(
                     .padding(paddingValues)
                     .fillMaxSize(),
             columns = GridCells.Adaptive(minSize = dimens.grid.minCellWidthLarge),
+            state = lazyGridState,
             contentPadding =
                 PaddingValues(
                     horizontal = dimens.padding.contentHorizontal,
