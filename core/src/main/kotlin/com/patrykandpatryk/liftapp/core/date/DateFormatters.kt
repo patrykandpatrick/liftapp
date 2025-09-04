@@ -8,8 +8,14 @@ import com.patrykandpatryk.liftapp.core.format.format
 import com.patrykandpatryk.liftapp.domain.format.Formatter
 import java.time.LocalDate
 
+@Stable
 @Composable
-fun formatDateRange(startDate: LocalDate, endDate: LocalDate): String {
+fun formatDateRange(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    dayFormat: Formatter.DateFormat = Formatter.DateFormat.Day,
+    dayMonthFormat: Formatter.DateFormat = Formatter.DateFormat.DayMonth,
+): String {
     val sameMonth = startDate.month == endDate.month
     val sameYear = startDate.year == endDate.year
 
@@ -17,9 +23,6 @@ fun formatDateRange(startDate: LocalDate, endDate: LocalDate): String {
 
     val startFormatter: Formatter.DateFormat
     val endFormatter: Formatter.DateFormat
-
-    val dayPattern = stringResource(R.string.date_range_format_day)
-    val dayMonthPattern = stringResource(R.string.date_range_format_day_month)
 
     if (sameMonth && sameYear) {
         startFormatter = dayFormat

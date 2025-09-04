@@ -4,15 +4,27 @@ import com.patrykandpatryk.liftapp.domain.Constants.Format.DECIMAL_PATTERN
 import com.patrykandpatryk.liftapp.domain.Constants.Format.INTEGER_PATTERN
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
+import com.patrykandpatryk.liftapp.domain.unit.DurationUnit
+import com.patrykandpatryk.liftapp.domain.unit.EnergyUnit
+import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.PercentageUnit
+import com.patrykandpatryk.liftapp.domain.unit.RatioUnit
+import com.patrykandpatryk.liftapp.domain.unit.RepsUnit
+import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
+import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.StateFlow
 
 class Formatter(private val stringProvider: StringProvider, private val is24H: StateFlow<Boolean>) {
@@ -46,11 +58,14 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: S
             DateFormat.HoursMinutes -> if (is24H()) HOURS_MINUTES_24H else HOURS_MINUTES_12H
             DateFormat.HoursMinutesSeconds ->
                 if (is24H()) HOURS_MINUTES_SECONDS_24H else HOURS_MINUTES_SECONDS_12H
+
             DateFormat.Day -> stringProvider.dateFormatDay
             DateFormat.DayMonth -> stringProvider.dateFormatDayMonth
             DateFormat.WeekdayDayMonth -> stringProvider.dateFormatWeekdayDayMonth
             DateFormat.DayMonthYear -> stringProvider.dateFormatDayMonthYear
             DateFormat.WeekdayDayMonthYear -> stringProvider.dateWeekdayDayMonthYear
+            DateFormat.MonthYear -> stringProvider.dateMonthYear
+            DateFormat.Year -> stringProvider.dateYear
         }
 
     fun is24H(): Boolean = is24H.value
@@ -75,6 +90,43 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: S
 
     fun formatWeight(weight: Double, massUnit: MassUnit): String =
         "${formatNumber(weight, format = NumberFormat.Decimal)}${stringProvider.getDisplayUnit(massUnit)}"
+
+    fun formatValue(value: Number, unit: ValueUnit): String =
+        when (unit) {
+            is MassUnit,
+            is EnergyUnit,
+            is ShortDistanceUnit,
+            is MediumDistanceUnit,
+            is LongDistanceUnit,
+            is PercentageUnit ->
+                "${formatNumber(value, format = NumberFormat.Decimal)}${stringProvider.getDisplayUnit(unit)}"
+
+            is RepsUnit -> formatReps(value.toInt())
+            is DurationUnit -> formatDuration(value.toLong())
+            is RatioUnit<*, *> -> formatRatioUnit(value, unit)
+            else -> formatNumber(value, format = NumberFormat.Decimal)
+        }
+
+    fun formatDuration(value: Long): String = formatDuration(value.milliseconds)
+
+    fun formatDuration(duration: Duration): String {
+        val pattern =
+            when {
+                duration.inWholeHours > 0 -> DateFormat.HoursMinutesSeconds.getPattern()
+                else -> DateFormat.MinutesSeconds.getPattern()
+            }
+        return SimpleDateFormat(pattern, Locale.getDefault()).format(duration.inWholeMilliseconds)
+    }
+
+    private fun formatReps(reps: Int): String =
+        "${formatNumber(reps, format = NumberFormat.Integer)} ${stringProvider.getRepsString(reps)}"
+
+    private fun formatRatioUnit(value: Number, unit: RatioUnit<*, *>): String =
+        "%s/%s"
+            .format(
+                formatValue(value, unit.dividend),
+                stringProvider.getDisplayUnit(unit.divisor, respectLeadingSpaceSetting = false),
+            )
 
     fun toDoubleOrNull(value: String): Double? =
         try {
@@ -102,6 +154,8 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: S
         WeekdayDayMonth,
         DayMonthYear,
         WeekdayDayMonthYear,
+        MonthYear,
+        Year,
     }
 
     enum class NumberFormat {

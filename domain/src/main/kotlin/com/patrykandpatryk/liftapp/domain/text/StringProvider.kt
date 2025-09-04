@@ -12,14 +12,30 @@ interface StringProvider {
     val list: String
 
     val dateFormatDay: String
+
     val dateFormatDayMonth: String
+
     val dateFormatWeekdayDayMonth: String
+
     val dateFormatDayMonthYear: String
+
     val dateWeekdayDayMonthYear: String
+
+    val dateMonthYear: String
+
+    val dateYear: String
 
     val errorMustBeHigherThanZero: String
 
+    val hoursShort: String
+
+    val minutesShort: String
+
+    val secondsShort: String
+
     fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean = true): String
+
+    fun getRepsString(reps: Int): String
 
     fun quoted(value: String): String
 

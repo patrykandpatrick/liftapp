@@ -90,7 +90,14 @@ val ChartTheme: VicoTheme
                         neutral = colorScheme.outline,
                         bearish = colorScheme.error,
                     ),
-                columnCartesianLayerColors = listOf(colorScheme.primary, colorScheme.secondary),
+                columnCartesianLayerColors =
+                    listOf(
+                        colorScheme.chartColors.series1,
+                        colorScheme.chartColors.series2,
+                        colorScheme.chartColors.series3,
+                        colorScheme.chartColors.series4,
+                        colorScheme.chartColors.series5,
+                    ),
                 lineColor = colorScheme.outline,
                 textColor = colorScheme.onSurface,
             )

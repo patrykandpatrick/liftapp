@@ -49,6 +49,7 @@ constructor(
             is MediumDistanceUnit -> convertToPreferredUnit(from = from, value = value)
             is ShortDistanceUnit -> convertToPreferredUnit(from = from, value = value)
             is PercentageUnit -> value
+            is EnergyUnit -> value
             else -> error(getTypeErrorMessage(unit = from))
         }
 

@@ -35,6 +35,7 @@
     <string name="and_in_a_list">&amp;</string>
     <string name="list_remove">Remove</string>
     <string name="energy_unit_kcal">kcal</string>
+    <string name="unit_reps">reps</string>
 
     <string name="point_separator" translatable="false">ꞏ</string>
     <string name="multiply_character" translatable="false">×</string>
@@ -47,13 +48,11 @@
     <string name="workout_exercise_set_info"><![CDATA[<b-surface>Set %d</b-surface> ꞏ %s]]></string>
     <string name="exercise_set_not_completed">Not completed</string>
     <!-- Example: 80 kg × 10 reps -->
-    <string name="exercise_set_format_calisthenics">%1$s %2$s × %3$s %4$s</string>
+    <string name="exercise_set_format_calisthenics">%1$s × %2$s</string>
     <!-- Example: 80 (+10) kg × 10 reps -->
-    <string name="exercise_set_format_calisthenics_with_weight">%1$s (+%2$s) %3$s × %4$s %5$s</string>
-    <!-- Example: 10 reps -->
-    <string name="exercise_set_format_reps">%1$s %2$s</string>
+    <string name="exercise_set_format_calisthenics_with_weight">%1$s (+%2$s) × %3$s</string>
     <!-- Example: 100 kg × 10 reps -->
-    <string name="exercise_set_format_weight">%1$s %2$s × %3$s %4$s</string>
+    <string name="exercise_set_format_weight">%1$s × %2$s</string>
     <!-- Example: 5 m 24 s ꞏ 2.21 km ꞏ 334 kcal -->
     <string name="exercise_set_format_cardio">%1$s ꞏ %2$s ꞏ %3$s</string>
     <!-- Example: 3 of 4 sets -->
@@ -197,6 +196,8 @@
     <string name="date_weekday_day_month">EEEE, d MMMM</string>
     <string name="date_day_month_year">d MMMM yyyy</string>
     <string name="date_weekday_day_month_year">EEEE, d MMMM yyyy</string>
+    <string name="date_month_year">MMMM yyyy</string>
+    <string name="date_year">yyyy</string>
     <string name="time_hours_short">h</string>
     <string name="time_minutes_short">m</string>
     <string name="time_seconds_short">s</string>
@@ -204,8 +205,14 @@
     <string name="time_minutes_medium">min</string>
     <string name="time_seconds_medium">sec</string>
     <string name="date_range_format_separator">–</string>
-    <string name="date_range_format_day">EEE d</string>
-    <string name="date_range_format_day_month">EEE d MMMM</string>
+    <string name="exercise_summary_type_1rm">One-Rep Max</string>
+    <string name="exercise_summary_type_total_volume">Total Volume</string>
+    <string name="exercise_summary_type_total_reps">Total Reps</string>
+    <string name="exercise_summary_type_total_duration">Total Duration</string>
+    <string name="exercise_summary_type_total_distance">Total Distance</string>
+    <string name="exercise_summary_type_total_calories">Total Calories</string>
+    <string name="exercise_summary_type_avg_pace">Average Pace</string>
+    <string name="exercise_summary_type_avg_speed">Average Speed</string>
 
     <string name="content_description_remove_set">Remove set</string>
 
@@ -286,4 +293,11 @@
     <string name="generic_error_title">Unexpected Error</string>
     <string name="error_routine_not_found">Routine has not been found.</string>
     <string name="error_plan_not_found">Training plan has not been found.</string>
+
+    <!-- Date Grouping -->
+    <string name="date_interval_rolling_days">Rolling %d %s</string>
+    <string name="date_interval_rolling_week">Weekly</string>
+    <string name="date_interval_rolling_month">Monthly</string>
+    <string name="date_interval_rolling_year">Yearly</string>
+
 </resources>

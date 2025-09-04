@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.core.text
 
 import android.content.Context
 import androidx.annotation.StringRes
+import com.patrykandpatryk.liftapp.core.R.plurals
 import com.patrykandpatryk.liftapp.core.R.string
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.resource.stringRes
@@ -40,10 +41,28 @@ class StringProviderImpl @Inject constructor(private val context: Context) : Str
     override val dateWeekdayDayMonthYear: String
         get() = string(string.date_weekday_day_month_year)
 
+    override val dateMonthYear: String
+        get() = string(string.date_month_year)
+
+    override val dateYear: String
+        get() = string(string.date_year)
+
+    override val hoursShort: String
+        get() = string(string.time_hours_short)
+
+    override val minutesShort: String
+        get() = string(string.time_minutes_short)
+
+    override val secondsShort: String
+        get() = string(string.time_seconds_short)
+
     override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
         string(unit.stringResourceId).let { displayUnit ->
-            if (unit.hasLeadingSpace) " $displayUnit" else displayUnit
+            if (unit.hasLeadingSpace && respectLeadingSpaceSetting) " $displayUnit" else displayUnit
         }
+
+    override fun getRepsString(reps: Int): String =
+        context.resources.getQuantityString(plurals.rep_count, reps)
 
     override fun quoted(value: String): String = string(string.generic_quoted, value)
 

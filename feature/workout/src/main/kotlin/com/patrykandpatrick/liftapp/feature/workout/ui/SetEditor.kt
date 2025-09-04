@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
-import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -34,6 +33,7 @@ import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.exercise.prettyString
 import com.patrykandpatryk.liftapp.core.extension.prettyString
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource.textFieldStateManager
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme

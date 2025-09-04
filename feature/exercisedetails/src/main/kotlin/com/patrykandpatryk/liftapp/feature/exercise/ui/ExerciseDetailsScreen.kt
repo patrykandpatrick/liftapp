@@ -2,12 +2,11 @@ package com.patrykandpatryk.liftapp.feature.exercise.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -21,22 +20,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
-import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.chart.ExtraStoreKey
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.tabItems
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
+import com.patrykandpatryk.liftapp.domain.date.DateInterval
+import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatryk.liftapp.domain.exerciseset.getSummaryTypes
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.model.toLoadable
+import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.feature.exercise.model.Action
+import com.patrykandpatryk.liftapp.feature.exercise.model.ExerciseTab
 import com.patrykandpatryk.liftapp.feature.exercise.model.ScreenState
-import com.patrykandpatryk.liftapp.feature.exercise.model.tabs
+import com.patrykandpatryk.liftapp.feature.exercise.model.exerciseTabItems
+import kotlin.random.Random
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun ExerciseDetailsScreen(modifier: Modifier = Modifier) {
@@ -72,8 +81,7 @@ private fun ExerciseDetailsScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
-    val tabs = tabs
-    val pagerState = rememberPagerState { tabs.size }
+    val pagerState = rememberPagerState { ExerciseTab.entries.size }
     val scope = rememberCoroutineScope()
 
     LiftAppScaffold(
@@ -85,34 +93,39 @@ private fun ExerciseDetailsScreen(
                 selectedTabIndex = { pagerState.currentPage },
                 selectedTabOffset = { pagerState.currentPageOffsetFraction },
                 onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
-                tabs = tabs.tabItems,
-            )
-        },
-        bottomBar = {
-            BottomAppBar {
-                IconButton(onClick = { onAction(Action.ShowDeleteDialog) }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_delete),
-                        contentDescription = stringResource(id = R.string.action_delete),
-                    )
-                }
+                tabs = exerciseTabItems,
+                actions = {
+                    LiftAppIconButton(onClick = { onAction(Action.Edit) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_edit),
+                            contentDescription = stringResource(id = R.string.action_edit),
+                        )
+                    }
 
-                IconButton(onClick = { onAction(Action.Edit) }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_edit),
-                        contentDescription = stringResource(id = R.string.action_edit),
-                    )
-                }
-            }
+                    LiftAppIconButton(onClick = { onAction(Action.ShowDeleteDialog) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete),
+                            contentDescription = stringResource(id = R.string.action_delete),
+                        )
+                    }
+                },
+            )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-        HorizontalPager(
-            modifier = Modifier.fillMaxSize(),
-            state = pagerState,
-            contentPadding = paddingValues,
-        ) { index ->
-            tabs[index].content()
+        screenState.Unfold(modifier = Modifier.padding(paddingValues)) { state ->
+            HorizontalPager(modifier = Modifier.fillMaxSize(), state = pagerState) { index ->
+                when (ExerciseTab.entries[index]) {
+                    ExerciseTab.Statistics ->
+                        Statistics(
+                            modifier = Modifier.fillMaxSize(),
+                            state = state,
+                            onAction = onAction,
+                        )
+
+                    ExerciseTab.Details -> Details()
+                }
+            }
         }
     }
 }
@@ -145,20 +158,76 @@ private fun DeleteExerciseDialog(
     }
 }
 
+@Composable
+internal fun getScreenStateForPreview(): ScreenState {
+    val cartesianChartModelProducer = CartesianChartModelProducer()
+    val dateInterval = DateInterval.exerciseOptions.first()
+    val summaryTypeOptions = ExerciseType.Weight.getSummaryTypes()
+
+    runBlocking {
+        cartesianChartModelProducer.runTransaction {
+            extras {
+                it[ExtraStoreKey.MinX] =
+                    dateInterval.periodStartTime.toLocalDate().toEpochDay().toDouble()
+                it[ExtraStoreKey.MaxX] =
+                    dateInterval.periodEndTime.toLocalDate().toEpochDay().toDouble()
+                it[ExtraStoreKey.DateInterval] = dateInterval
+                it[ExtraStoreKey.ValueUnit] = MassUnit.Kilograms
+            }
+            val x = buildList {
+                var current = dateInterval.periodStartTime
+                while (current.isBefore(dateInterval.periodEndTime)) {
+                    add(current.toLocalDate().toEpochDay())
+                    current = current.plusDays(3)
+                }
+            }
+
+            columnSeries {
+                series(
+                    x = x,
+                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                )
+                series(
+                    x = x,
+                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                )
+                series(
+                    x = x,
+                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                )
+                series(
+                    x = x,
+                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                )
+                series(
+                    x = x,
+                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                )
+            }
+        }
+    }
+
+    return ScreenState(
+        name = "Bicep Curl",
+        showDeleteDialog = false,
+        primaryMuscles = emptyList(),
+        secondaryMuscles = emptyList(),
+        tertiaryMuscles = emptyList(),
+        exerciseSetGroups = emptyList(),
+        cartesianChartModelProducer = cartesianChartModelProducer,
+        dateInterval = dateInterval,
+        dateIntervalOptions = DateInterval.exerciseOptions,
+        summaryType = summaryTypeOptions.first(),
+        summaryTypeOptions = summaryTypeOptions,
+    )
+}
+
 @MultiDevicePreview
 @Composable
 fun PreviewExerciseDetails() {
-    LiftAppTheme {
+    PreviewTheme {
         ExerciseDetailsScreen(
-            screenState =
-                ScreenState(
-                        name = "Bicep Curl",
-                        showDeleteDialog = false,
-                        primaryMuscles = emptyList(),
-                        secondaryMuscles = emptyList(),
-                        tertiaryMuscles = emptyList(),
-                    )
-                    .toLoadable(),
+            screenState = getScreenStateForPreview().toLoadable(),
             onAction = {},
             snackbarHostState = SnackbarHostState(),
         )
@@ -168,7 +237,7 @@ fun PreviewExerciseDetails() {
 @LightAndDarkThemePreview
 @Composable
 fun PreviewDeleteExerciseDialog() {
-    LiftAppTheme {
+    PreviewTheme {
         DeleteExerciseDialog(
             isVisible = true,
             exerciseName = "Bicep Curl",

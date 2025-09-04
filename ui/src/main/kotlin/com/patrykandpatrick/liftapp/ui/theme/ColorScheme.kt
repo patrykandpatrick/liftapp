@@ -26,8 +26,17 @@ data class ColorScheme(
     val error: Color,
     val onError: Color,
     val isDarkColorScheme: Boolean,
+    val chartColors: ChartColors,
     val borderColors: InteractiveBorderColors = getInteractiveBorderColors(highlight, outline),
     val onBackground: Color = onSurface,
+)
+
+data class ChartColors(
+    val series1: Color,
+    val series2: Color,
+    val series3: Color,
+    val series4: Color,
+    val series5: Color,
 )
 
 private fun getInteractiveBorderColors(highlight: Color, outline: Color): InteractiveBorderColors =
@@ -53,6 +62,14 @@ private val LightColorScheme =
         outline = Color(0xFF9595A6),
         error = Color(color = 0xff880000),
         onError = Color(color = 0xFFFFF1F1),
+        chartColors =
+            ChartColors(
+                Color(0xFF5151FA),
+                Color(0xFFD654F0),
+                Color(0xFFF054A2),
+                Color(0xFFF06154),
+                Color(0xFFF08854),
+            ),
         isDarkColorScheme = false,
     )
 
@@ -76,6 +93,14 @@ private val DarkColorScheme =
         outline = Color(0x4FE1E1F8),
         error = Color(color = 0xffff4444),
         onError = Color(color = 0xFF330000),
+        chartColors =
+            ChartColors(
+                Color(0xFF6C6CF0),
+                Color(0xFFDA6CF0),
+                Color(0xFFF06CAE),
+                Color(0xFFF06C6C),
+                Color(0xFFF0986C),
+            ),
         isDarkColorScheme = true,
     )
 

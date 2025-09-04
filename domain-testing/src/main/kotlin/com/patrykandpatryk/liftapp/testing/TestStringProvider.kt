@@ -29,7 +29,17 @@ object TestStringProvider : StringProvider {
 
     override val dateFormatDayMonthYear: String = "d MMMM YYYY"
 
+    override val dateMonthYear: String = "MMMM yyyy"
+
+    override val dateYear: String = "yyyy"
+
     override val errorMustBeHigherThanZero: String = "The value must be higher than zero."
+
+    override val hoursShort: String = "h"
+
+    override val minutesShort: String = "m"
+
+    override val secondsShort: String = "s"
 
     override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
         when (unit) {
@@ -44,6 +54,12 @@ object TestStringProvider : StringProvider {
             PercentageUnit -> "%"
             else -> getTypeErrorMessage(unit = unit)
         }.let { displayUnit -> if (unit.hasLeadingSpace) " $displayUnit" else displayUnit }
+
+    override fun getRepsString(reps: Int): String =
+        when (reps) {
+            1 -> "rep"
+            else -> "reps"
+        }
 
     override fun quoted(value: String): String = "”%s“".format(value)
 

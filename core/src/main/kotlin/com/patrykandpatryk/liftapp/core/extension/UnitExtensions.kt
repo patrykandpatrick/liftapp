@@ -6,11 +6,13 @@ import androidx.compose.ui.res.stringResource
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.extension.getTypeErrorMessage
+import com.patrykandpatryk.liftapp.domain.unit.DurationUnit
 import com.patrykandpatryk.liftapp.domain.unit.EnergyUnit
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.PercentageUnit
+import com.patrykandpatryk.liftapp.domain.unit.RepsUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
 
@@ -28,6 +30,8 @@ inline val ValueUnit.stringResourceId: Int
             MassUnit.Pounds -> R.string.unit_pound
             PercentageUnit -> R.string.unit_percentage
             EnergyUnit.KiloCalorie -> R.string.energy_unit_kcal
+            RepsUnit -> R.string.unit_reps
+            DurationUnit -> R.string.time_hours_short
             else -> error(getTypeErrorMessage(unit = this))
         }
 

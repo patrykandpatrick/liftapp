@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
@@ -35,13 +33,10 @@ import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
@@ -51,12 +46,12 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.chart.rememberAdaptiveCartesianLayerRangeProvider
+import com.patrykandpatryk.liftapp.core.chart.rememberBottom
 import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarker
 import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarkerValueFormatter
-import com.patrykandpatryk.liftapp.core.chart.rememberEpochDayCartesianValueFormatter
 import com.patrykandpatryk.liftapp.core.chart.rememberLine
+import com.patrykandpatryk.liftapp.core.chart.rememberStart
 import com.patrykandpatryk.liftapp.core.chart.rememberStartAxisValueFormatter
-import com.patrykandpatryk.liftapp.core.chart.rememberTextComponent
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
 import com.patrykandpatryk.liftapp.core.format.format
 import com.patrykandpatryk.liftapp.core.isCompactWidth
@@ -225,24 +220,8 @@ private fun Chart(
                         ),
                     rangeProvider = rememberAdaptiveCartesianLayerRangeProvider(),
                 ),
-                startAxis =
-                    VerticalAxis.rememberStart(
-                        label =
-                            rememberTextComponent(
-                                textStyle = MaterialTheme.typography.titleSmall,
-                                margins = insets(end = 4.dp),
-                            ),
-                        valueFormatter = rememberStartAxisValueFormatter(valueUnit),
-                    ),
-                bottomAxis =
-                    HorizontalAxis.rememberBottom(
-                        valueFormatter = rememberEpochDayCartesianValueFormatter(),
-                        label =
-                            rememberTextComponent(
-                                textStyle = MaterialTheme.typography.titleSmall,
-                                margins = insets(top = 2.dp, start = 4.dp, end = 4.dp),
-                            ),
-                    ),
+                startAxis = VerticalAxis.rememberStart(rememberStartAxisValueFormatter(valueUnit)),
+                bottomAxis = HorizontalAxis.rememberBottom(),
                 marker = rememberCartesianMarker(rememberCartesianMarkerValueFormatter(valueUnit)),
             ),
         modelProducer = modelProducer,
