@@ -3,9 +3,11 @@ package com.patrykandpatryk.liftapp.core.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,6 +25,7 @@ fun CompactTopAppBar(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (ColumnScope.() -> Unit)? = { LiftAppHorizontalDivider() },
@@ -34,6 +37,7 @@ fun CompactTopAppBar(
             actions = actions,
             colors = AppBars.colors,
             scrollBehavior = scrollBehavior,
+            windowInsets = windowInsets,
         )
         content?.invoke(this)
     }
