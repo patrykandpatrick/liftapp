@@ -147,7 +147,11 @@ private class BackdropNestedScrollConnection(
             val consumed = with(flingBehavior) { scrollScope.performFling(available.y) }
             Velocity(0f, consumed)
         } else {
-            available
+            if (state.offsetFraction == 0f) {
+                Velocity.Zero
+            } else {
+                available
+            }
         }
 
     override suspend fun onPostFling(consumed: Velocity, available: Velocity) =
@@ -159,6 +163,10 @@ private class BackdropNestedScrollConnection(
             val consumed = with(flingBehavior) { scrollScope.performFling(available.y) }
             Velocity(0f, consumed)
         } else {
-            available
+            if (state.offsetFraction == 0f) {
+                Velocity.Zero
+            } else {
+                available
+            }
         }
 }
