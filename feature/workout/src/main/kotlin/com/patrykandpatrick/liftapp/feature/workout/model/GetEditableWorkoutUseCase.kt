@@ -40,7 +40,7 @@ constructor(
                 it.editable()
             }
 
-    private suspend fun Workout.editable(): EditableWorkout {
+    private fun Workout.editable(): EditableWorkout {
         val exercises =
             exercises.map { exercise ->
                 EditableWorkout.Exercise(
@@ -72,7 +72,15 @@ constructor(
             exercises = exercises,
             pages =
                 buildList {
-                    exercises.forEach { add(WorkoutPage.Exercise(it, size)) }
+                    exercises.forEachIndexed { index, exercise ->
+                        add(
+                            WorkoutPage.Exercise(
+                                exercise = exercise,
+                                index = size,
+                                isLast = index == exercises.lastIndex,
+                            )
+                        )
+                    }
                     add(getSummaryPage(exercises, size))
                 },
         )

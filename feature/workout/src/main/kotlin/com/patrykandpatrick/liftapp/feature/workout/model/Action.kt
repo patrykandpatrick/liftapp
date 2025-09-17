@@ -16,7 +16,7 @@ sealed interface Action {
 
     sealed class MovePageBy(val delta: Int) : Button
 
-    data object NextPage : MovePageBy(1)
+    data class NextPage(val isLastExercise: Boolean) : MovePageBy(1)
 
     data object PreviousPage : MovePageBy(-1)
 
@@ -46,7 +46,13 @@ sealed interface Action {
 @Composable
 fun Action.Button.getText(): String =
     when (this) {
-        is Action.NextPage -> R.string.workout_action_next_exercise
+        is Action.NextPage -> {
+            if (isLastExercise) {
+                R.string.workout_action_summary
+            } else {
+                R.string.workout_action_next_exercise
+            }
+        }
         is Action.PreviousPage -> R.string.workout_action_previous_exercise
         is Action.FinishWorkout -> R.string.workout_summary_action_finish_workout
     }.let { stringResource(it) }
