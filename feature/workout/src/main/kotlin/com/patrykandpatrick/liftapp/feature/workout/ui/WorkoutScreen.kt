@@ -1,7 +1,9 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateBounds
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -45,6 +47,7 @@ import androidx.compose.ui.draw.innerShadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -265,6 +268,7 @@ private fun RestTimerEffect(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun BottomBar(
     page: WorkoutPage,
@@ -303,29 +307,46 @@ private fun BottomBar(
                     ) {
                         Icon(page.secondaryAction.getImageVector(), page.secondaryAction.getText())
                     }
-                    LiftAppButton(
-                        onClick = { onAction(page.primaryAction) },
-                        colors = LiftAppButtonDefaults.outlinedButtonColors,
-                        shape =
-                            ButtonShape.copy(
-                                topStart = CornerSize(6.dp),
-                                bottomStart = CornerSize(6.dp),
-                            ),
-                        borderShape =
-                            ButtonBorderShape.copy(
-                                topStart = CornerSize(5.dp),
-                                bottomStart = CornerSize(5.dp),
-                            ),
-                        modifier = Modifier,
-                    ) {
-                        Text(page.primaryAction.getText())
-                        Icon(page.primaryAction.getImageVector(), page.primaryAction.getText())
+                    LookaheadScope {
+                        LiftAppButton(
+                            onClick = { onAction(page.primaryAction) },
+                            colors = LiftAppButtonDefaults.outlinedButtonColors,
+                            shape =
+                                ButtonShape.copy(
+                                    topStart = CornerSize(6.dp),
+                                    bottomStart = CornerSize(6.dp),
+                                ),
+                            borderShape =
+                                ButtonBorderShape.copy(
+                                    topStart = CornerSize(5.dp),
+                                    bottomStart = CornerSize(5.dp),
+                                ),
+                            modifier = Modifier.animateBounds(this),
+                        ) {
+                            AnimatedContent(
+                                targetState = page.primaryAction.getText(),
+                                contentAlignment = Alignment.Center,
+                                transitionSpec = { elementTransitionSpec },
+                            ) { text ->
+                                Text(text)
+                            }
+                            AnimatedContent(
+                                targetState = page.primaryAction.getImageVector(),
+                                contentAlignment = Alignment.Center,
+                                transitionSpec = { elementTransitionSpec },
+                            ) { imageVector ->
+                                Icon(imageVector, page.primaryAction.getText())
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
+
+val elementTransitionSpec =
+    (fadeIn(tween(300, 100)) + scaleIn(tween(300, 100))).togetherWith(fadeOut(tween(150)))
 
 @Composable
 private fun RestTimerContainer(restTimerService: RestTimerService, modifier: Modifier = Modifier) {
