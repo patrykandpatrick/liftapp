@@ -30,6 +30,11 @@ sealed class DateInterval : Serializable {
             get() = LocalDate.now().plusDays(periodShift * days.toLong()).atEndOfDay()
 
         override fun shift(periodShift: Long): DateInterval = RollingDays(days, periodShift)
+
+        companion object {
+            val Standard: RollingDays
+                get() = RollingDays(30)
+        }
     }
 
     data class RollingWeek(override val periodShift: Long = 0) : DateInterval() {
@@ -67,6 +72,16 @@ sealed class DateInterval : Serializable {
 
     companion object {
         val exerciseOptions: List<DateInterval>
-            get() = listOf(RollingDays(30), RollingWeek(), RollingMonth(), RollingYear())
+            get() = listOf(RollingDays.Standard, RollingWeek(), RollingMonth(), RollingYear())
+
+        val bodyMeasurementOptions: List<DateInterval>
+            get() =
+                listOf(
+                    RollingDays(7),
+                    RollingDays.Standard,
+                    RollingWeek(),
+                    RollingMonth(),
+                    RollingYear(),
+                )
     }
 }

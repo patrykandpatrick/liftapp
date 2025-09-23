@@ -12,7 +12,7 @@ import java.text.DecimalFormat
 @Composable
 fun rememberStartAxisValueFormatter(unit: String): CartesianValueFormatter =
     remember(unit) {
-        CartesianValueFormatter.decimal(DecimalFormat("#.##' ${unit}';−#.##' ${unit}'"))
+        CartesianValueFormatter.decimal(DecimalFormat("#.##'${unit}';−#.##'${unit}'"))
     }
 
 class ValueUnitCartesianValueFormatter(private val formatter: Formatter) : CartesianValueFormatter {

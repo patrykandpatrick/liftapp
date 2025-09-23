@@ -1,11 +1,13 @@
 package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatryk.liftapp.core.chart.ExtraStoreKey
 import com.patrykandpatryk.liftapp.core.mapper.BodyMeasurementEntryToChartEntryMapper
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
@@ -14,6 +16,9 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.DeleteBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.FormatBodyMeasurementValueToStringUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntriesUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.invoke
+import com.patrykandpatryk.liftapp.domain.date.DateInterval
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
@@ -23,8 +28,10 @@ import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.ScreenSt
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -34,6 +41,7 @@ class BodyMeasurementDetailViewModel
 constructor(
     private val routeData: BodyMeasurementDetailsRouteData,
     repository: BodyMeasurementRepository,
+    getBodyMeasurementEntriesUseCase: GetBodyMeasurementEntriesUseCase,
     private val exceptionHandler: CoroutineExceptionHandler,
     private val chartEntryMapper: BodyMeasurementEntryToChartEntryMapper,
     private val deleteBodyMeasurementEntryUseCase: DeleteBodyMeasurementEntryUseCase,
@@ -42,14 +50,29 @@ constructor(
     private val getUnitForBodyMeasurementTypeUseCase: GetUnitForBodyMeasurementTypeUseCase,
     private val stringProvider: StringProvider,
     private val navigationCommander: NavigationCommander,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val chartModelProducer = CartesianChartModelProducer()
 
+    private val dateIntervalOptions = DateInterval.bodyMeasurementOptions
+
+    private val dateInterval =
+        savedStateHandle.getMutableStateFlow(DATE_INTERVAL_KEY, dateIntervalOptions.first())
+
+    private val entries: Flow<List<BodyMeasurementEntry>> =
+        dateInterval.flatMapLatest { dateInterval ->
+            getBodyMeasurementEntriesUseCase(
+                bodyMeasurementID = routeData.bodyMeasurementID,
+                dateInterval = dateInterval,
+            )
+        }
+
     val state: StateFlow<Loadable<ScreenState>> =
         combine(
                 repository.getBodyMeasurement(routeData.bodyMeasurementID),
-                repository.getBodyMeasurementEntries(routeData.bodyMeasurementID),
+                entries,
+                dateInterval,
                 transform = ::mapPopulatedState,
             )
             .toLoadableStateFlow(viewModelScope)
@@ -57,12 +80,21 @@ constructor(
     private suspend fun mapPopulatedState(
         bodyMeasurement: BodyMeasurement,
         entries: List<BodyMeasurementEntry>,
+        dateInterval: DateInterval,
     ): ScreenState =
         withContext(exceptionHandler) {
             val preferredValueUnit = getUnitForBodyMeasurementTypeUseCase(bodyMeasurement.type)
-            if (entries.isNotEmpty()) {
-                val mappedEntries = chartEntryMapper(entries)
-                chartModelProducer.runTransaction {
+            val mappedEntries = chartEntryMapper(entries)
+            chartModelProducer.runTransaction {
+                extras {
+                    it[ExtraStoreKey.MinX] =
+                        dateInterval.periodStartTime.toLocalDate().toEpochDay().toDouble()
+                    it[ExtraStoreKey.MaxX] =
+                        dateInterval.periodEndTime.toLocalDate().toEpochDay().toDouble()
+                    it[ExtraStoreKey.DateInterval] = dateInterval
+                }
+
+                if (mappedEntries.isNotEmpty()) {
                     lineSeries { mappedEntries.forEach { (x, y) -> series(x, y) } }
                 }
             }
@@ -80,6 +112,8 @@ constructor(
                     },
                 modelProducer = chartModelProducer,
                 valueUnit = stringProvider.getDisplayUnit(preferredValueUnit),
+                dateInterval = dateInterval,
+                dateIntervalOptions = dateIntervalOptions,
             )
         }
 
@@ -89,6 +123,9 @@ constructor(
             is Action.PopBackStack -> popBackStack()
             is Action.EditBodyMeasurement -> addNewBodyMeasurement(action.bodyEntryMeasurementId)
             is Action.AddBodyMeasurement -> addNewBodyMeasurement()
+            Action.DecrementDateInterval -> decrementDateInterval()
+            Action.IncrementDateInterval -> incrementDateInterval()
+            is Action.SetDateInterval -> setDateInterval(action.dateInterval)
         }
     }
 
@@ -109,5 +146,21 @@ constructor(
                 )
             )
         }
+    }
+
+    private fun setDateInterval(dateInterval: DateInterval) {
+        this.dateInterval.value = dateInterval
+    }
+
+    private fun incrementDateInterval() {
+        setDateInterval(dateInterval.value.increment())
+    }
+
+    private fun decrementDateInterval() {
+        setDateInterval(dateInterval.value.decrement())
+    }
+
+    companion object {
+        private const val DATE_INTERVAL_KEY = "dateInterval"
     }
 }

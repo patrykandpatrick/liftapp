@@ -3,27 +3,20 @@ package com.patrykandpatryk.liftapp.feature.exercise.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChip
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChipRow
-import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Dropdown
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -47,14 +40,14 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.chart.ExtraStoreCartesianLayerRangeProvider
+import com.patrykandpatryk.liftapp.core.chart.DateIntervalController
 import com.patrykandpatryk.liftapp.core.chart.OnModelChange
 import com.patrykandpatryk.liftapp.core.chart.rememberBottom
 import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarker
+import com.patrykandpatryk.liftapp.core.chart.rememberExtraStoreCartesianLayerRangeProvider
 import com.patrykandpatryk.liftapp.core.chart.rememberStart
 import com.patrykandpatryk.liftapp.core.chart.rememberValueUnitCartesianMarkerValueFormatter
 import com.patrykandpatryk.liftapp.core.chart.rememberValueUnitCartesianValueFormatter
-import com.patrykandpatryk.liftapp.core.date.displayDateInterval
 import com.patrykandpatryk.liftapp.core.date.name
 import com.patrykandpatryk.liftapp.core.exercise.prettyString
 import com.patrykandpatryk.liftapp.core.exerciseset.name
@@ -146,28 +139,11 @@ private fun StatisticsControls(
             }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            LiftAppIconButton(onClick = { onAction(Action.DecrementDateInterval) }) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
-            }
-
-            Text(
-                text = state.dateInterval.displayDateInterval(),
-                style = MaterialTheme.typography.titleSmall,
-                color = colorScheme.onSurfaceVariant,
-            )
-
-            LiftAppIconButton(
-                onClick = { onAction(Action.IncrementDateInterval) },
-                enabled = state.dateInterval.isIncrementable,
-            ) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowForward, null)
-            }
-        }
+        DateIntervalController(
+            dateInterval = state.dateInterval,
+            incrementDateInterval = { onAction(Action.IncrementDateInterval) },
+            decrementDateInterval = { onAction(Action.DecrementDateInterval) },
+        )
     }
 }
 
@@ -189,7 +165,7 @@ private fun Chart(producer: CartesianChartModelProducer, modifier: Modifier = Mo
                                 )
                             }
                         ),
-                    rangeProvider = ExtraStoreCartesianLayerRangeProvider(),
+                    rangeProvider = rememberExtraStoreCartesianLayerRangeProvider(),
                 ),
                 startAxis = VerticalAxis.rememberStart(rememberValueUnitCartesianValueFormatter()),
                 bottomAxis = HorizontalAxis.rememberBottom(),

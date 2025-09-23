@@ -8,8 +8,6 @@ interface BodyMeasurementRepository {
 
     fun getBodyMeasurementsWithLatestEntries(): Flow<List<BodyMeasurementWithLatestEntry>>
 
-    fun getBodyMeasurementEntries(bodyMeasurementID: Long): Flow<List<BodyMeasurementEntry>>
-
     suspend fun insertBodyMeasurement(bodyMeasurement: BodyMeasurement.Insert)
 
     suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement.Insert>)

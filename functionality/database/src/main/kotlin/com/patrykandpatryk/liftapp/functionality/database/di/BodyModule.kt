@@ -1,5 +1,6 @@
 package com.patrykandpatryk.liftapp.functionality.database.di
 
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntriesUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementWithLatestEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.UpsertBodyMeasurementUseCase
@@ -27,4 +28,9 @@ interface BodyModule {
     fun bindGetBodyMeasurementWithLatestEntryUseCase(
         repository: BodyMeasurementRepositoryImpl
     ): GetBodyMeasurementWithLatestEntryUseCase
+
+    @Binds
+    fun bindGetBodyMeasurementEntriesUseCase(
+        repository: BodyMeasurementRepositoryImpl
+    ): GetBodyMeasurementEntriesUseCase
 }

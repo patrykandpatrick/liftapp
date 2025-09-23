@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
+import java.time.LocalDateTime
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,9 +21,14 @@ interface BodyMeasurementDao {
     fun getBodyMeasurementsWithLatestEntries(): Flow<List<BodyMeasurementWithLatestEntryViewResult>>
 
     @Query(
-        "SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID ORDER BY time DESC"
+        "SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID " +
+            "AND time >= :startDateTime AND time < :endDateTime ORDER BY time DESC"
     )
-    fun getBodyMeasurementEntries(bodyMeasurementID: Long): Flow<List<BodyMeasurementEntryEntity>>
+    fun getBodyMeasurementEntries(
+        bodyMeasurementID: Long,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+    ): Flow<List<BodyMeasurementEntryEntity>>
 
     @Query("SELECT * FROM body_measurement_entries WHERE id = :id LIMIT 1")
     fun getBodyMeasurementEntry(id: Long): Flow<BodyMeasurementEntryEntity?>

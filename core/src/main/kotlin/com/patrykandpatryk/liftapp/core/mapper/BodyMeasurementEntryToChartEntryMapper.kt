@@ -12,6 +12,7 @@ constructor(private val unitConverter: UnitConverter) {
     suspend operator fun invoke(
         input: List<BodyMeasurementEntry>
     ): List<Pair<List<Double>, List<Double>>> {
+        if (input.isEmpty()) return emptyList()
         val x = mutableListOf<Double>()
         val y1 = mutableListOf<Double>()
         val y2 = mutableListOf<Double>()

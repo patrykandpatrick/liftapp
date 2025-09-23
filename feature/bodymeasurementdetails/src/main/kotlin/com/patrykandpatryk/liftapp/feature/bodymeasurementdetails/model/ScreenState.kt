@@ -2,6 +2,7 @@ package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatryk.liftapp.domain.date.DateInterval
 import java.time.LocalDateTime
 
 @Immutable
@@ -11,6 +12,8 @@ data class ScreenState(
     val entries: List<Entry>,
     val modelProducer: CartesianChartModelProducer,
     val valueUnit: String,
+    val dateInterval: DateInterval,
+    val dateIntervalOptions: List<DateInterval>,
 ) {
 
     @Immutable data class Entry(val id: Long, val value: String, val date: LocalDateTime)

@@ -54,3 +54,12 @@ fun PaddingValues.increaseBy(
 @Composable
 fun PaddingValues.increaseBy(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): PaddingValues =
     increaseBy(start = horizontal, top = vertical, end = horizontal, bottom = vertical)
+
+@Composable
+operator fun PaddingValues.plus(other: PaddingValues): PaddingValues =
+    PaddingValues(
+        start = calculateStartPadding() + other.calculateStartPadding(),
+        top = calculateTopPadding() + other.calculateTopPadding(),
+        end = calculateEndPadding() + other.calculateEndPadding(),
+        bottom = calculateBottomPadding() + other.calculateBottomPadding(),
+    )

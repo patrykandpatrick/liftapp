@@ -5,6 +5,7 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntriesUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementWithLatestEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.UpsertBodyMeasurementUseCase
@@ -27,7 +28,8 @@ constructor(
     BodyMeasurementRepository,
     UpsertBodyMeasurementUseCase,
     GetBodyMeasurementEntryUseCase,
-    GetBodyMeasurementWithLatestEntryUseCase {
+    GetBodyMeasurementWithLatestEntryUseCase,
+    GetBodyMeasurementEntriesUseCase {
 
     override fun getBodyMeasurement(id: Long): Flow<BodyMeasurement> =
         dao.getBodyMeasurement(id).map(bodyMeasurementMapper::toDomain).flowOn(dispatcher)
@@ -44,9 +46,11 @@ constructor(
             .flowOn(dispatcher)
 
     override fun getBodyMeasurementEntries(
-        bodyMeasurementID: Long
+        bodyMeasurementID: Long,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
     ): Flow<List<BodyMeasurementEntry>> =
-        dao.getBodyMeasurementEntries(bodyMeasurementID)
+        dao.getBodyMeasurementEntries(bodyMeasurementID, startDateTime, endDateTime)
             .map { entries -> entries.map { entry -> bodyMeasurementMapper.toDomain(entry) } }
             .flowOn(dispatcher)
 

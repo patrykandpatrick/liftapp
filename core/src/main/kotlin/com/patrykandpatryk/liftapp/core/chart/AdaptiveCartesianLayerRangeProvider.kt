@@ -12,13 +12,21 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sign
 
-private class AdaptiveCartesianLayerRangeProvider(private val extentValue: Double) :
-    CartesianLayerRangeProvider {
+private class AdaptiveCartesianLayerRangeProvider(
+    private val extentValue: Double,
+    private val xAxisCartesianLayerRangeProvider: CartesianLayerRangeProvider,
+) : CartesianLayerRangeProvider {
     override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
         (minY - extentValue).round(maxY + extentValue, isMin = true)
 
     override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
         (maxY + extentValue).round(minY - extentValue, isMin = false)
+
+    override fun getMinX(minX: Double, maxX: Double, extraStore: ExtraStore): Double =
+        xAxisCartesianLayerRangeProvider.getMinX(minX, maxX, extraStore)
+
+    override fun getMaxX(minX: Double, maxX: Double, extraStore: ExtraStore): Double =
+        xAxisCartesianLayerRangeProvider.getMaxX(minX, maxX, extraStore)
 
     private fun Double.round(other: Double, isMin: Boolean): Double {
         val absoluteValue = abs(this)
@@ -31,6 +39,10 @@ private class AdaptiveCartesianLayerRangeProvider(private val extentValue: Doubl
 
 @Composable
 fun rememberAdaptiveCartesianLayerRangeProvider(
-    extentValue: Double = 1.0
+    extentValue: Double = 1.0,
+    xAxisCartesianLayerRangeProvider: CartesianLayerRangeProvider =
+        CartesianLayerRangeProvider.auto(),
 ): CartesianLayerRangeProvider =
-    remember(extentValue) { AdaptiveCartesianLayerRangeProvider(extentValue) }
+    remember(extentValue) {
+        AdaptiveCartesianLayerRangeProvider(extentValue, xAxisCartesianLayerRangeProvider)
+    }
