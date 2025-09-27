@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import com.patrykandpatryk.liftapp.domain.markup.MarkupType
 import timber.log.Timber
 
 class MarkupProcessor(private val config: Config) {
@@ -45,16 +46,31 @@ class MarkupProcessor(private val config: Config) {
         }
     }
 
-    class Config(private val map: Map<Type, SpanStyle>) {
+    class Config(
+        private val tags: Map<String, MarkupType>,
+        private val spanStyles: Map<MarkupType, SpanStyle>,
+    ) {
         fun getSpanStyle(tag: String): SpanStyle =
-            map.getOrElse(Type.forTag(tag)) {
-                Timber.w("No SpanStyle found for tag: $tag")
-                SpanStyle()
+            tags[tag]?.let { markupType -> spanStyles[markupType] }
+                ?: run {
+                    Timber.w("No SpanStyle found for tag: $tag")
+                    SpanStyle()
+                }
+
+        class Builder {
+            private val tags = mutableMapOf<String, MarkupType>()
+            private val spanStyles = mutableMapOf<MarkupType, SpanStyle>()
+
+            infix fun MarkupType.using(style: SpanStyle) {
+                tags[tag] = this
+                spanStyles[this] = style
             }
 
+            fun build(): Config = Config(tags, spanStyles)
+        }
+
         companion object {
-            fun build(block: MutableMap<Type, SpanStyle>.() -> Unit): Config =
-                Config(mutableMapOf<Type, SpanStyle>().apply(block))
+            fun build(builder: Builder.() -> Unit): Config = Builder().apply(builder).build()
         }
     }
 
@@ -88,20 +104,6 @@ class MarkupProcessor(private val config: Config) {
         }
     }
 
-    enum class Type(val tag: String) {
-        Bold("b"),
-        BoldSurfaceColor("b-surface"),
-        Italic("i"),
-        Small("small");
-
-        fun wrap(content: String): String = "<$tag>$content</$tag>"
-
-        companion object {
-            fun forTag(tag: String): Type =
-                checkNotNull(Type.entries.find { it.tag == tag }) { "No Type found for tag: $tag" }
-        }
-    }
-
     companion object {
         private val markupRegex = Regex("""<(\w+[-\w+]*)>(.*?)</\1>""")
         private val stripMarkupRegex = Regex("""<(/?\w+[-\w+]*)>""")
@@ -119,16 +121,15 @@ fun rememberDefaultMarkupConfig(): MarkupProcessor.Config {
 
     return remember(colors, typography) {
         MarkupProcessor.Config.build {
-            put(MarkupProcessor.Type.Bold, SpanStyle(fontWeight = FontWeight.ExtraBold))
-            put(
-                MarkupProcessor.Type.BoldSurfaceColor,
-                SpanStyle(fontWeight = FontWeight.ExtraBold, color = colors.onSurface),
-            )
-            put(MarkupProcessor.Type.Italic, SpanStyle(fontStyle = FontStyle.Italic))
-            put(
-                MarkupProcessor.Type.Small,
-                SpanStyle(fontSize = .7.em, color = colors.onSurfaceVariant),
-            )
+            MarkupType.Style.Bold using SpanStyle(fontWeight = FontWeight.ExtraBold)
+            MarkupType.Style.Italic using SpanStyle(fontStyle = FontStyle.Italic)
+
+            MarkupType.Size.Small using SpanStyle(fontSize = .7.em)
+            MarkupType.Size.Medium using SpanStyle(fontSize = .85.em)
+
+            MarkupType.Color.Primary using SpanStyle(color = colors.primary)
+            MarkupType.Color.Secondary using SpanStyle(color = colors.secondary)
+            MarkupType.Color.SurfaceVariant using SpanStyle(color = colors.onSurfaceVariant)
         }
     }
 }
@@ -137,4 +138,10 @@ fun rememberDefaultMarkupConfig(): MarkupProcessor.Config {
 fun rememberDefaultMarkupProcessor(): MarkupProcessor {
     val config = rememberDefaultMarkupConfig()
     return remember(config) { MarkupProcessor(config) }
+}
+
+@Composable
+fun parseMarkup(text: String): AnnotatedString {
+    val processor = LocalMarkupProcessor.current
+    return remember(processor, text) { processor.toAnnotatedString(text) }
 }

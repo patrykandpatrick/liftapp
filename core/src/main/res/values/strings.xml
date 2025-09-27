@@ -40,12 +40,12 @@
     <string name="point_separator" translatable="false">ꞏ</string>
     <string name="multiply_character" translatable="false">×</string>
     <string name="goal_format_time_separator">in</string>
-    <string name="goal_time_format"><![CDATA[<b-surface>%1$s</b-surface>]]></string>
-    <string name="goal_reps_format_long"><![CDATA[<b-surface>%1$s–%2$s</b-surface> %3$s × <b-surface>%4$s</b-surface> %5$s]]></string>
-    <string name="goal_reps_format_long_single_rep"><![CDATA[<b-surface>%1$s</b-surface> %2$s × <b-surface>%3$s</b-surface> %4$s]]></string>
+    <string name="goal_time_format"><![CDATA[<b><color-surface-variant>%1$s</color-surface-variant></b>]]></string>
+    <string name="goal_reps_format_long"><![CDATA[<b><color-surface-variant>%1$s–%2$s</b-surface> %3$s × <b-surface>%4$s</color-surface-variant></b> %5$s]]></string>
+    <string name="goal_reps_format_long_single_rep"><![CDATA[<b><color-surface-variant>%1$s</b-surface> %2$s × <b-surface>%3$s</color-surface-variant></b> %4$s]]></string>
 
     <string name="exercise_set_set_index">Set %d</string>
-    <string name="workout_exercise_set_info"><![CDATA[<b-surface>Set %d</b-surface> ꞏ %s]]></string>
+    <string name="workout_exercise_set_info"><![CDATA[<b><color-surface-variant>Set %d</color-surface-variant></b> ꞏ %s]]></string>
     <string name="exercise_set_not_completed">Not completed</string>
     <!-- Example: 80 kg × 10 reps -->
     <string name="exercise_set_format_calisthenics">%1$s × %2$s</string>
@@ -222,8 +222,8 @@
     <string name="dashboard_section_recent_workout">Recent Workout</string>
     <string name="dashboard_section_recent_workouts">Recent Workouts</string>
     <string name="dashboard_workout_date_pattern">E, d MMM</string>
-    <string name="dashboard_active_workout_date_title"><![CDATA[Started on <b-surface>%s</b-surface>]]></string>
-    <string name="dashboard_completed_workout_date_title"><![CDATA[Completed on <b-surface>%s</b-surface>]]></string>
+    <string name="dashboard_active_workout_date_title"><![CDATA[Started on <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
+    <string name="dashboard_completed_workout_date_title"><![CDATA[Completed on <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
 
     <!-- Rest timer -->
     <string name="rest_timer_notification_channel_name">Rest Timer</string>
@@ -240,7 +240,7 @@
     <!-- Workout -->
     <string name="workout_set_suggestion_previous_set">Previous set</string>
     <string name="workout_set_suggestion_previous_workout">Previous workout</string>
-    <string name="workout_calisthenics_set_body_weight"><![CDATA[Body weight <b-surface>%s</b-surface>]]></string>
+    <string name="workout_calisthenics_set_body_weight"><![CDATA[Body weight <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
     <string name="workout_action_next_exercise">Next exercise</string>
     <string name="workout_action_summary">Summary</string>
     <string name="workout_action_previous_exercise">Previous exercise</string>
@@ -284,7 +284,7 @@
     <string name="route_plan_configurator">Configure Training Plan</string>
     <string name="training_plan_start_date">Start date</string>
     <string name="training_plan_cycle_count">Cycle count</string>
-    <string name="training_plan_configure_info_text"><![CDATA[Starts <b-surface>%s</b-surface>. Ends in <b-surface>%s</b-surface>, on <b-surface>%s</b-surface>.]]></string>
+    <string name="training_plan_configure_info_text"><![CDATA[Starts <b><color-surface-variant>%s</b-surface>. Ends in <b-surface>%s</b-surface>, on <b-surface>%s</color-surface-variant></b>.]]></string>
     <!-- Example: "2 weeks and 3 days" -->
     <string name="training_plan_configure_ends_in_weeks_days">%1$d %2$s and %3$d %4$s</string>
     <!-- Example: "2 weeks" -->

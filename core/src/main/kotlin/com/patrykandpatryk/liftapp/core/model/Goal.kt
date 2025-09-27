@@ -9,9 +9,9 @@ import com.patrykandpatryk.liftapp.core.R.plurals
 import com.patrykandpatryk.liftapp.core.R.string
 import com.patrykandpatryk.liftapp.core.format.LocalFormatter
 import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
-import com.patrykandpatryk.liftapp.core.text.MarkupProcessor
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.goal.Goal
+import com.patrykandpatryk.liftapp.domain.markup.MarkupType
 import com.patrykandpatryk.liftapp.domain.unit.EnergyUnit
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import kotlin.time.Duration
@@ -24,6 +24,7 @@ fun Goal.getPrettyStringLong(exerciseType: ExerciseType): AnnotatedString {
             ExerciseType.Weight,
             ExerciseType.Calisthenics,
             ExerciseType.Reps -> getRepsPrettyString(minReps, maxReps, sets)
+
             ExerciseType.Cardio -> getCardioPrettyString(distance, distanceUnit, duration, calories)
             ExerciseType.Time -> getTimePrettyString(duration)
         }
@@ -62,20 +63,30 @@ fun getCardioPrettyString(
 
     if (distance > 0) {
         append(
-            MarkupProcessor.Type.BoldSurfaceColor.wrap(
-                formatter.formatValue(distance, distanceUnit)
+            MarkupType.wrap(
+                formatter.formatValue(distance, distanceUnit),
+                MarkupType.Style.Bold,
+                MarkupType.Color.SurfaceVariant,
             )
         )
     }
     if (duration.inWholeMilliseconds > 0) {
         if (isNotBlank()) append(" ${stringResource(string.goal_format_time_separator)} ")
-        append(MarkupProcessor.Type.BoldSurfaceColor.wrap(formatter.formatDuration(duration)))
+        append(
+            MarkupType.wrap(
+                formatter.formatDuration(duration),
+                MarkupType.Style.Bold,
+                MarkupType.Color.SurfaceVariant,
+            )
+        )
     }
     if (calories > 0) {
         if (isNotBlank()) append(" ${stringResource(string.point_separator)} ")
         append(
-            MarkupProcessor.Type.BoldSurfaceColor.wrap(
-                formatter.formatValue(calories, EnergyUnit.KiloCalorie)
+            MarkupType.wrap(
+                formatter.formatValue(calories, EnergyUnit.KiloCalorie),
+                MarkupType.Style.Bold,
+                MarkupType.Color.SurfaceVariant,
             )
         )
     }
@@ -83,4 +94,8 @@ fun getCardioPrettyString(
 
 @Composable
 fun getTimePrettyString(duration: Duration): String =
-    MarkupProcessor.Type.BoldSurfaceColor.wrap(LocalFormatter.current.formatDuration(duration))
+    MarkupType.wrap(
+        LocalFormatter.current.formatDuration(duration),
+        MarkupType.Style.Bold,
+        MarkupType.Color.SurfaceVariant,
+    )
