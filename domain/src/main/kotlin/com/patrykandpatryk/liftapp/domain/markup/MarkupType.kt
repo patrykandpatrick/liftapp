@@ -22,6 +22,10 @@ sealed class MarkupType(val tag: String) {
         data object Primary : MarkupType("color-primary")
 
         data object Secondary : MarkupType("color-secondary")
+
+        data object Green : MarkupType("color-green")
+
+        data object Yellow : MarkupType("color-yellow")
     }
 
     companion object {

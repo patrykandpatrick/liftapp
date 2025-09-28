@@ -26,7 +26,6 @@ import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseC
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.Action
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +33,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @HiltViewModel
 class BodyMeasurementDetailViewModel
@@ -50,7 +50,7 @@ constructor(
     private val getUnitForBodyMeasurementTypeUseCase: GetUnitForBodyMeasurementTypeUseCase,
     private val stringProvider: StringProvider,
     private val navigationCommander: NavigationCommander,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val chartModelProducer = CartesianChartModelProducer()
@@ -103,10 +103,21 @@ constructor(
                 bodyMeasurementID = bodyMeasurement.id,
                 name = bodyMeasurement.name,
                 entries =
-                    entries.map { entry ->
+                    entries.mapIndexedNotNull { index, entry ->
+                        if (
+                            entry.localDateTime !in
+                                dateInterval.periodStartTime..dateInterval.periodEndTime
+                        ) {
+                            return@mapIndexedNotNull null
+                        }
+
                         ScreenState.Entry(
                             id = entry.id,
-                            value = formatBodyMeasurementValueToStringUseCase(entry.value),
+                            value =
+                                formatBodyMeasurementValueToStringUseCase(
+                                    entry.value,
+                                    entries.getOrNull(index + 1)?.value,
+                                ),
                             date = entry.localDateTime,
                         )
                     },

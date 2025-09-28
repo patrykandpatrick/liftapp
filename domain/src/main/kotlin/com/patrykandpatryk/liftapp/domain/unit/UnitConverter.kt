@@ -53,8 +53,21 @@ constructor(
             else -> error(getTypeErrorMessage(unit = from))
         }
 
-    suspend fun convertToPreferredUnitAndFormat(from: ValueUnit, vararg values: Double): String {
-        val convertedValues = values.map { convertToPreferredUnit(from, it) }.toTypedArray()
+    @Suppress("UNCHECKED_CAST")
+    suspend fun <T : ValueUnit> getPreferredUnit(referenceUnit: T): T =
+        when (referenceUnit) {
+            is MassUnit -> getPreferredMassUnit()
+            is LongDistanceUnit -> getPreferredLongDistanceUnit()
+            is MediumDistanceUnit -> getPreferredMediumDistanceUnit()
+            is ShortDistanceUnit -> getPreferredShortDistanceUnit()
+            is PercentageUnit -> PercentageUnit
+            is EnergyUnit -> EnergyUnit.KiloCalorie
+            else -> error(getTypeErrorMessage(unit = referenceUnit))
+        }
+            as T
+
+    suspend fun convertToPreferredUnitAndFormat(from: ValueUnit, value: Double): String {
+        val convertedValue = convertToPreferredUnit(from, value)
 
         val postfix =
             when (from) {
@@ -62,14 +75,16 @@ constructor(
                 is LongDistanceUnit -> stringProvider.getDisplayUnit(getPreferredLongDistanceUnit())
                 is MediumDistanceUnit ->
                     stringProvider.getDisplayUnit(getPreferredMediumDistanceUnit())
+
                 is ShortDistanceUnit ->
                     stringProvider.getDisplayUnit(getPreferredShortDistanceUnit())
+
                 is PercentageUnit -> stringProvider.getDisplayUnit(PercentageUnit)
                 else -> error(getTypeErrorMessage(unit = from))
             }
 
         return formatter.formatNumber(
-            *convertedValues,
+            convertedValue,
             format = Formatter.NumberFormat.Decimal,
             postfix = postfix,
         )

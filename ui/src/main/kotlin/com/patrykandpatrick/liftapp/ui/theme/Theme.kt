@@ -8,7 +8,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.liftapp.ui.dimens.LandscapeDimens
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
@@ -78,32 +77,6 @@ private val DarkColorScheme =
         inversePrimary = Colors.Dark.inversePrimary,
     )
 
-val ChartTheme: VicoTheme
-    @Composable
-    get() {
-        val colorScheme = LocalColorScheme.current
-        return remember(colorScheme) {
-            VicoTheme(
-                candlestickCartesianLayerColors =
-                    VicoTheme.CandlestickCartesianLayerColors(
-                        colorScheme.primary,
-                        neutral = colorScheme.outline,
-                        bearish = colorScheme.error,
-                    ),
-                columnCartesianLayerColors =
-                    listOf(
-                        colorScheme.chartColors.series1,
-                        colorScheme.chartColors.series2,
-                        colorScheme.chartColors.series3,
-                        colorScheme.chartColors.series4,
-                        colorScheme.chartColors.series5,
-                    ),
-                lineColor = colorScheme.outline,
-                textColor = colorScheme.onSurface,
-            )
-        }
-    }
-
 data object Alpha {
     const val disabled: Float = 0.38f
     const val standard: Float = 1f
@@ -137,7 +110,21 @@ fun LiftAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
             LocalColorScheme provides liftAppColorScheme,
             LocalIndication provides ScaleIndication(),
         ) {
-            ProvideVicoTheme(theme = ChartTheme, content = content)
+            ProvideVicoTheme(theme = getVicoTheme(liftAppColorScheme), content = content)
         }
     }
 }
+
+private fun getVicoTheme(colorScheme: ColorScheme): VicoTheme =
+    VicoTheme(
+        candlestickCartesianLayerColors =
+            VicoTheme.CandlestickCartesianLayerColors(
+                colorScheme.green,
+                neutral = colorScheme.outline,
+                bearish = colorScheme.red,
+            ),
+        columnCartesianLayerColors = colorScheme.chartColors,
+        lineCartesianLayerColors = colorScheme.chartColors,
+        lineColor = colorScheme.outline,
+        textColor = colorScheme.onSurface,
+    )

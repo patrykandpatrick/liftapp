@@ -26,18 +26,15 @@ data class ColorScheme(
     val error: Color,
     val onError: Color,
     val isDarkColorScheme: Boolean,
-    val chartColors: ChartColors,
     val borderColors: InteractiveBorderColors = getInteractiveBorderColors(highlight, outline),
     val onBackground: Color = onSurface,
-)
-
-data class ChartColors(
-    val series1: Color,
-    val series2: Color,
-    val series3: Color,
-    val series4: Color,
-    val series5: Color,
-)
+    val green: Color,
+    val yellow: Color,
+    val orange: Color,
+    val red: Color,
+) {
+    val chartColors = listOf(green, yellow, orange, red)
+}
 
 private fun getInteractiveBorderColors(highlight: Color, outline: Color): InteractiveBorderColors =
     InteractiveBorderColors(outline, highlight, highlight)
@@ -54,22 +51,18 @@ private val LightColorScheme =
         secondaryDisabled = Color(0xFFBEAA83),
         onSecondary = Color(0xFF2A1500),
         onSecondaryDisabled = Color(0xFF4D2A08),
-        background = Color(0xFFF2F2FF),
-        surface = Color(0xFFF6F6FF),
+        background = Color(0xFFFBFBFF),
+        surface = Color(0xFFF8F8FF),
         surfaceVariant = Color.White,
         onSurface = Color(0xFF00002F),
         onSurfaceVariant = Color(0xFF171754),
         outline = Color(0xFF9595A6),
         error = Color(color = 0xff880000),
         onError = Color(color = 0xFFFFF1F1),
-        chartColors =
-            ChartColors(
-                Color(0xFF5151FA),
-                Color(0xFFD654F0),
-                Color(0xFFF054A2),
-                Color(0xFFF06154),
-                Color(0xFFF08854),
-            ),
+        green = Color(0xFF25A98F),
+        yellow = Color(0xFFF59F00),
+        orange = Color(0xFFFF5900),
+        red = Color(0xFFFF0040),
         isDarkColorScheme = false,
     )
 
@@ -85,22 +78,18 @@ private val DarkColorScheme =
         secondaryDisabled = Color(0xFF6E5119),
         onSecondary = Color(0xFF3A1D00),
         onSecondaryDisabled = Color(0xFFECC8A3),
-        background = Color(0xFF0A0A0F),
-        surface = Color(0xFF121216),
+        background = Color(0xFF02020A),
+        surface = Color(0xFF080812),
         surfaceVariant = Color(0xFF252534),
         onSurface = Color(0xFFE5E5FF),
         onSurfaceVariant = Color(0xFFC8C8EC),
-        outline = Color(0x4FE1E1F8),
+        outline = Color(0xFF464653),
         error = Color(color = 0xffff4444),
         onError = Color(color = 0xFF330000),
-        chartColors =
-            ChartColors(
-                Color(0xFF6C6CF0),
-                Color(0xFFDA6CF0),
-                Color(0xFFF06CAE),
-                Color(0xFFF06C6C),
-                Color(0xFFF0986C),
-            ),
+        green = Color(0xFF00FFCC),
+        yellow = Color(0xFFFFE100),
+        orange = Color(0xFFFF5900),
+        red = Color(0xFFFF0040),
         isDarkColorScheme = true,
     )
 

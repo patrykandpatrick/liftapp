@@ -20,7 +20,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppChipRow
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Dropdown
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
-import com.patrykandpatrick.liftapp.ui.theme.ChartTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.layer.grouped
@@ -157,7 +156,7 @@ private fun Chart(producer: CartesianChartModelProducer, modifier: Modifier = Mo
                     mergeMode = { ColumnCartesianLayer.MergeMode.grouped(4.dp) },
                     columnProvider =
                         ColumnCartesianLayer.ColumnProvider.series(
-                            ChartTheme.columnCartesianLayerColors.map { color ->
+                            colorScheme.chartColors.map { color ->
                                 rememberLineComponent(
                                     fill = fill(color),
                                     shape = CorneredShape.rounded(topLeft = 4.dp, topRight = 4.dp),

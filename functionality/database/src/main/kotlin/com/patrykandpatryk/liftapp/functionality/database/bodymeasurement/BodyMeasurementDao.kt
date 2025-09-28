@@ -22,7 +22,14 @@ interface BodyMeasurementDao {
 
     @Query(
         "SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID " +
-            "AND time >= :startDateTime AND time < :endDateTime ORDER BY time DESC"
+            "AND time >= :startDateTime AND time < :endDateTime " +
+            "UNION SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID AND time =" +
+            "(SELECT MAX(time) FROM BODY_MEASUREMENT_ENTRIES WHERE body_measurement_id = :bodyMeasurementID AND " +
+            "time < :startDateTime) " +
+            "UNION SELECT * FROM body_measurement_entries WHERE body_measurement_id = :bodyMeasurementID AND time =" +
+            "(SELECT MIN(time) FROM BODY_MEASUREMENT_ENTRIES WHERE body_measurement_id = :bodyMeasurementID AND " +
+            "time > :endDateTime) " +
+            "ORDER BY time DESC"
     )
     fun getBodyMeasurementEntries(
         bodyMeasurementID: Long,

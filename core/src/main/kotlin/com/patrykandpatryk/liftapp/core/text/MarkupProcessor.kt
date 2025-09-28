@@ -75,11 +75,12 @@ class MarkupProcessor(private val config: Config) {
     }
 
     private class IndexLookup private constructor(private val map: Map<Int, Int>) {
-        fun provideIndexes(offset: Int = 0): IndexProvider =
+        fun provideIndexes(providedOffset: Int = 0): IndexProvider =
             object : IndexProvider {
-                override fun withOffset(offset: Int): IndexProvider = provideIndexes(offset)
+                override fun withOffset(offset: Int): IndexProvider =
+                    provideIndexes(offset + providedOffset)
 
-                override fun get(index: Int): Int = checkNotNull(map[index + offset])
+                override fun get(index: Int): Int = checkNotNull(map[index + providedOffset])
             }
 
         interface IndexProvider {
@@ -130,6 +131,8 @@ fun rememberDefaultMarkupConfig(): MarkupProcessor.Config {
             MarkupType.Color.Primary using SpanStyle(color = colors.primary)
             MarkupType.Color.Secondary using SpanStyle(color = colors.secondary)
             MarkupType.Color.SurfaceVariant using SpanStyle(color = colors.onSurfaceVariant)
+            MarkupType.Color.Green using SpanStyle(color = colors.green)
+            MarkupType.Color.Yellow using SpanStyle(color = colors.yellow)
         }
     }
 }

@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,8 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChip
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
-import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.Dropdown
@@ -66,9 +69,11 @@ import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
+import com.patrykandpatryk.liftapp.core.text.parseMarkup
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatryk.liftapp.core.ui.DropdownMenu
+import com.patrykandpatryk.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.domain.date.DateInterval
@@ -213,26 +218,55 @@ private fun LazyListScope.journalItems(
     }
 
     items(items = entries, key = { it.id }) { entry ->
+        val (modalVisible, setModalVisible) = remember { mutableStateOf(false) }
         ListItem(
-            title = { Text(entry.value) },
+            title = { Text(parseMarkup(entry.value)) },
             modifier = Modifier.animateItem(),
             description = { Text(entry.date.format(Formatter.DateFormat.WeekdayDayMonth)) },
             paddingValues = paddingValues,
-            actions = {
-                LiftAppIconButton(onClick = { onAction(Action.EditBodyMeasurement(entry.id)) }) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_edit),
-                        stringResource(id = R.string.action_edit),
-                    )
-                }
+            onClick = { setModalVisible(true) },
+        )
 
-                LiftAppIconButton(
-                    onClick = { onAction(Action.DeleteBodyMeasurementEntry(entry.id)) }
-                ) {
-                    Icon(LiftAppIcons.Delete, stringResource(id = R.string.action_delete))
-                }
+        if (modalVisible) {
+            OptionsBottomSheet(
+                onDismissRequest = { setModalVisible(false) },
+                onEdit = { onAction(Action.EditBodyMeasurement(entry.id)) },
+                onDelete = { onAction(Action.DeleteBodyMeasurementEntry(entry.id)) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun OptionsBottomSheet(
+    onDismissRequest: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LiftAppModalBottomSheetWithTopAppBar(onDismissRequest, modifier) { dismiss ->
+        SinHorizontalDivider()
+        Spacer(modifier = Modifier.height(dimens.padding.contentVertical))
+
+        ListItem(
+            title = { Text(stringResource(id = R.string.action_edit)) },
+            icon = { Icon(painterResource(id = R.drawable.ic_edit), null) },
+            onClick = {
+                onEdit()
+                dismiss()
             },
         )
+
+        ListItem(
+            title = { Text(text = stringResource(id = R.string.action_delete)) },
+            icon = { Icon(LiftAppIcons.Delete, null) },
+            onClick = {
+                onDelete()
+                dismiss()
+            },
+        )
+
+        Spacer(modifier = Modifier.height(dimens.padding.contentVertical))
     }
 }
 
@@ -284,8 +318,8 @@ private fun Chart(
                 rememberLineCartesianLayer(
                     lineProvider =
                         LineCartesianLayer.LineProvider.series(
-                            LineCartesianLayer.rememberLine(colorScheme.primary),
-                            LineCartesianLayer.rememberLine(colorScheme.secondary),
+                            LineCartesianLayer.rememberLine(colorScheme.chartColors[0]),
+                            LineCartesianLayer.rememberLine(colorScheme.chartColors[1]),
                         ),
                     rangeProvider =
                         rememberAdaptiveCartesianLayerRangeProvider(
@@ -296,6 +330,7 @@ private fun Chart(
                 startAxis = VerticalAxis.rememberStart(rememberStartAxisValueFormatter(valueUnit)),
                 bottomAxis = HorizontalAxis.rememberBottom(),
                 marker = rememberCartesianMarker(rememberCartesianMarkerValueFormatter(valueUnit)),
+                getXStep = { 1.0 },
             ),
         modelProducer = modelProducer,
         scrollState =
