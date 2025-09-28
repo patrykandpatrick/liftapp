@@ -11,4 +11,6 @@ object ExtraStoreKey {
         ExtraStore.Key<com.patrykandpatryk.liftapp.domain.date.DateInterval>()
 
     data object ValueUnit : ExtraStore.Key<com.patrykandpatryk.liftapp.domain.unit.ValueUnit>()
+
+    data object ShowLeftRightLegend : ExtraStore.Key<Boolean>()
 }

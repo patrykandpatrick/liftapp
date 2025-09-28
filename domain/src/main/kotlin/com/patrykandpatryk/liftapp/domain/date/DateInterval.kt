@@ -78,8 +78,8 @@ sealed class DateInterval : Serializable {
             get() =
                 listOf(
                     RollingDays(7),
-                    RollingDays.Standard,
                     RollingWeek(),
+                    RollingDays.Standard,
                     RollingMonth(),
                     RollingYear(),
                 )

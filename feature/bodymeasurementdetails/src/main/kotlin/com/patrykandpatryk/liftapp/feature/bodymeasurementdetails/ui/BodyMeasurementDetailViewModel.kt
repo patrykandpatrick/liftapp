@@ -26,6 +26,7 @@ import com.patrykandpatryk.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseC
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.Action
 import com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +34,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @HiltViewModel
 class BodyMeasurementDetailViewModel
@@ -92,6 +92,7 @@ constructor(
                     it[ExtraStoreKey.MaxX] =
                         dateInterval.periodEndTime.toLocalDate().toEpochDay().toDouble()
                     it[ExtraStoreKey.DateInterval] = dateInterval
+                    it[ExtraStoreKey.ShowLeftRightLegend] = mappedEntries.size > 1
                 }
 
                 if (mappedEntries.isNotEmpty()) {

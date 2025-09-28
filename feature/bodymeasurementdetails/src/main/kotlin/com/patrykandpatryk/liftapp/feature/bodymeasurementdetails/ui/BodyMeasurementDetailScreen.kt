@@ -52,6 +52,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.chart.DateIntervalController
+import com.patrykandpatryk.liftapp.core.chart.bodyMeasurementLegend
 import com.patrykandpatryk.liftapp.core.chart.rememberAdaptiveCartesianLayerRangeProvider
 import com.patrykandpatryk.liftapp.core.chart.rememberBottom
 import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarker
@@ -214,7 +215,12 @@ private fun LazyListScope.journalItems(
     paddingValues: PaddingValues,
 ) {
     if (entries.isNotEmpty()) {
-        item { ListSectionTitle(stringResource(id = R.string.generic_journal)) }
+        item {
+            ListSectionTitle(
+                title = stringResource(id = R.string.generic_journal),
+                modifier = Modifier.padding(top = dimens.padding.itemVertical),
+            )
+        }
     }
 
     items(items = entries, key = { it.id }) { entry ->
@@ -331,6 +337,7 @@ private fun Chart(
                 bottomAxis = HorizontalAxis.rememberBottom(),
                 marker = rememberCartesianMarker(rememberCartesianMarkerValueFormatter(valueUnit)),
                 getXStep = { 1.0 },
+                legend = bodyMeasurementLegend(),
             ),
         modelProducer = modelProducer,
         scrollState =
