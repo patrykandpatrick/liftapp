@@ -46,7 +46,7 @@ private fun Modifier.sinDivider(
 @Composable
 fun SinHorizontalDivider(
     modifier: Modifier = Modifier,
-    color: Color = colorScheme.outline,
+    color: Color = colorScheme.divider,
     thickness: Dp = dimens.strokeWidth,
     sinHeight: Dp = dimens.divider.sinHeight,
     sinPeriodLength: Dp = dimens.divider.sinPeriodLength,

@@ -125,6 +125,6 @@ private fun getVicoTheme(colorScheme: ColorScheme): VicoTheme =
             ),
         columnCartesianLayerColors = colorScheme.chartColors,
         lineCartesianLayerColors = colorScheme.chartColors,
-        lineColor = colorScheme.outline,
+        lineColor = colorScheme.divider,
         textColor = colorScheme.onSurface,
     )

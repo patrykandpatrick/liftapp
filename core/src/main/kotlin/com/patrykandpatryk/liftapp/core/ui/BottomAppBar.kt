@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
@@ -69,7 +68,7 @@ fun BottomAppBar(
         contentAlignment = Alignment.TopCenter,
         modifier = modifier.background(colorScheme.surface).fillMaxWidth().navigationBarsPadding(),
     ) {
-        HorizontalDivider()
+        LiftAppHorizontalDivider()
         Row(modifier = Modifier.padding(paddingValues), content = content)
     }
 }
