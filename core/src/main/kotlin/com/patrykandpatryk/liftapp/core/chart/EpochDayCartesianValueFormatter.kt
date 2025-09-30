@@ -10,11 +10,13 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.date.DateInterval
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 private class EpochDayCartesianValueFormatter(
     private val regularDateFormatter: DateTimeFormatter,
     private val dayOfWeekFormatter: DateTimeFormatter,
     private val dayOfMonthFormatter: DateTimeFormatter,
+    private val monthFormatter: DateTimeFormatter,
 ) : CartesianValueFormatter {
     override fun format(
         context: CartesianMeasuringContext,
@@ -23,9 +25,14 @@ private class EpochDayCartesianValueFormatter(
     ): CharSequence {
         val localDate = LocalDate.ofEpochDay(value.toLong())
         val dateInterval = context.model.extraStore.getOrNull(ExtraStoreKey.DateInterval)
-        return when (dateInterval) {
-            is DateInterval.RollingWeek -> dayOfWeekFormatter
-            is DateInterval.RollingMonth -> dayOfMonthFormatter
+        val isRangeWithinTwoMonths =
+            dateInterval?.run { ChronoUnit.MONTHS.between(periodStartTime, periodEndTime) <= 2 }
+                ?: false
+        return when {
+            dateInterval is DateInterval.RollingWeek -> dayOfWeekFormatter
+            isRangeWithinTwoMonths || dateInterval is DateInterval.RollingMonth ->
+                dayOfMonthFormatter
+            dateInterval is DateInterval.RollingYear -> monthFormatter
             else -> regularDateFormatter
         }.format(localDate)
     }
@@ -39,6 +46,7 @@ fun rememberEpochDayCartesianValueFormatter(): CartesianValueFormatter {
             regularDateFormatter = DateTimeFormatter.ofPattern(datePattern),
             dayOfWeekFormatter = DateTimeFormatter.ofPattern("EEE"),
             dayOfMonthFormatter = DateTimeFormatter.ofPattern("d"),
+            monthFormatter = DateTimeFormatter.ofPattern("M"),
         )
     }
 }
