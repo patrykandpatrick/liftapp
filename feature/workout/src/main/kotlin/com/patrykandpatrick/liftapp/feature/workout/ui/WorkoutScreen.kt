@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -43,9 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.innerShadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
@@ -73,8 +69,11 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.modifier.topTintedEdge
+import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonBorderShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonShape
+import com.patrykandpatrick.liftapp.ui.theme.bottomSheetShadow
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.copy
@@ -196,24 +195,18 @@ private fun Content(
             state = backdropState,
             modifier = Modifier,
         ) {
-            val outline = colorScheme.outline
-            val shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
             Column(
                 verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
                 modifier =
-                    Modifier.background(
+                    Modifier.bottomSheetShadow()
+                        .background(
                             brush =
                                 Brush.verticalGradient(
                                     listOf(colorScheme.surface, colorScheme.background)
                                 ),
-                            shape = shape,
+                            shape = BottomSheetShape,
                         )
-                        .innerShadow(shape) {
-                            spread = 0.5.dp.toPx()
-                            color = outline
-                            offset = Offset(0f, 1.dp.toPx())
-                            blendMode = BlendMode.SrcOver
-                        }
+                        .topTintedEdge(BottomSheetShape)
                         .padding(top = dimens.padding.contentVertical),
             ) {
                 Spacer(

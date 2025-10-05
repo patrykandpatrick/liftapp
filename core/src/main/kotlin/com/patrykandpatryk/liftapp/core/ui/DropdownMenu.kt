@@ -2,13 +2,15 @@ package com.patrykandpatryk.liftapp.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -18,17 +20,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
-import com.patrykandpatrick.liftapp.ui.component.LiftAppChipRow
-import com.patrykandpatrick.liftapp.ui.component.LiftAppFilterChip
-import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
+import com.patrykandpatrick.liftapp.ui.component.LiftAppModalBottomSheet
+import com.patrykandpatrick.liftapp.ui.component.LiftAppRadioButton
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.modifier.fadingEdges
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.bottomSheetShadow
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.resource.prettyName
@@ -118,11 +123,10 @@ private fun <T> ListBottomSheet(
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         val scope = rememberCoroutineScope()
 
-        ModalBottomSheet(
+        LiftAppModalBottomSheet(
             onDismissRequest = onDismissRequest,
             sheetState = sheetState,
-            modifier = modifier.safeDrawingPadding(),
-            dragHandle = null,
+            modifier = modifier,
         ) {
             ListBottomSheetContent(
                 onDismissRequest = {
@@ -139,6 +143,7 @@ private fun <T> ListBottomSheet(
                 onClick = onClick,
                 onClear = onClear,
                 isMultiSelect = isMultiSelect,
+                modifier = Modifier.bottomSheetShadow(),
             )
         }
     }
@@ -166,24 +171,20 @@ private fun <T> ListBottomSheetContent(
                     onClick = onDismissRequest,
                 )
             },
-            modifier =
-                Modifier.padding(
-                    top = dimens.padding.itemVerticalSmall,
-                    bottom = dimens.padding.itemVertical,
-                ),
             windowInsets = WindowInsets(),
+            content = null,
         )
 
         if (isMultiSelect) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = dimens.padding.contentHorizontal),
+                modifier = Modifier.padding(horizontal = dimens.padding.contentHorizontalSmall),
             ) {
                 Text(
                     text = stringResource(R.string.title_x_selected, selectedItems.size),
                     style = MaterialTheme.typography.titleMedium,
                     color = colorScheme.onSurface,
-                    modifier = Modifier.weight(1f).padding(start = dimens.chip.endPadding),
+                    modifier = Modifier.weight(1f).padding(start = 8.dp),
                 )
 
                 if (onClear != null) {
@@ -194,24 +195,45 @@ private fun <T> ListBottomSheetContent(
             }
         }
 
-        LiftAppChipRow(
+        val lazyListState = rememberLazyListState()
+
+        LazyColumn(
+            state = lazyListState,
+            contentPadding =
+                PaddingValues(horizontal = 2.dp, vertical = dimens.padding.itemVerticalSmall),
             modifier =
-                Modifier.padding(
-                    horizontal = dimens.padding.contentHorizontal,
-                    vertical = dimens.padding.itemVertical,
-                )
+                Modifier.fadingEdges(verticalEdgeLength = 32.dp, lazyListState = lazyListState)
+                    .weight(1f, fill = false),
         ) {
-            items.forEach { item ->
-                LiftAppFilterChip(
-                    selected = selectedItems.contains(item),
-                    enabled = disabledItems?.contains(item) != true,
-                    label = { Text(text = getItemText(item)) },
+            items(items) { item ->
+                val enabled = disabledItems?.contains(item) != true
+
+                ListItem(
+                    title = { Text(getItemText(item)) },
+                    icon = {
+                        if (isMultiSelect) {
+                            LiftAppCheckbox(
+                                checked = selectedItems.contains(item),
+                                onCheckedChange = null,
+                            )
+                        } else {
+                            LiftAppRadioButton(
+                                selected = selectedItems.contains(item),
+                                onCheck = null,
+                            )
+                        }
+                    },
+                    modifier = Modifier,
+                    enabled = enabled,
+                    paddingValues =
+                        PaddingValues(
+                            horizontal = dimens.padding.contentHorizontal,
+                            vertical = dimens.padding.itemVerticalMedium,
+                        ),
                     onClick = { onClick(item) },
                 )
             }
         }
-
-        LiftAppHorizontalDivider(modifier = Modifier.padding(top = dimens.padding.itemVertical))
 
         LiftAppButton(
             onClick = onDismissRequest,

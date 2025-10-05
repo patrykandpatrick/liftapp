@@ -33,6 +33,8 @@ data class ColorScheme(
     val yellow: Color,
     val orange: Color,
     val red: Color,
+    val bottomSheetScrim: Color = Color.Black,
+    val onBottomSheetScrim: Color = Color.White,
 ) {
     val chartColors = listOf(green, yellow, orange, red)
 }

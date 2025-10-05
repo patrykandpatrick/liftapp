@@ -32,7 +32,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChip
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
-import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.Dropdown
@@ -251,9 +250,6 @@ private fun OptionsBottomSheet(
     modifier: Modifier = Modifier,
 ) {
     LiftAppModalBottomSheetWithTopAppBar(onDismissRequest, modifier) { dismiss ->
-        SinHorizontalDivider()
-        Spacer(modifier = Modifier.height(dimens.padding.contentVertical))
-
         ListItem(
             title = { Text(stringResource(id = R.string.action_edit)) },
             icon = { Icon(painterResource(id = R.drawable.ic_edit), null) },
