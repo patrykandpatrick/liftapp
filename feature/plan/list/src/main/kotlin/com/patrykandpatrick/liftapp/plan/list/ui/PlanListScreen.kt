@@ -134,7 +134,7 @@ private fun PlanItem(
                 {
                     LiftAppRadioButton(
                         selected = plan.isChecked,
-                        onClick = { onAction(Action.CheckPlan(plan.id)) },
+                        onCheck = { onAction(Action.CheckPlan(plan.id)) },
                         colors = LiftAppRadioButtonDefaults.onSurfaceColors,
                     )
                 }

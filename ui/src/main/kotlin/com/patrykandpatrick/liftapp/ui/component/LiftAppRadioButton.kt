@@ -32,7 +32,7 @@ import com.patrykandpatrick.liftapp.ui.theme.unfocused
 @Composable
 fun LiftAppRadioButton(
     selected: Boolean,
-    onClick: () -> Unit,
+    onCheck: (() -> Unit)?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     colors: LiftAppRadioButtonColors = LiftAppRadioButtonDefaults.primaryColors,
@@ -59,12 +59,19 @@ fun LiftAppRadioButton(
     Canvas(
         modifier =
             modifier
-                .selectable(
-                    selected = selected,
-                    enabled = enabled,
-                    role = Role.RadioButton,
-                    onClick = onClick,
-                    interactionSource = interactionSource ?: remember { MutableInteractionSource() },
+                .then(
+                    if (onCheck != null) {
+                        Modifier.selectable(
+                            selected = selected,
+                            enabled = enabled,
+                            role = Role.RadioButton,
+                            onClick = onCheck,
+                            interactionSource =
+                                interactionSource ?: remember { MutableInteractionSource() },
+                        )
+                    } else {
+                        Modifier
+                    }
                 )
                 .defaultMinSize(radioButtonSize, radioButtonSize)
     ) {
@@ -147,11 +154,11 @@ private fun LiftAppRadioButtonPreview() {
                         ) {
                             LiftAppRadioButton(
                                 selected = selected,
-                                onClick = { setSelected(!selected) },
+                                onCheck = { setSelected(!selected) },
                             )
                             LiftAppRadioButton(
                                 selected = !selected,
-                                onClick = { setSelected(!selected) },
+                                onCheck = { setSelected(!selected) },
                             )
                         }
                     },
@@ -165,12 +172,12 @@ private fun LiftAppRadioButtonPreview() {
                             LiftAppRadioButton(
                                 selected = selected,
                                 enabled = false,
-                                onClick = { setSelected(!selected) },
+                                onCheck = { setSelected(!selected) },
                             )
                             LiftAppRadioButton(
                                 selected = !selected,
                                 enabled = false,
-                                onClick = { setSelected(!selected) },
+                                onCheck = { setSelected(!selected) },
                             )
                         }
                     },
