@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -14,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -25,17 +25,18 @@ fun CompactTopAppBar(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    colors: TopAppBarColors = AppBars.colors(),
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    content: @Composable (ColumnScope.() -> Unit)? = { LiftAppHorizontalDivider() },
+    content: @Composable (ColumnScope.() -> Unit)? = null,
 ) {
     Column(modifier) {
         CenterAlignedTopAppBar(
             title = title,
             navigationIcon = navigationIcon,
             actions = actions,
-            colors = AppBars.colors,
+            colors = colors,
             scrollBehavior = scrollBehavior,
             windowInsets = windowInsets,
         )

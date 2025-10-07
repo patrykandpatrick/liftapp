@@ -30,7 +30,7 @@ fun LiftAppModalBottomSheetWithTopAppBar(
                     onClick = dismiss,
                 )
             },
-            content = null,
+            colors = AppBars.noBackgroundColors,
         )
         content(dismiss)
     }

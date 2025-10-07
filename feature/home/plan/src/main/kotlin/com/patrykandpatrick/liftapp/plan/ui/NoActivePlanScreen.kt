@@ -139,7 +139,6 @@ private fun EditBottomSheetContent(
                         Icon(LiftAppIcons.Cross, stringResource(R.string.action_close))
                     }
                 },
-                content = null,
             )
         },
         bottomContent = {

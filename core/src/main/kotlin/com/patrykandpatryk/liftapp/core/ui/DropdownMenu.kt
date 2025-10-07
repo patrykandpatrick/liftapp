@@ -171,8 +171,8 @@ private fun <T> ListBottomSheetContent(
                     onClick = onDismissRequest,
                 )
             },
+            colors = AppBars.noBackgroundColors,
             windowInsets = WindowInsets(),
-            content = null,
         )
 
         if (isMultiSelect) {

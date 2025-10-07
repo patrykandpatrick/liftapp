@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,7 +44,7 @@ fun TopAppBar(
             scrollBehavior = scrollBehavior,
             title = { Text(text = title) },
             actions = actions,
-            colors = AppBars.colors,
+            colors = AppBars.colors(),
             navigationIcon = {
                 if (onBackClick != null) {
                     LiftAppIconButton(onClick = onBackClick) {
@@ -55,8 +56,6 @@ fun TopAppBar(
                 }
             },
         )
-
-        LiftAppHorizontalDivider()
     }
 }
 
@@ -82,7 +81,7 @@ fun TopAppBarWithTabs(
             LiftAppTabRow(
                 selectedTabIndex = selectedTabIndex(),
                 selectedTabOffset = selectedTabOffset?.invoke(),
-                modifier = modifier.background(colorScheme.surface),
+                modifier = modifier.background(colorScheme.background),
                 tabs = tabs,
             )
             LiftAppHorizontalDivider()
@@ -156,17 +155,22 @@ object AppBars {
         }
     }
 
-    val colors: TopAppBarColors
-        @Composable
-        get() =
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = colorScheme.surface,
-                scrolledContainerColor = colorScheme.surface,
-                navigationIconContentColor = colorScheme.onSurface,
-                titleContentColor = colorScheme.onSurface,
-                actionIconContentColor = colorScheme.onSurface,
-                subtitleContentColor = colorScheme.onSurface,
-            )
+    val noBackgroundColors: TopAppBarColors
+        @Composable get() = colors(containerColor = Color.Transparent)
+
+    @Composable
+    fun colors(
+        containerColor: Color = colorScheme.background,
+        contentColor: Color = colorScheme.onBackground,
+    ): TopAppBarColors =
+        TopAppBarDefaults.topAppBarColors(
+            containerColor = containerColor,
+            scrolledContainerColor = containerColor,
+            navigationIconContentColor = contentColor,
+            titleContentColor = contentColor,
+            actionIconContentColor = contentColor,
+            subtitleContentColor = contentColor,
+        )
 }
 
 @MultiDevicePreview
