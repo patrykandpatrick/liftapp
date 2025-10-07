@@ -13,6 +13,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
@@ -67,12 +69,14 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.component.windowInsetsControllerCompat
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.modifier.topTintedEdge
 import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonBorderShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonShape
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.bottomSheetShadow
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
@@ -117,6 +121,8 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
 
     RestTimerEffect(viewModel, restTimerService)
 
+    SetStatusAppearance()
+
     LiftAppScaffold(
         topBar = {
             CompactTopAppBar(
@@ -130,6 +136,11 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
                 navigationIcon = {
                     AppBars.BackArrow(onClick = { viewModel.onAction(Action.PopBackStack) })
                 },
+                colors =
+                    AppBars.colors(
+                        containerColor = colorScheme.bottomSheetScrim,
+                        contentColor = colorScheme.onBottomSheetScrim,
+                    ),
             )
         },
         bottomBar = {
@@ -138,6 +149,7 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
             }
         },
         modifier = modifier,
+        containerColor = colorScheme.bottomSheetScrim,
     ) { paddingValues ->
         if (workout != null) {
             Content(
@@ -189,7 +201,11 @@ private fun Content(
 
     Box(modifier = modifier.imePadding()) {
         Backdrop(
-            backContent = { ExerciseListPicker(workout, wheelPickerState, backdropState) },
+            backContent = {
+                LiftAppTheme(darkTheme = true) {
+                    ExerciseListPicker(workout, wheelPickerState, backdropState)
+                }
+            },
             backPeekHeight = { wheelPickerState.maxItemHeight.toDp() },
             contentPeekHeight = { 200.dp },
             state = backdropState,
@@ -202,7 +218,7 @@ private fun Content(
                         .background(
                             brush =
                                 Brush.verticalGradient(
-                                    listOf(colorScheme.surface, colorScheme.background)
+                                    listOf(colorScheme.surface, colorScheme.surface)
                                 ),
                             shape = BottomSheetShape,
                         )
@@ -271,8 +287,7 @@ private fun BottomBar(
     val padding = LocalDimens.current.padding
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier =
-            modifier.background(colorScheme.background).fillMaxWidth().navigationBarsPadding(),
+        modifier = modifier.background(colorScheme.surface).fillMaxWidth().navigationBarsPadding(),
     ) {
         Column {
             LiftAppHorizontalDivider()
@@ -439,6 +454,20 @@ private fun Page(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SetStatusAppearance() {
+    val windowInsetsController = windowInsetsControllerCompat
+    val isInDarkTheme = isSystemInDarkTheme()
+
+    DisposableEffect(windowInsetsController, isInDarkTheme) {
+        windowInsetsController?.let { controller ->
+            val initial = !isInDarkTheme
+            controller.isAppearanceLightStatusBars = false
+            onDispose { controller.isAppearanceLightStatusBars = initial }
+        } ?: onDispose {}
     }
 }
 
