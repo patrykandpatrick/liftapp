@@ -18,7 +18,7 @@ constructor(private val preferenceRepository: PreferenceRepository) {
     suspend operator fun invoke(type: ExerciseSummaryType): ValueUnit? =
         when (type) {
             ExerciseSummaryType.OneRepMax,
-            ExerciseSummaryType.TotalVolume,
+            ExerciseSummaryType.TotalVolume -> getMassUnit()
             ExerciseSummaryType.TotalDistance -> getLongDistanceUnit()
             ExerciseSummaryType.TotalDuration -> DurationUnit
             ExerciseSummaryType.AvgPace -> getPaceUnit()
@@ -41,4 +41,6 @@ constructor(private val preferenceRepository: PreferenceRepository) {
             LongDistanceUnit.Kilometer -> SpeedUnit.KilometersPerHour
             LongDistanceUnit.Mile -> SpeedUnit.MilesPerHour
         }
+
+    private suspend fun getMassUnit() = preferenceRepository.massUnit.get().first()
 }
