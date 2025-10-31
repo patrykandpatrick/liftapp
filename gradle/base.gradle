@@ -29,12 +29,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = "17"
         freeCompilerArgs += [
                 "-Xjvm-default=all-compatibility",
                 "-opt-in=kotlin.RequiresOptIn",
@@ -51,3 +50,25 @@ android {
         ]
     }
 }
+
+kotlin {
+    jvmToolchain(21)
+}
+
+//tasks.withType(KotlinCompile).configureEach {
+//    compilerOptions {
+//        jvmDefault.set("all-compatibility")
+//        contextReceivers.set(true)
+//        optIn.addAll(
+//            "kotlin.RequiresOptIn",
+//            "kotlin.time.ExperimentalTime",
+//            "kotlinx.coroutines.ExperimentalCoroutinesApi",
+//            "androidx.compose.animation.ExperimentalAnimationApi",
+//            "androidx.compose.foundation.ExperimentalFoundationApi",
+//            "androidx.compose.material3.ExperimentalMaterial3Api",
+//            "androidx.compose.ui.ExperimentalComposeUiApi",
+//            "androidx.compose.ui.text.ExperimentalTextApi",
+//            "androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi",
+//        )
+//    }
+//}
