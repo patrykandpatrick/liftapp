@@ -16,9 +16,9 @@ import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatryk.liftapp.core.ui.BackdropState
 import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults
-import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPicker
-import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerDefaults
-import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerState
+import com.patrykandpatryk.liftapp.core.ui.wheel.WheelPickerWindow
+import com.swmansion.kmpwheelpicker.WheelPicker
+import com.swmansion.kmpwheelpicker.WheelPickerState
 
 @Composable
 fun ExerciseListPicker(
@@ -28,11 +28,6 @@ fun ExerciseListPicker(
     modifier: Modifier = Modifier,
 ) {
     WheelPicker(
-        highlight = {
-            WheelPickerDefaults.Highlight(
-                modifier = Modifier.graphicsLayer { alpha = backdropState.offsetFraction }
-            )
-        },
         state = wheelPickerState,
         modifier =
             modifier.graphicsLayer {
@@ -45,20 +40,23 @@ fun ExerciseListPicker(
                         backdropState.offsetFraction,
                     )
             },
-    ) {
-        workout.exercises.forEachIndexed { index, exercise ->
+        window = {
+            WheelPickerWindow(Modifier.graphicsLayer { alpha = backdropState.offsetFraction })
+        },
+    ) { index ->
+        if (index == workout.exercises.size) {
+            SummaryItem(
+                isSelected = index == wheelPickerState.index,
+                revealOffset = backdropState.offsetFraction,
+            )
+        } else {
             ExerciseItem(
                 index = index,
-                exercise = exercise,
-                isSelected = index == wheelPickerState.currentItem,
+                exercise = workout.exercises[index],
+                isSelected = index == wheelPickerState.index,
                 revealOffset = backdropState.offsetFraction,
             )
         }
-
-        SummaryItem(
-            isSelected = workout.exercises.size == wheelPickerState.currentItem,
-            revealOffset = backdropState.offsetFraction,
-        )
     }
 }
 

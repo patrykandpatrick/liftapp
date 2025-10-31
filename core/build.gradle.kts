@@ -7,5 +7,6 @@ android { namespace = "com.patrykandpatryk.liftapp.core" }
 dependencies {
     api(project(":ui"))
     implementation(project(":navigation"))
+    implementation(libs.kmpWheelPicker)
     implementation(libs.opto.domain)
 }

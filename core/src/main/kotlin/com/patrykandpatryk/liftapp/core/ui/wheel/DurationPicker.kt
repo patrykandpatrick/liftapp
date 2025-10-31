@@ -23,17 +23,25 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
+import com.swmansion.kmpwheelpicker.WheelPicker
+import com.swmansion.kmpwheelpicker.rememberWheelPickerState
+import kotlin.math.round
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+
+private val windowHeight = 44.dp
+
+private const val BUFFER_SIZE = 2
 
 @Composable
 fun DurationPicker(
@@ -44,43 +52,36 @@ fun DurationPicker(
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     val timeFormat = remember { DecimalFormat("00") }
-    val allHours = remember { List(60) { it } }
-    val allMinutes = remember { List(60) { it } }
-    val allSeconds = remember { List(60) { it } }
     val (hours, minutes, seconds) =
         duration.toComponents { _, hours, minutes, seconds, _ -> Triple(hours, minutes, seconds) }
-    val hourState = rememberWheelPickerState(initialSelectedIndex = hours)
-    val minuteState = rememberWheelPickerState(initialSelectedIndex = minutes)
-    val secondState = rememberWheelPickerState(initialSelectedIndex = seconds)
+    val hourState = rememberWheelPickerState(itemCount = 60, initialIndex = hours)
+    val minuteState = rememberWheelPickerState(itemCount = 60, initialIndex = minutes)
+    val secondState = rememberWheelPickerState(itemCount = 60, initialIndex = seconds)
     val onTimeChangeState = rememberUpdatedState(onDurationChange)
 
     LaunchedEffect(hours, minutes, seconds) {
-        if (hours != hourState.targetItem)
+        if (hours != hourState.index) {
             launch(NonCancellable) { hourState.animateScrollTo(hours) }
-        if (minutes != minuteState.targetItem)
+        }
+        if (minutes != minuteState.index) {
             launch(NonCancellable) { minuteState.animateScrollTo(minutes) }
-        if (seconds != secondState.targetItem)
+        }
+        if (seconds != secondState.index) {
             launch(NonCancellable) { secondState.animateScrollTo(seconds) }
+        }
     }
 
-    LaunchedEffect(hourState.currentItem, minuteState.currentItem, secondState.currentItem) {
+    LaunchedEffect(round(hourState.value), round(minuteState.value), round(secondState.value)) {
         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
-    LaunchedEffect(hourState.targetItem, minuteState.targetItem, secondState.targetItem) {
-        val newDuration =
-            calculateDuration(
-                hour = allHours[hourState.targetItem],
-                minute = allMinutes[minuteState.targetItem],
-                second = allSeconds[secondState.targetItem],
-            )
+    LaunchedEffect(hourState.index, minuteState.index, secondState.index) {
+        val newDuration = calculateDuration(hourState.index, minuteState.index, secondState.index)
         if (newDuration != duration) onTimeChangeState.value(newDuration)
     }
 
-    Box(modifier = modifier) {
-        WheelPickerDefaults.Highlight(
-            modifier = Modifier.fillMaxWidth().height(44.dp).align(Alignment.Center)
-        )
+    Box(modifier.height((2 * BUFFER_SIZE - 1) * windowHeight)) {
+        WheelPickerWindow(Modifier.fillMaxWidth().height(windowHeight).align(Alignment.Center))
 
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -88,8 +89,8 @@ fun DurationPicker(
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (includeHours) {
-                WheelPicker(state = hourState, itemExtent = 1, highlight = null) {
-                    allHours.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
+                WheelPicker(state = hourState, bufferSize = BUFFER_SIZE) { index ->
+                    WheelPickerItem(timeFormat.format(index), index, hourState.value, BUFFER_SIZE)
                 }
 
                 Text(
@@ -100,8 +101,8 @@ fun DurationPicker(
                 )
             }
 
-            WheelPicker(state = minuteState, itemExtent = 1, highlight = null) {
-                allMinutes.forEach { value -> WheelPickerItem(timeFormat.format(value)) }
+            WheelPicker(state = minuteState, bufferSize = BUFFER_SIZE) { index ->
+                WheelPickerItem(timeFormat.format(index), index, minuteState.value, BUFFER_SIZE)
             }
 
             Text(
@@ -111,8 +112,8 @@ fun DurationPicker(
                 modifier = Modifier.offset(y = (-1).dp),
             )
 
-            WheelPicker(state = secondState, itemExtent = 1, highlight = null) {
-                allSeconds.forEach { index -> WheelPickerItem(timeFormat.format(index)) }
+            WheelPicker(state = secondState, bufferSize = BUFFER_SIZE) { index ->
+                WheelPickerItem(timeFormat.format(index), index, secondState.value, BUFFER_SIZE)
             }
 
             Text(
