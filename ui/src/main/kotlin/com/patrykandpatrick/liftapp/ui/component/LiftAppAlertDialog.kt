@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialogDefaults.DismissButton
@@ -87,13 +88,16 @@ object LiftAppAlertDialogDefaults {
 @LightAndDarkThemePreview
 private fun LiftAppAlertDialogPreview() {
     LiftAppTheme {
-        LiftAppAlertDialog(
-            title = { Text("Title") },
-            text = { Text("This is a sample alert dialog text.") },
-            onDismissRequest = {},
-            confirmButton = { PlainLiftAppButton(onClick = {}) { Text("Confirm") } },
-            dismissButton = { DismissButton(onClick = {}, text = "Dismiss") },
-            icon = { Icon(LiftAppIcons.Delete, null) },
-        )
+        LiftAppBackground {
+            LiftAppAlertDialog(
+                title = { Text("Title") },
+                text = { Text("This is a sample alert dialog text.") },
+                onDismissRequest = {},
+                confirmButton = { PlainLiftAppButton(onClick = {}) { Text("Confirm") } },
+                dismissButton = { DismissButton(onClick = {}, text = "Dismiss") },
+                icon = { Icon(LiftAppIcons.Delete, null) },
+                modifier = Modifier.padding(16.dp),
+            )
+        }
     }
 }

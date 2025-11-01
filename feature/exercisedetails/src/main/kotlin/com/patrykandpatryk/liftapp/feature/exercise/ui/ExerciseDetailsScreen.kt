@@ -5,23 +5,29 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialog
+import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialogDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
+import com.patrykandpatrick.liftapp.ui.icons.Delete
+import com.patrykandpatrick.liftapp.ui.icons.Edit
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.MoreVertical
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -32,6 +38,8 @@ import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
+import com.patrykandpatryk.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.ListItem
 import com.patrykandpatryk.liftapp.core.ui.TopAppBarWithTabs
 import com.patrykandpatryk.liftapp.domain.date.DateInterval
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
@@ -95,17 +103,18 @@ private fun ExerciseDetailsScreen(
                 onTabSelected = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
                 tabs = exerciseTabItems,
                 actions = {
-                    LiftAppIconButton(onClick = { onAction(Action.Edit) }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_edit),
-                            contentDescription = stringResource(id = R.string.action_edit),
-                        )
-                    }
+                    val (optionsVisible, setOptionsVisible) = remember { mutableStateOf(false) }
 
-                    LiftAppIconButton(onClick = { onAction(Action.ShowDeleteDialog) }) {
+                    OptionsModal(
+                        isVisible = optionsVisible,
+                        onDismissRequest = { setOptionsVisible(false) },
+                        onAction = onAction,
+                    )
+
+                    LiftAppIconButton(onClick = { setOptionsVisible(true) }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_delete),
-                            contentDescription = stringResource(id = R.string.action_delete),
+                            imageVector = LiftAppIcons.MoreVertical,
+                            contentDescription = stringResource(id = R.string.action_more),
                         )
                     }
                 },
@@ -131,6 +140,45 @@ private fun ExerciseDetailsScreen(
 }
 
 @Composable
+private fun OptionsModal(
+    isVisible: Boolean,
+    onDismissRequest: () -> Unit,
+    onAction: (Action) -> Unit,
+) {
+    if (isVisible) {
+        LiftAppModalBottomSheetWithTopAppBar(onDismissRequest = onDismissRequest) { dismiss ->
+            ListItem(
+                title = { Text(stringResource(R.string.action_edit)) },
+                icon = {
+                    Icon(
+                        imageVector = LiftAppIcons.Edit,
+                        contentDescription = stringResource(id = R.string.action_edit),
+                    )
+                },
+                onClick = {
+                    dismiss()
+                    onAction(Action.Edit)
+                },
+            )
+
+            ListItem(
+                title = { Text(stringResource(R.string.action_delete)) },
+                icon = {
+                    Icon(
+                        imageVector = LiftAppIcons.Delete,
+                        contentDescription = stringResource(id = R.string.action_delete),
+                    )
+                },
+                onClick = {
+                    dismiss()
+                    onAction(Action.ShowDeleteDialog)
+                },
+            )
+        }
+    }
+}
+
+@Composable
 private fun DeleteExerciseDialog(
     isVisible: Boolean,
     exerciseName: String,
@@ -138,22 +186,25 @@ private fun DeleteExerciseDialog(
     onConfirm: () -> Unit,
 ) {
     if (isVisible) {
-        AlertDialog(
+        LiftAppAlertDialog(
             onDismissRequest = onDismissRequest,
             title = {
                 Text(text = stringResource(id = R.string.generic_delete_something, exerciseName))
             },
             text = { Text(text = stringResource(id = R.string.exercise_delete_message)) },
             dismissButton = {
-                TextButton(onClick = onDismissRequest) {
-                    Text(text = stringResource(id = android.R.string.cancel))
-                }
+                LiftAppAlertDialogDefaults.DismissButton(
+                    onClick = onDismissRequest,
+                    text = stringResource(id = android.R.string.cancel),
+                )
             },
             confirmButton = {
-                TextButton(onClick = onConfirm) {
+                PlainLiftAppButton(onClick = onConfirm) {
                     Text(text = stringResource(id = R.string.action_delete))
                 }
             },
+            icon = { Icon(imageVector = LiftAppIcons.Delete, contentDescription = null) },
+            modifier = Modifier.padding(16.dp),
         )
     }
 }
