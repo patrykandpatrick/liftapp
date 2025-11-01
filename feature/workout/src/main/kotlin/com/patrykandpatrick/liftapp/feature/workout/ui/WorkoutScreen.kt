@@ -11,8 +11,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.DragInteraction
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -91,7 +89,6 @@ import com.patrykandpatryk.liftapp.core.ui.Backdrop
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisTransition
 import com.patrykandpatryk.liftapp.core.ui.rememberBackdropState
-import com.patrykandpatryk.liftapp.core.ui.wheel.rememberWheelPickerState
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
@@ -99,10 +96,10 @@ import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
+import com.swmansion.kmpwheelpicker.rememberWheelPickerState
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -188,16 +185,16 @@ private fun Content(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val wheelPickerState = rememberWheelPickerState(workout.firstIncompleteExerciseIndex)
+    val wheelPickerState =
+        rememberWheelPickerState(
+            itemCount = workout.exercises.size + 1,
+            initialIndex = workout.firstIncompleteExerciseIndex,
+        )
     val backdropState = rememberBackdropState()
 
     LaunchedEffect(page) { launch { wheelPickerState.animateScrollTo(page) } }
 
-    LaunchedEffect(wheelPickerState) {
-        wheelPickerState.interactionSource.interactions
-            .filter { it is DragInteraction.Stop || it is PressInteraction.Release }
-            .collect { setPage(wheelPickerState.getTargetScrollItem()) }
-    }
+    LaunchedEffect(wheelPickerState.index) { setPage(wheelPickerState.index) }
 
     Box(modifier = modifier.imePadding()) {
         Backdrop(
