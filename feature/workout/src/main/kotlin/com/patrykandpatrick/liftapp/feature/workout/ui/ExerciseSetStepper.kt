@@ -74,7 +74,11 @@ fun ExerciseSetStepper(
         lazyListState.animateScrollToItem(index)
     }
 
-    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
+    ) {
         LazyRow(
             state = lazyListState,
             modifier =
