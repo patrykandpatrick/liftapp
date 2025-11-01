@@ -11,8 +11,7 @@ sealed class BodyMeasurementValue {
 
     @Serializable
     @SerialName("single")
-    data class SingleValue(val value: Double, override val unit: ValueUnit) :
-        BodyMeasurementValue()
+    data class SingleValue(val value: Double, override val unit: ValueUnit) : BodyMeasurementValue()
 
     @Serializable
     @SerialName("double")

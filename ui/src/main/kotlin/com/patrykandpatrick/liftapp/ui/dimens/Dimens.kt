@@ -116,11 +116,7 @@ data class Dimens(
     )
 
     @Immutable
-    data class Checkbox(
-        val size: Dp = 20.dp,
-        val cornerSize: Dp = 4.dp,
-        val strokeWidth: Dp = 2.dp,
-    )
+    data class Checkbox(val size: Dp = 20.dp, val cornerSize: Dp = 4.dp, val strokeWidth: Dp = 2.dp)
 
     @Immutable data class RadioButton(val size: Dp = 20.dp)
 
