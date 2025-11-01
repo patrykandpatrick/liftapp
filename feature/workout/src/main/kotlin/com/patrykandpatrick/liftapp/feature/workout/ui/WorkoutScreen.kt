@@ -11,6 +11,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
@@ -222,9 +224,12 @@ private fun Content(
                         .topTintedEdge(BottomSheetShape)
                         .padding(top = dimens.padding.contentVertical),
             ) {
+                val coroutineScope = rememberCoroutineScope()
                 Spacer(
                     modifier =
-                        Modifier.background(color = colorScheme.outline, shape = CircleShape)
+                        Modifier.clip(CircleShape)
+                            .clickable { coroutineScope.launch { backdropState.toggle() } }
+                            .background(color = colorScheme.outline)
                             .width(32.dp)
                             .height(6.dp)
                             .align(Alignment.CenterHorizontally)

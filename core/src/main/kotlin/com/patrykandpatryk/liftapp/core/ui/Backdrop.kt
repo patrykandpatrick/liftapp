@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
@@ -47,6 +48,22 @@ data class BackdropState(val initialValue: BackdropValue) {
             anchoredDraggableState.anchors.positionOf(BackdropValue.Closed)) /
             (anchoredDraggableState.anchors.positionOf(BackdropValue.Open) -
                 anchoredDraggableState.anchors.positionOf(BackdropValue.Closed))
+    }
+
+    suspend fun open() {
+        anchoredDraggableState.animateTo(BackdropValue.Open)
+    }
+
+    suspend fun close() {
+        anchoredDraggableState.animateTo(BackdropValue.Closed)
+    }
+
+    suspend fun toggle() {
+        if (anchoredDraggableState.currentValue == BackdropValue.Open) {
+            close()
+        } else {
+            open()
+        }
     }
 }
 
