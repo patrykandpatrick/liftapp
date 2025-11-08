@@ -95,9 +95,12 @@ constructor(
         }
         addAction(
             -1,
-            context.getString(R.string.rest_timer_action_add_seconds, TIMER_ADD_SECONDS),
-            getPendingIntent(RestTimerService.ACTION_ADD_TIMER_SECONDS) {
-                putExtra(RestTimerService.EXTRA_SECONDS, TIMER_ADD_SECONDS)
+            context.getString(
+                R.string.rest_timer_action_add_seconds,
+                Constants.UPDATE_TIMER_BY_SECONDS,
+            ),
+            getPendingIntent(RestTimerService.ACTION_INCREASE_TIMER_SECONDS) {
+                putExtra(RestTimerService.EXTRA_SECONDS, Constants.UPDATE_TIMER_BY_SECONDS)
             },
         )
         setContentIntent(
@@ -137,6 +140,5 @@ constructor(
         const val NOTIFICATION_ID = 2025
         private const val TIMER_RUNNING_CHANNEL_ID = "rest_timer_running"
         private const val TIMER_FINISHED_CHANNEL_ID = "rest_timer_finished"
-        private const val TIMER_ADD_SECONDS = 15
     }
 }

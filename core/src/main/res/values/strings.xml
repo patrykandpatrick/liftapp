@@ -237,6 +237,7 @@
     <string name="rest_timer_action_dismiss">Dismiss</string>
     <string name="rest_timer_action_add_seconds">+%d s</string>
     <string name="rest_timer_counter_title">Rest</string>
+    <string name="rest_timer_update_by_seconds"><![CDATA[%d\n<small>sec</small>]]></string>
 
     <!-- Workout -->
     <string name="workout_set_suggestion_previous_set">Previous set</string>

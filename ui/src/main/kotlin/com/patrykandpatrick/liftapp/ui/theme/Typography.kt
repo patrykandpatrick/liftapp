@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -21,6 +22,13 @@ private val manropeFontFamily =
         Font(R.font.manrope_medium, FontWeight.Medium),
         Font(R.font.manrope_semibold, FontWeight.SemiBold),
         Font(R.font.manrope_bold, FontWeight.Bold),
+    )
+
+private val martianMonoFamily =
+    FontFamily(
+        Font(R.font.martian_mono_regular, FontWeight.Normal),
+        Font(R.font.martian_mono_semi_bold, FontWeight.SemiBold),
+        Font(R.font.martian_mono_bold, FontWeight.Bold),
     )
 
 val LiftAppTypography =
@@ -61,3 +69,22 @@ val LiftAppTypography =
                 ),
         )
     }
+
+object Typography {
+    val titleLargeMono =
+        TextStyle(
+            fontFamily = martianMonoFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 22.sp,
+        )
+
+    val titleMediumMono =
+        TextStyle(
+            fontFamily = martianMonoFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
+        )
+
+    val titleSmallMono =
+        TextStyle(fontFamily = martianMonoFamily, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+}

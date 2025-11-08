@@ -44,7 +44,7 @@ fun LiftAppIconButton(
                     onClick = onClick,
                     enabled = enabled,
                     shape = PillShape,
-                    indicationScale = IndicationScale(hover = 1.15f, press = .8f),
+                    indicationScale = LiftAppIconButtonDefaults.indicationScale,
                     role = Role.Button,
                     maxBorderWidth = maxBorderSize,
                     maxBorderHeight = maxBorderSize,
@@ -77,6 +77,8 @@ object LiftAppIconButtonDefaults {
                 hoverForegroundColor = colorScheme.primary,
                 hoverBackgroundColor = colorScheme.outline,
             )
+
+    val indicationScale = IndicationScale(hover = 1.15f, press = .8f)
 }
 
 @LightAndDarkThemePreview

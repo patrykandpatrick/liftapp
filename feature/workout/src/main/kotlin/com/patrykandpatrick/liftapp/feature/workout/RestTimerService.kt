@@ -79,7 +79,6 @@ class RestTimerService : Service() {
             timerConfig
                 .flatMapLatest { config ->
                     if (config != null) {
-                        isPaused = false
                         getTimer(config.duration, config.workoutID)
                     } else {
                         flowOf(null)
@@ -97,9 +96,9 @@ class RestTimerService : Service() {
         when (intent.action) {
             ACTION_TOGGLE_TIMER -> toggleTimer()
             ACTION_CANCEL_TIMER -> cancelTimer()
-            ACTION_ADD_TIMER_SECONDS -> {
+            ACTION_INCREASE_TIMER_SECONDS -> {
                 val seconds = intent.getIntExtra(EXTRA_SECONDS, 0)
-                addTimerSeconds(seconds)
+                updateTimerBy(seconds.seconds)
             }
         }
     }
@@ -163,10 +162,15 @@ class RestTimerService : Service() {
         }
     }
 
-    fun addTimerSeconds(seconds: Int) {
+    fun updateTimerBy(delta: Duration) {
         val timerState = timer.value ?: return
-        val currentSeconds = timerState.remainingDuration.inWholeSeconds
-        timerConfig.tryEmit(TimerConfig((currentSeconds + seconds).seconds, timerState.workoutID))
+        val remainingDuration = timerState.remainingDuration
+        timerConfig.tryEmit(
+            TimerConfig(
+                (remainingDuration + delta).coerceAtLeast(0.milliseconds),
+                timerState.workoutID,
+            )
+        )
     }
 
     @SuppressLint("MissingPermission")
@@ -199,8 +203,8 @@ class RestTimerService : Service() {
             "com.patrykandpatrick.liftapp.feature.workout.RestTimerService.TOGGLE_TIMER"
         const val ACTION_CANCEL_TIMER =
             "com.patrykandpatrick.liftapp.feature.workout.RestTimerService.CANCEL_TIMER"
-        const val ACTION_ADD_TIMER_SECONDS =
-            "com.patrykandpatrick.liftapp.feature.workout.RestTimerService.ADD_TIMER_SECONDS"
+        const val ACTION_INCREASE_TIMER_SECONDS =
+            "com.patrykandpatrick.liftapp.feature.workout.RestTimerService.INCREASE_TIMER_SECONDS"
         const val EXTRA_SECONDS =
             "com.patrykandpatrick.liftapp.feature.workout.RestTimerService.EXTRA_SECONDS"
     }

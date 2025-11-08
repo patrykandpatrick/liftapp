@@ -386,12 +386,10 @@ private fun RestTimerContainer(restTimerService: RestTimerService, modifier: Mod
                 remainingDuration = state.remainingDuration,
                 isPaused = state.isPaused,
                 onToggleIsPaused = restTimerService::toggleTimer,
+                onUpdateTimerBy = restTimerService::updateTimerBy,
                 onCancel = restTimerService::cancelTimer,
                 modifier =
-                    Modifier.padding(
-                        LocalDimens.current.padding.itemHorizontal,
-                        LocalDimens.current.padding.itemVertical,
-                    ),
+                    Modifier.padding(dimens.padding.itemHorizontal, dimens.padding.itemVertical),
             )
         }
     }
