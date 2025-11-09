@@ -128,13 +128,7 @@ private fun PlanItem(
 
         when (planItem) {
             is Plan.Item.Rest -> {
-                LiftAppCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = colors,
-                    contentPadding = PaddingValues(0.dp),
-                ) {
-                    RestCard()
-                }
+                LiftAppCard(modifier = Modifier.fillMaxWidth(), colors = colors) { RestCard() }
             }
 
             is Plan.Item.Routine -> {
@@ -142,7 +136,6 @@ private fun PlanItem(
                     modifier = Modifier.fillMaxWidth(),
                     colors = colors,
                     onClick = { (onAction(Action.OnPlanItemClick(planItem))) },
-                    contentPadding = PaddingValues(0.dp),
                 ) {
                     RoutineCard(
                         routineWithExercises = planItem.routine,

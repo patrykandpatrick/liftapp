@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -22,10 +21,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
 import com.patrykandpatryk.liftapp.core.ui.routine.RestCard
 import com.patrykandpatryk.liftapp.core.ui.routine.RoutineCard
 
@@ -37,14 +38,18 @@ internal fun PlanCreatorItem(
     onClick: (ScreenState.Item.PlanElement) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        onClick = { if (item is ScreenState.Item.PlanElement) onClick(item) },
+    LiftAppCard(
+        onClick =
+            if (item is ScreenState.Item.PlanElement) {
+                { onClick(item) }
+            } else null,
         modifier = modifier,
     ) {
         AnimatedContent(item) { planItem ->
             when (planItem) {
                 ScreenState.Item.PlaceholderItem ->
                     PlaceholderItem(onAddRestDayClick, onAddRoutineClick)
+
                 is ScreenState.Item.RestItem -> RestCard()
                 is ScreenState.Item.RoutineItem -> RoutineCard(planItem.routine)
             }
@@ -132,4 +137,12 @@ private fun PlanCreatorItemPlaceholderItemPreview() {
 @LightAndDarkThemePreview
 private fun PlanCreatorItemRestItemPreview() {
     PlanCreatorItemItemPreview(ScreenState.Item.RestItem())
+}
+
+@Composable
+@LightAndDarkThemePreview
+private fun PlanCreatorItemRoutineItemPreview() {
+    PlanCreatorItemItemPreview(
+        ScreenState.Item.RoutineItem(PreviewRoutineWithExercises.routines[0])
+    )
 }

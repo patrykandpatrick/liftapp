@@ -2,11 +2,9 @@ package com.patrykandpatryk.liftapp.core.ui.routine
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,19 +20,12 @@ import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
 
 @Composable
-fun RestCard(
-    modifier: Modifier = Modifier,
-    paddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = dimens.padding.itemHorizontal,
-            vertical = dimens.padding.itemVertical,
-        ),
-) {
+fun RestCard(modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement =
             Arrangement.spacedBy(dimens.padding.itemHorizontal, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth().padding(paddingValues),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Icon(painter = painterResource(R.drawable.ic_rest_day), contentDescription = null)
         Text(
@@ -48,18 +39,12 @@ fun RestCard(
 fun RoutineCard(
     routineWithExercises: RoutineWithExercises,
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = dimens.padding.itemHorizontal,
-            vertical = dimens.padding.itemVertical,
-        ),
     actionsRow: @Composable RowScope.() -> Unit = {},
 ) {
     RoutineCard(
         routineName = routineWithExercises.name,
         exerciseNames = routineWithExercises.exercises.map { it.name },
         modifier = modifier,
-        paddingValues = paddingValues,
         actionsRow = actionsRow,
     )
 }
@@ -69,15 +54,10 @@ fun RoutineCard(
     routineName: String,
     exerciseNames: List<String>,
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues =
-        PaddingValues(
-            horizontal = dimens.padding.itemHorizontal,
-            vertical = dimens.padding.itemVertical,
-        ),
     actionsRow: @Composable RowScope.() -> Unit = {},
 ) {
     Column(
-        modifier = modifier.fillMaxWidth().padding(paddingValues),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(dimens.padding.contentVerticalSmall),
     ) {
         Text(text = routineName, style = MaterialTheme.typography.titleMedium)

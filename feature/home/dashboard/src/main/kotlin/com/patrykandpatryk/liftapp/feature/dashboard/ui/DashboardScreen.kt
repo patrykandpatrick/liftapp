@@ -200,9 +200,7 @@ private fun PlanItem(
 
 @Composable
 private fun RestPlanItem(modifier: Modifier = Modifier) {
-    LiftAppCard(onClick = null, modifier = modifier.fillMaxWidth()) {
-        RestCard(paddingValues = PaddingValues(0.dp))
-    }
+    LiftAppCard(onClick = null, modifier = modifier.fillMaxWidth()) { RestCard() }
 }
 
 @Composable
@@ -225,7 +223,6 @@ private fun RoutinePlanItem(
 
         RoutineCard(
             routineWithExercises = planItem.routine,
-            paddingValues = PaddingValues(0.dp),
             actionsRow = {
                 when {
                     planItem.workout != null ->

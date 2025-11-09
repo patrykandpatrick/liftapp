@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
@@ -109,11 +108,7 @@ private fun RoutineListScreen(
             ) {
                 items(items = state, key = { it.id }) { routine ->
                     LiftAppCard(onClick = { onAction(Action.RoutineClicked(routine.id)) }) {
-                        RoutineCard(
-                            routineName = routine.name,
-                            exerciseNames = routine.exercises,
-                            paddingValues = PaddingValues(0.dp),
-                        )
+                        RoutineCard(routineName = routine.name, exerciseNames = routine.exercises)
                     }
                 }
             }

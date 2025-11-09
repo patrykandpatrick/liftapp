@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -33,11 +32,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.plan.creator.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
+import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatryk.liftapp.core.preview.PreviewResource
+import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
+import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
@@ -71,7 +75,7 @@ private fun PlanCreatorScreen(
             onAction(Action.ClearError)
         }
 
-        Scaffold(
+        LiftAppScaffold(
             modifier = modifier.fillMaxSize(),
             topBar = {
                 CompactTopAppBar(
@@ -232,5 +236,37 @@ private fun PlanCreatorItem(
                 )
             }
         }
+    }
+}
+
+@MultiDevicePreview
+@Composable
+private fun PlanCreatorScreenPreview() {
+    PreviewTheme {
+        val textFieldStateManager = PreviewResource.textFieldStateManager()
+
+        PlanCreatorScreen(
+            loadableState =
+                Loadable.Success(
+                    ScreenState(
+                        id = 1L,
+                        name = textFieldStateManager.stringTextField(),
+                        description = textFieldStateManager.stringTextField(),
+                        items =
+                            listOf(
+                                ScreenState.Item.RoutineItem(
+                                    PreviewRoutineWithExercises.routines[0]
+                                ),
+                                ScreenState.Item.RestItem(),
+                                ScreenState.Item.RoutineItem(
+                                    PreviewRoutineWithExercises.routines[1]
+                                ),
+                                ScreenState.Item.PlaceholderItem,
+                            ),
+                        error = null,
+                    )
+                ),
+            onAction = {},
+        )
     }
 }
