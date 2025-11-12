@@ -48,7 +48,7 @@ constructor(
     private fun toPlanEntity(plan: Plan): PlanEntity {
         return PlanEntity(
             id = plan.id,
-            name = plan.name,
+            name = plan.name.orEmpty(),
             description = plan.description,
             itemCount = plan.items.size,
         )

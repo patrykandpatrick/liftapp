@@ -88,7 +88,7 @@ private fun Content(state: ScreenState, modifier: Modifier = Modifier) {
         Spacer(Modifier.height(padding.contentVerticalSmall))
 
         Text(
-            text = state.plan.name,
+            text = state.plan.name ?: stringResource(R.string.training_plan_name_placeholder),
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(vertical = padding.contentVerticalSmall),
         )

@@ -14,7 +14,7 @@ data class ScreenState(
 
     data class PlanItem(
         val id: Long,
-        val name: String,
+        val name: String?,
         val routineNames: List<String>,
         val cycleLength: Int,
         val isChecked: Boolean,

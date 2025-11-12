@@ -14,7 +14,7 @@ class PlanMapper @Inject constructor(private val routineMapper: RoutineMapper) {
                 val routineIndexes = items.groupBy { it.orderIndex }
                 Plan(
                     id = plan.id,
-                    name = plan.name,
+                    name = plan.name.takeUnless { it.isBlank() },
                     description = plan.description,
                     items =
                         (0 until plan.itemCount).map { index ->

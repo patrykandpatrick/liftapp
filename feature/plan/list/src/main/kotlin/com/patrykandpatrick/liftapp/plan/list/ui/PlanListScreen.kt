@@ -139,7 +139,7 @@ private fun PlanItem(
                     )
                 }
             } else null,
-        title = { Text(plan.name) },
+        title = { Text(plan.name ?: stringResource(R.string.training_plan_name_placeholder)) },
         description = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(text = plan.routineNames.joinToPrettyString())
