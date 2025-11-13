@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -20,7 +19,10 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
+import com.patrykandpatrick.liftapp.ui.component.TextComponent
+import com.patrykandpatrick.liftapp.ui.component.appendBulletSeparator
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -48,26 +50,34 @@ fun WorkoutCard(workout: Workout, onClick: (Workout) -> Unit, modifier: Modifier
     ) {
         WorkoutStatusWithDate(workout)
 
-        Text(text = workout.name, style = MaterialTheme.typography.titleMedium)
+        LiftAppText(text = workout.name, style = MaterialTheme.typography.titleMedium)
 
-        Text(
+        LiftAppText(
             text =
                 buildAnnotatedString {
-                    workout.exercises.forEachIndexed { index, exercise ->
-                        append("• ")
-                        append(exercise.name.getDisplayName())
-                        append(" • ")
-                        append(
-                            markupProcessor.toAnnotatedString(
-                                stringResource(
-                                    R.string.workout_exercise_list_set_format,
-                                    exercise.completedSets,
-                                    exercise.totalSets,
-                                    pluralStringResource(R.plurals.set_count, exercise.totalSets),
+                    val exerciseNamesWithSets =
+                        workout.exercises.map { exercise ->
+                            exercise.name.getDisplayName() to
+                                markupProcessor.toAnnotatedString(
+                                    stringResource(
+                                        R.string.workout_exercise_list_set_format,
+                                        exercise.completedSets,
+                                        exercise.totalSets,
+                                        pluralStringResource(
+                                            R.plurals.set_count,
+                                            exercise.totalSets,
+                                        ),
+                                    )
                                 )
-                            )
-                        )
-                        if (index < workout.exercises.lastIndex) append("\n")
+                        }
+                    withBulletList(bullet = TextComponent.listBullet) {
+                        exerciseNamesWithSets.forEach { (name, sets) ->
+                            withBulletListItem {
+                                append(name)
+                                appendBulletSeparator()
+                                append(sets)
+                            }
+                        }
                     }
                 },
             style = MaterialTheme.typography.bodySmall.copy(lineHeight = 20.sp),
@@ -79,7 +89,7 @@ fun WorkoutCard(workout: Workout, onClick: (Workout) -> Unit, modifier: Modifier
             onClick = { onClick(workout) },
             modifier = Modifier.align(Alignment.End),
         ) {
-            Text(
+            LiftAppText(
                 text =
                     if (workout.isCompleted) {
                         stringResource(R.string.action_show)
@@ -108,7 +118,7 @@ fun ColumnScope.WorkoutStatusWithDate(workout: Workout) {
         tint = colorScheme.onSurfaceVariant,
     )
 
-    Text(
+    LiftAppText(
         text =
             markupProcessor.toAnnotatedString(
                 workout.endDate?.let { date ->
