@@ -13,3 +13,10 @@ fun Modifier.topTintedEdge(shape: Shape) =
         width = 1.dp,
         brush = Brush.verticalGradient(colors = listOf(Color.White.copy(.24f), Color.Transparent)),
     )
+
+fun Modifier.bottomTintedEdge(shape: Shape) =
+    this.border(
+        shape = shape,
+        width = 1.dp,
+        brush = Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Black.copy(.24f))),
+    )

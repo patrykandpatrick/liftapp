@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -206,14 +207,9 @@ object ListItemDefaults {
 
     @Composable
     fun LeadingText(text: String) {
-        Box(
-            modifier =
-                Modifier.size(40.dp)
-                    .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
-                    .padding(8.dp)
-        ) {
-            val modifiedDensity = Density(LocalDensity.current.density)
-            CompositionLocalProvider(LocalDensity provides modifiedDensity) {
+        val modifiedDensity = Density(LocalDensity.current.density)
+        CompositionLocalProvider(LocalDensity provides modifiedDensity) {
+            Icon {
                 Text(
                     text = text,
                     style = MaterialTheme.typography.titleMedium,
@@ -221,6 +217,19 @@ object ListItemDefaults {
                     modifier = Modifier.align(Alignment.Center),
                 )
             }
+        }
+    }
+
+    @Composable
+    fun Icon(modifier: Modifier = Modifier, icon: @Composable BoxScope.() -> Unit) {
+        Box(
+            modifier =
+                modifier
+                    .size(40.dp)
+                    .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
+                    .padding(8.dp)
+        ) {
+            CompositionLocalProvider(LocalContentColor provides colorScheme.surface) { icon() }
         }
     }
 

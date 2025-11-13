@@ -7,7 +7,9 @@ import androidx.compose.ui.unit.em
 import com.patrykandpatrick.liftapp.ui.component.TextComponent.listBullet
 
 object TextComponent {
-    const val BULLET_SEPARATOR = "bullet_separator"
+    internal const val BULLET_SEPARATOR = "bullet_separator"
+
+    internal const val COMPLETED_ICON = "completed_icon"
 
     val listBullet = Bullet.Default.copy(width = .35.em, height = .35.em, padding = .5.em)
 
@@ -16,6 +18,10 @@ object TextComponent {
 
 fun AnnotatedString.Builder.appendBulletSeparator() {
     appendInlineContent(TextComponent.BULLET_SEPARATOR)
+}
+
+fun AnnotatedString.Builder.appendCompletedIcon() {
+    appendInlineContent(TextComponent.COMPLETED_ICON)
 }
 
 fun AnnotatedString.Builder.appendBulletList(items: List<String>) {
