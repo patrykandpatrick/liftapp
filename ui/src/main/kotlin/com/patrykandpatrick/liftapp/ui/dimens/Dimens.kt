@@ -42,6 +42,7 @@ data class Dimens(
         val contentVertical: Dp = 20.dp,
         val contentVerticalSmall: Dp = 10.dp,
         val itemHorizontal: Dp = 16.dp,
+        val itemHorizontalMedium: Dp = 12.dp,
         val itemHorizontalSmall: Dp = 8.dp,
         val itemVertical: Dp = 16.dp,
         val itemVerticalSmall: Dp = 8.dp,

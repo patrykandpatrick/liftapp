@@ -1,20 +1,20 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.feature.workout.model.Action
-import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpdateWorkoutUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
+import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutIterator
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import com.patrykandpatryk.liftapp.domain.Constants.Workout.EXERCISE_CHANGE_DELAY
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -28,6 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -50,9 +51,16 @@ constructor(
     private val updateWorkoutUseCase: UpdateWorkoutUseCase,
     private val navigationCommander: NavigationCommander,
     coroutineScope: CoroutineScope,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel(coroutineScope) {
 
     private val customPage = MutableSharedFlow<Int>()
+
+    private val selectedItem =
+        savedStateHandle.getMutableStateFlow<WorkoutIterator.Item?>(
+            "selectedExerciseAndSetIndex",
+            null,
+        )
 
     val workout: StateFlow<EditableWorkout?> =
         getEditableWorkoutUseCase()
@@ -62,6 +70,14 @@ constructor(
                     keepEndDateTimeUpdated(workout.summary.endDate, workout.summary.endTime)
                 }
             }
+            .combine(selectedItem) { workout, selectedExerciseAndSetIndex ->
+                workout.copy(
+                    selectedSelectedExerciseAndSet =
+                        selectedExerciseAndSetIndex?.let { (_, exerciseIndex, setIndex) ->
+                            workout.iterator.getItem(exerciseIndex, setIndex)
+                        }
+                )
+            }
             .stateIn(coroutineScope, SharingStarted.Lazily, null)
 
     val selectedPage: StateFlow<Int> =
@@ -69,10 +85,11 @@ constructor(
                 customPage,
                 workout
                     .filterNotNull()
-                    .distinctUntilChangedBy { it.firstIncompleteExerciseIndex }
+                    .distinctUntilChangedBy { it.firstIncompleteOrLastExerciseIndex }
                     .withIndex()
                     .transform { (index, workout) ->
-                        val firstIncompleteExerciseIndex = workout.firstIncompleteExerciseIndex
+                        val firstIncompleteExerciseIndex =
+                            workout.firstIncompleteOrLastExerciseIndex
                         if (index > 0) delay(EXERCISE_CHANGE_DELAY)
                         val page =
                             if (firstIncompleteExerciseIndex == -1) workout.exercises.size
@@ -85,6 +102,10 @@ constructor(
     fun onAction(action: Action) {
         when (action) {
             is Action.MovePageBy -> onPageDelta(action.delta)
+            is Action.SelectPage -> selectPage(action.pageIndex)
+            is Action.SaveSet -> saveSet(action.workout, action.item)
+            is Action.ShowSetEditor -> selectedItem.value = action.item
+            is Action.ClearSetEditor -> selectedItem.value = null
             is Action.FinishWorkout -> finishWorkout()
             is Action.UpdateWorkoutName -> updateWorkoutName(action.name)
             is Action.UpdateWorkoutStartDateTime ->
@@ -182,12 +203,11 @@ constructor(
         }
     }
 
-    fun saveSet(
-        exercise: EditableWorkout.Exercise,
-        set: EditableExerciseSet<ExerciseSet>,
-        setIndex: Int,
-    ) {
-        viewModelScope.launch { upsertExerciseSet(getWorkout().id, exercise.id, set, setIndex) }
+    fun saveSet(workout: EditableWorkout, item: WorkoutIterator.Item) {
+        viewModelScope.launch {
+            upsertExerciseSet(workout.id, item.exercise.id, item.set, item.setIndex)
+            selectedItem.value = workout.iterator.getNextIncomplete(item)
+        }
     }
 
     private fun popBackStack() {

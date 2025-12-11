@@ -11,14 +11,16 @@ import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import java.io.Serializable
 import kotlin.time.Duration
 
-sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
+sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
     val isCompleted: Boolean
 
     val isInputValid: Boolean
 
     val suggestions: List<SetSuggestion<T>>
 
-    fun applySet(set: T)
+    val exerciseSet: T
+
+    fun applySet(set: @UnsafeVariance T)
 
     data class Weight(
         override val weight: Double,
@@ -28,6 +30,8 @@ sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
         override val weightUnit: MassUnit,
         override val suggestions: List<SetSuggestion<ExerciseSet.Weight>>,
     ) : ExerciseSet.Weight(weight, reps, weightUnit), EditableExerciseSet<ExerciseSet.Weight> {
+
+        override val exerciseSet: ExerciseSet.Weight = this
 
         override val isInputValid: Boolean
             get() = weightInput.isValid && repsInput.isValid
@@ -51,6 +55,8 @@ sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
         ExerciseSet.Calisthenics(weight, bodyWeight, reps, weightUnit),
         EditableExerciseSet<ExerciseSet.Calisthenics> {
 
+        override val exerciseSet: ExerciseSet.Calisthenics = this
+
         override val isInputValid: Boolean
             get() = weightInput.isValid && repsInput.isValid
 
@@ -65,6 +71,8 @@ sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
         val repsInput: IntTextFieldState,
         override val suggestions: List<SetSuggestion<ExerciseSet.Reps>>,
     ) : ExerciseSet.Reps(reps), EditableExerciseSet<ExerciseSet.Reps> {
+
+        override val exerciseSet: ExerciseSet.Reps = this
 
         override val isInputValid: Boolean
             get() = repsInput.isValid
@@ -87,6 +95,8 @@ sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
         ExerciseSet.Cardio(duration, distance, kcal, distanceUnit),
         EditableExerciseSet<ExerciseSet.Cardio> {
 
+        override val exerciseSet: ExerciseSet.Cardio = this
+
         override val isInputValid: Boolean
             get() = durationInput.isValid && distanceInput.isValid && kcalInput.isValid
 
@@ -103,6 +113,8 @@ sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
         override val suggestions: List<SetSuggestion<ExerciseSet.Time>>,
     ) : ExerciseSet.Time(duration), EditableExerciseSet<ExerciseSet.Time> {
 
+        override val exerciseSet: ExerciseSet.Time = this
+
         override val isInputValid: Boolean
             get() = timeInput.isValid
 
@@ -111,7 +123,7 @@ sealed interface EditableExerciseSet<T : ExerciseSet> : Serializable {
         }
     }
 
-    data class SetSuggestion<T : ExerciseSet>(val set: T, val type: Type) {
+    data class SetSuggestion<out T : ExerciseSet>(val set: T, val type: Type) {
         enum class Type {
             PreviousSet,
             PreviousWorkout,

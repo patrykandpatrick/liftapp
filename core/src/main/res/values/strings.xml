@@ -45,6 +45,7 @@
     <string name="goal_reps_format_long_single_rep"><![CDATA[<b><color-surface-variant>%1$s</b-surface> %2$s × <b-surface>%3$s</color-surface-variant></b> %4$s]]></string>
 
     <string name="exercise_set_set_index">Set %d</string>
+    <string name="exercise_set_set_index_with_total_count">Set %d/%d</string>
     <string name="workout_exercise_set_info"><![CDATA[<b><color-surface-variant>Set %d</color-surface-variant></b> ꞏ %s]]></string>
     <string name="exercise_set_not_completed">Not completed</string>
     <!-- Example: 80 kg × 10 reps -->
@@ -240,8 +241,11 @@
     <string name="rest_timer_update_by_seconds"><![CDATA[%d\n<small>sec</small>]]></string>
 
     <!-- Workout -->
+    <string name="workout_change_set_count_buttons_title">Sets</string>
     <string name="workout_set_suggestion_previous_set">Previous set</string>
     <string name="workout_set_suggestion_previous_workout">Previous workout</string>
+    <string name="workout_set_entry_section_past_sets">Past sets</string>
+    <string name="workout_set_entry_section_previous_workout">Sets from the previous workout</string>
     <string name="workout_calisthenics_set_body_weight"><![CDATA[Body weight <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
     <string name="workout_action_next_exercise">Next exercise</string>
     <string name="workout_action_summary">Summary</string>

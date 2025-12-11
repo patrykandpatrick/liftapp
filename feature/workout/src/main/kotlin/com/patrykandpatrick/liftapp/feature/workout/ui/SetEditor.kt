@@ -4,6 +4,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
+import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -64,10 +65,6 @@ internal fun <T : ExerciseSet> ColumnScope.SetEditorContent(
 ) {
     if (editableExerciseSet is EditableExerciseSet.Calisthenics) {
         BodyWeightInfo(bodyWeight = editableExerciseSet.formattedBodyWeight)
-    }
-
-    if (editableExerciseSet.suggestions.isNotEmpty()) {
-        Suggestions(editableExerciseSet.suggestions, editableExerciseSet::applySet)
     }
 
     when (editableExerciseSet) {
@@ -130,10 +127,14 @@ private fun <T : ExerciseSet> Suggestions(
     onClick: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LiftAppCard(modifier = modifier.fillMaxWidth()) {
+    LiftAppCard(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(vertical = dimens.padding.itemVertical),
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
+            modifier = Modifier.padding(horizontal = dimens.padding.itemHorizontal),
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_suggestion),
@@ -148,7 +149,8 @@ private fun <T : ExerciseSet> Suggestions(
         Row(
             modifier =
                 Modifier.padding(top = dimens.padding.itemVerticalSmall)
-                    .horizontalScroll(rememberScrollState()),
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = dimens.padding.itemHorizontal),
             horizontalArrangement =
                 Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
             verticalAlignment = Alignment.CenterVertically,
@@ -264,7 +266,7 @@ private fun CaloriesInput(textFieldState: DoubleTextFieldState, modifier: Modifi
 @Composable
 private fun <T : ExerciseSet> SetEditorPreview(editableExerciseSet: EditableExerciseSet<T>) {
     LiftAppTheme {
-        Surface {
+        LiftAppBackground {
             Column(
                 verticalArrangement =
                     Arrangement.spacedBy(LocalDimens.current.padding.itemVertical),
@@ -292,8 +294,8 @@ private fun SetEditorWeightExercisePreview() {
                     suggestions =
                         listOf(
                             EditableExerciseSet.SetSuggestion(
-                                ExerciseSet.Weight(100.0, 12, MassUnit.Kilograms),
-                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                                set = ExerciseSet.Weight(100.0, 12, MassUnit.Kilograms),
+                                type = EditableExerciseSet.SetSuggestion.Type.PreviousSet,
                             )
                         ),
                 )
@@ -319,8 +321,8 @@ private fun SetEditorCalisthenicsExercisePreview() {
                     suggestions =
                         listOf(
                             EditableExerciseSet.SetSuggestion(
-                                ExerciseSet.Calisthenics(20.0, 80.0, 10, MassUnit.Kilograms),
-                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                                set = ExerciseSet.Calisthenics(20.0, 80.0, 10, MassUnit.Kilograms),
+                                type = EditableExerciseSet.SetSuggestion.Type.PreviousSet,
                             )
                         ),
                 )
@@ -346,13 +348,14 @@ private fun SetEditorTimeExercisePreview() {
                     suggestions =
                         listOf(
                             EditableExerciseSet.SetSuggestion(
-                                ExerciseSet.Cardio(
-                                    1.hours + 30.minutes + 10.seconds,
-                                    4.75,
-                                    432.0,
-                                    LongDistanceUnit.Kilometer,
-                                ),
-                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                                set =
+                                    ExerciseSet.Cardio(
+                                        1.hours + 30.minutes + 10.seconds,
+                                        4.75,
+                                        432.0,
+                                        LongDistanceUnit.Kilometer,
+                                    ),
+                                type = EditableExerciseSet.SetSuggestion.Type.PreviousSet,
                             )
                         ),
                 )

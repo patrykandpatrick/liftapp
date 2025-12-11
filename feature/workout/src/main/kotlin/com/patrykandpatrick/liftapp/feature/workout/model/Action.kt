@@ -20,6 +20,10 @@ sealed interface Action {
 
     data object PreviousPage : MovePageBy(-1)
 
+    data class SelectPage(val pageIndex: Int) : Action
+
+    data class SaveSet(val workout: EditableWorkout, val item: WorkoutIterator.Item) : Action
+
     data object FinishWorkout : Button
 
     data class UpdateWorkoutName(val name: TextFieldState<String>) : Action
@@ -39,6 +43,10 @@ sealed interface Action {
     data class AddSet(val exercise: EditableWorkout.Exercise) : Action
 
     data class RemoveSet(val exercise: EditableWorkout.Exercise) : Action
+
+    data class ShowSetEditor(val item: WorkoutIterator.Item) : Action
+
+    data object ClearSetEditor : Action
 
     data object PopBackStack : Action
 }

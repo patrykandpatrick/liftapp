@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
@@ -33,14 +33,14 @@ fun InputSuggestion(
         modifier = modifier,
         contentPadding =
             PaddingValues(
-                horizontal = LocalDimens.current.padding.itemHorizontal,
+                horizontal = LocalDimens.current.padding.itemHorizontalMedium,
                 vertical = LocalDimens.current.padding.itemVerticalSmall,
             ),
         verticalArrangement = Arrangement.Top,
         colors = LiftAppCardDefaults.tonalCardColors,
     ) {
-        Text(text = text, style = MaterialTheme.typography.bodySmall)
-        Text(text = label, style = MaterialTheme.typography.labelSmall)
+        LiftAppText(text = text, style = MaterialTheme.typography.bodySmall)
+        LiftAppText(text = label, style = MaterialTheme.typography.labelSmall)
     }
 }
 
@@ -61,8 +61,8 @@ private fun SuggestionsRowPreview() {
     PreviewTheme {
         LiftAppBackground {
             InputSuggestionsRow(Modifier.padding(16.dp)) {
-                InputSuggestion(text = "50 kg", label = "Previous set", onClick = {})
-                InputSuggestion(text = "45 kg", label = "Previous workout", onClick = {})
+                InputSuggestion(text = "50 kg × 8 reps", label = "Previous set", onClick = {})
+                InputSuggestion(text = "45 kg × 8 reps", label = "Previous workout", onClick = {})
             }
         }
     }

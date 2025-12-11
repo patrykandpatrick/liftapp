@@ -46,9 +46,9 @@ val LiftAppTypography =
             bodyLarge =
                 bodyLarge.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Medium),
             bodyMedium =
-                bodyMedium.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Medium),
+                bodyMedium.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.SemiBold),
             bodySmall =
-                bodySmall.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Medium),
+                bodySmall.copy(fontFamily = manropeFontFamily, fontWeight = FontWeight.Bold),
             labelLarge =
                 labelLarge.copy(
                     fontFamily = manropeFontFamily,
@@ -87,4 +87,11 @@ object Typography {
 
     val titleSmallMono =
         TextStyle(fontFamily = martianMonoFamily, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+
+    val bodySmallMono =
+        TextStyle(
+            fontFamily = martianMonoFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
+        )
 }

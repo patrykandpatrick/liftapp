@@ -8,7 +8,6 @@ import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import java.io.Serializable
 import java.time.LocalDateTime
-import kotlin.time.Duration
 
 @Stable
 data class EditableWorkout(
@@ -19,14 +18,17 @@ data class EditableWorkout(
     val notes: String,
     val exercises: List<Exercise>,
     val pages: List<WorkoutPage>,
+    val selectedSelectedExerciseAndSet: WorkoutIterator.Item? = null,
 ) : Serializable {
 
-    val firstIncompleteExerciseIndex: Int =
-        exercises.indexOfFirst { it.firstIncompleteSetIndex != -1 }.takeIf { it != -1 }
-            ?: exercises.lastIndex
+    val iterator = WorkoutIterator.fromWorkout(this)
 
-    val nextExerciseSet: NextExerciseSet? =
-        getNextExerciseSet(exercises, firstIncompleteExerciseIndex)
+    val nextIncompleteItem = iterator.getNextIncomplete()
+
+    val firstIncompleteOrLastExerciseIndex: Int =
+        nextIncompleteItem?.exerciseIndex ?: exercises.lastIndex
+
+    val nextExerciseSet: WorkoutIterator.Item? = nextIncompleteItem
 
     val completedSetCount: Int = exercises.sumOf { it.completedSetCount }
 
@@ -42,27 +44,15 @@ data class EditableWorkout(
         val tertiaryMuscles: List<Muscle>,
         val goal: Workout.Goal,
         val sets: List<EditableExerciseSet<ExerciseSet>>,
+        val previousWorkoutSets: List<ExerciseSet>,
     ) : Serializable {
         val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isCompleted }
 
         val firstIncompleteOrLastSetIndex: Int =
             firstIncompleteSetIndex.let { if (it == -1) sets.lastIndex else it }
 
-        val completedSetCount: Int = sets.count { it.isCompleted }
-    }
+        val completedSets = sets.filter { it.isCompleted }
 
-    data class NextExerciseSet(val exercise: Exercise, val setIndex: Int) {
-        val set = exercise.sets[setIndex]
-
-        val restTime: Duration = exercise.goal.restTime
-    }
-
-    companion object {
-        private fun getNextExerciseSet(exercises: List<Exercise>, index: Int): NextExerciseSet? {
-            val exercise = exercises.getOrNull(index) ?: return null
-            val setIndex = exercise.firstIncompleteSetIndex
-            if (setIndex == -1) return null
-            return NextExerciseSet(exercise, setIndex)
-        }
+        val completedSetCount: Int = completedSets.size
     }
 }

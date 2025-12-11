@@ -60,6 +60,7 @@ constructor(
                                 lastSet = exercise.lastSets.getOrNull(index),
                             )
                         },
+                    previousWorkoutSets = exercise.lastSets.filter { it.isCompleted },
                 )
             }
 

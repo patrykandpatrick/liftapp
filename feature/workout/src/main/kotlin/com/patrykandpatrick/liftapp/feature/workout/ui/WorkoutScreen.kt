@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,17 +29,24 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -46,7 +54,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.LookaheadScope
+import androidx.compose.ui.node.Ref
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -56,19 +69,18 @@ import com.patrykandpatrick.liftapp.feature.workout.RestTimerService
 import com.patrykandpatrick.liftapp.feature.workout.model.Action
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
-import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseCase
-import com.patrykandpatrick.liftapp.feature.workout.model.UpdateWorkoutUseCase
-import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCase
-import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
 import com.patrykandpatrick.liftapp.feature.workout.model.getImageVector
 import com.patrykandpatrick.liftapp.feature.workout.model.getText
+import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.feature.workout.rememberRestTimerServiceController
-import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
+import com.patrykandpatrick.liftapp.ui.component.LiftAppModalBottomSheet
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.component.LiftAppText
+import com.patrykandpatrick.liftapp.ui.component.appendCompletedIcon
 import com.patrykandpatrick.liftapp.ui.component.windowInsetsControllerCompat
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -77,33 +89,40 @@ import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonBorderShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonShape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.Typography
 import com.patrykandpatrick.liftapp.ui.theme.bottomSheetShadow
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatryk.liftapp.core.exercise.prettyString
 import com.patrykandpatryk.liftapp.core.extension.copy
 import com.patrykandpatryk.liftapp.core.extension.getBottom
-import com.patrykandpatryk.liftapp.core.extension.interfaceStub
+import com.patrykandpatryk.liftapp.core.model.getDisplayName
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
+import com.patrykandpatryk.liftapp.core.text.parseMarkup
 import com.patrykandpatryk.liftapp.core.ui.AppBars
 import com.patrykandpatryk.liftapp.core.ui.Backdrop
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatryk.liftapp.core.ui.ListItem
+import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults
+import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatryk.liftapp.core.ui.animation.sharedXAxisTransition
 import com.patrykandpatryk.liftapp.core.ui.rememberBackdropState
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatryk.liftapp.domain.workout.Workout
 import com.swmansion.kmpwheelpicker.rememberWheelPickerState
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 private const val TIMER_BOUND_ANIMATION_DURATION = 120
@@ -120,6 +139,17 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
 
     RestTimerEffect(viewModel, restTimerService)
 
+    WorkoutScreen2(workout, restTimerService, selectedPage, viewModel::onAction, modifier)
+}
+
+@Composable
+fun WorkoutScreen(
+    workout: EditableWorkout?,
+    restTimerService: State<RestTimerService?>,
+    selectedPage: Int,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     SetStatusAppearance()
 
     LiftAppScaffold(
@@ -132,9 +162,7 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
                         overflow = TextOverflow.Ellipsis,
                     )
                 },
-                navigationIcon = {
-                    AppBars.BackArrow(onClick = { viewModel.onAction(Action.PopBackStack) })
-                },
+                navigationIcon = { AppBars.BackArrow(onClick = { onAction(Action.PopBackStack) }) },
                 colors =
                     AppBars.colors(
                         containerColor = colorScheme.bottomSheetScrim,
@@ -143,9 +171,7 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
             )
         },
         bottomBar = {
-            workout?.run {
-                pages[selectedPage].also { page -> BottomBar(page, viewModel::onAction) }
-            }
+            workout?.run { pages[selectedPage].also { page -> BottomBar(page, onAction) } }
         },
         modifier = modifier,
         containerColor = colorScheme.bottomSheetScrim,
@@ -154,10 +180,14 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
             Content(
                 workout = workout,
                 page = selectedPage,
-                setPage = viewModel::selectPage,
+                setPage = { onAction(Action.SelectPage(it)) },
                 restTimerService = restTimerService.value,
-                onSaveSet = viewModel::saveSet,
-                onAction = viewModel::onAction,
+                onSaveSet = { exerciseIndex, setIndex ->
+                    onAction(
+                        Action.SaveSet(workout, workout.iterator.getItem(exerciseIndex, setIndex))
+                    )
+                },
+                onAction = onAction,
                 modifier =
                     Modifier.padding(
                         paddingValues.copy(
@@ -183,14 +213,14 @@ private fun Content(
     page: Int,
     setPage: (Int) -> Unit,
     restTimerService: RestTimerService?,
-    onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet<ExerciseSet>, Int) -> Unit,
+    onSaveSet: (Int, Int) -> Unit,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val wheelPickerState =
         rememberWheelPickerState(
             itemCount = workout.exercises.size + 1,
-            initialIndex = workout.firstIncompleteExerciseIndex,
+            initialIndex = workout.firstIncompleteOrLastExerciseIndex,
         )
     val backdropState = rememberBackdropState()
 
@@ -245,6 +275,7 @@ private fun Content(
                     when (page) {
                         is WorkoutPage.Exercise ->
                             Page(
+                                exerciseIndex = page.index,
                                 exercise = page.exercise,
                                 onAddSet = { onAction(Action.AddSet(page.exercise)) },
                                 onRemoveSet = { onAction(Action.RemoveSet(page.exercise)) },
@@ -262,6 +293,243 @@ private fun Content(
 }
 
 @Composable
+fun WorkoutScreen2(
+    workout: EditableWorkout?,
+    restTimerService: State<RestTimerService?>,
+    selectedPage: Int,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val lazyListStateRef = remember { Ref<LazyListState?>() }
+
+    workout?.selectedSelectedExerciseAndSet?.also { selectedExerciseInput ->
+        LiftAppModalBottomSheet(
+            onDismissRequest = { onAction(Action.ClearSetEditor) },
+            modifier = Modifier.fillMaxHeight(),
+        ) { dismiss ->
+            ExerciseSetInput(workout, selectedExerciseInput, dismiss, onAction)
+        }
+    }
+    LiftAppScaffold(
+        topBar = {
+            CompactTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.route_workout),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = { AppBars.BackArrow(onClick = { onAction(Action.PopBackStack) }) },
+            )
+        },
+        bottomBar = {
+            workout?.nextIncompleteItem?.also { nextIncompleteItem ->
+                val scope = rememberCoroutineScope()
+                BottomBar(
+                    nextIncompleteItem = nextIncompleteItem,
+                    onGoToNextIncompleteItem = {
+                        scope.launch {
+                            lazyListStateRef.value?.animateScrollToItemCenter(
+                                workout.getNextSetScrollPosition()
+                            )
+                            onAction(Action.ShowSetEditor(nextIncompleteItem))
+                        }
+                    },
+                )
+            }
+        },
+    ) { paddingValues ->
+        workout?.also { workout ->
+            val lazyListState = rememberLazyListState(workout.getNextSetScrollPosition())
+            lazyListStateRef.value = lazyListState
+
+            LaunchedEffect(
+                workout.nextIncompleteItem,
+                lazyListState.layoutInfo.afterContentPadding,
+            ) {
+                if (workout.nextIncompleteItem != null) {
+                    lazyListState.animateScrollToItem(workout.getNextSetScrollPosition())
+                }
+            }
+
+            LazyColumn(
+                state = lazyListState,
+                contentPadding = paddingValues,
+                modifier = modifier.fillMaxSize(),
+            ) {
+                workout.exercises.forEachIndexed { exerciseIndex, exercise ->
+                    exerciseWithSets(workout, exerciseIndex, exercise, onAction)
+                    setCountButtons(exercise, exerciseIndex < workout.exercises.lastIndex, onAction)
+                }
+            }
+        }
+    }
+}
+
+private fun EditableWorkout.getNextSetScrollPosition(): Int {
+    val exerciseIndex = nextExerciseSet?.exerciseIndex ?: exercises.lastIndex
+    val exerciseCount = 1
+    val buttonsCount = 1
+    var position = 0
+    exercises.forEachIndexed { index, exercise ->
+        position += exerciseCount + exercise.sets.count { it.isCompleted }
+        if (index == exerciseIndex) return position
+        position += buttonsCount
+    }
+    return position
+}
+
+private suspend fun LazyListState.animateScrollToItemCenter(index: Int) {
+    animateScrollToItem(index, -layoutInfo.viewportSize.height / 2 + layoutInfo.afterContentPadding)
+}
+
+private fun LazyListScope.exerciseWithSets(
+    workout: EditableWorkout,
+    exerciseIndex: Int,
+    exercise: EditableWorkout.Exercise,
+    onAction: (Action) -> Unit,
+) {
+    item(key = exercise.id) {
+        ListItem(
+            icon = { ListItemDefaults.LeadingText((exerciseIndex + 1).toString()) },
+            title = {
+                LiftAppText(
+                    text =
+                        buildAnnotatedString {
+                            append(exercise.name.getDisplayName())
+                            if (exercise.completedSetCount == exercise.sets.size) {
+                                addStyle(
+                                    SpanStyle(textDecoration = TextDecoration.LineThrough),
+                                    0,
+                                    length,
+                                )
+                                appendCompletedIcon()
+                            }
+                        },
+                    maxLines = 1,
+                )
+            },
+            description = {
+                LiftAppText(
+                    text =
+                        parseMarkup(
+                            stringResource(
+                                R.string.workout_exercise_list_set_format,
+                                exercise.completedSetCount,
+                                exercise.sets.size,
+                                pluralStringResource(R.plurals.set_count, exercise.sets.size),
+                            )
+                        )
+                )
+            },
+            modifier = Modifier.animateItem().fillMaxWidth(),
+        )
+
+        ListSectionTitle(
+            title = stringResource(R.string.goal_sets),
+            paddingValues =
+                PaddingValues(dimens.padding.contentVertical, dimens.padding.itemVerticalSmall),
+            modifier = Modifier.animateItem(),
+        )
+    }
+
+    exercise.sets.forEachIndexed { setIndex, set ->
+        val previousWorkoutSet =
+            set.suggestions.find {
+                it.type == EditableExerciseSet.SetSuggestion.Type.PreviousWorkout
+            } // TODO replace list with fields
+        item(key = "set_${exercise.id}_$setIndex") {
+            ListItem(
+                onClick = {
+                    onAction(
+                        Action.ShowSetEditor(workout.iterator.getItem(exerciseIndex, setIndex))
+                    )
+                },
+                icon = { SetIndexIcon(setIndex, set.isCompleted) },
+                title = {
+                    LiftAppText(
+                        text = set.prettyString(),
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                },
+                description =
+                    if (previousWorkoutSet != null) {
+                        {
+                            LiftAppText(
+                                text = previousWorkoutSet.set.prettyString(),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = colorScheme.onSecondary,
+                                modifier =
+                                    Modifier.padding(top = 4.dp)
+                                        .background(colorScheme.secondary, RoundedCornerShape(6.dp))
+                                        .padding(dimens.chip.horizontalPadding, 1.dp),
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                paddingValues =
+                    PaddingValues(
+                        horizontal = dimens.padding.contentHorizontal,
+                        vertical = dimens.padding.itemVerticalSmall,
+                    ),
+                modifier = Modifier.animateItem(),
+            )
+        }
+    }
+}
+
+private fun LazyListScope.setCountButtons(
+    exercise: EditableWorkout.Exercise,
+    showDivider: Boolean,
+    onAction: (Action) -> Unit,
+) {
+    item(key = "add_set_${exercise.id}") {
+        Row(
+            modifier =
+                Modifier.animateItem()
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = dimens.padding.contentHorizontal,
+                        vertical = dimens.padding.itemVerticalSmall,
+                    ),
+            horizontalArrangement =
+                Arrangement.spacedBy(dimens.padding.itemHorizontal, Alignment.End),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            LiftAppText(
+                text = stringResource(R.string.workout_change_set_count_buttons_title),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = dimens.padding.itemHorizontalSmall),
+            )
+            LiftAppButton(
+                onClick = { onAction(Action.RemoveSet(exercise)) },
+                colors = LiftAppButtonDefaults.outlinedButtonColors,
+                modifier = Modifier,
+            ) {
+                LiftAppText(text = "-1", style = Typography.bodySmallMono)
+            }
+
+            LiftAppButton(
+                onClick = { onAction(Action.AddSet(exercise)) },
+                colors = LiftAppButtonDefaults.outlinedButtonColors,
+                modifier = Modifier,
+            ) {
+                LiftAppText(text = "+1", style = Typography.bodySmallMono)
+            }
+        }
+
+        if (showDivider) {
+            LiftAppHorizontalDivider(
+                Modifier.animateItem().padding(vertical = dimens.padding.itemVerticalSmall)
+            )
+        }
+    }
+}
+
+@Composable
 private fun RestTimerEffect(
     viewModel: WorkoutViewModel,
     restTimerService: State<RestTimerService?>,
@@ -272,8 +540,11 @@ private fun RestTimerEffect(
             .distinctUntilChanged { old, new -> new.completedSetCount <= old.completedSetCount }
             .drop(1)
             .collect { workout ->
-                if (workout.nextExerciseSet != null) {
-                    restTimerService.value?.startTimer(workout.nextExerciseSet.restTime, workout.id)
+                if (workout.nextIncompleteItem != null) {
+                    restTimerService.value?.startTimer(
+                        workout.nextIncompleteItem.restTime,
+                        workout.id,
+                    )
                 }
             }
     }
@@ -397,10 +668,11 @@ private fun RestTimerContainer(restTimerService: RestTimerService, modifier: Mod
 
 @Composable
 private fun Page(
+    exerciseIndex: Int,
     exercise: EditableWorkout.Exercise,
     onAddSet: () -> Unit,
     onRemoveSet: () -> Unit,
-    onSaveSet: (EditableWorkout.Exercise, EditableExerciseSet<ExerciseSet>, Int) -> Unit,
+    onSaveSet: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -446,7 +718,7 @@ private fun Page(
                 SetEditorContent(set)
 
                 LiftAppButton(
-                    onClick = { onSaveSet(exercise, set, setIndex) },
+                    onClick = { onSaveSet(exerciseIndex, setIndex) },
                     enabled = set.isInputValid,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -471,100 +743,188 @@ fun SetStatusAppearance() {
     }
 }
 
+internal val editableWorkoutPreview: EditableWorkout
+    @Composable
+    get() {
+        val savedStateHandle = remember { SavedStateHandle() }
+        val textFieldStateManager =
+            PreviewResource.textFieldStateManager(savedStateHandle = savedStateHandle)
+        val stringProvider = PreviewResource.stringProvider
+        val formatter = PreviewResource.formatter()
+        val dateFormat = DateTimeFormatter.ofPattern(stringProvider.dateFormatDayMonthYear)
+        val timeFormat = formatter.getLocalTimeFormatter()
+        val exercises =
+            listOf(
+                EditableWorkout.Exercise(
+                    id = 1,
+                    name = Name.Raw("Bench Press"),
+                    exerciseType = ExerciseType.Weight,
+                    mainMuscles = listOf(Muscle.Chest),
+                    secondaryMuscles = listOf(Muscle.Triceps),
+                    tertiaryMuscles = emptyList(),
+                    goal = Workout.Goal.default,
+                    sets =
+                        listOf(
+                            EditableExerciseSet.Weight(
+                                weight = 100.0,
+                                reps = 10,
+                                weightInput = textFieldStateManager.doubleTextField("100.0"),
+                                repsInput = textFieldStateManager.intTextField("10"),
+                                weightUnit = MassUnit.Kilograms,
+                                suggestions =
+                                    listOf(
+                                        EditableExerciseSet.SetSuggestion(
+                                            set = ExerciseSet.Weight(97.5, 10, MassUnit.Kilograms),
+                                            type =
+                                                EditableExerciseSet.SetSuggestion.Type
+                                                    .PreviousWorkout,
+                                        )
+                                    ),
+                            ),
+                            EditableExerciseSet.Weight(
+                                weight = 100.0,
+                                reps = 9,
+                                weightInput = textFieldStateManager.doubleTextField("100"),
+                                repsInput = textFieldStateManager.intTextField("9"),
+                                weightUnit = MassUnit.Kilograms,
+                                suggestions =
+                                    listOf(
+                                        EditableExerciseSet.SetSuggestion(
+                                            set = ExerciseSet.Weight(97.5, 9, MassUnit.Kilograms),
+                                            type =
+                                                EditableExerciseSet.SetSuggestion.Type
+                                                    .PreviousWorkout,
+                                        )
+                                    ),
+                            ),
+                            EditableExerciseSet.Weight(
+                                weight = 100.0,
+                                reps = 8,
+                                weightInput = textFieldStateManager.doubleTextField("100"),
+                                repsInput = textFieldStateManager.intTextField("8"),
+                                weightUnit = MassUnit.Kilograms,
+                                suggestions =
+                                    listOf(
+                                        EditableExerciseSet.SetSuggestion(
+                                            set = ExerciseSet.Weight(97.5, 8, MassUnit.Kilograms),
+                                            type =
+                                                EditableExerciseSet.SetSuggestion.Type
+                                                    .PreviousWorkout,
+                                        )
+                                    ),
+                            ),
+                        ),
+                    previousWorkoutSets = emptyList(),
+                ),
+                EditableWorkout.Exercise(
+                    id = 2,
+                    name = Name.Raw("Squat"),
+                    exerciseType = ExerciseType.Weight,
+                    mainMuscles = listOf(Muscle.Quadriceps),
+                    secondaryMuscles = listOf(Muscle.Glutes),
+                    tertiaryMuscles = emptyList(),
+                    goal = Workout.Goal.default,
+                    sets =
+                        listOf(
+                            EditableExerciseSet.Weight(
+                                weight = 110.0,
+                                reps = 10,
+                                weightInput = textFieldStateManager.doubleTextField("110"),
+                                repsInput = textFieldStateManager.intTextField("10"),
+                                weightUnit = MassUnit.Kilograms,
+                                suggestions = emptyList(),
+                            ),
+                            EditableExerciseSet.Weight(
+                                weight = 0.0,
+                                reps = 0,
+                                weightInput = textFieldStateManager.doubleTextField("0"),
+                                repsInput = textFieldStateManager.intTextField("0"),
+                                weightUnit = MassUnit.Kilograms,
+                                suggestions =
+                                    listOf(
+                                        EditableExerciseSet.SetSuggestion(
+                                            set = ExerciseSet.Weight(107.5, 10, MassUnit.Kilograms),
+                                            type =
+                                                EditableExerciseSet.SetSuggestion.Type
+                                                    .PreviousWorkout,
+                                        ),
+                                        EditableExerciseSet.SetSuggestion(
+                                            set = ExerciseSet.Weight(110.0, 10, MassUnit.Kilograms),
+                                            type =
+                                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
+                                        ),
+                                    ),
+                            ),
+                            EditableExerciseSet.Weight(
+                                weight = 0.0,
+                                reps = 0,
+                                weightInput = textFieldStateManager.doubleTextField("0"),
+                                repsInput = textFieldStateManager.intTextField("0"),
+                                weightUnit = MassUnit.Kilograms,
+                                suggestions = emptyList(),
+                            ),
+                        ),
+                    previousWorkoutSets =
+                        listOf(
+                            ExerciseSet.Weight(110.0, 10, MassUnit.Kilograms),
+                            ExerciseSet.Weight(107.5, 10, MassUnit.Kilograms),
+                            ExerciseSet.Weight(105.0, 10, MassUnit.Kilograms),
+                        ),
+                ),
+            )
+        return EditableWorkout(
+            id = 1,
+            name = "Push",
+            startDate = LocalDateTime.now(),
+            endDate = null,
+            notes = "",
+            exercises = exercises,
+            pages =
+                exercises.mapIndexed { index, exercise ->
+                    WorkoutPage.Exercise(
+                        exercise = exercise,
+                        index = index,
+                        isLast = index == exercises.lastIndex,
+                    )
+                } +
+                    WorkoutPage.Summary(
+                        name = textFieldStateManager.stringTextField("Push"),
+                        startDate =
+                            textFieldStateManager.localDateField(dateFormat, LocalDate.now()),
+                        startTime =
+                            textFieldStateManager.localTimeField(timeFormat, LocalTime.now()),
+                        endDate = textFieldStateManager.localDateField(dateFormat, LocalDate.now()),
+                        endTime = textFieldStateManager.localTimeField(timeFormat, LocalTime.now()),
+                        notes = textFieldStateManager.stringTextField(""),
+                        is24H = true,
+                        exercises = exercises,
+                        index = exercises.size,
+                    ),
+        )
+    }
+
+@MultiDevicePreview
+@Composable
+private fun WorkoutScreen2Preview() {
+    PreviewTheme {
+        WorkoutScreen2(
+            workout = editableWorkoutPreview,
+            restTimerService = mutableStateOf(null),
+            selectedPage = 0,
+            onAction = {},
+        )
+    }
+}
+
 @MultiDevicePreview
 @Composable
 private fun WorkoutScreenPreview() {
     PreviewTheme {
-        val savedStateHandle = remember { SavedStateHandle() }
-        val textFieldStateManager =
-            PreviewResource.textFieldStateManager(savedStateHandle = savedStateHandle)
-
         WorkoutScreen(
-            viewModel =
-                WorkoutViewModel(
-                    getEditableWorkoutUseCase =
-                        GetEditableWorkoutUseCase(
-                            contract = { _, _ ->
-                                flowOf(
-                                    Workout(
-                                        id = 1,
-                                        routineID = 1,
-                                        name = "Push",
-                                        startDate = LocalDateTime.now(),
-                                        endDate = null,
-                                        notes = "",
-                                        exercises =
-                                            listOf(
-                                                Workout.Exercise(
-                                                    id = 1,
-                                                    name = Name.Raw("Bench Press"),
-                                                    exerciseType = ExerciseType.Weight,
-                                                    mainMuscles = listOf(Muscle.Chest),
-                                                    secondaryMuscles = listOf(Muscle.Triceps),
-                                                    tertiaryMuscles = emptyList(),
-                                                    goal = Workout.Goal.default,
-                                                    sets =
-                                                        listOf(
-                                                            ExerciseSet.Weight(
-                                                                100.0,
-                                                                10,
-                                                                MassUnit.Kilograms,
-                                                            ),
-                                                            ExerciseSet.Weight(
-                                                                0.0,
-                                                                0,
-                                                                MassUnit.Kilograms,
-                                                            ),
-                                                            ExerciseSet.Weight(
-                                                                0.0,
-                                                                0,
-                                                                MassUnit.Kilograms,
-                                                            ),
-                                                        ),
-                                                ),
-                                                Workout.Exercise(
-                                                    id = 2,
-                                                    name = Name.Raw("Squat"),
-                                                    exerciseType = ExerciseType.Weight,
-                                                    mainMuscles = listOf(Muscle.Quadriceps),
-                                                    secondaryMuscles = listOf(Muscle.Glutes),
-                                                    tertiaryMuscles = emptyList(),
-                                                    goal = Workout.Goal.default,
-                                                    sets =
-                                                        listOf(
-                                                            ExerciseSet.Weight(
-                                                                0.0,
-                                                                0,
-                                                                MassUnit.Kilograms,
-                                                            ),
-                                                            ExerciseSet.Weight(
-                                                                0.0,
-                                                                0,
-                                                                MassUnit.Kilograms,
-                                                            ),
-                                                            ExerciseSet.Weight(
-                                                                0.0,
-                                                                0,
-                                                                MassUnit.Kilograms,
-                                                            ),
-                                                        ),
-                                                ),
-                                            ),
-                                    )
-                                )
-                            },
-                            textFieldStateManager = textFieldStateManager,
-                            formatter = PreviewResource.formatter(),
-                            stringProvider = PreviewResource.stringProvider,
-                            workoutRouteData = Routes.Workout.new(0L),
-                            savedStateHandle = savedStateHandle,
-                        ),
-                    upsertGoalSets = UpsertGoalSetsUseCase(interfaceStub()),
-                    upsertExerciseSet = UpsertExerciseSetUseCase(interfaceStub()),
-                    updateWorkoutUseCase = UpdateWorkoutUseCase(interfaceStub()),
-                    navigationCommander = NavigationCommander(),
-                    coroutineScope = rememberCoroutineScope(),
-                )
+            workout = editableWorkoutPreview,
+            restTimerService = mutableStateOf(null),
+            selectedPage = 0,
+            onAction = {},
         )
     }
 }
