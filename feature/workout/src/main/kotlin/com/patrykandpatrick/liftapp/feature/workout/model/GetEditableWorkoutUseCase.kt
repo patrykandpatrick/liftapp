@@ -56,7 +56,8 @@ constructor(
                             set.editable(
                                 exerciseId = exercise.id,
                                 setIndex = index,
-                                previousSet = exercise.sets.getOrNull(index - 1),
+                                previousSet =
+                                    exercise.sets.getOrNull(index - 1)?.takeIf { it.isCompleted },
                                 lastSet = exercise.lastSets.getOrNull(index),
                             )
                         },
@@ -175,17 +176,29 @@ constructor(
             weight = weight,
             reps = reps,
             weightInput =
-                textFieldStateManager.doubleTextField(
-                    initialValue = formatDecimal(weight),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
-                    validators = { validNumberHigherThanZero() },
-                ),
+                textFieldStateManager
+                    .doubleTextField(
+                        initialValue = formatDecimal(weight),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
+                        validators = { validNumberHigherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.weight?.let(::updateValue)
+                        }
+                    },
             repsInput =
-                textFieldStateManager.intTextField(
-                    initialValue = formatInteger(reps),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                    validators = { validNumberHigherThanZero() },
-                ),
+                textFieldStateManager
+                    .intTextField(
+                        initialValue = formatInteger(reps),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
+                        validators = { validNumberHigherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.reps?.let(::updateValue)
+                        }
+                    },
             weightUnit = weightUnit,
             suggestions = createSuggestions(previousSet, lastSet),
         )
@@ -203,17 +216,29 @@ constructor(
             formattedBodyWeight =
                 "${formatDecimal(bodyWeight)}${stringProvider.getDisplayUnit(weightUnit)}",
             weightInput =
-                textFieldStateManager.doubleTextField(
-                    initialValue = formatDecimal(weight),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
-                    validators = { validNumber() },
-                ),
+                textFieldStateManager
+                    .doubleTextField(
+                        initialValue = formatDecimal(weight),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "weight"),
+                        validators = { validNumber() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.weight?.let(::updateValue)
+                        }
+                    },
             repsInput =
-                textFieldStateManager.intTextField(
-                    initialValue = formatInteger(reps),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                    validators = { validNumberHigherThanZero() },
-                ),
+                textFieldStateManager
+                    .intTextField(
+                        initialValue = formatInteger(reps),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
+                        validators = { validNumberHigherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.reps?.let(::updateValue)
+                        }
+                    },
             weightUnit = weightUnit,
             suggestions = createSuggestions(previousSet, lastSet),
         )
@@ -227,11 +252,17 @@ constructor(
         EditableExerciseSet.Reps(
             reps = reps,
             repsInput =
-                textFieldStateManager.intTextField(
-                    initialValue = formatInteger(reps),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
-                    validators = { validNumberHigherThanZero() },
-                ),
+                textFieldStateManager
+                    .intTextField(
+                        initialValue = formatInteger(reps),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "reps"),
+                        validators = { validNumberHigherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.reps?.let(::updateValue)
+                        }
+                    },
             suggestions = createSuggestions(previousSet, lastSet),
         )
 
@@ -246,23 +277,42 @@ constructor(
             distance = distance,
             kcal = kcal,
             durationInput =
-                textFieldStateManager.longTextField(
-                    initialValue = formatInteger(duration.inWholeMilliseconds),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
-                    validators = { higherThanZero() },
-                ),
+                textFieldStateManager
+                    .longTextField(
+                        initialValue = formatInteger(duration.inWholeMilliseconds),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
+                        validators = { higherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.duration?.inWholeMilliseconds?.let(::updateValue)
+                        }
+                    },
             distanceInput =
-                textFieldStateManager.doubleTextField(
-                    initialValue = formatDecimal(distance),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "distance"),
-                    validators = { validNumberHigherThanZero() },
-                ),
+                textFieldStateManager
+                    .doubleTextField(
+                        initialValue = formatDecimal(distance),
+                        savedStateKey =
+                            getTextFieldStateManagerKey(exerciseId, setIndex, "distance"),
+                        validators = { validNumberHigherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.distance?.let(::updateValue)
+                        }
+                    },
             kcalInput =
-                textFieldStateManager.doubleTextField(
-                    initialValue = formatDecimal(kcal),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "kcal"),
-                    validators = { validNumberHigherThanZero() },
-                ),
+                textFieldStateManager
+                    .doubleTextField(
+                        initialValue = formatDecimal(kcal),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "kcal"),
+                        validators = { validNumberHigherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.kcal?.let(::updateValue)
+                        }
+                    },
             distanceUnit = distanceUnit,
             suggestions = createSuggestions(previousSet, lastSet),
         )
@@ -276,11 +326,17 @@ constructor(
         EditableExerciseSet.Time(
             duration = duration,
             timeInput =
-                textFieldStateManager.longTextField(
-                    initialValue = formatInteger(duration.inWholeMilliseconds),
-                    savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
-                    validators = { higherThanZero() },
-                ),
+                textFieldStateManager
+                    .longTextField(
+                        initialValue = formatInteger(duration.inWholeMilliseconds),
+                        savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "time"),
+                        validators = { higherThanZero() },
+                    )
+                    .apply {
+                        if (!isCompleted) {
+                            previousSet?.duration?.inWholeMilliseconds?.let(::updateValue)
+                        }
+                    },
             suggestions = createSuggestions(previousSet, lastSet),
         )
 
