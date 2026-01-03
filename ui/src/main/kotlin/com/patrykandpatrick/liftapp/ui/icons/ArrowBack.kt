@@ -1,13 +1,54 @@
 package com.patrykandpatrick.liftapp.ui.icons
 
 /*
- * Converted using https://composables.com/svg-to-compose
- */
+ISC License
+
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2023 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2025.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+---
+
+The MIT License (MIT) (for portions derived from Feather)
+
+Copyright (c) 2013-2023 Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
 
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
@@ -15,90 +56,37 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 
-val LiftAppIcons.ArrowBack: ImageVector
-    get() =
-        arrowBack
-            ?: ImageVector.Builder(
-                    name = "ArrowBack",
-                    defaultWidth = 24.dp,
-                    defaultHeight = 24.dp,
-                    viewportWidth = 24f,
-                    viewportHeight = 24f,
-                )
-                .path(fill = SolidColor(Color.White)) {
-                    moveTo(4.5f, 12f)
-                    lineTo(3.79289f, 11.2929f)
-                    curveTo(3.40237f, 11.6834f, 3.40237f, 12.3166f, 3.79289f, 12.7071f)
-                    lineTo(4.5f, 12f)
-                    close()
-                    moveTo(10.7071f, 7.20711f)
-                    curveTo(11.0976f, 6.81658f, 11.0976f, 6.18342f, 10.7071f, 5.79289f)
-                    curveTo(10.3166f, 5.40237f, 9.68342f, 5.40237f, 9.29289f, 5.79289f)
-                    lineTo(10.7071f, 7.20711f)
-                    close()
-                    moveTo(9.29289f, 18.2071f)
-                    curveTo(9.68342f, 18.5976f, 10.3166f, 18.5976f, 10.7071f, 18.2071f)
-                    curveTo(11.0976f, 17.8166f, 11.0976f, 17.1834f, 10.7071f, 16.7929f)
-                    lineTo(9.29289f, 18.2071f)
-                    close()
-                    moveTo(16f, 15f)
-                    curveTo(15.4477f, 15f, 15f, 15.4477f, 15f, 16f)
-                    curveTo(15f, 16.5523f, 15.4477f, 17f, 16f, 17f)
-                    verticalLineTo(15f)
-                    close()
-                    moveTo(4.5f, 12f)
-                    lineTo(5.20711f, 12.7071f)
-                    lineTo(10.7071f, 7.20711f)
-                    lineTo(10f, 6.5f)
-                    lineTo(9.29289f, 5.79289f)
-                    lineTo(3.79289f, 11.2929f)
-                    lineTo(4.5f, 12f)
-                    close()
-                    moveTo(4.5f, 12f)
-                    lineTo(3.79289f, 12.7071f)
-                    lineTo(9.29289f, 18.2071f)
-                    lineTo(10f, 17.5f)
-                    lineTo(10.7071f, 16.7929f)
-                    lineTo(5.20711f, 11.2929f)
-                    lineTo(4.5f, 12f)
-                    close()
-                    moveTo(4.5f, 12f)
-                    verticalLineTo(13f)
-                    horizontalLineTo(17.5f)
-                    verticalLineTo(12f)
-                    verticalLineTo(11f)
-                    horizontalLineTo(4.5f)
-                    verticalLineTo(12f)
-                    close()
-                    moveTo(17.5f, 12f)
-                    verticalLineTo(13f)
-                    curveTo(18.0357f, 13f, 18.5f, 13.4557f, 18.5f, 14f)
-                    horizontalLineTo(19.5f)
-                    horizontalLineTo(20.5f)
-                    curveTo(20.5f, 12.3352f, 19.1243f, 11f, 17.5f, 11f)
-                    verticalLineTo(12f)
-                    close()
-                    moveTo(19.5f, 14f)
-                    horizontalLineTo(18.5f)
-                    curveTo(18.5f, 14.5443f, 18.0357f, 15f, 17.5f, 15f)
-                    verticalLineTo(16f)
-                    verticalLineTo(17f)
-                    curveTo(19.1243f, 17f, 20.5f, 15.6648f, 20.5f, 14f)
-                    horizontalLineTo(19.5f)
-                    close()
-                    moveTo(17.5f, 16f)
-                    verticalLineTo(15f)
-                    horizontalLineTo(16f)
-                    verticalLineTo(16f)
-                    verticalLineTo(17f)
-                    horizontalLineTo(17.5f)
-                    verticalLineTo(16f)
-                    close()
-                }
-                .build()
-                .also { arrowBack = it }
-
-private var arrowBack: ImageVector? = null
+val LiftAppIcons.ArrowBack: ImageVector by lazy {
+    ImageVector.Builder(
+            name = "arrow-back",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        )
+        .apply {
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(12f, 19f)
+                lineToRelative(-7f, -7f)
+                lineToRelative(7f, -7f)
+            }
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(19f, 12f)
+                horizontalLineTo(5f)
+            }
+        }
+        .build()
+}
 
 @LightAndDarkThemePreview
 @Composable

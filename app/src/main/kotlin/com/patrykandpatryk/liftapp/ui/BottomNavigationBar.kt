@@ -19,8 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -73,12 +72,7 @@ internal fun BottomNavigationBar(
                             navOptions { popUpTo<Routes.Home>() },
                         )
                     },
-                    icon =
-                        painterResource(
-                            id =
-                                if (selected) menuRoute.selectedIconRes
-                                else menuRoute.deselectedIconRes
-                        ),
+                    icon = menuRoute.icon,
                     label = stringResource(id = menuRoute.titleRes),
                 )
             }
@@ -90,7 +84,7 @@ internal fun BottomNavigationBar(
 fun RowScope.NavigationBarItem(
     selected: Boolean,
     onClick: () -> Unit,
-    icon: Painter,
+    icon: ImageVector,
     label: String,
 ) {
     LiftAppCard(
@@ -106,7 +100,7 @@ fun RowScope.NavigationBarItem(
         role = Role.Tab,
         modifier = Modifier.weight(1f).semantics { contentDescription = label },
     ) {
-        Icon(painter = icon, contentDescription = null)
+        Icon(imageVector = icon, contentDescription = null)
 
         Text(
             text = label,

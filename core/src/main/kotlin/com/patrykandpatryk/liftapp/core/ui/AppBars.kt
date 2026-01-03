@@ -15,8 +15,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,9 @@ import com.patrykandpatrick.liftapp.ui.component.tabs.LiftAppTabRow
 import com.patrykandpatrick.liftapp.ui.component.tabs.LiftAppTabRowItem
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.Clock
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Settings
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
@@ -125,7 +126,7 @@ fun TopAppBarWithTabs(
                                             if (tabItem.text != null) tabDimens.iconToTextPadding
                                             else 0.dp
                                     ),
-                            painter = tabItem.icon,
+                            imageVector = tabItem.icon,
                             contentDescription = null,
                         )
                     }
@@ -142,7 +143,7 @@ fun TopAppBarWithTabs(
     )
 }
 
-@Immutable data class TabItem(val text: String? = null, val icon: Painter? = null)
+@Immutable data class TabItem(val text: String? = null, val icon: ImageVector? = null)
 
 object AppBars {
     @Composable
@@ -194,11 +195,7 @@ fun PreviewTopAppBarWithIconTabs() {
             title = "Title",
             selectedTabIndex = { 0 },
             onTabSelected = {},
-            tabs =
-                listOf(
-                    TabItem(icon = painterResource(id = R.drawable.ic_time)),
-                    TabItem(icon = painterResource(id = R.drawable.ic_workout)),
-                ),
+            tabs = listOf(TabItem(icon = LiftAppIcons.Clock), TabItem(icon = LiftAppIcons.Settings)),
         )
     }
 }
@@ -213,8 +210,8 @@ fun PreviewTopAppBarWithTextIconTabs() {
             onTabSelected = {},
             tabs =
                 listOf(
-                    TabItem(text = "First", icon = painterResource(id = R.drawable.ic_time)),
-                    TabItem(text = "Second", icon = painterResource(id = R.drawable.ic_workout)),
+                    TabItem(text = "First", icon = LiftAppIcons.Clock),
+                    TabItem(text = "Second", icon = LiftAppIcons.Settings),
                 ),
         )
     }

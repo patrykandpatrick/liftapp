@@ -12,14 +12,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatryk.liftapp.core.ui.ListItem
-import com.patrykandpatryk.liftapp.core.ui.resource.iconRes
+import com.patrykandpatryk.liftapp.core.ui.resource.icon
 import com.patrykandpatryk.liftapp.feature.bodymeasurementlist.model.Action
 
 @Composable
@@ -43,7 +42,7 @@ fun BodyMeasurementListScreen(modifier: Modifier = Modifier) {
                 ListItem(
                     title = item.headline,
                     description = item.supportingText,
-                    iconPainter = painterResource(id = item.bodyMeasurementType.iconRes),
+                    imageVector = item.bodyMeasurementType.icon,
                     onClick = { viewModel.onAction(Action.OpenDetails(item.bodyMeasurementID)) },
                 )
             }

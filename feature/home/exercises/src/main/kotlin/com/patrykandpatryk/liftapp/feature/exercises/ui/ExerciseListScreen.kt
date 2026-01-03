@@ -45,6 +45,7 @@ import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Check
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
@@ -93,7 +94,7 @@ private fun ExerciseListScreen(
             LiftAppFAB(
                 content = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_add),
+                        imageVector = LiftAppIcons.Plus,
                         contentDescription = stringResource(id = R.string.action_new_exercise),
                     )
 
@@ -265,7 +266,7 @@ private fun BottomBar(mode: ExerciseListRouteData.Mode.Pick, onAction: (Action) 
             colors = LiftAppButtonDefaults.primaryButtonColors,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_check),
+                imageVector = LiftAppIcons.Check,
                 contentDescription = stringResource(id = R.string.action_done),
             )
             Text(stringResource(id = R.string.action_done))

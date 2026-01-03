@@ -2,16 +2,19 @@ package com.patrykandpatryk.liftapp.feature.settings.ui
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.icons.Clock
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Ruler
+import com.patrykandpatrick.liftapp.ui.icons.Scale
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.stringResourceId
 import com.patrykandpatryk.liftapp.core.ui.ListSectionTitle
@@ -28,7 +31,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     val viewModel = hiltViewModel<SettingsViewModel>()
     val allPreferences by viewModel.allPreferences.collectAsState(initial = null)
 
-    Scaffold(
+    LiftAppScaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
@@ -48,7 +51,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     values = LongDistanceUnit.entries.toTypedArray(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = { viewModel.onAction(Action.SetDistanceUnit(it)) },
-                    iconPainter = painterResource(id = R.drawable.ic_distance),
+                    imageVector = LiftAppIcons.Ruler,
                 )
             }
 
@@ -59,7 +62,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     values = MassUnit.entries.toTypedArray(),
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = { viewModel.onAction(Action.SetMassUnit(it)) },
-                    iconPainter = painterResource(id = R.drawable.ic_weight),
+                    imageVector = LiftAppIcons.Scale,
                 )
             }
 
@@ -70,7 +73,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     title = stringResource(id = R.string.settings_hour_format),
                     selectedValue = allPreferences?.hourFormat,
                     values = HourFormat.entries.toTypedArray(),
-                    iconPainter = painterResource(id = R.drawable.ic_time),
+                    imageVector = LiftAppIcons.Clock,
                     getValueTitle = { stringResource(id = it.stringResourceId) },
                     onValueChange = { viewModel.onAction(Action.SetHourFormat(it)) },
                 )

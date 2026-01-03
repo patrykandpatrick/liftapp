@@ -1,64 +1,110 @@
-/*
- * Converted using https://composables.com/svg-to-compose
- */
 package com.patrykandpatrick.liftapp.ui.icons
 
+/*
+ISC License
+
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2023 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2025.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+---
+
+The MIT License (MIT) (for portions derived from Feather)
+
+Copyright (c) 2013-2023 Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 
-val LiftAppIcons.Delete: ImageVector
-    get() =
-        _Delete
-            ?: ImageVector.Builder(
-                    name = "Delete",
-                    defaultWidth = 24.dp,
-                    defaultHeight = 24.dp,
-                    viewportWidth = 24f,
-                    viewportHeight = 24f,
-                )
-                .apply {
-                    path(fill = SolidColor(Color.White)) {
-                        moveTo(15f, 10.5f)
-                        horizontalLineTo(8f)
-                        verticalLineTo(18f)
-                        curveTo(8f, 18.3728f, 8.11962f, 18.6059f, 8.25684f, 18.7432f)
-                        curveTo(8.39406f, 18.8804f, 8.62725f, 19f, 9f, 19f)
-                        horizontalLineTo(14f)
-                        curveTo(14.3728f, 19f, 14.6059f, 18.8804f, 14.7432f, 18.7432f)
-                        curveTo(14.8804f, 18.6059f, 15f, 18.3728f, 15f, 18f)
-                        verticalLineTo(10.5f)
-                        close()
-                        moveTo(13.5f, 4f)
-                        curveTo(14.0523f, 4f, 14.5f, 4.44772f, 14.5f, 5f)
-                        horizontalLineTo(17f)
-                        curveTo(17.5523f, 5f, 18f, 5.44772f, 18f, 6f)
-                        curveTo(18f, 6.55228f, 17.5523f, 7f, 17f, 7f)
-                        horizontalLineTo(6f)
-                        curveTo(5.44772f, 7f, 5f, 6.55228f, 5f, 6f)
-                        curveTo(5f, 5.44772f, 5.44772f, 5f, 6f, 5f)
-                        horizontalLineTo(8.5f)
-                        curveTo(8.5f, 4.44772f, 8.94772f, 4f, 9.5f, 4f)
-                        horizontalLineTo(13.5f)
-                        close()
-                        moveTo(17f, 18f)
-                        curveTo(17f, 18.8272f, 16.72f, 19.5944f, 16.1572f, 20.1572f)
-                        curveTo(15.5944f, 20.72f, 14.8272f, 21f, 14f, 21f)
-                        horizontalLineTo(9f)
-                        curveTo(8.17275f, 21f, 7.40555f, 20.72f, 6.84277f, 20.1572f)
-                        curveTo(6.27999f, 19.5944f, 6f, 18.8272f, 6f, 18f)
-                        verticalLineTo(9.5f)
-                        curveTo(6f, 8.94772f, 6.44772f, 8.5f, 7f, 8.5f)
-                        horizontalLineTo(16f)
-                        curveTo(16.2652f, 8.5f, 16.5195f, 8.60543f, 16.707f, 8.79297f)
-                        curveTo(16.8946f, 8.98051f, 17f, 9.23478f, 17f, 9.5f)
-                        verticalLineTo(18f)
-                        close()
-                    }
-                }
-                .build()
-                .also { _Delete = it }
+val LiftAppIcons.Delete: ImageVector by lazy {
+    ImageVector.Builder(
+            name = "delete",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        )
+        .apply {
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(19f, 6f)
+                verticalLineToRelative(14f)
+                arcToRelative(2f, 2f, 0f, false, true, -2f, 2f)
+                horizontalLineTo(7f)
+                arcToRelative(2f, 2f, 0f, false, true, -2f, -2f)
+                verticalLineTo(6f)
+            }
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(3f, 6f)
+                horizontalLineToRelative(18f)
+            }
+            path(
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(8f, 6f)
+                verticalLineTo(4f)
+                arcToRelative(2f, 2f, 0f, false, true, 2f, -2f)
+                horizontalLineToRelative(4f)
+                arcToRelative(2f, 2f, 0f, false, true, 2f, 2f)
+                verticalLineToRelative(2f)
+            }
+        }
+        .build()
+}
 
-private var _Delete: ImageVector? = null
+@LightAndDarkThemePreview
+@Composable
+private fun DeletePreview() {
+    LiftAppTheme { LiftAppBackground { Icon(LiftAppIcons.Delete, null) } }
+}

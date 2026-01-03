@@ -1,8 +1,46 @@
-/*
- * Converted using https://composables.com/svg-to-compose
- */
 package com.patrykandpatrick.liftapp.ui.icons
 
+/*
+ISC License
+
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2023 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2025.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+---
+
+The MIT License (MIT) (for portions derived from Feather)
+
+Copyright (c) 2013-2023 Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -16,37 +54,96 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 
-val LiftAppIcons.DragHandle: ImageVector
-    get() =
-        _DragHandle
-            ?: ImageVector.Builder(
-                    name = "DragHandle",
-                    defaultWidth = 24.dp,
-                    defaultHeight = 24.dp,
-                    viewportWidth = 24f,
-                    viewportHeight = 24f,
-                )
-                .apply {
-                    path(
-                        stroke = SolidColor(Color.White),
-                        strokeLineWidth = 2f,
-                        strokeLineCap = StrokeCap.Round,
-                        strokeLineJoin = StrokeJoin.Round,
-                    ) {
-                        moveTo(18f, 12f)
-                        horizontalLineTo(6f)
-                        moveTo(15f, 8f)
-                        lineTo(12f, 5f)
-                        lineTo(9f, 8f)
-                        moveTo(15f, 16f)
-                        lineTo(12f, 19f)
-                        lineTo(9f, 16f)
-                    }
-                }
-                .build()
-                .also { _DragHandle = it }
-
-private var _DragHandle: ImageVector? = null
+val LiftAppIcons.DragHandle: ImageVector by lazy {
+    ImageVector.Builder(
+            name = "drag-handle",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        )
+        .apply {
+            path(
+                fill = SolidColor(Color.Transparent),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(10f, 12f)
+                arcTo(1f, 1f, 0f, false, true, 9f, 13f)
+                arcTo(1f, 1f, 0f, false, true, 8f, 12f)
+                arcTo(1f, 1f, 0f, false, true, 10f, 12f)
+                close()
+            }
+            path(
+                fill = SolidColor(Color.Transparent),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(10f, 5f)
+                arcTo(1f, 1f, 0f, false, true, 9f, 6f)
+                arcTo(1f, 1f, 0f, false, true, 8f, 5f)
+                arcTo(1f, 1f, 0f, false, true, 10f, 5f)
+                close()
+            }
+            path(
+                fill = SolidColor(Color.Transparent),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(10f, 19f)
+                arcTo(1f, 1f, 0f, false, true, 9f, 20f)
+                arcTo(1f, 1f, 0f, false, true, 8f, 19f)
+                arcTo(1f, 1f, 0f, false, true, 10f, 19f)
+                close()
+            }
+            path(
+                fill = SolidColor(Color.Transparent),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(16f, 12f)
+                arcTo(1f, 1f, 0f, false, true, 15f, 13f)
+                arcTo(1f, 1f, 0f, false, true, 14f, 12f)
+                arcTo(1f, 1f, 0f, false, true, 16f, 12f)
+                close()
+            }
+            path(
+                fill = SolidColor(Color.Transparent),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(16f, 5f)
+                arcTo(1f, 1f, 0f, false, true, 15f, 6f)
+                arcTo(1f, 1f, 0f, false, true, 14f, 5f)
+                arcTo(1f, 1f, 0f, false, true, 16f, 5f)
+                close()
+            }
+            path(
+                fill = SolidColor(Color.Transparent),
+                stroke = SolidColor(Color.Black),
+                strokeLineWidth = 2f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(16f, 19f)
+                arcTo(1f, 1f, 0f, false, true, 15f, 20f)
+                arcTo(1f, 1f, 0f, false, true, 14f, 19f)
+                arcTo(1f, 1f, 0f, false, true, 16f, 19f)
+                close()
+            }
+        }
+        .build()
+}
 
 @LightAndDarkThemePreview
 @Composable

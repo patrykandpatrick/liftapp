@@ -1,6 +1,5 @@
 package com.patrykandpatryk.liftapp.core.ui
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,11 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Save
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -30,12 +31,12 @@ object BottomAppBar {
         text: String,
         onClick: () -> Unit,
         modifier: Modifier = Modifier,
-        @DrawableRes iconRes: Int? = null,
+        imageVector: ImageVector? = null,
         enabled: Boolean = true,
     ) {
         LiftAppButton(modifier = modifier.fillMaxWidth(), onClick = onClick, enabled = enabled) {
-            if (iconRes != null) {
-                Icon(painterResource(id = iconRes), null)
+            if (imageVector != null) {
+                Icon(imageVector, null)
             }
             Text(text)
         }
@@ -46,7 +47,7 @@ object BottomAppBar {
         BottomAppBar(modifier) {
             Button(
                 text = stringResource(id = R.string.action_save),
-                iconRes = R.drawable.ic_save,
+                imageVector = LiftAppIcons.Save,
                 onClick = onClick,
                 enabled = enabled,
             )

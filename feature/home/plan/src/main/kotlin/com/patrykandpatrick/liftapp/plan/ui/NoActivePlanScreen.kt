@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -26,6 +25,8 @@ import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Open
+import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
@@ -68,7 +69,7 @@ internal fun NoActivePlanScreen(onAction: (Action) -> Unit) {
 private fun ChooseExistingButton(onAction: (Action) -> Unit, modifier: Modifier = Modifier) {
     LiftAppButton(onClick = { onAction(Action.ChooseExistingPlan) }, modifier = modifier) {
         Icon(
-            painter = painterResource(R.drawable.ic_open),
+            imageVector = LiftAppIcons.Open,
             contentDescription = null,
             modifier = Modifier.padding(end = LocalDimens.current.padding.itemHorizontalSmall),
         )
@@ -85,7 +86,7 @@ private fun CreateNewButton(onAction: (Action) -> Unit, modifier: Modifier = Mod
         colors = LiftAppButtonDefaults.outlinedButtonColors,
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_add),
+            imageVector = LiftAppIcons.Plus,
             contentDescription = null,
             modifier = Modifier.padding(end = LocalDimens.current.padding.itemHorizontalSmall),
         )

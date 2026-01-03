@@ -1,9 +1,7 @@
 package com.patrykandpatrick.liftapp.ui.component
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
@@ -12,7 +10,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.translate
@@ -29,15 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.patrykandpatrick.liftapp.ui.component.TextComponent.BULLET_SEPARATOR
 import com.patrykandpatrick.liftapp.ui.component.TextComponent.COMPLETED_ICON
 import com.patrykandpatrick.liftapp.ui.component.TextComponent.separatorBullet
-import com.patrykandpatrick.liftapp.ui.icons.Check
+import com.patrykandpatrick.liftapp.ui.icons.BadgeCheck
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
-import com.patrykandpatrick.liftapp.ui.modifier.bottomTintedEdge
-import com.patrykandpatrick.liftapp.ui.modifier.topTintedEdge
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
@@ -180,32 +174,19 @@ private fun BulletSeparator(modifier: Modifier = Modifier) {
 private fun CompletedIcon(modifier: Modifier = Modifier) {
     val backgroundColor = colorScheme.secondary
     Icon(
-        imageVector = LiftAppIcons.Check,
+        imageVector = LiftAppIcons.BadgeCheck,
         contentDescription = null,
-        tint = colorScheme.onSecondary,
+        tint = colorScheme.secondary,
         modifier =
-            modifier
-                .layout { measurable, constraints ->
-                    val placeable = measurable.measure(constraints)
-                    val size = minOf(placeable.width, placeable.height)
-                    layout(placeable.width, placeable.height) {
-                        placeable.place(
-                            (constraints.maxWidth - size) / 2,
-                            (constraints.maxHeight - size) / 2,
-                        )
-                    }
+            modifier.layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                val size = minOf(placeable.width, placeable.height)
+                layout(placeable.width, placeable.height) {
+                    placeable.place(
+                        (constraints.maxWidth - size) / 2,
+                        (constraints.maxHeight - size) / 2,
+                    )
                 }
-                .topTintedEdge(CircleShape)
-                .bottomTintedEdge(CircleShape)
-                .dropShadow(CircleShape) {
-                    radius = 4.dp.toPx()
-                    color = backgroundColor.copy(alpha = .6f)
-                }
-                .dropShadow(CircleShape) {
-                    radius = 1.dp.toPx()
-                    spread = 1.dp.toPx()
-                    color = backgroundColor.copy(alpha = .4f)
-                }
-                .background(color = backgroundColor, shape = CircleShape),
+            },
     )
 }

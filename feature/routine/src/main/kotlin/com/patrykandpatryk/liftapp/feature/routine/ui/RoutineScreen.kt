@@ -13,12 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
+import com.patrykandpatrick.liftapp.ui.icons.Dumbbell
+import com.patrykandpatrick.liftapp.ui.icons.Edit
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatryk.liftapp.core.model.valueOrNull
@@ -72,7 +74,7 @@ private fun RoutineScreen(
                 actions = {
                     LiftAppIconButton(onClick = { onAction(Action.Edit) }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_edit),
+                            imageVector = LiftAppIcons.Edit,
                             contentDescription = stringResource(id = R.string.action_edit),
                         )
                     }
@@ -85,7 +87,7 @@ private fun RoutineScreen(
         },
         floatingActionButton = {
             LiftAppFAB(onClick = { onAction(Action.StartWorkout) }) {
-                Icon(painterResource(R.drawable.ic_workout), null)
+                Icon(LiftAppIcons.Dumbbell, null)
                 Text(stringResource(R.string.action_work_out))
             }
         },

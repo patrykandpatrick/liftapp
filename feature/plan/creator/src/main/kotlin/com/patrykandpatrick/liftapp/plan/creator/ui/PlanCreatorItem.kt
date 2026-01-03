@@ -11,18 +11,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Plus
+import com.patrykandpatrick.liftapp.ui.icons.Routine
+import com.patrykandpatrick.liftapp.ui.icons.TreePalm
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
@@ -66,14 +69,14 @@ private fun PlaceholderItem(
     Row(modifier.height(IntrinsicSize.Min)) {
         PlaceholderItemButton(
             text = stringResource(R.string.training_plan_item_add_rest_day),
-            icon = painterResource(R.drawable.ic_rest_day),
+            icon = LiftAppIcons.TreePalm,
             onClick = onRestDayClick,
             modifier = Modifier.weight(1f),
         )
         VerticalDivider(modifier = Modifier)
         PlaceholderItemButton(
             text = stringResource(R.string.training_plan_item_add_routine),
-            icon = painterResource(R.drawable.ic_routines_outlined),
+            icon = LiftAppIcons.Routine,
             onClick = onRoutineClick,
             modifier = Modifier.weight(1f),
         )
@@ -83,7 +86,7 @@ private fun PlaceholderItem(
 @Composable
 private fun PlaceholderItemButton(
     text: String,
-    icon: Painter,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -102,11 +105,11 @@ private fun PlaceholderItemButton(
             modifier = Modifier.padding(end = 10.dp),
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_add),
+                imageVector = LiftAppIcons.Plus,
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
             )
-            Icon(painter = icon, contentDescription = null)
+            Icon(imageVector = icon, contentDescription = null)
         }
         Text(text = text, style = MaterialTheme.typography.bodySmall)
     }
@@ -115,7 +118,7 @@ private fun PlaceholderItemButton(
 @Composable
 private fun PlanCreatorItemItemPreview(item: ScreenState.Item) {
     LiftAppTheme {
-        Surface {
+        LiftAppBackground {
             PlanCreatorItem(
                 item = item,
                 onAddRestDayClick = {},

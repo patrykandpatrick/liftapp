@@ -1,15 +1,17 @@
 package com.patrykandpatryk.liftapp.core.ui.resource
 
-import androidx.annotation.DrawableRes
-import com.patrykandpatryk.liftapp.core.R
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Percent
+import com.patrykandpatrick.liftapp.ui.icons.Ruler
+import com.patrykandpatrick.liftapp.ui.icons.Scale
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementType
 
-val BodyMeasurementType.iconRes: Int
-    @DrawableRes
+val BodyMeasurementType.icon: ImageVector
     get() =
         when (this) {
-            BodyMeasurementType.Weight -> R.drawable.ic_weightscale_outline
-            BodyMeasurementType.Length -> R.drawable.ic_distance
-            BodyMeasurementType.LengthTwoSides -> R.drawable.ic_distance
-            BodyMeasurementType.Percentage -> R.drawable.ic_donut
+            BodyMeasurementType.Weight -> LiftAppIcons.Scale
+            BodyMeasurementType.Length -> LiftAppIcons.Ruler
+            BodyMeasurementType.LengthTwoSides -> LiftAppIcons.Ruler
+            BodyMeasurementType.Percentage -> LiftAppIcons.Percent
         }

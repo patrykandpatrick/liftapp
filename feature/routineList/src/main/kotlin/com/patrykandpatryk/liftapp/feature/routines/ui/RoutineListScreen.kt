@@ -13,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,7 +22,9 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
@@ -57,7 +58,7 @@ private fun RoutineListScreen(
         floatingActionButton = {
             LiftAppFAB(
                 content = {
-                    Icon(painterResource(id = R.drawable.ic_add), null)
+                    Icon(LiftAppIcons.Plus, null)
                     Text(stringResource(id = R.string.action_new_routine))
                 },
                 onClick = { onAction(Action.AddNewRoutine) },
@@ -77,7 +78,7 @@ private fun RoutineListScreen(
                         LiftAppIconButton(onClick = { onAction(Action.PopBackStack) }) {
                             if (state.isPickingRoutine) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_close),
+                                    imageVector = LiftAppIcons.Cross,
                                     contentDescription = stringResource(id = R.string.action_close),
                                 )
                             } else {

@@ -33,7 +33,7 @@ import com.patrykandpatryk.liftapp.core.model.getDisplayName
 
 @Composable
 internal fun BottomBar(
-    nextIncompleteItem: WorkoutIterator.Item,
+    nextIncompleteItem: WorkoutIterator.Item?,
     onGoToNextIncompleteItem: (WorkoutIterator.Item) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,39 +63,47 @@ internal fun BottomBar(
             horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
         ) {
             CircularProgressIndicator(
-                progress = { nextIncompleteItem.setIndex / nextIncompleteItem.setCount.toFloat() },
+                progress = { nextIncompleteItem?.progress ?: 1f },
                 color = colorScheme.onSurface,
                 trackColor = colorScheme.outline,
                 modifier = Modifier.size(32.dp),
             )
             Column {
                 LiftAppText(
-                    text = "Next up", // TODO string resource
+                    text = stringResource(R.string.workout_action_next_exercise),
                     style = MaterialTheme.typography.titleSmall,
                 )
-                LiftAppText(
-                    text =
-                        buildAnnotatedString {
-                            append(nextIncompleteItem.exercise.name.getDisplayName())
-                            appendBulletSeparator()
-                            append(
-                                stringResource(
-                                    R.string.exercise_set_set_index,
-                                    nextIncompleteItem.setIndex + 1,
+                if (nextIncompleteItem != null) {
+                    LiftAppText(
+                        text =
+                            buildAnnotatedString {
+                                append(nextIncompleteItem.exercise.name.getDisplayName())
+                                appendBulletSeparator()
+                                append(
+                                    stringResource(
+                                        R.string.exercise_set_set_index,
+                                        nextIncompleteItem.setIndex + 1,
+                                    )
                                 )
-                            )
-                            append("/${nextIncompleteItem.exercise.sets.size}")
-                        },
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                                append("/${nextIncompleteItem.exercise.sets.size}")
+                            },
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
             }
         }
 
-        LiftAppButton(
-            onClick = { onGoToNextIncompleteItem(nextIncompleteItem) },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(text = "Record set")
+        if (nextIncompleteItem != null) {
+            LiftAppButton(
+                onClick = { onGoToNextIncompleteItem(nextIncompleteItem) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = "Record set")
+            }
+        } else {
+            LiftAppButton(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(R.string.workout_action_summary))
+            }
         }
     }
 }

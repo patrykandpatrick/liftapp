@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -35,6 +34,9 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.TriangleAlert
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
@@ -101,7 +103,7 @@ private fun PlanCreatorScreen(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_error),
+                                imageVector = LiftAppIcons.TriangleAlert,
                                 contentDescription = null,
                                 modifier =
                                     Modifier.padding(
@@ -231,7 +233,7 @@ private fun PlanCreatorItem(
                     ),
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_remove_circle),
+                    imageVector = LiftAppIcons.CircleMinus,
                     contentDescription = stringResource(R.string.training_plan_item_remove),
                 )
             }

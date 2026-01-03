@@ -14,7 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.patrykandpatryk.liftapp.core.ui.DialogContent
@@ -26,7 +26,7 @@ fun <T : Enum<T>> EnumPreferenceListItem(
     title: String,
     selectedValue: T?,
     values: Array<T>,
-    iconPainter: Painter,
+    imageVector: ImageVector,
     getValueTitle: @Composable (T) -> String,
     onValueChange: (T) -> Unit,
 ) {
@@ -34,7 +34,7 @@ fun <T : Enum<T>> EnumPreferenceListItem(
 
     ListItem(
         title = title,
-        iconPainter = iconPainter,
+        imageVector = imageVector,
         description = if (selectedValue != null) getValueTitle(selectedValue) else "",
         onClick = { dialogVisible = true },
     )

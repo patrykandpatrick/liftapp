@@ -10,11 +10,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.icons.Goal
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.Unfold
 import com.patrykandpatryk.liftapp.core.model.getPrettyStringLong
 import com.patrykandpatryk.liftapp.core.ui.ListItem
@@ -76,7 +76,7 @@ fun ListItem(
         actions = {
             IconButton(onClick = { onGoalClick(exercise.id) }) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_target),
+                    imageVector = LiftAppIcons.Goal,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                 )

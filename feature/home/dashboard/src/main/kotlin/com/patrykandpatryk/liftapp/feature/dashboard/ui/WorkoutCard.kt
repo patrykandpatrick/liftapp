@@ -10,7 +10,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -23,6 +22,9 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.TextComponent
 import com.patrykandpatrick.liftapp.ui.component.appendBulletSeparator
+import com.patrykandpatrick.liftapp.ui.icons.CheckCircle
+import com.patrykandpatrick.liftapp.ui.icons.CircleFading
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -108,11 +110,11 @@ fun ColumnScope.WorkoutStatusWithDate(workout: Workout) {
     val dateFormat = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
 
     Icon(
-        painter =
+        imageVector =
             if (workout.isCompleted) {
-                painterResource(R.drawable.ic_check_circle)
+                LiftAppIcons.CheckCircle
             } else {
-                painterResource(R.drawable.ic_pending)
+                LiftAppIcons.CircleFading
             },
         contentDescription = null,
         tint = colorScheme.onSurfaceVariant,

@@ -24,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +34,9 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.Dropdown
+import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -112,10 +113,7 @@ private fun BodyMeasurementDetailScreen(
         floatingActionButton = {
             LiftAppFAB(
                 content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_add),
-                        contentDescription = null,
-                    )
+                    Icon(imageVector = LiftAppIcons.Plus, contentDescription = null)
 
                     Text(text = stringResource(id = R.string.action_new_entry))
                 },
@@ -252,7 +250,7 @@ private fun OptionsBottomSheet(
     LiftAppModalBottomSheetWithTopAppBar(onDismissRequest, modifier) { dismiss ->
         ListItem(
             title = { Text(stringResource(id = R.string.action_edit)) },
-            icon = { Icon(painterResource(id = R.drawable.ic_edit), null) },
+            icon = { Icon(imageVector = LiftAppIcons.Edit, contentDescription = null) },
             onClick = {
                 onEdit()
                 dismiss()

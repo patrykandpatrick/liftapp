@@ -32,8 +32,8 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -48,13 +48,16 @@ import com.patrykandpatrick.liftapp.ui.component.StatefulContainerColors
 import com.patrykandpatrick.liftapp.ui.component.animateContainerColorsAsState
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
+import com.patrykandpatrick.liftapp.ui.icons.Edit
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Ruler
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.Alpha
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.PillShape
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.ListItemTitle
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.getDefaultDescription
 import com.patrykandpatryk.liftapp.core.ui.ListItemDefaults.getDefaultIcon
@@ -82,6 +85,38 @@ fun ListItem(
         description = getDefaultDescription(description),
         trailing = trailing,
         icon = getDefaultIcon(iconPainter),
+        actions = actions,
+        enabled = enabled,
+        checked = checked,
+        colors = colors,
+        paddingValues = paddingValues,
+        interactionSource = interactionSource,
+        onClick = onClick,
+    )
+}
+
+@Composable
+fun ListItem(
+    title: String,
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    trailing: String? = null,
+    enabled: Boolean = true,
+    checked: Boolean = false,
+    actions: @Composable RowScope.() -> Unit = {},
+    colors: StatefulContainerColors = ListItemDefaults.colors,
+    paddingValues: PaddingValues = ListItemDefaults.paddingValues,
+    titleHighlightPosition: IntRange = IntRange.EMPTY,
+    interactionSource: MutableInteractionSource? = null,
+    onClick: (() -> Unit)? = null,
+) {
+    ListItem(
+        title = { ListItemTitle(title, titleHighlightPosition) },
+        modifier = modifier,
+        description = getDefaultDescription(description),
+        trailing = trailing,
+        icon = getDefaultIcon(imageVector),
         actions = actions,
         enabled = enabled,
         checked = checked,
@@ -199,6 +234,21 @@ object ListItemDefaults {
                             .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
                             .padding(8.dp),
                     painter = painter,
+                    contentDescription = null,
+                    tint = colorScheme.surface,
+                )
+            }
+        } else null
+
+    internal fun getDefaultIcon(imageVector: ImageVector?): (@Composable RowScope.() -> Unit)? =
+        if (imageVector != null) {
+            {
+                Icon(
+                    modifier =
+                        Modifier.size(40.dp)
+                            .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
+                            .padding(8.dp),
+                    imageVector = imageVector,
                     contentDescription = null,
                     tint = colorScheme.surface,
                 )
@@ -337,7 +387,7 @@ fun PreviewTitleWithDescAndIconItem() {
             ListItem(
                 title = "This is a title",
                 description = "This is a description",
-                iconPainter = painterResource(id = R.drawable.ic_distance),
+                imageVector = LiftAppIcons.Ruler,
             )
         }
     }
@@ -351,20 +401,14 @@ fun PreviewTitleWithLongDescAndIconItem() {
             ListItem(
                 title = "This is a title",
                 description = "This is a description with two lines",
-                iconPainter = painterResource(id = R.drawable.ic_distance),
+                imageVector = LiftAppIcons.Ruler,
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_remove_circle),
-                            contentDescription = null,
-                        )
+                        Icon(imageVector = LiftAppIcons.CircleMinus, contentDescription = null)
                     }
 
                     IconButton(onClick = {}) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_edit),
-                            contentDescription = null,
-                        )
+                        Icon(imageVector = LiftAppIcons.Edit, contentDescription = null)
                     }
                 },
             )
@@ -381,13 +425,10 @@ fun PreviewTitleWithLongDescTrailingAndIconItem() {
                 title = "This is a title",
                 description = "This is a description with two lines",
                 trailing = "100+",
-                iconPainter = painterResource(id = R.drawable.ic_distance),
+                imageVector = LiftAppIcons.Ruler,
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_edit),
-                            contentDescription = null,
-                        )
+                        Icon(imageVector = LiftAppIcons.Edit, contentDescription = null)
                     }
                 },
             )
@@ -399,12 +440,7 @@ fun PreviewTitleWithLongDescTrailingAndIconItem() {
 @Composable
 fun PreviewTitleWithIconItem() {
     LiftAppTheme {
-        LiftAppBackground {
-            ListItem(
-                title = "This is a title",
-                iconPainter = painterResource(id = R.drawable.ic_distance),
-            )
-        }
+        LiftAppBackground { ListItem(title = "This is a title", imageVector = LiftAppIcons.Ruler) }
     }
 }
 
@@ -429,7 +465,7 @@ private fun PreviewCheckableListItem(checked: Boolean) {
                 title = "This is a title",
                 titleHighlightPosition = 0..3,
                 description = "This is a description",
-                iconPainter = painterResource(id = R.drawable.ic_distance),
+                imageVector = LiftAppIcons.Ruler,
                 checked = checked,
                 onClick = { setChecked(!checked) },
                 modifier = Modifier.padding(8.dp),

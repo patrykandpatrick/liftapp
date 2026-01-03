@@ -21,8 +21,8 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButtonDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.icons.FilledAdd
-import com.patrykandpatrick.liftapp.ui.icons.FilledRemove
+import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
+import com.patrykandpatrick.liftapp.ui.icons.CirclePlus
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.modifier.fadingEdges
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
@@ -121,7 +121,7 @@ fun ExerciseSetStepper(
                 colors = LiftAppIconButtonDefaults.outlinedColors,
                 maxBorderSize = 40.dp,
             ) {
-                Icon(imageVector = LiftAppIcons.FilledRemove, contentDescription = null)
+                Icon(imageVector = LiftAppIcons.CircleMinus, contentDescription = null)
             }
 
             LiftAppIconButton(
@@ -129,7 +129,7 @@ fun ExerciseSetStepper(
                 colors = LiftAppIconButtonDefaults.outlinedColors,
                 maxBorderSize = 40.dp,
             ) {
-                Icon(imageVector = LiftAppIcons.FilledAdd, contentDescription = null)
+                Icon(imageVector = LiftAppIcons.CirclePlus, contentDescription = null)
             }
         }
     }

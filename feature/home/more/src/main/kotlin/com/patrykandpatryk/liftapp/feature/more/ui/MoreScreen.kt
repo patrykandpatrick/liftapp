@@ -7,11 +7,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
-import com.patrykandpatrick.liftapp.ui.icons.ChevronForward
+import com.patrykandpatrick.liftapp.ui.icons.ChevronRight
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatryk.liftapp.core.R
@@ -38,9 +37,9 @@ private fun MoreScreen(onAction: (Action) -> Unit, modifier: Modifier = Modifier
             items(destinations) { destination ->
                 ListItem(
                     title = stringResource(id = destination.titleResourceId),
-                    iconPainter = painterResource(id = destination.iconResourceId),
+                    imageVector = destination.imageVector,
                     actions = {
-                        Icon(imageVector = LiftAppIcons.ChevronForward, contentDescription = null)
+                        Icon(imageVector = LiftAppIcons.ChevronRight, contentDescription = null)
                     },
                     onClick = { onAction(Action.NavigateTo(destination)) },
                 )

@@ -32,14 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.Check
+import com.patrykandpatrick.liftapp.ui.icons.CirclePlus
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.PillShape
-import com.patrykandpatryk.liftapp.core.R
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
 fun SegmentedButtonContainer(
@@ -52,11 +54,7 @@ fun SegmentedButtonContainer(
             modifier
                 .height(IntrinsicSize.Max)
                 .clip(shape)
-                .border(
-                    width = MaterialTheme.dimens.strokeWidth,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = shape,
-                ),
+                .border(width = dimens.strokeWidth, color = colorScheme.outline, shape = shape),
         verticalAlignment = Alignment.CenterVertically,
         content = buttons,
     )
@@ -90,11 +88,7 @@ fun VerticalSegmentedButtonContainer(
             modifier
                 .width(IntrinsicSize.Max)
                 .clip(shape)
-                .border(
-                    width = MaterialTheme.dimens.strokeWidth,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = shape,
-                ),
+                .border(width = dimens.strokeWidth, color = colorScheme.outline, shape = shape),
         horizontalAlignment = Alignment.CenterHorizontally,
         content = buttons,
     )
@@ -122,9 +116,9 @@ fun VerticalDivider(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
-                .background(color = MaterialTheme.colorScheme.outline)
+                .background(color = colorScheme.outline)
                 .fillMaxHeight()
-                .width(MaterialTheme.dimens.strokeWidth)
+                .width(dimens.strokeWidth)
     )
 }
 
@@ -134,7 +128,7 @@ fun RowScope.SegmentedButton(
     onClick: () -> Unit,
     selected: Boolean,
     modifier: Modifier = Modifier,
-    icon: Painter? = null,
+    icon: ImageVector? = null,
     showIcon: Boolean = true,
 ) {
     com.patrykandpatryk.liftapp.core.ui.SegmentedButton(
@@ -153,7 +147,7 @@ fun ColumnScope.SegmentedButton(
     onClick: () -> Unit,
     selected: Boolean,
     modifier: Modifier = Modifier,
-    icon: Painter? = null,
+    icon: ImageVector? = null,
     showIcon: Boolean = icon != null,
 ) {
     com.patrykandpatryk.liftapp.core.ui.SegmentedButton(
@@ -173,17 +167,13 @@ private fun SegmentedButton(
     selected: Boolean,
     showIcon: Boolean,
     modifier: Modifier = Modifier,
-    icon: Painter? = null,
+    icon: ImageVector? = null,
 ) {
 
     Row(
         modifier =
             modifier
-                .background(
-                    color =
-                        if (selected) MaterialTheme.colorScheme.secondaryContainer
-                        else Color.Transparent
-                )
+                .background(color = if (selected) colorScheme.primary else Color.Transparent)
                 .clickable(
                     onClick = onClick,
                     interactionSource = remember { MutableInteractionSource() },
@@ -191,37 +181,35 @@ private fun SegmentedButton(
                         ripple(
                             color =
                                 if (selected) {
-                                    MaterialTheme.colorScheme.onSecondaryContainer
+                                    colorScheme.onPrimary
                                 } else {
-                                    MaterialTheme.colorScheme.onSurface
+                                    colorScheme.onSurface
                                 }
                         ),
                 )
                 .padding(
-                    horizontal = MaterialTheme.dimens.padding.segmentedButtonHorizontal,
-                    vertical = MaterialTheme.dimens.padding.segmentedButtonVertical,
+                    horizontal = dimens.padding.segmentedButtonHorizontal,
+                    vertical = dimens.padding.segmentedButtonVertical,
                 ),
         horizontalArrangement =
             Arrangement.spacedBy(
-                space = MaterialTheme.dimens.padding.segmentedButtonElement,
+                space = dimens.padding.segmentedButtonElement,
                 alignment = Alignment.CenterHorizontally,
             ),
     ) {
-        val iconPainter =
+        val imageVector =
             when {
                 showIcon.not() -> null
-                selected -> painterResource(id = R.drawable.ic_check)
+                selected -> LiftAppIcons.Check
                 else -> icon
             }
 
-        val tint =
-            if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-            else MaterialTheme.colorScheme.onSurface
+        val tint = if (selected) colorScheme.onPrimary else colorScheme.onSurface
 
-        if (iconPainter != null) {
+        if (imageVector != null) {
             Icon(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                painter = iconPainter,
+                imageVector = imageVector,
                 contentDescription = null,
                 tint = tint,
             )
@@ -251,7 +239,7 @@ fun PreviewSegmentedButtonWithIcons() {
                     text = text,
                     onClick = { selectedIndex = index },
                     selected = selectedIndex == index,
-                    icon = painterResource(id = R.drawable.ic_info),
+                    icon = LiftAppIcons.CirclePlus,
                 )
             }
         }

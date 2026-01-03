@@ -17,7 +17,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -25,6 +24,7 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.Check
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.StepConnector
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
@@ -90,7 +90,7 @@ fun ColumnScope.StepperItemLabel(
     ) {
         if (completed) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_check),
+                imageVector = LiftAppIcons.Check,
                 contentDescription = null,
                 tint = colorScheme.onPrimary,
                 modifier =

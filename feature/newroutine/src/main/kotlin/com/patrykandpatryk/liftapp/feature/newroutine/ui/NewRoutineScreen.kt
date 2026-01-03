@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +41,8 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.BicepsFlexed
+import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.DragHandle
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -263,7 +264,7 @@ private fun LazyListScope.exercises(
                     actions = {
                         LiftAppIconButton(onClick = { onAction(Action.RemoveExercise(item.id)) }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_remove_circle),
+                                imageVector = LiftAppIcons.CircleMinus,
                                 contentDescription = stringResource(id = R.string.list_remove),
                             )
                         }
@@ -288,8 +289,8 @@ private fun EmptyState(state: NewRoutineState, modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxWidth(),
     ) {
         Icon(
-            modifier = Modifier.align(Alignment.CenterHorizontally).size(128.dp),
-            painter = painterResource(id = R.drawable.ic_weightlifter_down),
+            modifier = Modifier.align(Alignment.CenterHorizontally).size(88.dp),
+            imageVector = LiftAppIcons.BicepsFlexed,
             contentDescription = null,
             tint = color.value.copy(alpha = IllustrationAlpha),
         )

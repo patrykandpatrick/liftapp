@@ -3,7 +3,6 @@ package com.patrykandpatrick.liftapp.feature.workout.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -15,6 +14,8 @@ import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.appendCompletedIcon
+import com.patrykandpatrick.liftapp.ui.icons.FinishFlag
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.getDisplayName
@@ -143,7 +144,7 @@ private fun ExerciseItem(
 @Composable
 private fun SummaryItem(isSelected: Boolean, revealOffset: Float, modifier: Modifier = Modifier) {
     ListItem(
-        iconPainter = painterResource(R.drawable.ic_finish),
+        imageVector = LiftAppIcons.FinishFlag,
         title = stringResource(R.string.workout_summary_title),
         modifier =
             modifier.graphicsLayer {

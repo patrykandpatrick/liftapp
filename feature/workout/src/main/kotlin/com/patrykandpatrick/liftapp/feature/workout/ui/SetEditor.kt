@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -30,6 +29,8 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Lightbulb
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -137,7 +138,7 @@ private fun <T : ExerciseSet> Suggestions(
             modifier = Modifier.padding(horizontal = dimens.padding.itemHorizontal),
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_suggestion),
+                imageVector = LiftAppIcons.Lightbulb,
                 contentDescription = null,
                 tint = colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp),
@@ -184,7 +185,7 @@ private fun <T : ExerciseSet> InputSuggestion(
 }
 
 @Composable
-private fun BodyWeightInfo(bodyWeight: String, modifier: Modifier = Modifier) {
+fun BodyWeightInfo(bodyWeight: String, modifier: Modifier = Modifier) {
     InfoCard(
         text =
             LocalMarkupProcessor.current.toAnnotatedString(
