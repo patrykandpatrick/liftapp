@@ -54,5 +54,8 @@ data class EditableWorkout(
         val completedSets = sets.filter { it.isCompleted }
 
         val completedSetCount: Int = completedSets.size
+
+        val formattedBodyWeight: String? =
+            (sets.firstOrNull() as? EditableExerciseSet.Calisthenics)?.formattedBodyWeight
     }
 }

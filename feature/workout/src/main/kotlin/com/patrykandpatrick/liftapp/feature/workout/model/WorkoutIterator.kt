@@ -12,6 +12,8 @@ class WorkoutIterator(val items: List<Item>) : List<WorkoutIterator.Item> by ite
         val set = exercise.sets[setIndex]
         val setCount = exercise.sets.size
 
+        val progress = setIndex / setCount.toFloat()
+
         operator fun component4() = set
 
         val isCompleted: Boolean = set.isCompleted

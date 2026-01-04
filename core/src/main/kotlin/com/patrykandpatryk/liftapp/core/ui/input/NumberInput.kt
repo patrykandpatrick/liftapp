@@ -81,7 +81,9 @@ fun NumberInput(
                     )
                 }
 
-                VerticalDivider(modifier = Modifier.padding(vertical = dimens.padding.itemVertical))
+                VerticalDivider(
+                    modifier = Modifier.padding(vertical = dimens.padding.itemVerticalSmall)
+                )
 
                 if (prefix != null) {
                     Text(
@@ -106,7 +108,9 @@ fun NumberInput(
                     )
                 }
 
-                VerticalDivider(modifier = Modifier.padding(vertical = dimens.padding.itemVertical))
+                VerticalDivider(
+                    modifier = Modifier.padding(vertical = dimens.padding.itemVerticalSmall)
+                )
 
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
@@ -194,10 +198,11 @@ fun PreviewNumberInputWithError() {
                 textFieldState =
                     PreviewResource.textFieldStateManager()
                         .doubleTextField(
-                            initialValue = "40",
+                            initialValue = "0",
                             validators = { valueInRange(50.0, 100.0) },
-                        ),
-                hint = "Weight",
+                        )
+                        .also { it.updateText("40") },
+                suffix = "Weight",
                 onPlusClick = {},
                 onMinusClick = {},
             )

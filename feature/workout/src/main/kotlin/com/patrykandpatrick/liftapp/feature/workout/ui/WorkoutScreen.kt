@@ -16,6 +16,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,19 +26,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,9 +53,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.node.Ref
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -82,7 +83,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.appendCompletedIcon
 import com.patrykandpatrick.liftapp.ui.component.windowInsetsControllerCompat
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.modifier.topTintedEdge
 import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
@@ -120,6 +120,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
@@ -139,7 +140,7 @@ fun WorkoutScreen(modifier: Modifier = Modifier, viewModel: WorkoutViewModel = h
 
     RestTimerEffect(viewModel, restTimerService)
 
-    WorkoutScreen2(workout, restTimerService, selectedPage, viewModel::onAction, modifier)
+    WorkoutScreen(workout, restTimerService, selectedPage, viewModel::onAction, modifier)
 }
 
 @Composable
@@ -175,6 +176,7 @@ fun WorkoutScreen(
         },
         modifier = modifier,
         containerColor = colorScheme.bottomSheetScrim,
+        contentWindowInsets = WindowInsets.statusBars,
     ) { paddingValues ->
         if (workout != null) {
             Content(
@@ -189,19 +191,7 @@ fun WorkoutScreen(
                 },
                 onAction = onAction,
                 modifier =
-                    Modifier.padding(
-                        paddingValues.copy(
-                            bottom =
-                                if (
-                                    WindowInsets.ime.getBottom() >
-                                        paddingValues.calculateBottomPadding()
-                                ) {
-                                    0.dp
-                                } else {
-                                    paddingValues.calculateBottomPadding()
-                                }
-                        )
-                    ),
+                    Modifier.padding(paddingValues.copy(bottom = WindowInsets.ime.getBottom())),
             )
         }
     }
@@ -228,7 +218,7 @@ private fun Content(
 
     LaunchedEffect(wheelPickerState.index) { setPage(wheelPickerState.index) }
 
-    Box(modifier = modifier.imePadding()) {
+    Box(modifier = modifier) {
         Backdrop(
             backContent = {
                 LiftAppTheme(darkTheme = true) {
@@ -244,13 +234,7 @@ private fun Content(
                 verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
                 modifier =
                     Modifier.bottomSheetShadow()
-                        .background(
-                            brush =
-                                Brush.verticalGradient(
-                                    listOf(colorScheme.surface, colorScheme.surface)
-                                ),
-                            shape = BottomSheetShape,
-                        )
+                        .background(color = colorScheme.surface, shape = BottomSheetShape)
                         .topTintedEdge(BottomSheetShape)
                         .padding(top = dimens.padding.contentVertical),
             ) {
@@ -277,9 +261,8 @@ private fun Content(
                             Page(
                                 exerciseIndex = page.index,
                                 exercise = page.exercise,
-                                onAddSet = { onAction(Action.AddSet(page.exercise)) },
-                                onRemoveSet = { onAction(Action.RemoveSet(page.exercise)) },
                                 onSaveSet = onSaveSet,
+                                onAction = onAction,
                             )
 
                         is WorkoutPage.Summary -> Summary(page, onAction)
@@ -324,11 +307,11 @@ fun WorkoutScreen2(
             )
         },
         bottomBar = {
-            workout?.nextIncompleteItem?.also { nextIncompleteItem ->
+            workout?.let { workout ->
                 val scope = rememberCoroutineScope()
                 BottomBar(
-                    nextIncompleteItem = nextIncompleteItem,
-                    onGoToNextIncompleteItem = {
+                    nextIncompleteItem = workout.nextIncompleteItem,
+                    onGoToNextIncompleteItem = { nextIncompleteItem ->
                         scope.launch {
                             lazyListStateRef.value?.animateScrollToItemCenter(
                                 workout.getNextSetScrollPosition()
@@ -435,10 +418,7 @@ private fun LazyListScope.exerciseWithSets(
     }
 
     exercise.sets.forEachIndexed { setIndex, set ->
-        val previousWorkoutSet =
-            set.suggestions.find {
-                it.type == EditableExerciseSet.SetSuggestion.Type.PreviousWorkout
-            } // TODO replace list with fields
+        val previousWorkoutSet = exercise.previousWorkoutSets.getOrNull(setIndex)
         item(key = "set_${exercise.id}_$setIndex") {
             ListItem(
                 onClick = {
@@ -458,7 +438,7 @@ private fun LazyListScope.exerciseWithSets(
                     if (previousWorkoutSet != null) {
                         {
                             LiftAppText(
-                                text = previousWorkoutSet.set.prettyString(),
+                                text = previousWorkoutSet.prettyString(),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = colorScheme.onSecondary,
                                 modifier =
@@ -487,13 +467,15 @@ private fun LazyListScope.setCountButtons(
     onAction: (Action) -> Unit,
 ) {
     item(key = "add_set_${exercise.id}") {
+        LiftAppHorizontalDivider(Modifier.animateItem())
+
         Row(
             modifier =
                 Modifier.animateItem()
                     .fillMaxWidth()
                     .padding(
                         horizontal = dimens.padding.contentHorizontal,
-                        vertical = dimens.padding.itemVerticalSmall,
+                        vertical = dimens.padding.itemVertical,
                     ),
             horizontalArrangement =
                 Arrangement.spacedBy(dimens.padding.itemHorizontal, Alignment.End),
@@ -557,7 +539,7 @@ private fun BottomBar(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val padding = LocalDimens.current.padding
+    val padding = dimens.padding
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.background(colorScheme.surface).fillMaxWidth().navigationBarsPadding(),
@@ -666,66 +648,88 @@ private fun RestTimerContainer(restTimerService: RestTimerService, modifier: Mod
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Page(
     exerciseIndex: Int,
     exercise: EditableWorkout.Exercise,
-    onAddSet: () -> Unit,
-    onRemoveSet: () -> Unit,
     onSaveSet: (Int, Int) -> Unit,
+    onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = LocalDimens.current.padding.contentVertical)
+    val isKeyboardVisible = WindowInsets.isImeVisible
+    val focusManager = LocalFocusManager.current
+    val (selectedSet, onSelectSet) =
+        remember(exercise.firstIncompleteOrLastSetIndex) {
+            mutableIntStateOf(exercise.firstIncompleteOrLastSetIndex)
+        }
+
+    LaunchedEffect(isKeyboardVisible, focusManager) {
+        if (!isKeyboardVisible) {
+            delay(100)
+            focusManager.clearFocus()
+        }
+    }
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize().padding(top = dimens.padding.contentVerticalSmall)
     ) {
-        val (selectedSet, onSelectSet) =
-            remember(exercise.firstIncompleteOrLastSetIndex) {
-                mutableIntStateOf(exercise.firstIncompleteOrLastSetIndex)
-            }
-
-        ExerciseSetStepper(
-            sets = exercise.sets,
-            selectedSet = selectedSet,
-            onSelectSet = onSelectSet,
-            onAddSet = onAddSet,
-            onRemoveSet = onRemoveSet,
-            contentPadding = PaddingValues(start = dimens.padding.contentHorizontal),
-            modifier = Modifier.padding(end = dimens.padding.contentHorizontalSmall),
-        )
-
-        AnimatedContent(
-            targetState = selectedSet,
-            transitionSpec = sharedXAxisTransition(),
-            modifier = Modifier,
-            label = "set",
-        ) { setIndex ->
-            Column(
-                verticalArrangement =
-                    Arrangement.spacedBy(LocalDimens.current.padding.itemVertical),
-                modifier =
-                    Modifier.fillMaxSize()
-                        .padding(
-                            horizontal = LocalDimens.current.padding.contentHorizontal,
-                            vertical = LocalDimens.current.padding.itemVertical,
+        if (exercise.formattedBodyWeight != null) {
+            item {
+                BodyWeightInfo(
+                    bodyWeight = exercise.formattedBodyWeight,
+                    modifier =
+                        Modifier.padding(
+                            horizontal = dimens.padding.contentHorizontal,
+                            vertical = dimens.padding.itemVertical,
                         ),
+                )
+            }
+        }
+
+        itemsIndexed(exercise.sets, key = { index, _ -> "set_$index" }) { index, set ->
+            Row(
+                modifier =
+                    Modifier.animateItem()
+                        .padding(
+                            horizontal = dimens.padding.contentHorizontal,
+                            vertical = dimens.padding.itemVerticalSmall,
+                        )
             ) {
-                val set = exercise.sets.getOrNull(setIndex) ?: return@Column
+                SetIndexIcon(index, set.isCompleted, modifier = Modifier.padding(top = 16.dp))
 
-                SetEditorContent(set)
-
-                LiftAppButton(
-                    onClick = { onSaveSet(exerciseIndex, setIndex) },
-                    enabled = set.isInputValid,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = stringResource(R.string.action_save))
+                AnimatedContent(
+                    targetState = selectedSet == index,
+                    modifier = Modifier.weight(1f),
+                ) { isSelected ->
+                    if (isSelected) {
+                        Column(
+                            modifier =
+                                Modifier.padding(
+                                    start = dimens.padding.itemHorizontal,
+                                    top = dimens.padding.itemVerticalSmall,
+                                    bottom = dimens.padding.itemVerticalSmall,
+                                ),
+                            verticalArrangement =
+                                Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
+                        ) {
+                            SetEditorContent(set)
+                            LiftAppButton(
+                                onClick = { onSaveSet(exerciseIndex, index) },
+                                enabled = set.isInputValid,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(text = stringResource(R.string.action_save))
+                            }
+                        }
+                    } else {
+                        SetItem(exercise, set, index, onSelectSet)
+                    }
                 }
             }
         }
+
+        setCountButtons(exercise, false, onAction)
     }
 }
 
@@ -771,15 +775,6 @@ internal val editableWorkoutPreview: EditableWorkout
                                 weightInput = textFieldStateManager.doubleTextField("100.0"),
                                 repsInput = textFieldStateManager.intTextField("10"),
                                 weightUnit = MassUnit.Kilograms,
-                                suggestions =
-                                    listOf(
-                                        EditableExerciseSet.SetSuggestion(
-                                            set = ExerciseSet.Weight(97.5, 10, MassUnit.Kilograms),
-                                            type =
-                                                EditableExerciseSet.SetSuggestion.Type
-                                                    .PreviousWorkout,
-                                        )
-                                    ),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 100.0,
@@ -787,15 +782,6 @@ internal val editableWorkoutPreview: EditableWorkout
                                 weightInput = textFieldStateManager.doubleTextField("100"),
                                 repsInput = textFieldStateManager.intTextField("9"),
                                 weightUnit = MassUnit.Kilograms,
-                                suggestions =
-                                    listOf(
-                                        EditableExerciseSet.SetSuggestion(
-                                            set = ExerciseSet.Weight(97.5, 9, MassUnit.Kilograms),
-                                            type =
-                                                EditableExerciseSet.SetSuggestion.Type
-                                                    .PreviousWorkout,
-                                        )
-                                    ),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 100.0,
@@ -803,15 +789,6 @@ internal val editableWorkoutPreview: EditableWorkout
                                 weightInput = textFieldStateManager.doubleTextField("100"),
                                 repsInput = textFieldStateManager.intTextField("8"),
                                 weightUnit = MassUnit.Kilograms,
-                                suggestions =
-                                    listOf(
-                                        EditableExerciseSet.SetSuggestion(
-                                            set = ExerciseSet.Weight(97.5, 8, MassUnit.Kilograms),
-                                            type =
-                                                EditableExerciseSet.SetSuggestion.Type
-                                                    .PreviousWorkout,
-                                        )
-                                    ),
                             ),
                         ),
                     previousWorkoutSets = emptyList(),
@@ -832,7 +809,6 @@ internal val editableWorkoutPreview: EditableWorkout
                                 weightInput = textFieldStateManager.doubleTextField("110"),
                                 repsInput = textFieldStateManager.intTextField("10"),
                                 weightUnit = MassUnit.Kilograms,
-                                suggestions = emptyList(),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 0.0,
@@ -840,20 +816,6 @@ internal val editableWorkoutPreview: EditableWorkout
                                 weightInput = textFieldStateManager.doubleTextField("0"),
                                 repsInput = textFieldStateManager.intTextField("0"),
                                 weightUnit = MassUnit.Kilograms,
-                                suggestions =
-                                    listOf(
-                                        EditableExerciseSet.SetSuggestion(
-                                            set = ExerciseSet.Weight(107.5, 10, MassUnit.Kilograms),
-                                            type =
-                                                EditableExerciseSet.SetSuggestion.Type
-                                                    .PreviousWorkout,
-                                        ),
-                                        EditableExerciseSet.SetSuggestion(
-                                            set = ExerciseSet.Weight(110.0, 10, MassUnit.Kilograms),
-                                            type =
-                                                EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                                        ),
-                                    ),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 0.0,
@@ -861,7 +823,6 @@ internal val editableWorkoutPreview: EditableWorkout
                                 weightInput = textFieldStateManager.doubleTextField("0"),
                                 repsInput = textFieldStateManager.intTextField("0"),
                                 weightUnit = MassUnit.Kilograms,
-                                suggestions = emptyList(),
                             ),
                         ),
                     previousWorkoutSets =

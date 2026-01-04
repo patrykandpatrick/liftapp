@@ -114,7 +114,6 @@ private fun WeightInput(
         textFieldState = textFieldState,
         onPlusClick = { long -> textFieldState.updateValueBy(Increment.getWeight(long)) },
         onMinusClick = { long -> textFieldState.updateValueBy(-Increment.getWeight(long)) },
-        hint = stringResource(R.string.exercise_set_input_weight),
         suffix = unit.prettyString(),
         modifier = modifier,
         keyboardOptions =
@@ -202,7 +201,7 @@ private fun RepsInput(textFieldState: IntTextFieldState, modifier: Modifier = Mo
         textFieldState = textFieldState,
         onPlusClick = { long -> textFieldState.updateValueBy(Increment.getReps(long)) },
         onMinusClick = { long -> textFieldState.updateValueBy(-Increment.getReps(long)) },
-        hint = stringResource(R.string.exercise_set_input_reps),
+        suffix = stringResource(R.string.exercise_set_input_reps),
         modifier = modifier,
         keyboardOptions =
             KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
@@ -240,7 +239,6 @@ private fun DistanceInput(
         textFieldState = textFieldState,
         onPlusClick = { long -> textFieldState.updateValueBy(Increment.getDistance(long)) },
         onMinusClick = { long -> textFieldState.updateValueBy(-Increment.getDistance(long)) },
-        hint = stringResource(R.string.exercise_set_input_distance),
         suffix = unit.prettyString(),
         modifier = modifier,
         keyboardOptions =
@@ -255,7 +253,6 @@ private fun CaloriesInput(textFieldState: DoubleTextFieldState, modifier: Modifi
         textFieldState = textFieldState,
         onPlusClick = { long -> textFieldState.updateValueBy(Increment.getCalories(long)) },
         onMinusClick = { long -> textFieldState.updateValueBy(-Increment.getCalories(long)) },
-        hint = stringResource(R.string.exercise_set_input_calories),
         suffix = stringResource(R.string.energy_unit_kcal),
         modifier = modifier,
         keyboardOptions =

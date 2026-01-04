@@ -9,8 +9,8 @@ import com.patrykandpatryk.liftapp.domain.unit.RepsUnit
 import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 
 @Composable
-fun ExerciseSet.prettyString(): String =
-    if (isCompleted) {
+fun ExerciseSet?.prettyString(): String =
+    if (this?.isCompleted == true) {
         val formatter = LocalFormatter.current
         when (this) {
             is ExerciseSet.Weight ->
