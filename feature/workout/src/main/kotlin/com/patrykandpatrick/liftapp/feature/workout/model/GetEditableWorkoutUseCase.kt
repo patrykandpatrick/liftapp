@@ -183,8 +183,13 @@ constructor(
                         validators = { validNumberHigherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.weight?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.weight)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.weight)
+                            }
                         }
                     },
             repsInput =
@@ -195,8 +200,13 @@ constructor(
                         validators = { validNumberHigherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.reps?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.reps)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.reps)
+                            }
                         }
                     },
             weightUnit = weightUnit,
@@ -223,8 +233,13 @@ constructor(
                         validators = { validNumber() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.weight?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.weight)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.weight)
+                            }
                         }
                     },
             repsInput =
@@ -235,8 +250,13 @@ constructor(
                         validators = { validNumberHigherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.reps?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.reps)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.reps)
+                            }
                         }
                     },
             weightUnit = weightUnit,
@@ -259,8 +279,13 @@ constructor(
                         validators = { validNumberHigherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.reps?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.reps)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.reps)
+                            }
                         }
                     },
             suggestions = createSuggestions(previousSet, lastSet),
@@ -284,8 +309,13 @@ constructor(
                         validators = { higherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.duration?.inWholeMilliseconds?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.duration.inWholeMilliseconds)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.duration.inWholeMilliseconds)
+                            }
                         }
                     },
             distanceInput =
@@ -297,8 +327,13 @@ constructor(
                         validators = { validNumberHigherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.distance?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.distance)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.distance)
+                            }
                         }
                     },
             kcalInput =
@@ -309,8 +344,13 @@ constructor(
                         validators = { validNumberHigherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.kcal?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.kcal)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.kcal)
+                            }
                         }
                     },
             distanceUnit = distanceUnit,
@@ -333,8 +373,13 @@ constructor(
                         validators = { higherThanZero() },
                     )
                     .apply {
-                        if (!isCompleted) {
-                            previousSet?.duration?.inWholeMilliseconds?.let(::updateValue)
+                        when {
+                            !isCompleted && previousSet?.isCompleted == true -> {
+                                updateValue(previousSet.duration.inWholeMilliseconds)
+                            }
+                            !isCompleted && lastSet?.isCompleted == true -> {
+                                updateValue(lastSet.duration.inWholeMilliseconds)
+                            }
                         }
                     },
             suggestions = createSuggestions(previousSet, lastSet),
