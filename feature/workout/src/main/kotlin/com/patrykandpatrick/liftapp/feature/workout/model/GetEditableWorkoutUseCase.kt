@@ -210,7 +210,6 @@ constructor(
                         }
                     },
             weightUnit = weightUnit,
-            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Calisthenics.editable(
@@ -260,7 +259,6 @@ constructor(
                         }
                     },
             weightUnit = weightUnit,
-            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Reps.editable(
@@ -288,7 +286,6 @@ constructor(
                             }
                         }
                     },
-            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Cardio.editable(
@@ -354,7 +351,6 @@ constructor(
                         }
                     },
             distanceUnit = distanceUnit,
-            suggestions = createSuggestions(previousSet, lastSet),
         )
 
     private fun ExerciseSet.Time.editable(
@@ -382,27 +378,6 @@ constructor(
                             }
                         }
                     },
-            suggestions = createSuggestions(previousSet, lastSet),
-        )
-
-    private fun <T : ExerciseSet> createSuggestions(
-        previousSet: T?,
-        lastSet: T?,
-    ): List<EditableExerciseSet.SetSuggestion<T>> =
-        listOfNotNull(
-            previousSet?.let { set ->
-                EditableExerciseSet.SetSuggestion(
-                    set,
-                    EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                )
-            },
-            lastSet?.let { set ->
-                if (!set.isCompleted) return@let null
-                EditableExerciseSet.SetSuggestion(
-                    set,
-                    EditableExerciseSet.SetSuggestion.Type.PreviousWorkout,
-                )
-            },
         )
 
     private fun formatDecimal(value: Double): String =

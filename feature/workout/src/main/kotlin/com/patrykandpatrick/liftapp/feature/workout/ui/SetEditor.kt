@@ -1,22 +1,13 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -26,16 +17,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
-import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
-import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
-import com.patrykandpatrick.liftapp.ui.icons.Lightbulb
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.exercise.prettyString
 import com.patrykandpatryk.liftapp.core.extension.prettyString
 import com.patrykandpatryk.liftapp.core.preview.PreviewResource.textFieldStateManager
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
@@ -47,7 +32,6 @@ import com.patrykandpatryk.liftapp.core.text.updateValueBy
 import com.patrykandpatryk.liftapp.core.ui.InfoCard
 import com.patrykandpatryk.liftapp.core.ui.InputFieldLayout
 import com.patrykandpatryk.liftapp.core.ui.SupportingText
-import com.patrykandpatryk.liftapp.core.ui.input.InputSuggestion
 import com.patrykandpatryk.liftapp.core.ui.input.NumberInput
 import com.patrykandpatryk.liftapp.core.ui.wheel.DurationPicker
 import com.patrykandpatryk.liftapp.domain.Constants.Input.Increment
@@ -118,68 +102,6 @@ private fun WeightInput(
         modifier = modifier,
         keyboardOptions =
             KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next),
-    )
-}
-
-@Composable
-private fun <T : ExerciseSet> Suggestions(
-    suggestions: List<EditableExerciseSet.SetSuggestion<T>>,
-    onClick: (T) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LiftAppCard(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(vertical = dimens.padding.itemVertical),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
-            modifier = Modifier.padding(horizontal = dimens.padding.itemHorizontal),
-        ) {
-            Icon(
-                imageVector = LiftAppIcons.Lightbulb,
-                contentDescription = null,
-                tint = colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp),
-            )
-
-            Text(text = "Smart suggestions", style = MaterialTheme.typography.titleSmall)
-        }
-
-        Row(
-            modifier =
-                Modifier.padding(top = dimens.padding.itemVerticalSmall)
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = dimens.padding.itemHorizontal),
-            horizontalArrangement =
-                Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            suggestions.forEach { suggestion ->
-                InputSuggestion(suggestion = suggestion, onClick = onClick)
-            }
-        }
-    }
-}
-
-@Composable
-private fun <T : ExerciseSet> InputSuggestion(
-    suggestion: EditableExerciseSet.SetSuggestion<T>,
-    onClick: (T) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    InputSuggestion(
-        text = suggestion.set.prettyString(),
-        label =
-            when (suggestion.type) {
-                EditableExerciseSet.SetSuggestion.Type.PreviousSet ->
-                    stringResource(R.string.workout_set_suggestion_previous_set)
-
-                EditableExerciseSet.SetSuggestion.Type.PreviousWorkout ->
-                    stringResource(R.string.workout_set_suggestion_previous_workout)
-            },
-        onClick = { onClick(suggestion.set) },
-        modifier = modifier,
     )
 }
 
@@ -289,13 +211,6 @@ private fun SetEditorWeightExercisePreview() {
                     weightInput = textFieldStateManager.doubleTextField(initialValue = "100"),
                     repsInput = textFieldStateManager.intTextField(initialValue = "10"),
                     weightUnit = MassUnit.Kilograms,
-                    suggestions =
-                        listOf(
-                            EditableExerciseSet.SetSuggestion(
-                                set = ExerciseSet.Weight(100.0, 12, MassUnit.Kilograms),
-                                type = EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                            )
-                        ),
                 )
         )
     }
@@ -316,13 +231,6 @@ private fun SetEditorCalisthenicsExercisePreview() {
                     weightInput = textFieldStateManager.doubleTextField(initialValue = "20"),
                     repsInput = textFieldStateManager.intTextField(initialValue = "10"),
                     weightUnit = MassUnit.Kilograms,
-                    suggestions =
-                        listOf(
-                            EditableExerciseSet.SetSuggestion(
-                                set = ExerciseSet.Calisthenics(20.0, 80.0, 10, MassUnit.Kilograms),
-                                type = EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                            )
-                        ),
                 )
         )
     }
@@ -343,19 +251,6 @@ private fun SetEditorTimeExercisePreview() {
                     distanceUnit = LongDistanceUnit.Kilometer,
                     kcal = 458.0,
                     kcalInput = textFieldStateManager.doubleTextField(initialValue = "458"),
-                    suggestions =
-                        listOf(
-                            EditableExerciseSet.SetSuggestion(
-                                set =
-                                    ExerciseSet.Cardio(
-                                        1.hours + 30.minutes + 10.seconds,
-                                        4.75,
-                                        432.0,
-                                        LongDistanceUnit.Kilometer,
-                                    ),
-                                type = EditableExerciseSet.SetSuggestion.Type.PreviousSet,
-                            )
-                        ),
                 )
         )
     }

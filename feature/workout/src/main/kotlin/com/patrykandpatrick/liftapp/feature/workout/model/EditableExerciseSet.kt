@@ -16,8 +16,6 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
 
     val isInputValid: Boolean
 
-    val suggestions: List<SetSuggestion<T>>
-
     val exerciseSet: T
 
     fun applySet(set: @UnsafeVariance T)
@@ -28,7 +26,6 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         val weightInput: DoubleTextFieldState,
         val repsInput: IntTextFieldState,
         override val weightUnit: MassUnit,
-        override val suggestions: List<SetSuggestion<ExerciseSet.Weight>>,
     ) : ExerciseSet.Weight(weight, reps, weightUnit), EditableExerciseSet<ExerciseSet.Weight> {
 
         override val exerciseSet: ExerciseSet.Weight = this
@@ -50,7 +47,6 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         val weightInput: DoubleTextFieldState,
         val repsInput: IntTextFieldState,
         override val weightUnit: MassUnit,
-        override val suggestions: List<SetSuggestion<ExerciseSet.Calisthenics>>,
     ) :
         ExerciseSet.Calisthenics(weight, bodyWeight, reps, weightUnit),
         EditableExerciseSet<ExerciseSet.Calisthenics> {
@@ -66,11 +62,8 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         }
     }
 
-    data class Reps(
-        override val reps: Int,
-        val repsInput: IntTextFieldState,
-        override val suggestions: List<SetSuggestion<ExerciseSet.Reps>>,
-    ) : ExerciseSet.Reps(reps), EditableExerciseSet<ExerciseSet.Reps> {
+    data class Reps(override val reps: Int, val repsInput: IntTextFieldState) :
+        ExerciseSet.Reps(reps), EditableExerciseSet<ExerciseSet.Reps> {
 
         override val exerciseSet: ExerciseSet.Reps = this
 
@@ -90,7 +83,6 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         val distanceInput: DoubleTextFieldState,
         val kcalInput: DoubleTextFieldState,
         override val distanceUnit: LongDistanceUnit,
-        override val suggestions: List<SetSuggestion<ExerciseSet.Cardio>>,
     ) :
         ExerciseSet.Cardio(duration, distance, kcal, distanceUnit),
         EditableExerciseSet<ExerciseSet.Cardio> {
@@ -107,11 +99,8 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         }
     }
 
-    data class Time(
-        override val duration: Duration,
-        val timeInput: LongTextFieldState,
-        override val suggestions: List<SetSuggestion<ExerciseSet.Time>>,
-    ) : ExerciseSet.Time(duration), EditableExerciseSet<ExerciseSet.Time> {
+    data class Time(override val duration: Duration, val timeInput: LongTextFieldState) :
+        ExerciseSet.Time(duration), EditableExerciseSet<ExerciseSet.Time> {
 
         override val exerciseSet: ExerciseSet.Time = this
 
@@ -120,13 +109,6 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
 
         override fun applySet(set: ExerciseSet.Time) {
             timeInput.updateValue(set.duration.inWholeMilliseconds)
-        }
-    }
-
-    data class SetSuggestion<out T : ExerciseSet>(val set: T, val type: Type) {
-        enum class Type {
-            PreviousSet,
-            PreviousWorkout,
         }
     }
 }
