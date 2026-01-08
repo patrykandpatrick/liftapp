@@ -35,7 +35,7 @@ fun ExerciseListPicker(
                 scaleY = scaleX
                 translationY =
                     lerp(
-                        -(size.height - wheelPickerState.maxItemHeight) / 2,
+                        -(size.height - wheelPickerState.slotHeight) / 2,
                         0f,
                         backdropState.offsetFraction,
                     )
