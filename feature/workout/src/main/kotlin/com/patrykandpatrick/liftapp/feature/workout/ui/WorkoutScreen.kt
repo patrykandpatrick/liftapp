@@ -203,7 +203,7 @@ private fun Content(
                     ExerciseListPicker(workout, wheelPickerState, backdropState)
                 }
             },
-            backPeekHeight = { wheelPickerState.maxItemHeight.toDp() },
+            backPeekHeight = { wheelPickerState.slotHeight.toDp() },
             contentPeekHeight = { 200.dp },
             state = backdropState,
             modifier = Modifier,
