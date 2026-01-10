@@ -210,7 +210,7 @@ private fun Content(
     val wheelPickerState =
         rememberWheelPickerState(
             itemCount = workout.exercises.size + 1,
-            initialIndex = workout.firstIncompleteOrLastExerciseIndex,
+            initialIndex = workout.startPageIndex,
         )
     val backdropState = rememberBackdropState()
 
@@ -660,9 +660,7 @@ private fun Page(
     val isKeyboardVisible = WindowInsets.isImeVisible
     val focusManager = LocalFocusManager.current
     val (selectedSet, onSelectSet) =
-        remember(exercise.firstIncompleteOrLastSetIndex) {
-            mutableIntStateOf(exercise.firstIncompleteOrLastSetIndex)
-        }
+        remember(exercise.sets) { mutableIntStateOf(exercise.firstIncompleteSetIndex) }
 
     LaunchedEffect(isKeyboardVisible, focusManager) {
         if (!isKeyboardVisible) {
@@ -870,7 +868,7 @@ private fun WorkoutScreen2Preview() {
     PreviewTheme {
         WorkoutScreen2(
             workout = editableWorkoutPreview,
-            restTimerService = mutableStateOf(null),
+            restTimerService = remember { mutableStateOf(null) },
             selectedPage = 0,
             onAction = {},
         )
@@ -883,7 +881,7 @@ private fun WorkoutScreenPreview() {
     PreviewTheme {
         WorkoutScreen(
             workout = editableWorkoutPreview,
-            restTimerService = mutableStateOf(null),
+            restTimerService = remember { mutableStateOf(null) },
             selectedPage = 0,
             onAction = {},
         )

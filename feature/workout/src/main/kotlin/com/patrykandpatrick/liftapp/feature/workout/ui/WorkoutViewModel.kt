@@ -85,16 +85,11 @@ constructor(
                 customPage,
                 workout
                     .filterNotNull()
-                    .distinctUntilChangedBy { it.firstIncompleteOrLastExerciseIndex }
+                    .distinctUntilChangedBy { it.startPageIndex }
                     .withIndex()
                     .transform { (index, workout) ->
-                        val firstIncompleteExerciseIndex =
-                            workout.firstIncompleteOrLastExerciseIndex
                         if (index > 0) delay(EXERCISE_CHANGE_DELAY)
-                        val page =
-                            if (firstIncompleteExerciseIndex == -1) workout.exercises.size
-                            else firstIncompleteExerciseIndex
-                        emit(page)
+                        emit(workout.startPageIndex)
                     },
             )
             .stateIn(coroutineScope, SharingStarted.Lazily, 0)

@@ -25,8 +25,7 @@ data class EditableWorkout(
 
     val nextIncompleteItem = iterator.getNextIncomplete()
 
-    val firstIncompleteOrLastExerciseIndex: Int =
-        nextIncompleteItem?.exerciseIndex ?: exercises.lastIndex
+    val startPageIndex: Int = nextIncompleteItem?.exerciseIndex ?: exercises.size
 
     val nextExerciseSet: WorkoutIterator.Item? = nextIncompleteItem
 
@@ -47,9 +46,6 @@ data class EditableWorkout(
         val previousWorkoutSets: List<ExerciseSet>,
     ) : Serializable {
         val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isCompleted }
-
-        val firstIncompleteOrLastSetIndex: Int =
-            firstIncompleteSetIndex.let { if (it == -1) sets.lastIndex else it }
 
         val completedSets = sets.filter { it.isCompleted }
 
