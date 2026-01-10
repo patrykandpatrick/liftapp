@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.core.chart
 
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 object ExtraStoreKey {
     data object MinX : ExtraStore.Key<Double>()

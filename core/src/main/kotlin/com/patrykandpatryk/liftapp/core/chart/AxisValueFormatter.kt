@@ -2,21 +2,18 @@ package com.patrykandpatryk.liftapp.core.chart
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.axis.Axis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.axis.Axis
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatryk.liftapp.core.format.LocalFormatter
 import com.patrykandpatryk.liftapp.domain.format.Formatter
-import java.text.DecimalFormat
 
 @Composable
 fun rememberStartAxisValueFormatter(unit: String): CartesianValueFormatter =
-    remember(unit) {
-        CartesianValueFormatter.decimal(DecimalFormat("#.##'${unit}';−#.##'${unit}'"))
-    }
+    remember(unit) { CartesianValueFormatter.decimal(decimalCount = 2, suffix = unit) }
 
 class ValueUnitCartesianValueFormatter(private val formatter: Formatter) : CartesianValueFormatter {
-    private val delegate = CartesianValueFormatter.Default
+    private val delegate = CartesianValueFormatter.decimal(2)
 
     override fun format(
         context: CartesianMeasuringContext,

@@ -29,8 +29,8 @@ import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.MoreVertical
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.chart.ExtraStoreKey
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages

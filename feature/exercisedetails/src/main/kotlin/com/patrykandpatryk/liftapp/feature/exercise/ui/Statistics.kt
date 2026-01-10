@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,32 +22,29 @@ import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Dropdown
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import com.patrykandpatrick.vico.compose.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.layer.grouped
+import com.patrykandpatrick.vico.compose.cartesian.Scroll
+import com.patrykandpatrick.vico.compose.cartesian.Zoom
+import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.shape.rounded
-import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
-import com.patrykandpatrick.vico.core.cartesian.Scroll
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.chart.DateIntervalController
 import com.patrykandpatryk.liftapp.core.chart.OnModelChange
-import com.patrykandpatryk.liftapp.core.chart.rememberBottom
+import com.patrykandpatryk.liftapp.core.chart.bottom
 import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarker
 import com.patrykandpatryk.liftapp.core.chart.rememberExtraStoreCartesianLayerRangeProvider
-import com.patrykandpatryk.liftapp.core.chart.rememberStart
 import com.patrykandpatryk.liftapp.core.chart.rememberValueUnitCartesianMarkerValueFormatter
 import com.patrykandpatryk.liftapp.core.chart.rememberValueUnitCartesianValueFormatter
+import com.patrykandpatryk.liftapp.core.chart.start
 import com.patrykandpatryk.liftapp.core.date.name
 import com.patrykandpatryk.liftapp.core.exercise.prettyString
 import com.patrykandpatryk.liftapp.core.exerciseset.name
@@ -153,21 +151,21 @@ private fun Chart(producer: CartesianChartModelProducer, modifier: Modifier = Mo
         chart =
             rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    mergeMode = { ColumnCartesianLayer.MergeMode.grouped(4.dp) },
+                    mergeMode = { ColumnCartesianLayer.MergeMode.Grouped(4.dp) },
                     columnProvider =
                         ColumnCartesianLayer.ColumnProvider.series(
                             colorScheme.chartColors.map { color ->
                                 rememberLineComponent(
-                                    fill = fill(color),
-                                    shape = CorneredShape.rounded(topLeft = 4.dp, topRight = 4.dp),
+                                    fill = Fill(color),
+                                    shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
                                     thickness = 8.dp,
                                 )
                             }
                         ),
                     rangeProvider = rememberExtraStoreCartesianLayerRangeProvider(),
                 ),
-                startAxis = VerticalAxis.rememberStart(rememberValueUnitCartesianValueFormatter()),
-                bottomAxis = HorizontalAxis.rememberBottom(),
+                startAxis = VerticalAxis.start(rememberValueUnitCartesianValueFormatter()),
+                bottomAxis = HorizontalAxis.bottom(),
                 marker = rememberCartesianMarker(rememberValueUnitCartesianMarkerValueFormatter()),
                 getXStep = { 1.0 },
             ),

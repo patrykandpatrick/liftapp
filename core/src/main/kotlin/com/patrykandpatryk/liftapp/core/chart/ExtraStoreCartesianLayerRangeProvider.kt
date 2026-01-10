@@ -2,8 +2,8 @@ package com.patrykandpatryk.liftapp.core.chart
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
-import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 
 class ExtraStoreCartesianLayerRangeProvider : CartesianLayerRangeProvider {
     override fun getMaxX(minX: Double, maxX: Double, extraStore: ExtraStore): Double =

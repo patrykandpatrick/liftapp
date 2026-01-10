@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.exercise.model
 
 import androidx.compose.runtime.Immutable
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatryk.liftapp.core.model.MuscleModel
 import com.patrykandpatryk.liftapp.domain.date.DateInterval
 import com.patrykandpatryk.liftapp.domain.exerciseset.ExerciseSetGroup

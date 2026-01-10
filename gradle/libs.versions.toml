@@ -26,7 +26,7 @@ room = "2.8.4"
 viewmodel = "2.10.0"
 timber = "5.0.1"
 turbine = "1.2.1"
-vico = "2.2.1"
+vico = "3.0.0-alpha.3"
 
 androidPlugin = "8.13.2"
 kspPlugin = "2.2.21-2.0.4"
@@ -75,7 +75,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 safeArgs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "composeNavigation" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-vico = { module = "com.patrykandpatrick.vico:compose", version.ref = "vico" }
+vico = { module = "com.patrykandpatrick.vico:compose-android", version.ref = "vico" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel" }
 
 [bundles]

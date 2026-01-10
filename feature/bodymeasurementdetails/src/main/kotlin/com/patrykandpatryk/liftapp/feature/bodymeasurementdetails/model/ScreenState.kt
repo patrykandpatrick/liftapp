@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.feature.bodymeasurementdetails.model
 
 import androidx.compose.runtime.Immutable
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatryk.liftapp.domain.date.DateInterval
 import java.time.LocalDateTime
 

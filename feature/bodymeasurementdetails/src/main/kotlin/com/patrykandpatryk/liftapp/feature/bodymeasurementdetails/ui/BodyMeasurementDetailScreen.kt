@@ -38,29 +38,29 @@ import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import com.patrykandpatrick.vico.compose.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.Zoom
+import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.chart.DateIntervalController
 import com.patrykandpatryk.liftapp.core.chart.bodyMeasurementLegend
+import com.patrykandpatryk.liftapp.core.chart.bottom
 import com.patrykandpatryk.liftapp.core.chart.rememberAdaptiveCartesianLayerRangeProvider
-import com.patrykandpatryk.liftapp.core.chart.rememberBottom
 import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarker
 import com.patrykandpatryk.liftapp.core.chart.rememberCartesianMarkerValueFormatter
 import com.patrykandpatryk.liftapp.core.chart.rememberExtraStoreCartesianLayerRangeProvider
 import com.patrykandpatryk.liftapp.core.chart.rememberLine
-import com.patrykandpatryk.liftapp.core.chart.rememberStart
 import com.patrykandpatryk.liftapp.core.chart.rememberStartAxisValueFormatter
+import com.patrykandpatryk.liftapp.core.chart.start
 import com.patrykandpatryk.liftapp.core.date.name
 import com.patrykandpatryk.liftapp.core.extension.plus
 import com.patrykandpatryk.liftapp.core.extension.toPaddingValues
@@ -327,8 +327,8 @@ private fun Chart(
                                 rememberExtraStoreCartesianLayerRangeProvider()
                         ),
                 ),
-                startAxis = VerticalAxis.rememberStart(rememberStartAxisValueFormatter(valueUnit)),
-                bottomAxis = HorizontalAxis.rememberBottom(),
+                startAxis = VerticalAxis.start(rememberStartAxisValueFormatter(valueUnit)),
+                bottomAxis = HorizontalAxis.bottom(),
                 marker = rememberCartesianMarker(rememberCartesianMarkerValueFormatter(valueUnit)),
                 getXStep = { 1.0 },
                 legend = bodyMeasurementLegend(),
