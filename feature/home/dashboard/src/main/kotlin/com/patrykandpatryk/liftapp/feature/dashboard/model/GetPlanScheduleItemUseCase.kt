@@ -15,7 +15,7 @@ constructor(
     private val getWorkoutsByDateContract: GetWorkoutsByDateContract,
 ) {
 
-    operator fun invoke(date: LocalDate): Flow<PlanScheduleItem?> =
+    operator fun invoke(date: LocalDate): Flow<PlanScheduleItem> =
         combine(
             getPlanItemContract.getPlanItem(date),
             getWorkoutsByDateContract.getWorkouts(date),
@@ -28,7 +28,7 @@ constructor(
                         workout = workouts.firstOrNull { it.routineID == planItem.id },
                     )
 
-                null -> null
+                null -> PlanScheduleItem.None
             }
         }
 }

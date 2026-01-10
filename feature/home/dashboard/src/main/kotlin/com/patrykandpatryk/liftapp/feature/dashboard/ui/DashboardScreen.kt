@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,11 +21,9 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
-import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
-import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.extension.increaseBy
 import com.patrykandpatryk.liftapp.core.model.Unfold
@@ -33,8 +31,6 @@ import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
 import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 import com.patrykandpatryk.liftapp.core.ui.TopAppBar
-import com.patrykandpatryk.liftapp.core.ui.routine.RestCard
-import com.patrykandpatryk.liftapp.core.ui.routine.RoutineCard
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.feature.dashboard.model.Action
 import com.patrykandpatryk.liftapp.feature.dashboard.model.DashboardState
@@ -99,6 +95,14 @@ private fun Content(
         verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemVertical),
         modifier = Modifier.fillMaxSize(),
     ) {
+        item(key = "shortcuts") {
+            ListSectionTitle(title = "Shortcuts" /* TODO */)
+            Shortcuts(
+                onAction = onAction,
+                modifier = Modifier.padding(vertical = dimens.padding.itemVertical),
+            )
+        }
+
         item(key = "days_of_week") {
             DaysOfWeek(dateItems = state.dayItems, onClick = { onAction(Action.SelectDate(it)) })
         }
@@ -179,7 +183,7 @@ private fun ListSectionTitle(title: String, modifier: Modifier = Modifier) {
 
 @Composable
 private fun PlanItem(
-    item: PlanScheduleItem?,
+    item: PlanScheduleItem,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -192,62 +196,9 @@ private fun PlanItem(
             when (planItem) {
                 PlanScheduleItem.Rest -> RestPlanItem()
                 is PlanScheduleItem.Routine -> RoutinePlanItem(planItem, onAction)
-                else -> Unit
+                else -> NonePlanItem(onAction)
             }
         }
-    }
-}
-
-@Composable
-private fun RestPlanItem(modifier: Modifier = Modifier) {
-    LiftAppCard(onClick = null, modifier = modifier.fillMaxWidth()) { RestCard() }
-}
-
-@Composable
-private fun RoutinePlanItem(
-    planItem: PlanScheduleItem.Routine,
-    onAction: (Action) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LiftAppCard(
-        onClick = { onAction(Action.GoToRoutine(planItem.routine.id)) },
-        modifier = modifier.fillMaxWidth(),
-        colors =
-            if (planItem.workout?.isCompleted == false) {
-                LiftAppCardDefaults.tonalCardColors
-            } else {
-                LiftAppCardDefaults.cardColors
-            },
-    ) {
-        planItem.workout?.also { workout -> WorkoutStatusWithDate(workout) }
-
-        RoutineCard(
-            routineWithExercises = planItem.routine,
-            actionsRow = {
-                when {
-                    planItem.workout != null ->
-                        PlainLiftAppButton(
-                            onClick = { onAction(Action.GoToWorkout(planItem.workout.id)) }
-                        ) {
-                            Text(
-                                text =
-                                    if (planItem.workout.isCompleted) {
-                                        stringResource(R.string.action_show)
-                                    } else {
-                                        stringResource(R.string.action_continue)
-                                    }
-                            )
-                        }
-
-                    else ->
-                        PlainLiftAppButton(
-                            onClick = { onAction(Action.NewWorkout(planItem.routine.id)) }
-                        ) {
-                            Text(stringResource(R.string.action_start_workout))
-                        }
-                }
-            },
-        )
     }
 }
 

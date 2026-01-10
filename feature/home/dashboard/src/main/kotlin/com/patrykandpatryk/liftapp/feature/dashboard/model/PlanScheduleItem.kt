@@ -6,6 +6,8 @@ import com.patrykandpatryk.liftapp.domain.workout.Workout
 sealed class PlanScheduleItem {
     data object Rest : PlanScheduleItem()
 
+    data object None : PlanScheduleItem()
+
     data class Routine(val routine: RoutineWithExercises, val workout: Workout?) :
         PlanScheduleItem()
 }

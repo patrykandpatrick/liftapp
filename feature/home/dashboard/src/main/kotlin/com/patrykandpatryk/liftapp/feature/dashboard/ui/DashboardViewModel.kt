@@ -60,19 +60,24 @@ constructor(
             is Action.GoToWorkout -> goToWorkout(action.workoutID)
             is Action.GoToRoutine -> goToRoutine(action.routineID)
             is Action.SelectDate -> selectedDate.value = action.date
+            is Action.Navigate -> navigate(action.route)
         }
     }
 
     private fun newWorkout(routineID: Long) {
-        viewModelScope.launch { navigationCommander.navigateTo(Routes.Workout.new(routineID)) }
+        navigate(Routes.Workout.new(routineID))
     }
 
     private fun goToWorkout(workoutID: Long) {
-        viewModelScope.launch { navigationCommander.navigateTo(Routes.Workout.edit(workoutID)) }
+        navigate(Routes.Workout.edit(workoutID))
     }
 
     private fun goToRoutine(routineID: Long) {
-        viewModelScope.launch { navigationCommander.navigateTo(Routes.Routine.details(routineID)) }
+        navigate(Routes.Routine.details(routineID))
+    }
+
+    private fun navigate(route: Any) {
+        viewModelScope.launch { navigationCommander.navigateTo(route) }
     }
 
     companion object {

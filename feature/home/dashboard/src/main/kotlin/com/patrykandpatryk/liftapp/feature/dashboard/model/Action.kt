@@ -10,4 +10,6 @@ sealed class Action {
     data class GoToRoutine(val routineID: Long) : Action()
 
     data class SelectDate(val date: LocalDate) : Action()
+
+    data class Navigate(val route: Any) : Action()
 }

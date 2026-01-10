@@ -268,9 +268,11 @@
     <string name="plan_no_active_plan_create_cta">Create new </string>
     <string name="plan_no_active_plan_choose_existing_cta">Choose existing</string>
     <string name="plan_cycle_number_title"><![CDATA[Current Cycle <small>(%d/%d)</small>]]></string>
+    <string name="plan_no_schedule_for_this_day">Nothing planned for this day</string>
 
     <!-- New Training Plan -->
     <string name="route_new_plan">New Training Plan</string>
+    <string name="training_plan_add_new">Add Training Plan</string>
     <string name="route_new_plan_edit">Edit Training Plan</string>
     <string name="training_plan_name_placeholder">My Training Plan</string>
     <string name="training_plan_item_add_rest_day">Add rest day</string>
