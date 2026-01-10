@@ -10,9 +10,6 @@ class WorkoutIterator(val items: List<Item>) : List<WorkoutIterator.Item> by ite
     data class Item(val exercise: Exercise, val exerciseIndex: Int, val setIndex: Int) :
         Serializable {
         val set = exercise.sets[setIndex]
-        val setCount = exercise.sets.size
-
-        val progress = setIndex / setCount.toFloat()
 
         operator fun component4() = set
 
