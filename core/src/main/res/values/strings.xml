@@ -37,6 +37,13 @@
     <string name="energy_unit_kcal">kcal</string>
     <string name="unit_reps">reps</string>
 
+    <!-- Shortcuts -->
+    <string name="shortcut_section_title">Shortcuts</string>
+    <string name="shortcut_1rm_calculator">Calculator</string>
+    <string name="shortcut_exercises">Exercises</string>
+    <string name="shortcut_plan">Plan</string>
+    <string name="shortcut_routines">Routines</string>
+
     <string name="point_separator" translatable="false">ꞏ</string>
     <string name="multiply_character" translatable="false">×</string>
     <string name="goal_format_time_separator">in</string>

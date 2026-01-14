@@ -38,6 +38,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.component.ContainerColors
@@ -141,13 +142,14 @@ fun ListItem(
     checked: Boolean = false,
     shape: Shape = MaterialTheme.shapes.medium,
     interactionSource: MutableInteractionSource? = null,
+    horizontalSpacing: Dp = dimens.padding.itemHorizontal,
     onClick: (() -> Unit)? = null,
 ) {
     val currentColors = animateContainerColorsAsState(colors.getColors(checked)).value
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
+        horizontalArrangement = Arrangement.spacedBy(horizontalSpacing),
         modifier =
             modifier
                 .alpha(Alpha.get(enabled))

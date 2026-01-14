@@ -95,31 +95,6 @@ private fun Content(
         verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemVertical),
         modifier = Modifier.fillMaxSize(),
     ) {
-        item(key = "shortcuts") {
-            ListSectionTitle(title = "Shortcuts" /* TODO */)
-            Shortcuts(
-                onAction = onAction,
-                modifier = Modifier.padding(vertical = dimens.padding.itemVertical),
-            )
-        }
-
-        item(key = "days_of_week") {
-            DaysOfWeek(dateItems = state.dayItems, onClick = { onAction(Action.SelectDate(it)) })
-        }
-
-        item(key = "selected_date") {
-            val datePattern = stringResource(R.string.date_weekday_day_month)
-            val dateFormatter = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
-            AnimatedContent(
-                targetState = dateFormatter.format(state.selectedDate),
-                modifier = Modifier.animateItem(),
-            ) { title ->
-                ListSectionTitle(title = title)
-            }
-        }
-
-        item { PlanItem(state.planScheduleItem, onAction) }
-
         if (state.activeWorkouts.isNotEmpty()) {
             item(key = "active_workouts") {
                 ListSectionTitle(
@@ -140,6 +115,36 @@ private fun Content(
                     modifier = Modifier.animateItem(),
                 )
             }
+        }
+
+        item(key = "days_of_week") {
+            ListSectionTitle(stringResource(R.string.route_dashboard))
+            DaysOfWeek(
+                dateItems = state.dayItems,
+                onClick = { onAction(Action.SelectDate(it)) },
+                modifier = Modifier.padding(top = dimens.padding.itemVertical),
+            )
+        }
+
+        item(key = "selected_date") {
+            val datePattern = stringResource(R.string.date_weekday_day_month)
+            val dateFormatter = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
+            AnimatedContent(
+                targetState = dateFormatter.format(state.selectedDate),
+                modifier = Modifier.animateItem(),
+            ) { title ->
+                ListSectionTitle(title = title)
+            }
+        }
+
+        item { PlanItem(state.planScheduleItem, onAction) }
+
+        item(key = "shortcuts") {
+            ListSectionTitle(title = stringResource(R.string.shortcut_section_title))
+            Shortcuts(
+                onAction = onAction,
+                modifier = Modifier.padding(top = dimens.padding.itemVertical),
+            )
         }
 
         if (state.pastWorkouts.isNotEmpty()) {
