@@ -44,9 +44,7 @@ sealed interface Action {
 
     data class RemoveSet(val exercise: EditableWorkout.Exercise) : Action
 
-    data class ShowSetEditor(val item: WorkoutIterator.Item) : Action
-
-    data object ClearSetEditor : Action
+    data class GoToExerciseDetails(val exerciseID: Long) : Action
 
     data object PopBackStack : Action
 }

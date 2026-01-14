@@ -203,7 +203,12 @@ private fun Content(
         Backdrop(
             backContent = {
                 LiftAppTheme(darkTheme = true) {
-                    ExerciseListPicker(workout, wheelPickerState, backdropState)
+                    ExerciseListPicker(
+                        workout = workout,
+                        wheelPickerState = wheelPickerState,
+                        backdropState = backdropState,
+                        openExercise = { onAction(Action.GoToExerciseDetails(it.id)) },
+                    )
                 }
             },
             backPeekHeight = { wheelPickerState.slotHeight.toDp() },

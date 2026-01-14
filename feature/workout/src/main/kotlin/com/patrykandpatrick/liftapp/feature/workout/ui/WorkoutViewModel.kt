@@ -99,8 +99,6 @@ constructor(
             is Action.MovePageBy -> onPageDelta(action.delta)
             is Action.SelectPage -> selectPage(action.pageIndex)
             is Action.SaveSet -> saveSet(action.workout, action.item)
-            is Action.ShowSetEditor -> selectedItem.value = action.item
-            is Action.ClearSetEditor -> selectedItem.value = null
             is Action.FinishWorkout -> finishWorkout()
             is Action.UpdateWorkoutName -> updateWorkoutName(action.name)
             is Action.UpdateWorkoutStartDateTime ->
@@ -109,6 +107,7 @@ constructor(
             is Action.UpdateWorkoutNotes -> updateWorkoutNotes(action.notes)
             is Action.AddSet -> updateSetCount(exercise = action.exercise, delta = 1)
             is Action.RemoveSet -> updateSetCount(exercise = action.exercise, delta = -1)
+            is Action.GoToExerciseDetails -> goToExerciseDetails(action.exerciseID)
             is Action.PopBackStack -> popBackStack()
         }
     }
@@ -202,6 +201,12 @@ constructor(
         viewModelScope.launch {
             upsertExerciseSet(workout.id, item.exercise.id, item.set, item.setIndex)
             selectedItem.value = workout.iterator.getNextIncomplete(item)
+        }
+    }
+
+    private fun goToExerciseDetails(exerciseID: Long) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.Exercise.details(exerciseID))
         }
     }
 

@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -12,10 +13,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.util.lerp
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.appendCompletedIcon
 import com.patrykandpatrick.liftapp.ui.icons.FinishFlag
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Open
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.model.getDisplayName
@@ -34,12 +37,14 @@ fun ExerciseListPicker(
     workout: EditableWorkout,
     wheelPickerState: WheelPickerState,
     backdropState: BackdropState,
+    openExercise: (ExerciseItemData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ExerciseListPicker(
         exercises =
             workout.exercises.map { exercise ->
                 ExerciseItemData(
+                    id = exercise.id,
                     name = exercise.name.getDisplayName(),
                     setCount = exercise.sets.size,
                     completedSetCount = exercise.completedSetCount,
@@ -47,6 +52,7 @@ fun ExerciseListPicker(
             },
         wheelPickerState = wheelPickerState,
         revealOffset = backdropState.offsetFraction,
+        openExercise = openExercise,
         modifier = modifier,
     )
 }
@@ -56,6 +62,7 @@ fun ExerciseListPicker(
     exercises: List<ExerciseItemData>,
     wheelPickerState: WheelPickerState,
     revealOffset: Float,
+    openExercise: (ExerciseItemData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     WheelPicker(
@@ -65,11 +72,7 @@ fun ExerciseListPicker(
                 scaleX = lerp(1f, 0.9f, revealOffset)
                 scaleY = scaleX
                 translationY =
-                    lerp(
-                        -(size.height - wheelPickerState.slotHeight) / 2,
-                        0f,
-                        revealOffset,
-                    )
+                    lerp(-(size.height - wheelPickerState.slotHeight) / 2, 0f, revealOffset)
             },
         window = { WheelPickerWindow(Modifier.graphicsLayer { alpha = revealOffset }) },
     ) { index ->
@@ -81,12 +84,18 @@ fun ExerciseListPicker(
                 exercise = exercises[index],
                 isSelected = index == wheelPickerState.index,
                 revealOffset = revealOffset,
+                openExercise = openExercise,
             )
         }
     }
 }
 
-data class ExerciseItemData(val name: String, val setCount: Int, val completedSetCount: Int) {
+data class ExerciseItemData(
+    val id: Long,
+    val name: String,
+    val setCount: Int,
+    val completedSetCount: Int,
+) {
     val allSetsCompleted = setCount == completedSetCount
 }
 
@@ -96,6 +105,7 @@ private fun ExerciseItem(
     exercise: ExerciseItemData,
     isSelected: Boolean,
     revealOffset: Float,
+    openExercise: (ExerciseItemData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ListItem(
@@ -133,6 +143,14 @@ private fun ExerciseItem(
                 modifier = modifier,
             )
         },
+        actions = {
+            LiftAppIconButton(onClick = { openExercise(exercise) }) {
+                Icon(
+                    imageVector = LiftAppIcons.Open,
+                    contentDescription = stringResource(R.string.action_info),
+                )
+            }
+        },
         modifier =
             Modifier.graphicsLayer {
                 if (isSelected) return@graphicsLayer
@@ -162,16 +180,19 @@ private fun ExerciseListPickerPreview() {
             val exercises =
                 listOf(
                     ExerciseItemData(
+                        id = 1,
                         name = "Flat Bench Press",
                         setCount = 3,
                         completedSetCount = 3,
                     ),
                     ExerciseItemData(
+                        id = 2,
                         name = "Incline Dumbbell Press",
                         setCount = 4,
                         completedSetCount = 2,
                     ),
                     ExerciseItemData(
+                        id = 3,
                         name = "Chest Fly Machine",
                         setCount = 3,
                         completedSetCount = 0,
@@ -182,6 +203,7 @@ private fun ExerciseListPickerPreview() {
                 wheelPickerState =
                     rememberWheelPickerState(itemCount = exercises.size + 1, initialIndex = 1),
                 revealOffset = 1f,
+                openExercise = {},
             )
         }
     }

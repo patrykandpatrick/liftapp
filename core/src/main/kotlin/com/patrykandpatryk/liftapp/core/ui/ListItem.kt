@@ -191,7 +191,9 @@ fun ListItem(
             )
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically, content = actions)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CompositionLocalProvider(LocalContentColor provides colorScheme.onSurface) { actions() }
+        }
     }
 }
 
