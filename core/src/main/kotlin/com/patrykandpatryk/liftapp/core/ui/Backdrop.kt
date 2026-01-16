@@ -12,10 +12,14 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.IntState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -24,9 +28,11 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onLayoutRectChanged
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 enum class BackdropValue {
@@ -43,11 +49,19 @@ data class BackdropState(val initialValue: BackdropValue) {
             anchoredDraggableState.anchors.positionOf(BackdropValue.Closed)
     }
 
+    private val _handleHeight = mutableIntStateOf(0)
+
     val offsetFraction: Float by derivedStateOf {
         (anchoredDraggableState.offset -
             anchoredDraggableState.anchors.positionOf(BackdropValue.Closed)) /
             (anchoredDraggableState.anchors.positionOf(BackdropValue.Open) -
                 anchoredDraggableState.anchors.positionOf(BackdropValue.Closed))
+    }
+
+    val handleHeight: IntState = _handleHeight
+
+    internal fun setHandleHeight(height: Int) {
+        _handleHeight.intValue = height
     }
 
     suspend fun open() {
@@ -73,12 +87,12 @@ fun rememberBackdropState(initialState: BackdropValue = BackdropValue.Closed) =
 
 @Composable
 fun Backdrop(
+    state: BackdropState = rememberBackdropState(),
     backContent: @Composable BoxScope.() -> Unit,
     backPeekHeight: Density.() -> Dp,
-    contentPeekHeight: Density.() -> Dp,
+    contentPeekHeight: Density.() -> Dp = { (state.handleHeight.intValue / density).dp },
     modifier: Modifier = Modifier,
-    state: BackdropState = rememberBackdropState(),
-    content: @Composable BoxScope.() -> Unit,
+    content: @Composable BackdropScope.() -> Unit,
 ) {
     val flingBehavior =
         AnchoredDraggableDefaults.flingBehavior(
@@ -90,7 +104,10 @@ fun Backdrop(
     Layout(
         content = {
             Box(content = backContent)
-            Box(Modifier.nestedScroll(scrollConnection).pointerInput(Unit) {}, content = content)
+            Column(Modifier.nestedScroll(scrollConnection).pointerInput(Unit) {}) {
+                val scope = remember(state, this) { BackdropScopeImpl(state, this) }
+                scope.content()
+            }
         },
         measurePolicy = { measurables, constraints ->
             val backdrop = measurables[0].measure(constraints)
@@ -104,7 +121,7 @@ fun Backdrop(
                     )
                 )
             val backdropOpenLength =
-                minOf(constraints.maxHeight - contentPeekHeight().toPx(), backdrop.height.toFloat())
+                maxOf(constraints.maxHeight - contentPeekHeight().toPx(), backdrop.height.toFloat())
 
             state.anchoredDraggableState.updateAnchors(
                 DraggableAnchors {
@@ -124,6 +141,20 @@ fun Backdrop(
                 flingBehavior = flingBehavior,
             ),
     )
+}
+
+interface BackdropScope : ColumnScope {
+    fun Modifier.revealHandle(): Modifier
+}
+
+private class BackdropScopeImpl(
+    private val backdropState: BackdropState,
+    private val columnScope: ColumnScope,
+) : BackdropScope, ColumnScope by columnScope {
+    override fun Modifier.revealHandle(): Modifier =
+        Modifier.onLayoutRectChanged { layoutBounds ->
+            backdropState.setHandleHeight(layoutBounds.height)
+        }
 }
 
 private class BackdropNestedScrollConnection(

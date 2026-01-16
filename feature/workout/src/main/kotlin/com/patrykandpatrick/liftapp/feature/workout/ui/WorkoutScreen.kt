@@ -52,6 +52,7 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -172,7 +173,14 @@ fun WorkoutScreen(
                 },
                 onAction = onAction,
                 modifier =
-                    Modifier.padding(paddingValues.copy(bottom = WindowInsets.ime.getBottom())),
+                    Modifier.padding(
+                        paddingValues.copy(
+                            bottom =
+                                WindowInsets.ime
+                                    .getBottom()
+                                    .coerceAtLeast(paddingValues.calculateBottomPadding())
+                        )
+                    ),
             )
         }
     }
@@ -212,22 +220,21 @@ private fun Content(
                 }
             },
             backPeekHeight = { wheelPickerState.slotHeight.toDp() },
-            contentPeekHeight = { 200.dp },
             state = backdropState,
             modifier = Modifier,
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
                 modifier =
                     Modifier.bottomSheetShadow()
                         .background(color = colorScheme.surface, shape = BottomSheetShape)
                         .topTintedEdge(BottomSheetShape)
-                        .padding(top = dimens.padding.contentVertical),
             ) {
                 val coroutineScope = rememberCoroutineScope()
                 Spacer(
                     modifier =
-                        Modifier.clip(CircleShape)
+                        Modifier.run { with(this@Backdrop) { revealHandle() } }
+                            .padding(vertical = dimens.padding.itemVertical)
+                            .clip(CircleShape)
                             .clickable { coroutineScope.launch { backdropState.toggle() } }
                             .background(color = colorScheme.outline)
                             .width(32.dp)
