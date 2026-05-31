@@ -10,6 +10,5 @@ dependencies {
     implementation project(":core")
     implementation project(":navigation")
 
-    implementation libs.bundles.opto
     implementation libs.kmpWheelPicker
 }

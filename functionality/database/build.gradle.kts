@@ -13,5 +13,4 @@ android { namespace = "com.patrykandpatryk.liftapp.functionality.database" }
 dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
-    implementation(libs.opto.domain)
 }

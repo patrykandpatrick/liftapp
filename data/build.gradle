@@ -6,7 +6,6 @@ dependencies {
     implementation project(":domain")
 
     implementation libs.bundles.hilt
-    implementation libs.bundles.opto
     implementation libs.timber
 
     ksp libs.hilt.compiler

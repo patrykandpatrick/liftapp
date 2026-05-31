@@ -12,6 +12,5 @@ kotlin { jvmToolchain(21) }
 
 dependencies {
     implementation(project(":domain"))
-    implementation(libs.opto.domain)
     implementation(libs.bundles.testing)
 }

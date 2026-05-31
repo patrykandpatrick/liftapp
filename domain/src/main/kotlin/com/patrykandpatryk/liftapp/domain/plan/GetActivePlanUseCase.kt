@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.domain.plan
 
-import com.patrykandpatrick.opto.domain.Preference
+import com.patrykandpatryk.liftapp.domain.datastore.Preference
 import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi

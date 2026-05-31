@@ -9,6 +9,5 @@ android { namespace = "com.patrykandpatryk.liftapp.functionality.preference" }
 
 dependencies {
     implementation(libs.datastore)
-    implementation(libs.bundles.opto)
     testImplementation(project(":domain-testing"))
 }

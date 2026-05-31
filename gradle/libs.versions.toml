@@ -19,7 +19,6 @@ kotlinxSerializationConverter = "1.0.0"
 landscapist = "2.8.2"
 lifecycle = "2.10.0"
 m3 = "1.4.0"
-opto = "1.2.0"
 reorderable = "3.0.0"
 retrofit = "3.0.0"
 room = "2.8.4"
@@ -66,8 +65,6 @@ kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 landscapist = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist" }
 lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
-opto-core = { module = "com.github.patrykandpatrick.opto:core", version.ref = "opto" }
-opto-domain = { module = "com.github.patrykandpatrick.opto:domain", version.ref = "opto" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -81,7 +78,6 @@ viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version
 [bundles]
 kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
 hilt = ["hilt-android", "hilt-navigation"]
-opto = ["opto-core", "opto-domain"]
 ui = ["landscapist", "compose-ui", "compose-ui-preview", "compose-material-icons", "compose-material3", "compose-navigation", "vico", "immutable-collections", "compose-navigation-material", "compose-material3-adaptive"]
 testing = ["junit", "jupiter", "kotlin-test", "kotlin-coroutines-test", "turbine"]
 

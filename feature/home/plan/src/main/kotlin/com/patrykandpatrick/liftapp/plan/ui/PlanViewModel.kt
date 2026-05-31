@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.plan.model.GetPlanStateUseCase
-import com.patrykandpatrick.opto.domain.Preference
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
+import com.patrykandpatryk.liftapp.domain.datastore.Preference
 import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander

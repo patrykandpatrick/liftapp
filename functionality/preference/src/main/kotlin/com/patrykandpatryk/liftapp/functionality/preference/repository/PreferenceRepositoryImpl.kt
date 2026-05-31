@@ -6,9 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.patrykandpatrick.opto.core.PreferenceImpl
-import com.patrykandpatrick.opto.core.PreferenceManager
-import com.patrykandpatrick.opto.domain.Preference
+import com.patrykandpatryk.liftapp.domain.datastore.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
@@ -18,6 +16,8 @@ import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.ShortDistanceUnit
+import com.patrykandpatryk.liftapp.functionality.preference.datastore.PreferenceImpl
+import com.patrykandpatryk.liftapp.functionality.preference.datastore.PreferenceManager
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher

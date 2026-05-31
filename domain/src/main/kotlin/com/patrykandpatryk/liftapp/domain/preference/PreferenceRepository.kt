@@ -1,6 +1,6 @@
 package com.patrykandpatryk.liftapp.domain.preference
 
-import com.patrykandpatrick.opto.domain.Preference
+import com.patrykandpatryk.liftapp.domain.datastore.Preference
 import com.patrykandpatryk.liftapp.domain.date.HourFormat
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
