@@ -19,14 +19,10 @@ android {
         buildConfig true
     }
 
-    buildTypes {
-        debug
-
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-        }
-    }
+    // Minification is configured by `:app` only. Enabling it here made every library module run
+    // R8 independently, so several of them emitted a class named `a.a`, and the app's own R8 pass
+    // then failed with "Type a.a is defined multiple times". Library modules that need to
+    // contribute keep rules should use `consumerProguardFiles`.
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
