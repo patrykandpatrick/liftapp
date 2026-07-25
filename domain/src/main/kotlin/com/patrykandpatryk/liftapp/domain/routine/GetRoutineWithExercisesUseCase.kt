@@ -1,12 +1,10 @@
 package com.patrykandpatryk.liftapp.domain.routine
 
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
-class GetRoutineWithExercisesUseCase
-@Inject
-constructor(private val routineRepository: RoutineRepository) {
-
-    operator fun invoke(routineId: Long): Flow<RoutineWithExercises?> =
-        routineRepository.getRoutineWithExercises(routineId)
+fun interface GetRoutineWithExercisesUseCase {
+    fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?>
 }
+
+operator fun GetRoutineWithExercisesUseCase.invoke(routineId: Long): Flow<RoutineWithExercises?> =
+    getRoutineWithExercises(routineId)

@@ -74,7 +74,7 @@ class OneRepMaxState(
         getPreferredMassUnitUseCase: GetPreferredMassUnitUseCase,
         formatter: Formatter,
     ) : this(
-        getMassUnit = getPreferredMassUnitUseCase::invoke,
+        getMassUnit = getPreferredMassUnitUseCase::getPreferredMassUnit,
         savedStateHandle = savedStateHandle,
         formatWeight = formatter::formatWeight,
         coroutineScope = coroutineScope,

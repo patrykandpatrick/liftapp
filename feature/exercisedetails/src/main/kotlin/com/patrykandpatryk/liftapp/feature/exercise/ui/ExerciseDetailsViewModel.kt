@@ -14,6 +14,7 @@ import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.domain.date.DateInterval
 import com.patrykandpatryk.liftapp.domain.exercise.DeleteExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
+import com.patrykandpatryk.liftapp.domain.exercise.invoke
 import com.patrykandpatryk.liftapp.domain.exerciseset.ExerciseSetGroup
 import com.patrykandpatryk.liftapp.domain.exerciseset.ExerciseSummaryType
 import com.patrykandpatryk.liftapp.domain.exerciseset.GetExerciseSetsUseCase

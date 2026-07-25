@@ -12,6 +12,7 @@ import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.model.AllPreferences
 import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.unit.GetPreferredMassUnitUseCase
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
 import com.patrykandpatryk.liftapp.domain.unit.MediumDistanceUnit
@@ -44,10 +45,12 @@ constructor(
     private val application: Application,
     private val json: Json,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-) : PreferenceRepository, PreferenceManager {
+) : PreferenceRepository, PreferenceManager, GetPreferredMassUnitUseCase {
 
     private val coroutineScope = CoroutineScope(dispatcher + SupervisorJob())
     override val massUnit = enumPreference(KEY_MASS_UNIT, MassUnit.Kilograms)
+
+    override fun getPreferredMassUnit(): Flow<MassUnit> = massUnit.get()
 
     override val longDistanceUnit = enumPreference(KEY_DISTANCE_UNIT, LongDistanceUnit.Kilometer)
 

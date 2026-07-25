@@ -9,6 +9,7 @@ import com.patrykandpatryk.liftapp.domain.datastore.Preference
 import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
 import com.patrykandpatryk.liftapp.domain.preference.PreferenceRepository
+import com.patrykandpatryk.liftapp.domain.unit.GetPreferredMassUnitUseCase
 import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatryk.liftapp.functionality.preference.repository.PreferenceRepositoryImpl
 import dagger.Binds
@@ -27,6 +28,11 @@ interface PreferenceModule {
 
     @Binds
     fun bindPreferenceRepository(repositoryImpl: PreferenceRepositoryImpl): PreferenceRepository
+
+    @Binds
+    fun bindGetPreferredMassUnitUseCase(
+        repositoryImpl: PreferenceRepositoryImpl
+    ): GetPreferredMassUnitUseCase
 
     companion object {
 

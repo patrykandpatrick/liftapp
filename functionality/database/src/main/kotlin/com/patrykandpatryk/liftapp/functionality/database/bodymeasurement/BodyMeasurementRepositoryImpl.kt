@@ -8,6 +8,7 @@ import com.patrykandpatryk.liftapp.domain.bodymeasurement.BodyMeasurementWithLat
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntriesUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementWithLatestEntryUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementsWithLatestEntriesUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.UpsertBodyMeasurementUseCase
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import java.time.LocalDateTime
@@ -29,6 +30,7 @@ constructor(
     UpsertBodyMeasurementUseCase,
     GetBodyMeasurementEntryUseCase,
     GetBodyMeasurementWithLatestEntryUseCase,
+    GetBodyMeasurementsWithLatestEntriesUseCase,
     GetBodyMeasurementEntriesUseCase {
 
     override fun getBodyMeasurement(id: Long): Flow<BodyMeasurement> =

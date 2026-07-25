@@ -10,6 +10,7 @@ import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
+import com.patrykandpatryk.liftapp.domain.routine.invoke
 import com.patrykandpatryk.liftapp.feature.routine.model.Action
 import com.patrykandpatryk.liftapp.feature.routine.model.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel

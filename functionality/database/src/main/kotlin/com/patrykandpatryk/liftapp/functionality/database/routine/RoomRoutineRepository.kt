@@ -4,7 +4,7 @@ import androidx.room.RoomRawQuery
 import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsUseCase
-import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutinesWithExerciseNamesContract
 import com.patrykandpatryk.liftapp.domain.routine.Routine
 import com.patrykandpatryk.liftapp.domain.routine.RoutineRepository
@@ -29,7 +29,7 @@ constructor(
     @param:IODispatcher private val dispatcher: CoroutineDispatcher,
 ) :
     RoutineRepository,
-    GetRoutineWithExercisesContract,
+    GetRoutineWithExercisesUseCase,
     GetRoutineWithExerciseIDsUseCase,
     UpsertRoutineWithExerciseIdsUseCase,
     GetRoutinesWithExerciseNamesContract,

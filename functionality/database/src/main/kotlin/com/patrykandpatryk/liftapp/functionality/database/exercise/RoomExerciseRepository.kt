@@ -6,6 +6,7 @@ import com.patrykandpatryk.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatryk.liftapp.domain.exercise.Exercise
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType
 import com.patrykandpatryk.liftapp.domain.exercise.ExerciseRepository
+import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.GetRoutineExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.exerciseset.ExerciseSetGroup
 import com.patrykandpatryk.liftapp.domain.exerciseset.GetExerciseSetsUseCase
@@ -27,7 +28,7 @@ constructor(
     private val exerciseMapper: ExerciseMapper,
     private val exerciseSetMapper: ExerciseSetMapper,
     @param:DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-) : ExerciseRepository, GetRoutineExercisesUseCase, GetExerciseSetsUseCase {
+) : ExerciseRepository, GetExerciseUseCase, GetRoutineExercisesUseCase, GetExerciseSetsUseCase {
 
     override fun getAllExercises(): Flow<List<Exercise>> =
         exerciseDao.getAllExercises().map(exerciseMapper::toDomain).flowOn(dispatcher)

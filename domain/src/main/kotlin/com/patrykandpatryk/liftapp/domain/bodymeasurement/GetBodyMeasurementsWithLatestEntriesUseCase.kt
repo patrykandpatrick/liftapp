@@ -1,9 +1,10 @@
 package com.patrykandpatryk.liftapp.domain.bodymeasurement
 
-import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
-class GetBodyMeasurementsWithLatestEntriesUseCase
-@Inject
-constructor(private val bodyMeasurementRepository: BodyMeasurementRepository) {
-    operator fun invoke() = bodyMeasurementRepository.getBodyMeasurementsWithLatestEntries()
+fun interface GetBodyMeasurementsWithLatestEntriesUseCase {
+    fun getBodyMeasurementsWithLatestEntries(): Flow<List<BodyMeasurementWithLatestEntry>>
 }
+
+operator fun GetBodyMeasurementsWithLatestEntriesUseCase.invoke():
+    Flow<List<BodyMeasurementWithLatestEntry>> = getBodyMeasurementsWithLatestEntries()

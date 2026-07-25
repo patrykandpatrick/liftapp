@@ -2,7 +2,7 @@ package com.patrykandpatryk.liftapp.functionality.database.di
 
 import com.patrykandpatryk.liftapp.domain.routine.DeleteRoutineUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExerciseIDsUseCase
-import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutinesWithExerciseNamesContract
 import com.patrykandpatryk.liftapp.domain.routine.UpsertRoutineWithExerciseIdsUseCase
 import com.patrykandpatryk.liftapp.functionality.database.routine.RoomRoutineRepository
@@ -15,9 +15,9 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 interface RoutineModule {
     @Binds
-    fun bindGetRoutineWithExercisesContract(
+    fun bindGetRoutineWithExercisesUseCase(
         repository: RoomRoutineRepository
-    ): GetRoutineWithExercisesContract
+    ): GetRoutineWithExercisesUseCase
 
     @Binds
     fun bindGetRoutineWithExerciseIDsUseCase(

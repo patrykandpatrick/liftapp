@@ -16,7 +16,7 @@ import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
 import com.patrykandpatryk.liftapp.domain.plan.Plan
-import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesContract
+import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +40,7 @@ constructor(
     private val routeData: PlanCreatorRouteData,
     private val getPlanContract: GetPlanContract,
     private val upsertPlanUseCase: UpsertPlanUseCase,
-    private val getRoutineWithExercisesContract: GetRoutineWithExercisesContract,
+    private val getRoutineWithExercisesUseCase: GetRoutineWithExercisesUseCase,
     private val textFieldStateManager: TextFieldStateManager,
     private val savedStateHandle: SavedStateHandle,
     private val navigationCommander: NavigationCommander,
@@ -146,7 +146,7 @@ constructor(
             .onEach { routineID ->
                 val routine =
                     checkNotNull(
-                        getRoutineWithExercisesContract.getRoutineWithExercises(routineID).first()
+                        getRoutineWithExercisesUseCase.getRoutineWithExercises(routineID).first()
                     ) {
                         "Routine with ID $routineID was picked, but could not be found in the database"
                     }

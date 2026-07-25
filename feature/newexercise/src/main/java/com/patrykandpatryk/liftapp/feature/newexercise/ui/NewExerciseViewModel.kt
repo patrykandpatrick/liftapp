@@ -16,6 +16,7 @@ import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.InsertExercisesUseCase
 import com.patrykandpatryk.liftapp.domain.exercise.UpdateExercisesUseCase
+import com.patrykandpatryk.liftapp.domain.exercise.invoke
 import com.patrykandpatryk.liftapp.domain.extension.toggle
 import com.patrykandpatryk.liftapp.domain.mapper.Mapper
 import com.patrykandpatryk.liftapp.domain.model.Name

@@ -1,7 +1,7 @@
 package com.patrykandpatryk.liftapp.functionality.database.di
 
 import com.patrykandpatryk.liftapp.domain.plan.AddPlanItemsScheduleContract
-import com.patrykandpatryk.liftapp.domain.plan.GetAllPlansContract
+import com.patrykandpatryk.liftapp.domain.plan.GetAllPlansUseCase
 import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
 import com.patrykandpatryk.liftapp.domain.plan.GetPlanItemContract
 import com.patrykandpatryk.liftapp.domain.plan.UpsertPlanContract
@@ -18,7 +18,7 @@ interface PlanModule {
 
     @Binds fun binUpsertPlanContract(repository: RoomPlanRepository): UpsertPlanContract
 
-    @Binds fun bindGetAllPlansContract(repository: RoomPlanRepository): GetAllPlansContract
+    @Binds fun bindGetAllPlansUseCase(repository: RoomPlanRepository): GetAllPlansUseCase
 
     @Binds
     fun bindAddPlanItemsScheduleContract(

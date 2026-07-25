@@ -3,6 +3,7 @@ package com.patrykandpatryk.liftapp.functionality.database.di
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntriesUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementEntryUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementWithLatestEntryUseCase
+import com.patrykandpatryk.liftapp.domain.bodymeasurement.GetBodyMeasurementsWithLatestEntriesUseCase
 import com.patrykandpatryk.liftapp.domain.bodymeasurement.UpsertBodyMeasurementUseCase
 import com.patrykandpatryk.liftapp.functionality.database.bodymeasurement.BodyMeasurementRepositoryImpl
 import dagger.Binds
@@ -28,6 +29,11 @@ interface BodyModule {
     fun bindGetBodyMeasurementWithLatestEntryUseCase(
         repository: BodyMeasurementRepositoryImpl
     ): GetBodyMeasurementWithLatestEntryUseCase
+
+    @Binds
+    fun bindGetBodyMeasurementsWithLatestEntriesUseCase(
+        repository: BodyMeasurementRepositoryImpl
+    ): GetBodyMeasurementsWithLatestEntriesUseCase
 
     @Binds
     fun bindGetBodyMeasurementEntriesUseCase(
