@@ -1,6 +1,7 @@
-apply { from("$rootDir/gradle/ui-module-base.gradle") }
-
-plugins { alias(libs.plugins.library) }
+plugins {
+    id("liftapp.android.library")
+    id("liftapp.android.compose")
+}
 
 android { namespace = "com.patrykandpatryk.liftapp.core" }
 

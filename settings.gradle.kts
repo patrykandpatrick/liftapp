@@ -1,7 +1,11 @@
-pluginManagement.repositories {
-    google()
-    gradlePluginPortal()
-    mavenCentral()
+pluginManagement {
+    includeBuild("build-logic")
+
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+    }
 }
 
 @Suppress("UnstableApiUsage")

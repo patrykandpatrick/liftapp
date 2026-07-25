@@ -1,8 +1,6 @@
-apply { from("$rootDir/gradle/functionality-module-base.gradle") }
-
 plugins {
-    alias(libs.plugins.library)
-    alias(libs.plugins.kotlinXSerialization)
+    id("liftapp.android.functionality")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android { namespace = "com.patrykandpatryk.liftapp.functionality.musclebitmap" }

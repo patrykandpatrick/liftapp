@@ -1,14 +1,11 @@
-apply { from("$rootDir/gradle/feature-module-base.gradle") }
-
-plugins {
-    alias(libs.plugins.library)
-    id("kotlinx-serialization")
-    id("androidx.navigation.safeargs.kotlin")
-}
-
-dependencies {
-    add("implementation", project(":navigation"))
-    project.subprojects.forEach { project -> add("api", project) }
-}
+plugins { id("liftapp.android.feature") }
 
 android { namespace = "com.patrykandpatryk.liftapp.feature.home" }
+
+// Every `:feature:home:*` module is re-exported, so `:app` only depends on `:feature:home`.
+val homeModules = subprojects
+
+dependencies {
+    implementation(project(":navigation"))
+    homeModules.forEach { homeModule -> api(homeModule) }
+}

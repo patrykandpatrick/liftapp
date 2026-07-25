@@ -1,8 +1,0 @@
-ext {
-
-    android = [
-            minSdk    : 26,
-            compileSdk: 37,
-            targetSdk : 37,
-    ]
-}

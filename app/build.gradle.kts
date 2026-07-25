@@ -1,6 +1,7 @@
-apply { from("$rootDir/gradle/ui-module-base.gradle") }
-
-plugins { alias(libs.plugins.application) }
+plugins {
+    id("liftapp.android.application")
+    id("liftapp.android.compose")
+}
 
 android {
     namespace = "pl.patrykgoworowski.mintlift"
@@ -26,6 +27,8 @@ android {
     }
 }
 
+val functionalityModulePaths = project(":functionality").subprojects.map { it.path }
+
 dependencies {
     implementation(project(":core"))
     implementation(project(":data"))
@@ -47,5 +50,5 @@ dependencies {
     implementation(project(":feature:routineList"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:workout"))
-    project(":functionality") { subprojects.forEach(::implementation) }
+    functionalityModulePaths.forEach { implementation(project(it)) }
 }

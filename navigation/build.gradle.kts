@@ -1,8 +1,7 @@
-apply { from("$rootDir/gradle/ui-module-base.gradle") }
-
 plugins {
-    alias(libs.plugins.library)
-    id("kotlinx-serialization")
+    id("liftapp.android.library")
+    id("liftapp.android.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android { namespace = "com.patrykandpatrick.liftapp.navigation" }

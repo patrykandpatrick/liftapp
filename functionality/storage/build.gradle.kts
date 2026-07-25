@@ -1,9 +1,4 @@
-apply { from("$rootDir/gradle/functionality-module-base.gradle") }
-
-plugins {
-    alias(libs.plugins.library)
-    alias(libs.plugins.ksp)
-}
+plugins { id("liftapp.android.functionality") }
 
 android { namespace = "com.patrykandpatryk.liftapp.functionality.storage" }
 

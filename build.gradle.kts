@@ -1,8 +1,9 @@
+// The convention plugins in `build-logic` compile against these but do not carry them, so they are
+// resolved here and applied per module by the conventions themselves.
 buildscript {
     dependencies {
         classpath(libs.hilt.gradle.plugin)
         classpath(libs.kotlin.serialization.plugin)
-        classpath(libs.safeArgs)
     }
 
     repositories { gradlePluginPortal() }

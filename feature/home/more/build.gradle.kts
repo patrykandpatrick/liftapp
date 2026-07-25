@@ -1,5 +1,3 @@
-apply { from("$rootDir/gradle/feature-module-base.gradle") }
-
-plugins { alias(libs.plugins.library) }
+plugins { id("liftapp.android.feature") }
 
 android { namespace = "com.patrykandpatryk.liftapp.feature.more" }

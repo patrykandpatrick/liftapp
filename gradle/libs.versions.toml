@@ -29,7 +29,11 @@ kspPlugin = "2.3.10"
 
 [libraries]
 activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "androidPlugin" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradle-plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version.ref = "kspPlugin" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
@@ -65,7 +69,6 @@ lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", versi
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-safeArgs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "composeNavigation" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 vico = { module = "com.patrykandpatrick.vico:compose-android", version.ref = "vico" }

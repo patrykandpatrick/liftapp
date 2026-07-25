@@ -1,14 +1,11 @@
-apply { from("$rootDir/gradle/functionality-module-base.gradle") }
-
 plugins {
-    alias(libs.plugins.library)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlinXSerialization)
+    id("liftapp.android.functionality")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-ksp { arg("room.schemaLocation", "$projectDir/schemas".toString()) }
-
 android { namespace = "com.patrykandpatryk.liftapp.functionality.database" }
+
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
 dependencies {
     implementation(libs.room.ktx)
