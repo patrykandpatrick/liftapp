@@ -31,7 +31,6 @@ val functionalityModulePaths = project(":functionality").subprojects.map { it.pa
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":data"))
     implementation(project(":navigation"))
     implementation(project(":feature:about"))
     implementation(project(":feature:bodymeasurementdetails"))

@@ -24,7 +24,6 @@ include(
     ":app",
     ":ui",
     ":core",
-    ":data",
     ":domain",
     ":domain-testing",
     ":feature:about",
@@ -51,6 +50,5 @@ include(
     ":functionality:database",
     ":functionality:musclebitmap",
     ":functionality:preference",
-    ":functionality:storage",
     ":navigation",
 )
