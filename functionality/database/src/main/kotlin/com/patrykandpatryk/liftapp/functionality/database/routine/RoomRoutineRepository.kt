@@ -101,10 +101,6 @@ constructor(
         withContext(dispatcher) { routineDao.delete(routineId) }
     }
 
-    override suspend fun deleteExerciseWithRoutine(routineId: Long, exerciseId: Long) {
-        withContext(dispatcher) { routineDao.deleteExerciseWithRoutine(routineId, exerciseId) }
-    }
-
     private companion object {
         const val GET_ROUTINE_WITH_EXERCISE_IDS_QUERY =
             "SELECT r.routine_id, r.routine_name, GROUP_CONCAT(ewr.exercise_id ORDER BY ewr.order_index, ',') as " +
