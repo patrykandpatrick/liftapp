@@ -167,7 +167,7 @@ private fun Chart(producer: CartesianChartModelProducer, modifier: Modifier = Mo
                 startAxis = VerticalAxis.start(rememberValueUnitCartesianValueFormatter()),
                 bottomAxis = HorizontalAxis.bottom(),
                 marker = rememberCartesianMarker(rememberValueUnitCartesianMarkerValueFormatter()),
-                getXStep = { 1.0 },
+                getXStep = { _, _, _ -> 1.0 },
             ),
         modelProducer = producer,
         zoomState = rememberVicoZoomState(minZoom = Zoom.fixed(1f)),

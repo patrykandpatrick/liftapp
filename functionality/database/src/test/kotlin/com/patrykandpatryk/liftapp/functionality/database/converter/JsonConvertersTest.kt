@@ -5,15 +5,23 @@ import com.patrykandpatryk.liftapp.domain.di.DomainModule
 import com.patrykandpatryk.liftapp.domain.model.Name
 import com.patrykandpatryk.liftapp.domain.muscle.Muscle
 import com.patrykandpatryk.liftapp.domain.unit.MassUnit
+import com.patrykandpatryk.liftapp.functionality.database.di.DatabaseModule
 import com.patrykandpatryk.liftapp.functionality.database.string.ExerciseStringResource
 import kotlin.random.Random
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class JsonConvertersTest {
 
-    private val converter = JsonConverters(DomainModule.provideJson(emptySet()))
+    // The serializer set mirrors what `DatabaseModule` contributes via `@IntoSet` at runtime.
+    // Passing `emptySet()` here left `Name.Resource` unserializable.
+    private val converter =
+        JsonConverters(
+            DomainModule.provideJson(
+                setOf(DatabaseModule.provideExerciseStringResourceSerializer())
+            )
+        )
 
     @Test
     fun `Conversion of List of Muscles to String and back yields the same result`() {

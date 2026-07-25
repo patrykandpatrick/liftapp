@@ -16,4 +16,10 @@ dependencies {
     ksp libs.hilt.compiler
 
     testImplementation libs.bundles.testing
+
+    // These modules run on the JUnit Platform (see `useJUnitPlatform()` above), which needs the
+    // engine and the launcher on the test runtime classpath. Without them Gradle 9 fails outright,
+    // and Gradle 8 silently discovered no tests at all.
+    testRuntimeOnly libs.jupiter.engine
+    testRuntimeOnly libs.junit.platform.launcher
 }

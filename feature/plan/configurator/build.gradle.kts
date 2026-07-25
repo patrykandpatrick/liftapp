@@ -1,8 +1,5 @@
 apply { from("$rootDir/gradle/feature-module-base.gradle") }
 
-plugins {
-    alias(libs.plugins.library)
-    id("org.jetbrains.kotlin.android")
-}
+plugins { alias(libs.plugins.library) }
 
 android { namespace = "com.patrykandpatrick.liftapp.feature.newplan" }

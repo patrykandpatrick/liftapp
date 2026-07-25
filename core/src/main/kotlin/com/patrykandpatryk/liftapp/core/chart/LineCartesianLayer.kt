@@ -34,7 +34,7 @@ fun LineCartesianLayer.Companion.rememberLine(
                     size = 10.dp,
                 )
             ),
-        pointConnector = LineCartesianLayer.PointConnector.cubic(),
+        interpolator = LineCartesianLayer.Interpolator.cubic(),
     )
 
 @Composable

@@ -30,7 +30,7 @@ import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.MoreVertical
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import com.patrykandpatryk.liftapp.core.R
 import com.patrykandpatryk.liftapp.core.chart.ExtraStoreKey
 import com.patrykandpatryk.liftapp.core.logging.CollectSnackbarMessages
@@ -233,7 +233,7 @@ internal fun getScreenStateForPreview(): ScreenState {
                 }
             }
 
-            columnSeries {
+            columnModel {
                 series(
                     x = x,
                     y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },

@@ -36,7 +36,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 
 private val windowHeight = 44.dp
@@ -61,13 +60,13 @@ fun DurationPicker(
 
     LaunchedEffect(hours, minutes, seconds) {
         if (hours != hourState.index) {
-            launch(NonCancellable) { hourState.animateScrollTo(hours) }
+            launch { hourState.animateScrollTo(hours) }
         }
         if (minutes != minuteState.index) {
-            launch(NonCancellable) { minuteState.animateScrollTo(minutes) }
+            launch { minuteState.animateScrollTo(minutes) }
         }
         if (seconds != secondState.index) {
-            launch(NonCancellable) { secondState.animateScrollTo(seconds) }
+            launch { secondState.animateScrollTo(seconds) }
         }
     }
 

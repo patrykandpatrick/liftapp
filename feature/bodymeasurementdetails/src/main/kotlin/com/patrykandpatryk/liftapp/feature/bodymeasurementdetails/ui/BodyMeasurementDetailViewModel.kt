@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatryk.liftapp.core.chart.ExtraStoreKey
 import com.patrykandpatryk.liftapp.core.mapper.BodyMeasurementEntryToChartEntryMapper
 import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
@@ -96,7 +96,7 @@ constructor(
                 }
 
                 if (mappedEntries.isNotEmpty()) {
-                    lineSeries { mappedEntries.forEach { (x, y) -> series(x, y) } }
+                    lineModel { mappedEntries.forEach { (x, y) -> series(x, y) } }
                 }
             }
 
