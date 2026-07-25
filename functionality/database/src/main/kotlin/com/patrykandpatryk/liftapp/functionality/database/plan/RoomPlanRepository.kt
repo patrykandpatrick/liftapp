@@ -4,8 +4,8 @@ import com.patrykandpatryk.liftapp.domain.di.IODispatcher
 import com.patrykandpatryk.liftapp.domain.exception.PlanNotFoundException
 import com.patrykandpatryk.liftapp.domain.plan.AddPlanItemsScheduleContract
 import com.patrykandpatryk.liftapp.domain.plan.GetAllPlansUseCase
-import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
 import com.patrykandpatryk.liftapp.domain.plan.GetPlanItemContract
+import com.patrykandpatryk.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatryk.liftapp.domain.plan.Plan
 import com.patrykandpatryk.liftapp.domain.plan.UpsertPlanContract
 import java.time.LocalDate
@@ -24,7 +24,7 @@ constructor(
     @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) :
     GetAllPlansUseCase,
-    GetPlanContract,
+    GetPlanUseCase,
     UpsertPlanContract,
     AddPlanItemsScheduleContract,
     GetPlanItemContract {

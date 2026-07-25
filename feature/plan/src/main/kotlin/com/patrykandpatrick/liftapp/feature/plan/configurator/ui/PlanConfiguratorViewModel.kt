@@ -9,7 +9,7 @@ import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.Constants
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
+import com.patrykandpatryk.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatryk.liftapp.domain.plan.Plan
 import com.patrykandpatryk.liftapp.domain.plan.SetActivePlanUseCase
 import com.patrykandpatryk.liftapp.domain.text.StringProvider
@@ -30,7 +30,7 @@ class PlanConfiguratorViewModel
 @Inject
 constructor(
     private val routeData: PlanConfiguratorRouteData,
-    getPlanContract: GetPlanContract,
+    getPlanUseCase: GetPlanUseCase,
     stringProvider: StringProvider,
     textFieldStateManager: TextFieldStateManager,
     private val navigationCommander: NavigationCommander,
@@ -56,7 +56,7 @@ constructor(
     private val refreshState = MutableSharedFlow<Unit>(replay = 1)
 
     val screenState: StateFlow<Loadable<ScreenState>> =
-        getPlanContract
+        getPlanUseCase
             .getPlan(routeData.planID)
             .combine(refreshState.onStart { emit(Unit) }) { plan, _ -> getScreenState(plan) }
             .toLoadableStateFlow(viewModelScope)

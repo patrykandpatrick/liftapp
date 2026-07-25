@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.transformLatest
 class GetActivePlanUseCase
 @Inject
 constructor(
-    private val getPlanContract: GetPlanContract,
+    private val getPlanUseCase: GetPlanUseCase,
     @param:PreferenceQualifier.ActivePlan private val activePlan: Preference<ActivePlan?>,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -21,7 +21,7 @@ constructor(
             if (activePlan == null) {
                 emit(null)
             } else {
-                emitAll(getPlanContract.getPlan(activePlan.planID).map { activePlan to it })
+                emitAll(getPlanUseCase.getPlan(activePlan.planID).map { activePlan to it })
             }
         }
 }

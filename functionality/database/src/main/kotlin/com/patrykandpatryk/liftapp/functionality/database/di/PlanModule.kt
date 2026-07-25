@@ -2,8 +2,8 @@ package com.patrykandpatryk.liftapp.functionality.database.di
 
 import com.patrykandpatryk.liftapp.domain.plan.AddPlanItemsScheduleContract
 import com.patrykandpatryk.liftapp.domain.plan.GetAllPlansUseCase
-import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
 import com.patrykandpatryk.liftapp.domain.plan.GetPlanItemContract
+import com.patrykandpatryk.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatryk.liftapp.domain.plan.UpsertPlanContract
 import com.patrykandpatryk.liftapp.functionality.database.plan.RoomPlanRepository
 import dagger.Binds
@@ -14,7 +14,7 @@ import dagger.hilt.android.components.ViewModelComponent
 @Module
 @InstallIn(ViewModelComponent::class)
 interface PlanModule {
-    @Binds fun bindGetPlanContract(repository: RoomPlanRepository): GetPlanContract
+    @Binds fun bindGetPlanUseCase(repository: RoomPlanRepository): GetPlanUseCase
 
     @Binds fun binUpsertPlanContract(repository: RoomPlanRepository): UpsertPlanContract
 

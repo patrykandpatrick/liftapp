@@ -14,7 +14,7 @@ import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatryk.liftapp.domain.model.Loadable
 import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatryk.liftapp.domain.plan.GetPlanContract
+import com.patrykandpatryk.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatryk.liftapp.domain.plan.Plan
 import com.patrykandpatryk.liftapp.domain.routine.GetRoutineWithExercisesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,7 +38,7 @@ class PlanCreatorViewModel
 @Inject
 constructor(
     private val routeData: PlanCreatorRouteData,
-    private val getPlanContract: GetPlanContract,
+    private val getPlanUseCase: GetPlanUseCase,
     private val upsertPlanUseCase: UpsertPlanUseCase,
     private val getRoutineWithExercisesUseCase: GetRoutineWithExercisesUseCase,
     private val textFieldStateManager: TextFieldStateManager,
@@ -63,7 +63,7 @@ constructor(
         if (routeData.planID == ID_NOT_SET) {
             emit(null)
         } else {
-            val plan = getPlanContract.getPlan(routeData.planID)
+            val plan = getPlanUseCase.getPlan(routeData.planID)
             emitAll(plan)
         }
     }
