@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    "implementation"(project(":domain"))
     "implementation"(project(":core"))
     "implementation"(project(":navigation"))
     "implementation"(libs.library("kmpWheelPicker"))

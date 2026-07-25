@@ -30,8 +30,10 @@ composeCompiler {
     metricsDestination = destination
 }
 
+// `:domain` is deliberately absent. `:ui` is the design system, and keeping the domain off its
+// compile classpath is what stops it from rendering models: the modules that do render them ask
+// for `:domain` themselves.
 dependencies {
-    "implementation"(project(":domain"))
     "implementation"(platform(libs.library("compose-bom")))
     "implementation"(libs.bundle("hilt"))
     "implementation"(libs.bundle("ui"))

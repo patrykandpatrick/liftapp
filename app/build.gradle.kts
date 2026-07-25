@@ -30,6 +30,7 @@ android {
 val functionalityModulePaths = project(":functionality").subprojects.map { it.path }
 
 dependencies {
+    implementation(project(":domain"))
     implementation(project(":core"))
     implementation(project(":navigation"))
     implementation(project(":feature:about"))

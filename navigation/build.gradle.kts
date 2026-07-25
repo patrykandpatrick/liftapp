@@ -5,3 +5,5 @@ plugins {
 }
 
 android { namespace = "com.patrykandpatrick.liftapp.navigation" }
+
+dependencies { implementation(project(":domain")) }
