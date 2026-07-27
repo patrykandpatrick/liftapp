@@ -169,7 +169,9 @@ private fun NewRoutineScreen(
                         maxLines = dimens.input.nameMaxLines,
                         modifier =
                             Modifier.fillMaxWidth()
-                                .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
+                                .padding(
+                                    horizontal = LocalDimens.current.padding.contentHorizontal
+                                ),
                     )
 
                     ListSectionTitle(

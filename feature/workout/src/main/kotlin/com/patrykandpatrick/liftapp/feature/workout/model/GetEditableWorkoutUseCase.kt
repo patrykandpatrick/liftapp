@@ -41,29 +41,28 @@ constructor(
             }
 
     private fun Workout.editable(): EditableWorkout {
-        val exercises =
-            exercises.map { exercise ->
-                EditableWorkout.Exercise(
-                    id = exercise.id,
-                    name = exercise.name,
-                    exerciseType = exercise.exerciseType,
-                    mainMuscles = exercise.mainMuscles,
-                    secondaryMuscles = exercise.secondaryMuscles,
-                    tertiaryMuscles = exercise.tertiaryMuscles,
-                    goal = exercise.goal,
-                    sets =
-                        exercise.sets.mapIndexed { index, set ->
-                            set.editable(
-                                exerciseId = exercise.id,
-                                setIndex = index,
-                                previousSet =
-                                    exercise.sets.getOrNull(index - 1)?.takeIf { it.isCompleted },
-                                lastSet = exercise.lastSets.getOrNull(index),
-                            )
-                        },
-                    previousWorkoutSets = exercise.lastSets.filter { it.isCompleted },
-                )
-            }
+        val exercises = exercises.map { exercise ->
+            EditableWorkout.Exercise(
+                id = exercise.id,
+                name = exercise.name,
+                exerciseType = exercise.exerciseType,
+                mainMuscles = exercise.mainMuscles,
+                secondaryMuscles = exercise.secondaryMuscles,
+                tertiaryMuscles = exercise.tertiaryMuscles,
+                goal = exercise.goal,
+                sets =
+                    exercise.sets.mapIndexed { index, set ->
+                        set.editable(
+                            exerciseId = exercise.id,
+                            setIndex = index,
+                            previousSet =
+                                exercise.sets.getOrNull(index - 1)?.takeIf { it.isCompleted },
+                            lastSet = exercise.lastSets.getOrNull(index),
+                        )
+                    },
+                previousWorkoutSets = exercise.lastSets.filter { it.isCompleted },
+            )
+        }
 
         return EditableWorkout(
             id = id,

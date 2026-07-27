@@ -206,11 +206,10 @@ class DatePickerState(
         val hasError = input.isNotBlank() && inputDateFormat.isValid(input).not()
 
         if (hasError) {
-            delayJob =
-                scope.launch {
-                    delay(errorDelay)
-                    _hasError.value = true
-                }
+            delayJob = scope.launch {
+                delay(errorDelay)
+                _hasError.value = true
+            }
         }
     }
 }

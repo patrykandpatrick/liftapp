@@ -162,14 +162,18 @@ fun LiftAppFilterChipPreview() {
                         {
                             FilterChipPreview(
                                 selected = true,
-                                leadingIcon = { LiftAppFilterChipDefaults.Icon(LiftAppIcons.Check) },
+                                leadingIcon = {
+                                    LiftAppFilterChipDefaults.Icon(LiftAppIcons.Check)
+                                },
                             )
                         },
                     "Chip with leading icon" to
                         {
                             FilterChipPreview(
                                 selected = false,
-                                leadingIcon = { LiftAppFilterChipDefaults.Icon(LiftAppIcons.Check) },
+                                leadingIcon = {
+                                    LiftAppFilterChipDefaults.Icon(LiftAppIcons.Check)
+                                },
                             )
                         },
                     "ChipRow" to

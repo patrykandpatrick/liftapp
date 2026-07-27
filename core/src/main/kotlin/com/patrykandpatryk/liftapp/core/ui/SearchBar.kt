@@ -53,12 +53,11 @@ fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifie
     val focusManager = LocalFocusManager.current
     val isValueNotEmpty = textFieldState.value.isNotEmpty()
 
-    val clearFocusAndValue =
-        {
-                focusManager.clearFocus()
-                if (isValueNotEmpty) textFieldState.clear()
-            }
-            .also { BackHandler(enabled = focused, onBack = it) }
+    val clearFocusAndValue = {
+        focusManager.clearFocus()
+        if (isValueNotEmpty) textFieldState.clear()
+    }
+        .also { BackHandler(enabled = focused, onBack = it) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

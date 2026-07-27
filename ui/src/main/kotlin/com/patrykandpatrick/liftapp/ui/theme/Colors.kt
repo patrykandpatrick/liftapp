@@ -70,14 +70,13 @@ object Colors {
 }
 
 @Composable
-fun getHighlightedColorScheme(): ColorScheme =
-    colorScheme.run {
-        copy(
-            outlineVariant = primary,
-            background = primaryContainer,
-            onBackground = onPrimaryContainer,
-            surface = primaryContainer,
-            onSurface = onPrimaryContainer,
-            onSurfaceVariant = onPrimaryContainer,
-        )
-    }
+fun getHighlightedColorScheme(): ColorScheme = colorScheme.run {
+    copy(
+        outlineVariant = primary,
+        background = primaryContainer,
+        onBackground = onPrimaryContainer,
+        surface = primaryContainer,
+        onSurface = onPrimaryContainer,
+        onSurfaceVariant = onPrimaryContainer,
+    )
+}

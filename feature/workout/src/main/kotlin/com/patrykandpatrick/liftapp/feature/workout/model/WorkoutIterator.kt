@@ -17,8 +17,9 @@ class WorkoutIterator(val items: List<Item>) : List<WorkoutIterator.Item> by ite
         val restTime: Duration = exercise.goal.restTime
     }
 
-    fun getItem(exerciseIndex: Int, setIndex: Int): Item =
-        items.first { it.exerciseIndex == exerciseIndex && it.setIndex == setIndex }
+    fun getItem(exerciseIndex: Int, setIndex: Int): Item = items.first {
+        it.exerciseIndex == exerciseIndex && it.setIndex == setIndex
+    }
 
     fun getNextIncomplete(item: Item? = null): Item? {
         val startIndex = item?.let { items.indexOf(it) + 1 } ?: 0

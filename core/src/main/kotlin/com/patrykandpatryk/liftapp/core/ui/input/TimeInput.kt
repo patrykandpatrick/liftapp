@@ -79,7 +79,10 @@ fun TimeInput(
                     text = stringResource(R.string.workout_summary_edit_workout_start_time),
                     style = MaterialTheme.typography.headlineSmall,
                     modifier =
-                        Modifier.padding(dimens.padding.itemHorizontal, dimens.padding.itemVertical),
+                        Modifier.padding(
+                            dimens.padding.itemHorizontal,
+                            dimens.padding.itemVertical,
+                        ),
                 )
 
                 TimePicker(timePickerState)

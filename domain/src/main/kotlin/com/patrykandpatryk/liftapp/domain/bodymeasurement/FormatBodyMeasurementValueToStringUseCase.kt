@@ -15,10 +15,9 @@ constructor(
         bodyMeasurementValue: BodyMeasurementValue,
         previousBodyMeasurementValue: BodyMeasurementValue? = null,
     ): String {
-        val change =
-            previousBodyMeasurementValue?.let {
-                getBodyMeasurementValueDeltaUseCase(bodyMeasurementValue, it)
-            }
+        val change = previousBodyMeasurementValue?.let {
+            getBodyMeasurementValueDeltaUseCase(bodyMeasurementValue, it)
+        }
 
         return when (bodyMeasurementValue) {
             is BodyMeasurementValue.DoubleValue -> {
@@ -70,19 +69,19 @@ constructor(
 
     private suspend fun getChange(unit: ValueUnit, value: Double, changeMarkupColor: MarkupType) =
         buildString {
-                append("(")
-                if (value > 0) {
-                    append("+")
-                }
-                append(unitConverter.convertToPreferredUnitAndFormat(unit, value))
-                append(")")
+            append("(")
+            if (value > 0) {
+                append("+")
             }
-            .let { text ->
-                MarkupType.wrap(
-                    text,
-                    changeMarkupColor,
-                    MarkupType.Size.Medium,
-                    MarkupType.Style.Bold,
-                )
-            }
+            append(unitConverter.convertToPreferredUnitAndFormat(unit, value))
+            append(")")
+        }
+        .let { text ->
+            MarkupType.wrap(
+                text,
+                changeMarkupColor,
+                MarkupType.Size.Medium,
+                MarkupType.Style.Bold,
+            )
+        }
 }

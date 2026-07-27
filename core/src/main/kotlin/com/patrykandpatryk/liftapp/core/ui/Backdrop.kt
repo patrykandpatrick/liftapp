@@ -151,10 +151,9 @@ private class BackdropScopeImpl(
     private val backdropState: BackdropState,
     private val columnScope: ColumnScope,
 ) : BackdropScope, ColumnScope by columnScope {
-    override fun Modifier.revealHandle(): Modifier =
-        Modifier.onLayoutRectChanged { layoutBounds ->
-            backdropState.setHandleHeight(layoutBounds.height)
-        }
+    override fun Modifier.revealHandle(): Modifier = Modifier.onLayoutRectChanged { layoutBounds ->
+        backdropState.setHandleHeight(layoutBounds.height)
+    }
 }
 
 private class BackdropNestedScrollConnection(

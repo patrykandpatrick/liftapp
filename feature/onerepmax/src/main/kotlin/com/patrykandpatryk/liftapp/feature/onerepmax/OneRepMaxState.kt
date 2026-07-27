@@ -117,17 +117,16 @@ class OneRepMaxState(
                 oneRepMax = oneRepMax.value,
             )
 
-        historyUpdateJob =
-            coroutineScope.launch {
-                delay(HISTORY_UPDATE_DELAY)
-                if (history.value.firstOrNull() == historyEntry) return@launch
-                savedStateHandle.update<List<HistoryEntryModel>>(HISTORY_KEY) { history ->
-                    buildList {
-                        history?.also(::addAll)
-                        add(historyEntry)
-                    }
+        historyUpdateJob = coroutineScope.launch {
+            delay(HISTORY_UPDATE_DELAY)
+            if (history.value.firstOrNull() == historyEntry) return@launch
+            savedStateHandle.update<List<HistoryEntryModel>>(HISTORY_KEY) { history ->
+                buildList {
+                    history?.also(::addAll)
+                    add(historyEntry)
                 }
             }
+        }
     }
 
     @AssistedFactory

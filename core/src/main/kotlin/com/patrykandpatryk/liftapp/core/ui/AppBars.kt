@@ -195,7 +195,8 @@ fun PreviewTopAppBarWithIconTabs() {
             title = "Title",
             selectedTabIndex = { 0 },
             onTabSelected = {},
-            tabs = listOf(TabItem(icon = LiftAppIcons.Clock), TabItem(icon = LiftAppIcons.Settings)),
+            tabs =
+                listOf(TabItem(icon = LiftAppIcons.Clock), TabItem(icon = LiftAppIcons.Settings)),
         )
     }
 }

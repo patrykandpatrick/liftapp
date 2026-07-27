@@ -25,19 +25,18 @@ class MuscleContainerDataFetcher(
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
-        loadJob =
-            scope.launch {
-                val path = muscleImageProvider.getMuscleImagePath(muscleContainer, isDark)
-                runCatching { File(path).inputStream() }
-                    .onSuccess { callback.onDataReady(it) }
-                    .onFailure { throwable ->
-                        if (throwable is Exception) {
-                            callback.onLoadFailed(throwable)
-                        } else {
-                            throw throwable
-                        }
+        loadJob = scope.launch {
+            val path = muscleImageProvider.getMuscleImagePath(muscleContainer, isDark)
+            runCatching { File(path).inputStream() }
+                .onSuccess { callback.onDataReady(it) }
+                .onFailure { throwable ->
+                    if (throwable is Exception) {
+                        callback.onLoadFailed(throwable)
+                    } else {
+                        throw throwable
                     }
-            }
+                }
+        }
     }
 
     override fun cleanup() {

@@ -59,22 +59,20 @@ constructor(
     private val name = textFieldStateManager.stringTextField()
     private val description = textFieldStateManager.stringTextField()
 
-    private val planOrNull: Flow<Plan?> =
-        flow {
-                if (routeData.planID == ID_NOT_SET) {
-                    emit(null)
-                } else {
-                    val plan = getPlanContract.getPlan(routeData.planID)
-                    emitAll(plan)
-                }
+    private val planOrNull: Flow<Plan?> = flow {
+        if (routeData.planID == ID_NOT_SET) {
+            emit(null)
+        } else {
+            val plan = getPlanContract.getPlan(routeData.planID)
+            emitAll(plan)
+        }
+    }
+        .onEach { plan ->
+            if (!savedStateHandle.contains(KEY_ITEMS)) {
+                planItems =
+                    plan?.items?.toNewScreenStateItems() ?: listOf(ScreenState.Item.PlaceholderItem)
             }
-            .onEach { plan ->
-                if (!savedStateHandle.contains(KEY_ITEMS)) {
-                    planItems =
-                        plan?.items?.toNewScreenStateItems()
-                            ?: listOf(ScreenState.Item.PlaceholderItem)
-                }
-            }
+        }
 
     val state: StateFlow<Loadable<ScreenState>> = run {
         planOrNull

@@ -28,39 +28,37 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
 
     fun exerciseEntityToRoutineExerciseItem(
         exercises: List<ExerciseEntity>
-    ): List<RoutineExerciseItem> =
-        exercises.map { exercise ->
-            RoutineExerciseItem(
-                id = exercise.id,
-                name = stringProvider.getResolvedName(exercise.name),
-                muscles =
-                    exercise.mainMuscles.joinToPrettyString(
-                        andText = stringProvider.andInAList,
-                        toString = stringProvider::getMuscleName,
-                    ),
-                type = exercise.exerciseType,
-                goal = exercise.goal,
-            )
-        }
+    ): List<RoutineExerciseItem> = exercises.map { exercise ->
+        RoutineExerciseItem(
+            id = exercise.id,
+            name = stringProvider.getResolvedName(exercise.name),
+            muscles =
+                exercise.mainMuscles.joinToPrettyString(
+                    andText = stringProvider.andInAList,
+                    toString = stringProvider::getMuscleName,
+                ),
+            type = exercise.exerciseType,
+            goal = exercise.goal,
+        )
+    }
 
     fun exerciseWithGoalDtoToRoutineExerciseItem(
         exercises: List<ExerciseWithGoalDto>
-    ): List<RoutineExerciseItem> =
-        exercises.map { (exercise, goalEntity) ->
-            val goal = goalEntity?.toDomain() ?: exercise.goal
+    ): List<RoutineExerciseItem> = exercises.map { (exercise, goalEntity) ->
+        val goal = goalEntity?.toDomain() ?: exercise.goal
 
-            RoutineExerciseItem(
-                id = exercise.id,
-                name = stringProvider.getResolvedName(exercise.name),
-                muscles =
-                    exercise.mainMuscles.joinToPrettyString(
-                        andText = stringProvider.andInAList,
-                        toString = stringProvider::getMuscleName,
-                    ),
-                type = exercise.exerciseType,
-                goal = goal,
-            )
-        }
+        RoutineExerciseItem(
+            id = exercise.id,
+            name = stringProvider.getResolvedName(exercise.name),
+            muscles =
+                exercise.mainMuscles.joinToPrettyString(
+                    andText = stringProvider.andInAList,
+                    toString = stringProvider::getMuscleName,
+                ),
+            type = exercise.exerciseType,
+            goal = goal,
+        )
+    }
 }
 
 internal fun Exercise.Insert.toEntity(): ExerciseEntity =

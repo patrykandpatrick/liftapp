@@ -24,14 +24,16 @@ fun DialogContent(title: String, actions: @Composable () -> Unit, content: @Comp
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 16.dp),
+                modifier =
+                    Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 16.dp),
             )
 
             content()
 
             Row(
                 horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp, end = 24.dp, bottom = 24.dp),
+                modifier =
+                    Modifier.fillMaxWidth().padding(top = 16.dp, end = 24.dp, bottom = 24.dp),
             ) {
                 actions()
             }

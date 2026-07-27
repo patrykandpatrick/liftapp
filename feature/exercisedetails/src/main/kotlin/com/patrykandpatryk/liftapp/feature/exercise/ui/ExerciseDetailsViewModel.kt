@@ -59,10 +59,9 @@ constructor(
     private val summaryType =
         savedStateHandle.getMutableStateFlow<ExerciseSummaryType?>(SUMMARY_TYPE_KEY, null)
 
-    private val exerciseSets =
-        dateInterval.flatMapLatest { dateInterval ->
-            getExerciseSetsUseCase(routeData.exerciseID, dateInterval)
-        }
+    private val exerciseSets = dateInterval.flatMapLatest { dateInterval ->
+        getExerciseSetsUseCase(routeData.exerciseID, dateInterval)
+    }
 
     val screenState: StateFlow<Loadable<ScreenState>> =
         combine(

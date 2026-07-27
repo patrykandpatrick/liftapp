@@ -66,7 +66,8 @@ fun LiftAppAlertDialog(
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
                 modifier =
-                    Modifier.align(Alignment.End).padding(top = dimens.padding.contentVerticalSmall),
+                    Modifier.align(Alignment.End)
+                        .padding(top = dimens.padding.contentVerticalSmall),
             ) {
                 dismissButton?.invoke()
                 confirmButton()

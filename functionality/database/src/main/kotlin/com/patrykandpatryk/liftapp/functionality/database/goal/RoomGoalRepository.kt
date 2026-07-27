@@ -18,15 +18,14 @@ constructor(
     @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) : GetExerciseGoalContract, SaveGoalContract {
 
-    override fun getGoal(routineID: Long, exerciseID: Long): Flow<Goal> =
-        flow {
-                val goal =
-                    goalDao.getGoal(routineID, exerciseID)?.toDomain()
-                        ?: goalDao.getDefaultGoal(exerciseID)?.goal
-                        ?: Goal.Companion.default
-                emit(goal)
-            }
-            .flowOn(dispatcher)
+    override fun getGoal(routineID: Long, exerciseID: Long): Flow<Goal> = flow {
+        val goal =
+            goalDao.getGoal(routineID, exerciseID)?.toDomain()
+                ?: goalDao.getDefaultGoal(exerciseID)?.goal
+                ?: Goal.Companion.default
+        emit(goal)
+    }
+        .flowOn(dispatcher)
 
     override suspend fun saveGoal(routineID: Long, exerciseID: Long, goal: Goal) =
         withContext(dispatcher) { goalDao.saveGoal(goal.toEntity(routineID, exerciseID)) }

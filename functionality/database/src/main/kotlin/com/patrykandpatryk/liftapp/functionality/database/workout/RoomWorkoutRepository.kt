@@ -58,23 +58,22 @@ constructor(
             .map { (workoutEntity, exercises) -> workoutMapper.toDomain(workoutEntity, exercises) }
             .flowOn(coroutineContext)
 
-    private fun getWorkoutEntity(routineID: Long, workoutID: Long?): Flow<WorkoutEntity> =
-        flow {
-                if (workoutID != null) {
-                    emitAll(workoutDao.getWorkout(workoutID))
-                } else {
-                    emit(null)
-                }
+    private fun getWorkoutEntity(routineID: Long, workoutID: Long?): Flow<WorkoutEntity> = flow {
+        if (workoutID != null) {
+            emitAll(workoutDao.getWorkout(workoutID))
+        } else {
+            emit(null)
+        }
+    }
+        .distinctUntilChanged()
+        .transformLatest { workout ->
+            if (workout == null) {
+                emitAll(workoutDao.getWorkout(insertEmptyWorkout(routineID)))
+            } else {
+                emit(workout)
             }
-            .distinctUntilChanged()
-            .transformLatest { workout ->
-                if (workout == null) {
-                    emitAll(workoutDao.getWorkout(insertEmptyWorkout(routineID)))
-                } else {
-                    emit(workout)
-                }
-            }
-            .filterNotNull()
+        }
+        .filterNotNull()
 
     private suspend fun insertEmptyWorkout(routineID: Long): Long = coroutineScope {
         val routineName = async {
@@ -104,8 +103,9 @@ constructor(
 
     private suspend fun insertWorkoutWithExercises(workoutID: Long, routineID: Long) {
         val exerciseIDs = workoutDao.getExerciseIDs(routineID).first()
-        val workoutWithExercises =
-            exerciseIDs.mapIndexed { index, id -> WorkoutWithExerciseEntity(workoutID, id, index) }
+        val workoutWithExercises = exerciseIDs.mapIndexed { index, id ->
+            WorkoutWithExerciseEntity(workoutID, id, index)
+        }
         workoutDao.insertWorkoutWithExercises(workoutWithExercises)
     }
 

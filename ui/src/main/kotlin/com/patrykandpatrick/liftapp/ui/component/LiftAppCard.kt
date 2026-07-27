@@ -159,14 +159,12 @@ object LiftAppCardDefaults {
 
     val deselectedColors: ContainerColors
         @Composable
-        get() =
-            cardColors.run {
-                copy(
-                    backgroundColor = Color.Transparent,
-                    interactiveBorderColors =
-                        interactiveBorderColors.copy(color = Color.Transparent),
-                )
-            }
+        get() = cardColors.run {
+            copy(
+                backgroundColor = Color.Transparent,
+                interactiveBorderColors = interactiveBorderColors.copy(color = Color.Transparent),
+            )
+        }
 }
 
 @Preview

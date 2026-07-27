@@ -44,7 +44,10 @@ internal fun NoActivePlanScreen(onAction: (Action) -> Unit) {
             Arrangement.spacedBy(padding.itemVerticalSmall, Alignment.CenterVertically),
         modifier =
             Modifier.fillMaxSize()
-                .padding(horizontal = padding.contentHorizontal, vertical = padding.contentVertical),
+                .padding(
+                    horizontal = padding.contentHorizontal,
+                    vertical = padding.contentVertical,
+                ),
     ) {
         Text(
             text = stringResource(R.string.plan_no_active_plan),
