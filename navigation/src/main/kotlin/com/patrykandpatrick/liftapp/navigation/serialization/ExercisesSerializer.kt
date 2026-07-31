@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 
 object ExercisesSerializer : KSerializer<Routes.Home.Exercises> {
     override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor(checkNotNull(Routes.Home.Exercises::class.qualifiedName)) {
+        buildClassSerialDescriptor(SERIAL_NAME) {
             element(
                 elementName = "mode",
                 descriptor = ExerciseListRouteData.Mode.serializer().descriptor,
@@ -28,4 +28,6 @@ object ExercisesSerializer : KSerializer<Routes.Home.Exercises> {
     override fun serialize(encoder: Encoder, value: Routes.Home.Exercises) {
         ExerciseListRouteData.serializer().serialize(encoder, value)
     }
+
+    private const val SERIAL_NAME = "com.patrykandpatrick.liftapp.navigation.Routes.Home.Exercises"
 }

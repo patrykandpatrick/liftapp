@@ -12,10 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -31,12 +35,17 @@ import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.plan.list.model.Action
 import com.patrykandpatrick.liftapp.plan.list.model.ScreenState
+import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppRadioButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppRadioButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Plan
+import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
@@ -53,10 +62,25 @@ private fun PlanListScreen(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val dimens = LocalDimens.current
+    val fabHeight = 24.dp + dimens.fab.verticalPadding * 2
+    val bottomContentPadding = fabHeight + 16.dp + dimens.screen.verticalPadding
+
     screenState.Unfold { state ->
         LiftAppScaffold(
-            modifier = modifier.fillMaxSize(),
-            topBar = { Toolbar(state.isPickingTrainingPlan, onAction) },
+            modifier =
+                modifier.fillMaxSize().nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+            topBar = { Toolbar(state.isPickingTrainingPlan, onAction, topAppBarScrollBehavior) },
+            floatingActionButton = {
+                LiftAppFAB(
+                    content = {
+                        Icon(LiftAppIcons.Plus, contentDescription = null)
+                        Text(stringResource(R.string.route_new_plan))
+                    },
+                    onClick = { onAction(Action.AddNewPlan) },
+                )
+            },
             bottomBar = {
                 if (state.isPickingTrainingPlan) {
                     BottomAppBar.Save(
@@ -66,33 +90,48 @@ private fun PlanListScreen(
                 }
             },
         ) { paddingValues ->
-            val dimens = LocalDimens.current
-            LazyColumn(
-                modifier = Modifier.padding(paddingValues),
-                verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
-                contentPadding =
-                    PaddingValues(
-                        dimens.padding.contentHorizontal,
-                        dimens.padding.contentVerticalSmall,
-                    ),
-            ) {
-                items(items = state, key = { it.id }) { plan ->
-                    LiftAppCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(0.dp),
-                        onClick = { onAction(Action.CheckPlan(plan.id)) },
-                        colors =
-                            if (plan.isChecked) {
-                                LiftAppCardDefaults.tonalCardColors
-                            } else {
-                                LiftAppCardDefaults.cardColors
-                            },
-                    ) {
-                        PlanItem(
-                            plan = plan,
-                            isPickingTrainingPlan = state.isPickingTrainingPlan,
-                            onAction = onAction,
-                        )
+            if (state.plans.isEmpty()) {
+                EmptyState(
+                    icon = LiftAppIcons.Plan,
+                    message = stringResource(R.string.state_no_training_plans),
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(
+                                horizontal = dimens.screen.horizontalPadding,
+                                vertical = dimens.screen.verticalPadding,
+                            ),
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.padding(paddingValues),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding =
+                        PaddingValues(
+                            start = dimens.screen.horizontalPadding,
+                            top = 10.dp,
+                            end = dimens.screen.horizontalPadding,
+                            bottom = bottomContentPadding,
+                        ),
+                ) {
+                    items(items = state, key = { it.id }) { plan ->
+                        LiftAppCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(0.dp),
+                            onClick = { onAction(Action.OnPlanClick(plan.id)) },
+                            colors =
+                                if (plan.isChecked) {
+                                    LiftAppCardDefaults.tonalCardColors
+                                } else {
+                                    LiftAppCardDefaults.cardColors
+                                },
+                        ) {
+                            PlanItem(
+                                plan = plan,
+                                isPickingTrainingPlan = state.isPickingTrainingPlan,
+                                onAction = onAction,
+                            )
+                        }
                     }
                 }
             }
@@ -104,9 +143,11 @@ private fun PlanListScreen(
 private fun Toolbar(
     isPickingTrainingPlan: Boolean,
     onAction: (Action) -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 ) {
     CompactTopAppBar(
+        scrollBehavior = scrollBehavior,
         title = {
             val title =
                 if (isPickingTrainingPlan) {
@@ -134,7 +175,7 @@ private fun PlanItem(
                 {
                     LiftAppRadioButton(
                         selected = plan.isChecked,
-                        onCheck = { onAction(Action.CheckPlan(plan.id)) },
+                        onCheck = { onAction(Action.OnPlanClick(plan.id)) },
                         colors = LiftAppRadioButtonDefaults.onSurfaceColors,
                     )
                 }

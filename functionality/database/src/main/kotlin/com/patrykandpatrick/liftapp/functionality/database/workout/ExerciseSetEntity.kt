@@ -37,5 +37,6 @@ data class ExerciseSetEntity(
     @ColumnInfo(name = "exercise_set_distance") val distance: Double? = null,
     @ColumnInfo(name = "exercise_set_distance_unit") val distanceUnit: LongDistanceUnit? = null,
     @ColumnInfo(name = "exercise_set_kcal") val kcal: Double? = null,
+    @ColumnInfo(name = "exercise_set_notes") val notes: String = "",
     @ColumnInfo(name = "workout_exercise_set_index") val setIndex: Int,
 )

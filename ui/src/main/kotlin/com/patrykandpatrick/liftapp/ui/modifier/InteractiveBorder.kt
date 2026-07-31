@@ -18,13 +18,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.interaction.HoverInteraction
 import com.patrykandpatrick.liftapp.ui.state.animatedColorStateOf
-import kotlin.properties.Delegates
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -34,6 +35,7 @@ fun Modifier.interactiveBorder(
     colors: InteractiveBorderColors,
     shape: Shape,
     width: Dp = 1.dp,
+    horizontalInset: Dp = 0.dp,
     checked: Boolean = false,
     animationSpec: AnimationSpec<Color> = spring(),
     maxWidth: Dp? = null,
@@ -45,6 +47,7 @@ fun Modifier.interactiveBorder(
             colors,
             shape,
             width,
+            horizontalInset,
             checked,
             animationSpec,
             maxWidth,
@@ -57,6 +60,7 @@ private data class InteractiveBorderElement(
     private val colors: InteractiveBorderColors,
     private val shape: Shape,
     private val strokeWidth: Dp,
+    private val horizontalInset: Dp,
     private val checked: Boolean,
     private val animationSpec: AnimationSpec<Color>,
     private val maxWidth: Dp?,
@@ -67,6 +71,7 @@ private data class InteractiveBorderElement(
             interactionSource,
             colors,
             strokeWidth,
+            horizontalInset,
             checked,
             shape,
             animationSpec,
@@ -75,14 +80,17 @@ private data class InteractiveBorderElement(
         )
 
     override fun update(node: BorderNode) {
-        node.interactionSource = interactionSource
-        node.colors = colors
-        node.shape = shape
-        node.strokeWidth = strokeWidth
-        node.checked = checked
-        node.animationSpec = animationSpec
-        node.maxWidth = maxWidth
-        node.maxHeight = maxHeight
+        node.update(
+            interactionSource = interactionSource,
+            colors = colors,
+            shape = shape,
+            strokeWidth = strokeWidth,
+            horizontalInset = horizontalInset,
+            checked = checked,
+            animationSpec = animationSpec,
+            maxWidth = maxWidth,
+            maxHeight = maxHeight,
+        )
     }
 
     override fun InspectorInfo.inspectableProperties() {
@@ -91,6 +99,7 @@ private data class InteractiveBorderElement(
         properties["colors"] = colors
         properties["shape"] = shape
         properties["width"] = strokeWidth
+        properties["horizontalInset"] = horizontalInset
         properties["checked"] = checked
         properties["maxWidth"] = maxWidth
         properties["maxHeight"] = maxHeight
@@ -98,29 +107,28 @@ private data class InteractiveBorderElement(
 }
 
 private class BorderNode(
-    var interactionSource: InteractionSource,
-    var colors: InteractiveBorderColors,
-    var strokeWidth: Dp,
-    var checked: Boolean,
-    shape: Shape,
-    animationSpec: AnimationSpec<Color>,
-    var maxWidth: Dp?,
-    var maxHeight: Dp?,
+    private var interactionSource: InteractionSource,
+    private var colors: InteractiveBorderColors,
+    private var strokeWidth: Dp,
+    private var horizontalInset: Dp,
+    private var checked: Boolean,
+    private var shape: Shape,
+    private var animationSpec: AnimationSpec<Color>,
+    private var maxWidth: Dp?,
+    private var maxHeight: Dp?,
 ) : DrawModifierNode, Modifier.Node() {
 
     private val idleColor: Color
         get() = if (checked) colors.checkedColor else colors.color
 
-    var shape: Shape by Delegates.observable(shape) { _, _, _ -> updateBorderColors() }
-
-    var animationSpec: AnimationSpec<Color> by
-        Delegates.observable(animationSpec) { _, _, _ -> updateBorderColors() }
-
     private var borderPrimaryColor = animatedColorStateOf(idleColor, animationSpec)
 
     private var borderSecondaryColor = animatedColorStateOf(idleColor, animationSpec)
 
-    private fun updateBorderColors() {
+    private var interactionCollectionJob: Job? = null
+    private val activeDrags = mutableSetOf<DragInteraction.Start>()
+
+    private fun resetBorderColors() {
         borderPrimaryColor = animatedColorStateOf(idleColor, animationSpec)
         borderSecondaryColor = animatedColorStateOf(idleColor, animationSpec)
     }
@@ -128,7 +136,62 @@ private class BorderNode(
     private val touchOffset = mutableStateOf(Offset.Companion.Zero)
 
     override fun onAttach() {
-        coroutineScope.launch {
+        observeInteractions()
+    }
+
+    fun update(
+        interactionSource: InteractionSource,
+        colors: InteractiveBorderColors,
+        shape: Shape,
+        strokeWidth: Dp,
+        horizontalInset: Dp,
+        checked: Boolean,
+        animationSpec: AnimationSpec<Color>,
+        maxWidth: Dp?,
+        maxHeight: Dp?,
+    ) {
+        val interactionSourceChanged = this.interactionSource !== interactionSource
+        val animationSpecChanged = this.animationSpec != animationSpec
+        val idleColorChanged =
+            this.colors != colors || this.checked != checked || animationSpecChanged
+        val currentPrimaryColor = borderPrimaryColor.value
+        val currentSecondaryColor = borderSecondaryColor.value
+
+        this.interactionSource = interactionSource
+        this.colors = colors
+        this.shape = shape
+        this.strokeWidth = strokeWidth
+        this.horizontalInset = horizontalInset
+        this.checked = checked
+        this.animationSpec = animationSpec
+        this.maxWidth = maxWidth
+        this.maxHeight = maxHeight
+
+        if (idleColorChanged) {
+            if (isAttached) {
+                if (animationSpecChanged) {
+                    borderPrimaryColor = animatedColorStateOf(currentPrimaryColor, animationSpec)
+                    borderSecondaryColor =
+                        animatedColorStateOf(currentSecondaryColor, animationSpec)
+                }
+                coroutineScope.launch {
+                    coroutineScope {
+                        launch { borderPrimaryColor.animate(idleColor) }
+                        launch { borderSecondaryColor.animate(idleColor) }
+                    }
+                }
+            } else {
+                resetBorderColors()
+            }
+        }
+        if (interactionSourceChanged && isAttached) observeInteractions()
+        invalidateDraw()
+    }
+
+    private fun observeInteractions() {
+        interactionCollectionJob?.cancel()
+        activeDrags.clear()
+        interactionCollectionJob = coroutineScope.launch {
             interactionSource.interactions.collectLatest { interaction ->
                 coroutineScope {
                     when (interaction) {
@@ -157,27 +220,40 @@ private class BorderNode(
                         }
 
                         is PressInteraction.Release -> {
-                            launch {
-                                borderPrimaryColor.animate(colors.pressedColor)
-                                borderPrimaryColor.animate(idleColor)
-                            }
-                            launch {
-                                borderSecondaryColor.animate(colors.pressedColor)
-                                borderSecondaryColor.animate(idleColor)
-                            }
+                            val targetColor =
+                                if (activeDrags.isEmpty()) idleColor else colors.draggedColor
+                            launch { borderPrimaryColor.animate(targetColor) }
+                            launch { borderSecondaryColor.animate(targetColor) }
                         }
 
                         is DragInteraction.Start -> {
+                            activeDrags += interaction
                             launch { borderPrimaryColor.animate(colors.draggedColor) }
                             launch { borderSecondaryColor.animate(colors.draggedColor) }
                         }
 
-                        is DragInteraction.Stop,
-                        is DragInteraction.Cancel,
+                        is DragInteraction.Stop -> {
+                            activeDrags -= interaction.start
+                            val targetColor =
+                                if (activeDrags.isEmpty()) idleColor else colors.draggedColor
+                            launch { borderPrimaryColor.animate(targetColor) }
+                            launch { borderSecondaryColor.animate(targetColor) }
+                        }
+
+                        is DragInteraction.Cancel -> {
+                            activeDrags -= interaction.start
+                            val targetColor =
+                                if (activeDrags.isEmpty()) idleColor else colors.draggedColor
+                            launch { borderPrimaryColor.animate(targetColor) }
+                            launch { borderSecondaryColor.animate(targetColor) }
+                        }
+
                         is HoverInteraction.Exit,
                         is PressInteraction.Cancel -> {
-                            launch { borderPrimaryColor.animate(idleColor) }
-                            launch { borderSecondaryColor.animate(idleColor) }
+                            val targetColor =
+                                if (activeDrags.isEmpty()) idleColor else colors.draggedColor
+                            launch { borderPrimaryColor.animate(targetColor) }
+                            launch { borderSecondaryColor.animate(targetColor) }
                         }
                     }
                 }
@@ -187,7 +263,7 @@ private class BorderNode(
 
     override fun ContentDrawScope.draw() {
         val borderWidth = strokeWidth.roundToPx()
-        val actualMaxWidth = size.width - borderWidth
+        val actualMaxWidth = size.width - borderWidth - horizontalInset.toPx() * 2
         val actualMaxHeight = size.height - borderWidth
         val width = maxWidth?.toPx()?.coerceAtMost(actualMaxWidth) ?: actualMaxWidth
         val height = maxHeight?.toPx()?.coerceAtMost(actualMaxHeight) ?: actualMaxHeight

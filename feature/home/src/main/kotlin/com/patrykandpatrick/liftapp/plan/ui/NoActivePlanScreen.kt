@@ -6,65 +6,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
-import com.patrykandpatrick.liftapp.core.ui.BottomSheetContent
-import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatrick.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
 import com.patrykandpatrick.liftapp.plan.model.Action
+import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
-import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
-import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Open
+import com.patrykandpatrick.liftapp.ui.icons.Plan
 import com.patrykandpatrick.liftapp.ui.icons.Plus
-import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import kotlinx.coroutines.launch
 
 @Composable
-internal fun NoActivePlanScreen(onAction: (Action) -> Unit) {
-    val padding = LocalDimens.current.padding
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement =
-            Arrangement.spacedBy(padding.itemVerticalSmall, Alignment.CenterVertically),
+internal fun NoActivePlanScreen(hasPlans: Boolean, onAction: (Action) -> Unit) {
+    EmptyState(
+        icon = LiftAppIcons.Plan,
+        message = stringResource(R.string.plan_no_active_plan),
         modifier =
             Modifier.fillMaxSize()
                 .padding(
-                    horizontal = padding.contentHorizontal,
-                    vertical = padding.contentVertical,
+                    horizontal = dimens.screen.horizontalPadding,
+                    vertical = dimens.screen.verticalPadding,
                 ),
     ) {
-        Text(
-            text = stringResource(R.string.plan_no_active_plan),
-            style = MaterialTheme.typography.headlineMedium,
-            color = colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-        )
-
-        Text(
-            text = "\uD83D\uDCC2",
-            fontSize = 88.sp,
-            modifier = Modifier.padding(vertical = padding.itemVertical),
-        )
-
-        ChooseExistingButton(onAction)
-
-        CreateNewButton(onAction)
+        if (hasPlans) ChooseExistingButton(onAction)
+        CreateNewButton(onAction, primary = !hasPlans)
     }
 }
 
@@ -74,7 +49,6 @@ private fun ChooseExistingButton(onAction: (Action) -> Unit, modifier: Modifier 
         Icon(
             imageVector = LiftAppIcons.Open,
             contentDescription = null,
-            modifier = Modifier.padding(end = LocalDimens.current.padding.itemHorizontalSmall),
         )
 
         Text(stringResource(R.string.plan_no_active_plan_choose_existing_cta))
@@ -82,16 +56,24 @@ private fun ChooseExistingButton(onAction: (Action) -> Unit, modifier: Modifier 
 }
 
 @Composable
-private fun CreateNewButton(onAction: (Action) -> Unit, modifier: Modifier = Modifier) {
+private fun CreateNewButton(
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+    primary: Boolean = false,
+) {
     LiftAppButton(
         onClick = { onAction(Action.CreateNewPlan) },
         modifier = modifier,
-        colors = LiftAppButtonDefaults.outlinedButtonColors,
+        colors =
+            if (primary) {
+                LiftAppButtonDefaults.primaryButtonColors
+            } else {
+                LiftAppButtonDefaults.outlinedButtonColors
+            },
     ) {
         Icon(
             imageVector = LiftAppIcons.Plus,
             contentDescription = null,
-            modifier = Modifier.padding(end = LocalDimens.current.padding.itemHorizontalSmall),
         )
         Text(stringResource(R.string.plan_no_active_plan_create_cta))
     }
@@ -99,82 +81,50 @@ private fun CreateNewButton(onAction: (Action) -> Unit, modifier: Modifier = Mod
 
 @Composable
 internal fun EditBottomSheet(onDismissRequest: () -> Unit, onAction: (Action) -> Unit) {
-    val sheetState = rememberModalBottomSheetState()
-
-    ModalBottomSheet(
+    LiftAppModalBottomSheetWithTopAppBar(
         onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        dragHandle = null,
-        containerColor = colorScheme.surface,
-    ) {
-        val coroutineScope = rememberCoroutineScope()
-
+        title = { Text(text = stringResource(R.string.training_plan_change_title)) },
+    ) { dismiss ->
         EditBottomSheetContent(
-            onDismissRequest = {
-                coroutineScope.launch {
-                    sheetState.hide()
-                    onDismissRequest()
-                }
-            },
             onAction = { action ->
-                coroutineScope.launch {
-                    sheetState.hide()
-                    onDismissRequest()
-                    onAction(action)
-                }
-            },
+                onAction(action)
+                dismiss()
+            }
         )
     }
 }
 
 @Composable
 private fun EditBottomSheetContent(
-    onDismissRequest: () -> Unit,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val padding = dimens.padding
-    BottomSheetContent(
-        topContent = {
-            CompactTopAppBar(
-                title = { Text(text = stringResource(R.string.training_plan_change_title)) },
-                navigationIcon = {
-                    LiftAppIconButton(onClick = onDismissRequest) {
-                        Icon(LiftAppIcons.Cross, stringResource(R.string.action_close))
-                    }
-                },
-            )
-        },
-        bottomContent = {
-            Column(
-                verticalArrangement =
-                    Arrangement.spacedBy(padding.itemVerticalSmall, Alignment.Bottom),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(bottom = padding.itemVertical),
-            ) {
-                ChooseExistingButton(
-                    onAction,
-                    Modifier.fillMaxWidth().padding(horizontal = padding.contentHorizontal),
-                )
-
-                CreateNewButton(
-                    onAction,
-                    Modifier.fillMaxWidth().padding(horizontal = padding.contentHorizontal),
-                )
-            }
-        },
-        modifier = modifier.padding(vertical = padding.itemVertical),
-    )
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(
+                    start = dimens.screen.horizontalPadding,
+                    top = 8.dp,
+                    end = dimens.screen.horizontalPadding,
+                    bottom = 16.dp,
+                ),
+    ) {
+        ChooseExistingButton(onAction, Modifier.fillMaxWidth())
+        CreateNewButton(onAction, Modifier.fillMaxWidth())
+    }
 }
 
 @Composable
 @MultiDevicePreview
 private fun NoActivePlanScreenPreview() {
-    PreviewTheme { NoActivePlanScreen(onAction = {}) }
+    PreviewTheme { NoActivePlanScreen(hasPlans = true, onAction = {}) }
 }
 
 @Composable
 @MultiDevicePreview
 private fun EditBottomSheetPreview() {
-    PreviewTheme { EditBottomSheetContent(onDismissRequest = {}, onAction = {}) }
+    PreviewTheme { EditBottomSheetContent(onAction = {}) }
 }

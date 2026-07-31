@@ -100,6 +100,7 @@ constructor(
             weight = weight ?: 0.0,
             reps = reps ?: 0,
             weightUnit = weightUnit ?: massUnit,
+            notes = notes,
         )
 
     private fun ExerciseSetEntity.toCalisthenicsSet(
@@ -114,10 +115,12 @@ constructor(
                     ?: 0.0,
             reps = reps ?: 0,
             weightUnit = weightUnit,
+            notes = notes,
         )
     }
 
-    private fun ExerciseSetEntity.toRepsSet(): ExerciseSet.Reps = ExerciseSet.Reps(reps ?: 0)
+    private fun ExerciseSetEntity.toRepsSet(): ExerciseSet.Reps =
+        ExerciseSet.Reps(reps = reps ?: 0, notes = notes)
 
     private fun ExerciseSetEntity.toCardioSet(distanceUnit: LongDistanceUnit): ExerciseSet.Cardio =
         ExerciseSet.Cardio(
@@ -125,8 +128,9 @@ constructor(
             distance = distance ?: 0.0,
             kcal = kcal ?: 0.0,
             distanceUnit = distanceUnit,
+            notes = notes,
         )
 
     private fun ExerciseSetEntity.toTimeSet(): ExerciseSet.Time =
-        ExerciseSet.Time((timeMillis ?: 0).milliseconds)
+        ExerciseSet.Time(duration = (timeMillis ?: 0).milliseconds, notes = notes)
 }

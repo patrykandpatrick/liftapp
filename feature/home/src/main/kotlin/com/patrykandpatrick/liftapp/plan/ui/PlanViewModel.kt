@@ -43,6 +43,7 @@ constructor(
             Action.CreateNewPlan -> createNewPlan()
             is Action.OnPlanItemClick -> onPlanItemClick(action.item)
             is Action.StartWorkout -> onStartWorkoutClick(action.item)
+            is Action.GoToWorkout -> goToWorkout(action.workoutID)
         }
     }
 
@@ -77,6 +78,10 @@ constructor(
         viewModelScope.launch {
             navigationCommander.navigateTo(Routes.Workout.new(item.routine.id))
         }
+    }
+
+    private fun goToWorkout(workoutID: Long) {
+        viewModelScope.launch { navigationCommander.navigateTo(Routes.Workout.edit(workoutID)) }
     }
 
     companion object {

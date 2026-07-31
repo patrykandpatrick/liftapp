@@ -148,8 +148,8 @@ fun SupportingText(
         Column(
             modifier =
                 modifier.padding(
-                    horizontal = dimens.padding.supportingTextHorizontal,
-                    vertical = dimens.padding.supportingTextVertical,
+                    horizontal = dimens.supportingText.horizontalPadding,
+                    vertical = dimens.supportingText.verticalPadding,
                 )
         ) {
             AnimatedVisibility(visible = errorVisible) {

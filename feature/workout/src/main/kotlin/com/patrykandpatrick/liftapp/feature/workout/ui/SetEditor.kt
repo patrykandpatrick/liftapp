@@ -23,9 +23,11 @@ import com.patrykandpatrick.liftapp.core.text.DoubleTextFieldState
 import com.patrykandpatrick.liftapp.core.text.IntTextFieldState
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatrick.liftapp.core.text.LongTextFieldState
+import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.core.text.updateValueBy
 import com.patrykandpatrick.liftapp.core.ui.InfoCard
 import com.patrykandpatrick.liftapp.core.ui.InputFieldLayout
+import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatrick.liftapp.core.ui.SupportingText
 import com.patrykandpatrick.liftapp.core.ui.input.NumberInput
 import com.patrykandpatrick.liftapp.core.ui.wheel.DurationPicker
@@ -36,7 +38,6 @@ import com.patrykandpatrick.liftapp.domain.unit.ValueUnit
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import kotlin.time.Duration.Companion.hours
@@ -86,6 +87,8 @@ internal fun <T : ExerciseSet> ColumnScope.SetEditorContent(
             TimeInput(textFieldState = editableExerciseSet.timeInput)
         }
     }
+
+    NotesInput(textFieldState = editableExerciseSet.notesInput)
 }
 
 @Composable
@@ -184,12 +187,25 @@ private fun CaloriesInput(textFieldState: DoubleTextFieldState, modifier: Modifi
 }
 
 @Composable
+private fun NotesInput(textFieldState: TextFieldState<String>, modifier: Modifier = Modifier) {
+    val focusManager = LocalFocusManager.current
+    LiftAppTextFieldWithSupportingText(
+        textFieldState = textFieldState,
+        placeholder = { Text(stringResource(R.string.generic_notes)) },
+        minLines = 3,
+        maxLines = 5,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+        modifier = modifier,
+    )
+}
+
+@Composable
 private fun <T : ExerciseSet> SetEditorPreview(editableExerciseSet: EditableExerciseSet<T>) {
     LiftAppTheme {
         LiftAppBackground {
             Column(
-                verticalArrangement =
-                    Arrangement.spacedBy(LocalDimens.current.padding.itemVertical),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(16.dp),
             ) {
                 SetEditorContent(editableExerciseSet = editableExerciseSet)
@@ -211,6 +227,7 @@ private fun SetEditorWeightExercisePreview() {
                     weightInput = textFieldStateManager.doubleTextField(initialValue = "100"),
                     repsInput = textFieldStateManager.intTextField(initialValue = "10"),
                     weightUnit = MassUnit.Kilograms,
+                    notesInput = textFieldStateManager.stringTextField(),
                 )
         )
     }
@@ -231,6 +248,7 @@ private fun SetEditorCalisthenicsExercisePreview() {
                     weightInput = textFieldStateManager.doubleTextField(initialValue = "20"),
                     repsInput = textFieldStateManager.intTextField(initialValue = "10"),
                     weightUnit = MassUnit.Kilograms,
+                    notesInput = textFieldStateManager.stringTextField(),
                 )
         )
     }
@@ -251,6 +269,7 @@ private fun SetEditorTimeExercisePreview() {
                     distanceUnit = LongDistanceUnit.Kilometer,
                     kcal = 458.0,
                     kcalInput = textFieldStateManager.doubleTextField(initialValue = "458"),
+                    notesInput = textFieldStateManager.stringTextField(),
                 )
         )
     }

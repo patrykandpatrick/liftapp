@@ -30,7 +30,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
 import com.patrykandpatrick.liftapp.ui.component.LiftAppModalBottomSheet
 import com.patrykandpatrick.liftapp.ui.component.LiftAppRadioButton
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.modifier.fadingEdges
@@ -178,7 +177,7 @@ private fun <T> ListBottomSheetContent(
         if (isMultiSelect) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = dimens.padding.contentHorizontalSmall),
+                modifier = Modifier.padding(start = 8.dp),
             ) {
                 Text(
                     text = stringResource(R.string.title_x_selected, selectedItems.size),
@@ -199,8 +198,7 @@ private fun <T> ListBottomSheetContent(
 
         LazyColumn(
             state = lazyListState,
-            contentPadding =
-                PaddingValues(horizontal = 2.dp, vertical = dimens.padding.itemVerticalSmall),
+            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 8.dp),
             modifier =
                 Modifier.fadingEdges(verticalEdgeLength = 32.dp, lazyListState = lazyListState)
                     .weight(1f, fill = false),
@@ -227,8 +225,8 @@ private fun <T> ListBottomSheetContent(
                     enabled = enabled,
                     paddingValues =
                         PaddingValues(
-                            horizontal = dimens.padding.contentHorizontal,
-                            vertical = dimens.padding.itemVerticalMedium,
+                            horizontal = 16.dp,
+                            vertical = 12.dp,
                         ),
                     onClick = { onClick(item) },
                 )
@@ -240,8 +238,8 @@ private fun <T> ListBottomSheetContent(
             modifier =
                 Modifier.fillMaxWidth()
                     .padding(
-                        horizontal = dimens.padding.contentHorizontal,
-                        vertical = dimens.padding.itemVertical,
+                        horizontal = 16.dp,
+                        vertical = 16.dp,
                     ),
         ) {
             Text(text = stringResource(id = R.string.action_apply))

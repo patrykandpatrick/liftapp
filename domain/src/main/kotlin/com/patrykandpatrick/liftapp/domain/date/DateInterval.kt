@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.domain.date
 
 import java.io.Serializable
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -37,15 +38,22 @@ sealed class DateInterval : Serializable {
         }
     }
 
-    data class RollingWeek(override val periodShift: Long = 0) : DateInterval() {
+    data class RollingWeek(
+        override val periodShift: Long = 0,
+        val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY,
+    ) : DateInterval() {
 
         override val periodStartTime: LocalDateTime
-            get() = LocalDate.now().atStartOfWeek().plusDays(7L * periodShift)
+            get() =
+                LocalDate.now()
+                    .atStartOfWeek(firstDayOfWeek)
+                    .plusDays(DAYS_IN_WEEK.toLong() * periodShift)
 
         override val periodEndTime: LocalDateTime
-            get() = periodStartTime.plusDays(6L)
+            get() = periodStartTime.plusDays(DAYS_IN_WEEK - 1L).toLocalDate().atEndOfDay()
 
-        override fun shift(periodShift: Long): DateInterval = RollingWeek(periodShift)
+        override fun shift(periodShift: Long): DateInterval =
+            RollingWeek(periodShift, firstDayOfWeek)
     }
 
     data class RollingMonth(override val periodShift: Long = 0) : DateInterval() {
@@ -71,17 +79,21 @@ sealed class DateInterval : Serializable {
     }
 
     companion object {
-        val exerciseOptions: List<DateInterval>
-            get() = listOf(RollingDays.Standard, RollingWeek(), RollingMonth(), RollingYear())
+        fun exerciseOptions(firstDayOfWeek: DayOfWeek): List<DateInterval> =
+            listOf(
+                RollingDays.Standard,
+                RollingWeek(firstDayOfWeek = firstDayOfWeek),
+                RollingMonth(),
+                RollingYear(),
+            )
 
-        val bodyMeasurementOptions: List<DateInterval>
-            get() =
-                listOf(
-                    RollingDays(7),
-                    RollingWeek(),
-                    RollingDays.Standard,
-                    RollingMonth(),
-                    RollingYear(),
-                )
+        fun bodyMeasurementOptions(firstDayOfWeek: DayOfWeek): List<DateInterval> =
+            listOf(
+                RollingDays(DAYS_IN_WEEK),
+                RollingWeek(firstDayOfWeek = firstDayOfWeek),
+                RollingDays.Standard,
+                RollingMonth(),
+                RollingYear(),
+            )
     }
 }

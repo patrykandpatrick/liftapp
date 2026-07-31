@@ -85,6 +85,26 @@ class OneRepMaxStateTest {
         }
 
     @Test
+    fun `Given another calculation is saved, the newest entry is first`() =
+        runTest(coroutineContext) {
+            sut.updateMass("100")
+            sut.updateReps("5")
+            advanceUntilIdle()
+
+            sut.updateMass("80")
+            advanceUntilIdle()
+
+            assertEquals(
+                formatter.formatWeight(80.0, MassUnit.Kilograms),
+                sut.history.value[0].mass,
+            )
+            assertEquals(
+                formatter.formatWeight(100.0, MassUnit.Kilograms),
+                sut.history.value[1].mass,
+            )
+        }
+
+    @Test
     fun `Given history is cleared, the history is empty`() =
         runTest(coroutineContext) {
             sut.updateMass("100")

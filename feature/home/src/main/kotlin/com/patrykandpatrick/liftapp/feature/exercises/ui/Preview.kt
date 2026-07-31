@@ -1,10 +1,13 @@
 package com.patrykandpatrick.liftapp.feature.exercises.ui
 
 import androidx.compose.runtime.Composable
-import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.preview.PreviewResource
 import com.patrykandpatrick.liftapp.feature.exercises.model.ScreenState
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
+import com.patrykandpatrick.liftapp.ui.icons.BicepsFlexed
+import com.patrykandpatrick.liftapp.ui.icons.Dumbbell
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Timer
 
 @Composable
 internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
@@ -19,7 +22,7 @@ internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
                     key = 0,
                     name = "Arnold Shoulder Press",
                     muscles = "Shoulders",
-                    iconRes = R.drawable.ic_workout,
+                    icon = LiftAppIcons.Dumbbell,
                     checked = true,
                 ),
                 ExercisesItem.Exercise(
@@ -27,7 +30,7 @@ internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
                     key = 1,
                     name = "Australian Push-Up",
                     muscles = "Lats",
-                    iconRes = R.drawable.ic_calisthenics,
+                    icon = LiftAppIcons.BicepsFlexed,
                     checked = true,
                 ),
                 ExercisesItem.Exercise(
@@ -35,7 +38,7 @@ internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
                     key = 2,
                     name = "Axe Hold",
                     muscles = "Shoulders",
-                    iconRes = R.drawable.ic_time,
+                    icon = LiftAppIcons.Timer,
                 ),
                 ExercisesItem.Header("B"),
                 ExercisesItem.Exercise(
@@ -43,14 +46,14 @@ internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
                     key = 3,
                     name = "Back Extension",
                     muscles = "Lower Back",
-                    iconRes = R.drawable.ic_workout,
+                    icon = LiftAppIcons.Dumbbell,
                 ),
                 ExercisesItem.Exercise(
                     id = 4,
                     key = 4,
                     name = "Barbell Bicep Curl",
                     muscles = "Biceps",
-                    iconRes = R.drawable.ic_workout,
+                    icon = LiftAppIcons.Dumbbell,
                     checked = true,
                 ),
                 ExercisesItem.Exercise(
@@ -58,21 +61,21 @@ internal fun getScreenState(mode: ExerciseListRouteData.Mode): ScreenState =
                     key = 5,
                     name = "Barbell French Press",
                     muscles = "Triceps",
-                    iconRes = R.drawable.ic_workout,
+                    icon = LiftAppIcons.Dumbbell,
                 ),
                 ExercisesItem.Exercise(
                     id = 6,
                     key = 6,
                     name = "Barbell Row",
                     muscles = "Lats",
-                    iconRes = R.drawable.ic_workout,
+                    icon = LiftAppIcons.Dumbbell,
                 ),
                 ExercisesItem.Exercise(
                     id = 7,
                     key = 7,
                     name = "Bulgarian Split Squat",
                     muscles = "Quadriceps",
-                    iconRes = R.drawable.ic_workout,
+                    icon = LiftAppIcons.Dumbbell,
                 ),
             ),
     )

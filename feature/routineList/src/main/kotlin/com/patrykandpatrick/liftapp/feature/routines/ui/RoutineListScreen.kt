@@ -1,30 +1,44 @@
 package com.patrykandpatrick.liftapp.feature.routines.ui
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.extension.increaseBy
 import com.patrykandpatrick.liftapp.core.model.Unfold
 import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.routine.RoutineCard
+import com.patrykandpatrick.liftapp.domain.extension.moved
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.feature.routines.model.Action
 import com.patrykandpatrick.liftapp.feature.routines.model.RoutineItem
+import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
@@ -33,7 +47,11 @@ import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
 import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
+import com.patrykandpatrick.liftapp.ui.icons.Routine
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyStaggeredGridState
 
 @Composable
 fun RoutineListScreen(
@@ -51,10 +69,16 @@ private fun RoutineListScreen(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val dimensPadding = LocalDimens.current.padding
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val dimens = LocalDimens.current
+    val cardGutter = 8.dp
+    val fabHeight = 24.dp + dimens.fab.verticalPadding * 2
+    // The scaffold leaves 16 dp below the FAB; use the standard screen padding above it.
+    val bottomContentPadding = fabHeight + 16.dp + dimens.screen.verticalPadding
 
     LiftAppScaffold(
-        modifier = modifier.fillMaxHeight(),
+        modifier =
+            modifier.fillMaxHeight().nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             LiftAppFAB(
                 content = {
@@ -67,6 +91,7 @@ private fun RoutineListScreen(
         topBar = {
             loadableState.Unfold { state ->
                 CompactTopAppBar(
+                    scrollBehavior = topAppBarScrollBehavior,
                     title = {
                         if (state.isPickingRoutine) {
                             Text(stringResource(id = R.string.route_pick_routine))
@@ -95,21 +120,80 @@ private fun RoutineListScreen(
         contentWindowInsets = WindowInsets.systemBars,
     ) { internalPadding ->
         loadableState.Unfold { state ->
-            LazyVerticalStaggeredGrid(
-                modifier = Modifier.padding(internalPadding),
-                columns =
-                    StaggeredGridCells.Adaptive(minSize = LocalDimens.current.routine.minCardWidth),
-                contentPadding =
-                    PaddingValues(
-                        horizontal = dimensPadding.contentHorizontalSmall,
-                        vertical = dimensPadding.contentVertical,
-                    ),
-                verticalItemSpacing = dimensPadding.itemVerticalSmall,
-                horizontalArrangement = Arrangement.spacedBy(dimensPadding.itemHorizontalSmall),
-            ) {
-                items(items = state, key = { it.id }) { routine ->
-                    LiftAppCard(onClick = { onAction(Action.RoutineClicked(routine.id)) }) {
-                        RoutineCard(routineName = routine.name, exerciseNames = routine.exercises)
+            if (state.routines.isEmpty()) {
+                EmptyState(
+                    icon = LiftAppIcons.Routine,
+                    message = stringResource(R.string.state_no_routines),
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .padding(internalPadding)
+                            .padding(
+                                horizontal = dimens.screen.horizontalPadding,
+                                vertical = dimens.screen.verticalPadding,
+                            ),
+                )
+            } else {
+                var routines by remember(state.routines) { mutableStateOf(state.routines) }
+                var orderBeforeDrag by remember { mutableStateOf(emptyList<Long>()) }
+                val lazyGridState = rememberLazyStaggeredGridState()
+                val reorderableState =
+                    rememberReorderableLazyStaggeredGridState(lazyGridState) { from, to ->
+                        routines = routines.moved(from.index, to.index)
+                    }
+
+                LazyVerticalStaggeredGrid(
+                    state = lazyGridState,
+                    modifier = Modifier.fillMaxSize(),
+                    columns = StaggeredGridCells.Adaptive(minSize = dimens.routine.minCardWidth),
+                    contentPadding =
+                        internalPadding.increaseBy(
+                            start = dimens.screen.horizontalPadding - cardGutter,
+                            top = cardGutter,
+                            end = dimens.screen.horizontalPadding - cardGutter,
+                            bottom = bottomContentPadding,
+                        ),
+                    verticalItemSpacing = cardGutter,
+                    horizontalArrangement = Arrangement.spacedBy(cardGutter),
+                ) {
+                    items(items = routines, key = { it.id }) { routine ->
+                        ReorderableItem(
+                            state = reorderableState,
+                            key = routine.id,
+                            enabled = !state.isPickingRoutine,
+                        ) { isDragging ->
+                            val interactionSource = remember { MutableInteractionSource() }
+                            val cardColors = LiftAppCardDefaults.cardColors
+                            LiftAppCard(
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .longPressDraggableHandle(
+                                            enabled = !state.isPickingRoutine,
+                                            interactionSource = interactionSource,
+                                            onDragStarted = {
+                                                orderBeforeDrag = routines.map(RoutineItem::id)
+                                            },
+                                            onDragStopped = {
+                                                val routineIDs = routines.map(RoutineItem::id)
+                                                if (routineIDs != orderBeforeDrag) {
+                                                    onAction(Action.ReorderRoutines(routineIDs))
+                                                }
+                                            },
+                                        ),
+                                onClick = { onAction(Action.RoutineClicked(routine.id)) },
+                                colors =
+                                    if (isDragging) {
+                                        cardColors.copy(backgroundColor = colorScheme.background)
+                                    } else {
+                                        cardColors
+                                    },
+                                interactionSource = interactionSource,
+                            ) {
+                                RoutineCard(
+                                    routineName = routine.name,
+                                    exerciseNames = routine.exercises,
+                                )
+                            }
+                        }
                     }
                 }
             }

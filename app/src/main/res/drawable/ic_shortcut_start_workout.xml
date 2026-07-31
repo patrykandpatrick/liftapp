@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+The launcher masks an adaptive icon into whatever shape it uses, so the background layer becomes the
+container rather than sitting inside one. `android:icon` asks for adaptive icons wherever possible.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/shortcut_icon_background" />
+    <foreground android:drawable="@drawable/ic_shortcut_start_workout_foreground" />
+</adaptive-icon>

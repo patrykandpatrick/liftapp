@@ -6,8 +6,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.patrykandpatrick.liftapp.ui.icons.ChevronDown
 import com.patrykandpatrick.liftapp.ui.icons.CirclePlus
-import com.patrykandpatrick.liftapp.ui.icons.Dropdown
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.ComponentPreview
 import com.patrykandpatrick.liftapp.ui.preview.GridPreviewSurface
@@ -60,7 +60,9 @@ fun LiftAppChipPreview() {
                         {
                             LiftAppChip(
                                 onClick = {},
-                                trailingIcon = { Icon(LiftAppIcons.Dropdown, null) },
+                                trailingIcon = {
+                                    LiftAppFilterChipDefaults.Icon(LiftAppIcons.ChevronDown)
+                                },
                             ) {
                                 Text("Chip")
                             }

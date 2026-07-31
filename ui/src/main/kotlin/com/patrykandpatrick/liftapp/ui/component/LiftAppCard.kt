@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.GridPreviewSurface
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -45,16 +44,16 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 fun LiftAppCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     colors: ContainerColors = LiftAppCardDefaults.cardColors,
-    contentPadding: PaddingValues =
-        PaddingValues(dimens.padding.itemHorizontal, dimens.padding.itemVertical),
+    contentPadding: PaddingValues = PaddingValues(16.dp, 16.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(4.dp),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     shape: Shape = MaterialTheme.shapes.medium,
     interactionSource: MutableInteractionSource? = null,
     role: Role? = null,
-    minSize: DpSize = DpSize(0.dp, dimens.button.minContentHeight),
+    minSize: DpSize = DpSize(0.dp, 24.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     CardBase(
@@ -70,9 +69,11 @@ fun LiftAppCard(
                 Modifier.interactiveButtonEffect(
                         colors = colors.interactiveBorderColors,
                         onClick = onClick,
+                        onLongClick = onLongClick,
                         enabled = enabled,
                         role = role,
                         shape = shape,
+                        interactionSource = interactionSource,
                     )
                     .clip(shape)
                     .background(color = colors.getBackgroundColor(enabled), shape = shape)

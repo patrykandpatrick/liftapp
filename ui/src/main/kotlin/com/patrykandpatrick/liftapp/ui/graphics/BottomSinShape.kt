@@ -45,7 +45,7 @@ class BottomSinShape(
 fun rememberBottomSinShape(
     sinPeriodLength: Dp = LocalDimens.current.divider.sinPeriodLength,
     sinHeight: Dp = LocalDimens.current.divider.sinHeight,
-    strokeWidth: Dp = LocalDimens.current.strokeWidth,
+    strokeWidth: Dp = LocalDimens.current.divider.thickness,
 ): BottomSinShape =
     remember(sinPeriodLength, sinHeight, strokeWidth) {
         BottomSinShape(sinPeriodLength, sinHeight, strokeWidth)

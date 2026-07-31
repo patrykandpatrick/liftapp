@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,8 +36,10 @@ import com.patrykandpatrick.liftapp.core.text.StringTextFieldState
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
 import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Search
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
@@ -97,9 +96,7 @@ fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifie
         ) {
             AnimatedContent(targetState = focused) { targetState ->
                 Icon(
-                    imageVector =
-                        if (targetState) Icons.AutoMirrored.Filled.ArrowBack
-                        else Icons.Default.Search,
+                    imageVector = if (targetState) LiftAppIcons.ArrowBack else LiftAppIcons.Search,
                     contentDescription = null,
                     tint = colorScheme.onSurface,
                 )

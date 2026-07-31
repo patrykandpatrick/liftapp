@@ -31,8 +31,8 @@ fun ColumnScope.SupportingText(
             Box(
                 modifier =
                     modifier.padding(
-                        horizontal = dimens.padding.supportingTextHorizontal,
-                        vertical = dimens.padding.supportingTextVertical,
+                        horizontal = dimens.supportingText.horizontalPadding,
+                        vertical = dimens.supportingText.verticalPadding,
                     )
             ) {
                 Text(text = text)

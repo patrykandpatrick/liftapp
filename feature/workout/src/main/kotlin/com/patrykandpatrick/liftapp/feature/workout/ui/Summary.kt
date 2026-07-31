@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -48,12 +49,21 @@ import java.time.LocalTime
 internal fun Summary(
     summary: WorkoutPage.Summary,
     onAction: (Action) -> Unit,
+    listState: LazyListState,
+    isRestTimerVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val dimens = LocalDimens.current
     LazyColumn(
-        contentPadding = PaddingValues(vertical = dimens.padding.contentVertical),
-        verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
+        state = listState,
+        contentPadding =
+            PaddingValues(
+                top = dimens.screen.verticalPadding,
+                bottom =
+                    dimens.screen.verticalPadding +
+                        if (isRestTimerVisible) RestTimerContainerHeight else 0.dp,
+            ),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
         item(contentType = "name") {
@@ -119,7 +129,7 @@ private fun Name(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         interactionSource = interactionSource,
-        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
+        modifier = modifier.padding(horizontal = 16.dp),
     )
 
     interactionSource.OnFocusChanged { isFocused -> if (!isFocused) onNameSelected(name) }
@@ -135,8 +145,8 @@ private fun StartDateTime(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
-        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
     ) {
         DateInput(
             date = startDate,
@@ -165,8 +175,8 @@ private fun EndDateTime(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontal),
-        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
     ) {
         DateInput(
             date = endDate,
@@ -196,13 +206,13 @@ private fun Notes(
 
     LiftAppTextFieldWithSupportingText(
         textFieldState = notes,
-        label = { Text(stringResource(R.string.workout_summary_edit_workout_notes)) },
+        label = { Text(stringResource(R.string.generic_notes)) },
         minLines = 3,
         maxLines = 5,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         interactionSource = interactionSource,
-        modifier = modifier.padding(horizontal = LocalDimens.current.padding.itemHorizontal),
+        modifier = modifier.padding(horizontal = 16.dp),
     )
 
     interactionSource.OnFocusChanged { isFocused -> if (!isFocused) onNotesSelected(notes) }
@@ -237,7 +247,7 @@ private fun Exercise(
         },
         description = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(top = 12.dp),
             ) {
                 exercise.sets.forEachIndexed { setIndex, set ->
@@ -258,8 +268,8 @@ private fun Exercise(
         modifier = modifier,
         paddingValues =
             PaddingValues(
-                horizontal = dimens.padding.itemHorizontal,
-                vertical = dimens.padding.itemVerticalSmall,
+                horizontal = 16.dp,
+                vertical = 8.dp,
             ),
     )
 }

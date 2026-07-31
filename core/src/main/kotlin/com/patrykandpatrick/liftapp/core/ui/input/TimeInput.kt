@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
@@ -64,7 +65,7 @@ fun TimeInput(
                         time.updateValue(LocalTime.of(timePickerState.hour, timePickerState.minute))
                         onTimeSelected?.invoke(time)
                     },
-                    modifier = modifier.padding(end = dimens.padding.itemHorizontalSmall),
+                    modifier = modifier.padding(end = 8.dp),
                 ) {
                     Text(stringResource(R.string.workout_summary_edit_picker_confirm))
                 }
@@ -72,16 +73,16 @@ fun TimeInput(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
-                modifier = Modifier.fillMaxWidth().padding(vertical = dimens.padding.itemVertical),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
             ) {
                 Text(
                     text = stringResource(R.string.workout_summary_edit_workout_start_time),
                     style = MaterialTheme.typography.headlineSmall,
                     modifier =
                         Modifier.padding(
-                            dimens.padding.itemHorizontal,
-                            dimens.padding.itemVertical,
+                            16.dp,
+                            16.dp,
                         ),
                 )
 

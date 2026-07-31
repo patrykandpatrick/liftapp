@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,12 +23,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.Info
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -50,8 +53,10 @@ fun InfoCard(
 ) {
     val shape = RoundedCornerShape(12.dp)
     val colorScheme = colorScheme
+    val buttonPadding = LiftAppButtonDefaults.plainContentPadding
+    val layoutDirection = LocalLayoutDirection.current
     Column(
-        verticalArrangement = Arrangement.spacedBy(LocalDimens.current.padding.itemVerticalSmall),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier =
             modifier
                 .fillMaxWidth()
@@ -108,7 +113,7 @@ fun InfoCard(
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(space = 16.dp)) {
             Icon(
-                imageVector = Icons.Outlined.Info,
+                imageVector = LiftAppIcons.Info,
                 contentDescription = null,
                 tint = colorScheme.onSurface,
             )
@@ -123,9 +128,12 @@ fun InfoCard(
 
         if (buttons != null) {
             Row(
-                horizontalArrangement =
-                    Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
-                modifier = Modifier.align(Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier =
+                    Modifier.align(Alignment.End)
+                        // The card's 8.dp bottom padding already compensates for the button's
+                        // vertical inset. Only its invisible horizontal inset remains to remove.
+                        .offset(x = buttonPadding.calculateEndPadding(layoutDirection)),
                 content = buttons,
             )
         } else {

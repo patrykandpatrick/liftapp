@@ -7,5 +7,5 @@ import dagger.hilt.components.SingletonComponent
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface GlideEntryPoint {
-    val muscleContainerModelLoaderFactory: MuscleContainerModelLoader.Factory
+    val muscleImageModelLoaderFactory: MuscleImageModelLoader.Factory
 }

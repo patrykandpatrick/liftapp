@@ -6,4 +6,6 @@ interface Action {
     data object AddNewRoutine : Action
 
     data class RoutineClicked(val routineID: Long) : Action
+
+    data class ReorderRoutines(val routineIDs: List<Long>) : Action
 }

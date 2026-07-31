@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -49,7 +48,6 @@ import com.patrykandpatrick.liftapp.core.ui.dialog.DialogButtons
 import com.patrykandpatrick.liftapp.domain.extension.parseToIntOrNull
 import com.patrykandpatrick.liftapp.domain.extension.toIntOrZero
 import com.patrykandpatrick.liftapp.domain.time.TimeOfDay
-import com.patrykandpatrick.liftapp.ui.dimens.DialogDimens
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import java.text.DecimalFormat
@@ -61,36 +59,30 @@ fun TimePicker(
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     onTimePicked: (hour: Int, minute: Int) -> Unit,
 ) {
-    CompositionLocalProvider(LocalDimens provides DialogDimens) {
-        if (state.isShowing) {
-            Dialog(onDismissRequest = { state.isShowing = false }, properties = properties) {
-                Surface(
-                    modifier =
-                        modifier
-                            .widthIn(
-                                min = LocalDimens.current.dialog.minWidth,
-                                max = LocalDimens.current.dialog.maxWidth,
-                            )
-                            .width(IntrinsicSize.Min)
-                            .padding(all = LocalDimens.current.dialog.paddingLarge),
-                    color = MaterialTheme.colorScheme.surface,
-                    tonalElevation = LocalDimens.current.dialog.tonalElevation,
-                    shape = MaterialTheme.shapes.extraLarge,
-                ) {
-                    TimePickerContent(
-                        modifier =
-                            Modifier.padding(
-                                horizontal = LocalDimens.current.padding.contentHorizontal,
-                                vertical = LocalDimens.current.padding.contentVertical,
-                            ),
-                        state = state,
-                        onNegativeButtonClick = { state.isShowing = false },
-                        onPositiveButtonClick = {
-                            state.isShowing = false
-                            onTimePicked(state.hourInt, state.minuteInt)
-                        },
-                    )
-                }
+    if (state.isShowing) {
+        Dialog(onDismissRequest = { state.isShowing = false }, properties = properties) {
+            Surface(
+                modifier =
+                    modifier
+                        .widthIn(
+                            min = LocalDimens.current.dialog.minWidth,
+                            max = LocalDimens.current.dialog.maxWidth,
+                        )
+                        .width(IntrinsicSize.Min)
+                        .padding(all = LocalDimens.current.dialog.windowPadding),
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = LocalDimens.current.dialog.tonalElevation,
+                shape = MaterialTheme.shapes.extraLarge,
+            ) {
+                TimePickerContent(
+                    modifier = Modifier.padding(all = LocalDimens.current.dialog.contentPadding),
+                    state = state,
+                    onNegativeButtonClick = { state.isShowing = false },
+                    onPositiveButtonClick = {
+                        state.isShowing = false
+                        onTimePicked(state.hourInt, state.minuteInt)
+                    },
+                )
             }
         }
     }
@@ -107,18 +99,15 @@ private fun TimePickerContent(
 
     Column(modifier = modifier) {
         Text(
-            modifier = Modifier.padding(bottom = LocalDimens.current.padding.itemVertical),
+            modifier = Modifier.padding(bottom = 16.dp),
             text = stringResource(id = R.string.picker_time_title),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleSmall,
         )
 
         Row(
-            modifier =
-                Modifier.padding(top = LocalDimens.current.dialog.paddingLarge)
-                    .height(IntrinsicSize.Max),
-            horizontalArrangement =
-                Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall),
+            modifier = Modifier.padding(top = 24.dp).height(IntrinsicSize.Max),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             val inputTextStyle =
                 MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center)
@@ -142,7 +131,7 @@ private fun TimePickerContent(
             }
 
             Text(
-                modifier = Modifier.padding(top = LocalDimens.current.padding.itemVertical),
+                modifier = Modifier.padding(top = 16.dp),
                 text = stringResource(id = R.string.picker_time_colon),
                 style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
             )
@@ -170,7 +159,7 @@ private fun TimePickerContent(
         }
 
         DialogButtons(
-            modifier = Modifier.padding(top = LocalDimens.current.dialog.paddingLarge),
+            modifier = Modifier.padding(top = 24.dp),
             onPositiveButtonClick = onPositiveButtonClick,
             onNegativeButtonClick = onNegativeButtonClick,
         )

@@ -16,7 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.patrykandpatrick.liftapp.core.permission.getPermissionGrantedState
+import com.patrykandpatrick.liftapp.core.permission.requestPermission
 import com.patrykandpatrick.liftapp.feature.workout.model.RestTimerState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -248,7 +248,7 @@ fun rememberRestTimerServiceController(): RestTimerServiceController {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val permissionGranted =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getPermissionGrantedState(android.Manifest.permission.POST_NOTIFICATIONS)
+            requestPermission(android.Manifest.permission.POST_NOTIFICATIONS)
         } else {
             remember { mutableStateOf(true) }
         }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.liftapp.core.model.MuscleModel
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseSetGroup
+import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseStatistics
 import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseSummaryType
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.muscle.MuscleContainer
@@ -16,7 +17,9 @@ data class ScreenState(
     override val primaryMuscles: List<Muscle>,
     override val secondaryMuscles: List<Muscle>,
     override val tertiaryMuscles: List<Muscle>,
+    val hasExerciseHistory: Boolean,
     val exerciseSetGroups: List<ExerciseSetGroup>,
+    val exerciseStatistics: ExerciseStatistics?,
     val cartesianChartModelProducer: CartesianChartModelProducer,
     val dateInterval: DateInterval,
     val dateIntervalOptions: List<DateInterval>,

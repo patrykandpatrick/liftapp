@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -28,9 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
@@ -40,6 +45,8 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.core.extension.calculateStartPadding
+import com.patrykandpatrick.liftapp.core.extension.increaseBy
 import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults.ListItemTitle
 import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults.getDefaultDescription
 import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults.getDefaultIcon
@@ -52,7 +59,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
 import com.patrykandpatrick.liftapp.ui.component.StatefulContainerColors
 import com.patrykandpatrick.liftapp.ui.component.animateContainerColorsAsState
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
 import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -72,11 +78,12 @@ fun ListItem(
     description: String? = null,
     trailing: String? = null,
     enabled: Boolean = true,
-    checked: Boolean = false,
+    checked: Boolean? = null,
     actions: @Composable RowScope.() -> Unit = {},
     colors: StatefulContainerColors = ListItemDefaults.colors,
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     titleHighlightPosition: IntRange = IntRange.EMPTY,
+    horizontalVisualInset: Dp = ListItemDefaults.horizontalVisualInset(checked),
     interactionSource: MutableInteractionSource? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -91,6 +98,7 @@ fun ListItem(
         checked = checked,
         colors = colors,
         paddingValues = paddingValues,
+        horizontalVisualInset = horizontalVisualInset,
         interactionSource = interactionSource,
         onClick = onClick,
     )
@@ -104,11 +112,12 @@ fun ListItem(
     description: String? = null,
     trailing: String? = null,
     enabled: Boolean = true,
-    checked: Boolean = false,
+    checked: Boolean? = null,
     actions: @Composable RowScope.() -> Unit = {},
     colors: StatefulContainerColors = ListItemDefaults.colors,
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
     titleHighlightPosition: IntRange = IntRange.EMPTY,
+    horizontalVisualInset: Dp = ListItemDefaults.horizontalVisualInset(checked),
     interactionSource: MutableInteractionSource? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -123,6 +132,7 @@ fun ListItem(
         checked = checked,
         colors = colors,
         paddingValues = paddingValues,
+        horizontalVisualInset = horizontalVisualInset,
         interactionSource = interactionSource,
         onClick = onClick,
     )
@@ -139,13 +149,24 @@ fun ListItem(
     enabled: Boolean = true,
     colors: StatefulContainerColors = ListItemDefaults.colors,
     paddingValues: PaddingValues = ListItemDefaults.paddingValues,
-    checked: Boolean = false,
+    checked: Boolean? = null,
     shape: Shape = MaterialTheme.shapes.medium,
+    /**
+     * How far the background and border are drawn inside the row, and how far the content is pushed
+     * in to match. A checkable row takes it so its fill does not run to the screen edge; pass the
+     * same value to a plain row sitting under one, or their text will not line up.
+     */
+    horizontalVisualInset: Dp = ListItemDefaults.horizontalVisualInset(checked),
     interactionSource: MutableInteractionSource? = null,
-    horizontalSpacing: Dp = dimens.padding.itemHorizontal,
+    horizontalSpacing: Dp = ListItemDefaults.horizontalSpacing,
     onClick: (() -> Unit)? = null,
 ) {
-    val currentColors = animateContainerColorsAsState(colors.getColors(checked)).value
+    val isChecked = checked == true
+    val contentPadding = paddingValues.increaseBy(start = horizontalVisualInset)
+    val targetColors = colors.getColors(isChecked)
+    val currentColors = animateContainerColorsAsState(targetColors).value
+    val resolvedInteractionSource = interactionSource ?: remember { MutableInteractionSource() }
+    val isDragged by resolvedInteractionSource.collectIsDraggedAsState()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -155,33 +176,36 @@ fun ListItem(
                 .alpha(Alpha.get(enabled))
                 .fillMaxWidth()
                 .interactiveButtonEffect(
-                    colors = currentColors.interactiveBorderColors,
+                    // The background and border each animate from the same state change. Passing
+                    // the already-animated border colors here would animate them a second time,
+                    // leaving the border visibly behind the fill.
+                    colors = targetColors.interactiveBorderColors,
                     onClick = onClick,
                     enabled = enabled,
-                    checked = checked,
+                    borderHorizontalInset = horizontalVisualInset,
+                    checked = isChecked,
                     shape = shape,
-                    interactionSource = interactionSource,
+                    interactionSource = resolvedInteractionSource,
                 )
-                .background(color = currentColors.getBackgroundColor(enabled), shape = shape)
-                .padding(paddingValues),
+                .listItemBackground(
+                    color =
+                        if (isDragged) {
+                            colorScheme.background
+                        } else {
+                            currentColors.getBackgroundColor(enabled)
+                        },
+                    shape = shape,
+                    horizontalInset = horizontalVisualInset,
+                )
+                .padding(contentPadding),
     ) {
         icon?.invoke(this)
 
-        Column(modifier = Modifier.weight(1f)) {
-            CompositionLocalProvider(
-                LocalTextStyle provides MaterialTheme.typography.titleMedium,
-                LocalContentColor provides colorScheme.onSurface,
-                content = title,
-            )
-
-            if (description != null) {
-                CompositionLocalProvider(
-                    LocalTextStyle provides MaterialTheme.typography.bodyMedium,
-                    LocalContentColor provides colorScheme.onSurfaceVariant,
-                    content = description,
-                )
-            }
-        }
+        ListItemText(
+            title = title,
+            description = description,
+            modifier = Modifier.weight(1f),
+        )
 
         if (trailing != null) {
             Text(
@@ -197,7 +221,66 @@ fun ListItem(
     }
 }
 
+@Composable
+fun ListItemText(
+    title: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    description: (@Composable () -> Unit)? = null,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = horizontalAlignment,
+    ) {
+        CompositionLocalProvider(
+            LocalTextStyle provides MaterialTheme.typography.titleMedium,
+            LocalContentColor provides colorScheme.onSurface,
+            content = title,
+        )
+
+        if (description != null) {
+            CompositionLocalProvider(
+                LocalTextStyle provides MaterialTheme.typography.bodyMedium,
+                LocalContentColor provides colorScheme.onSurfaceVariant,
+                content = description,
+            )
+        }
+    }
+}
+
+private fun Modifier.listItemBackground(
+    color: Color,
+    shape: Shape,
+    horizontalInset: Dp,
+): Modifier = drawWithCache {
+    val horizontalInsetPx = horizontalInset.toPx()
+    val outline =
+        shape.createOutline(
+            size =
+                Size(
+                    width = (size.width - horizontalInsetPx * 2).coerceAtLeast(0f),
+                    height = size.height,
+                ),
+            layoutDirection = layoutDirection,
+            density = this,
+        )
+
+    onDrawBehind {
+        translate(left = horizontalInsetPx) { drawOutline(outline = outline, color = color) }
+    }
+}
+
 object ListItemDefaults {
+    val iconSize = 40.dp
+    val horizontalSpacing = 16.dp
+
+    /** What a checkable row insets its background, border, and content by. */
+    val horizontalVisualInset = 4.dp
+
+    /** The inset a row takes when nothing asks for another: only a checkable row has one. */
+    fun horizontalVisualInset(checked: Boolean?): Dp =
+        if (checked != null) horizontalVisualInset else 0.dp
+
     val colors: StatefulContainerColors
         @Composable
         get() =
@@ -223,18 +306,21 @@ object ListItemDefaults {
         @Composable
         get() =
             PaddingValues(
-                start = LocalDimens.current.padding.contentHorizontal,
-                top = LocalDimens.current.padding.itemVertical,
-                end = LocalDimens.current.padding.contentHorizontalSmall,
-                bottom = LocalDimens.current.padding.itemVertical,
+                start = LocalDimens.current.screen.horizontalPadding,
+                top = 16.dp,
+                end = LocalDimens.current.screen.horizontalPadding - 8.dp,
+                bottom = 16.dp,
             )
+
+    val leadingContentStartPadding: Dp
+        @Composable get() = paddingValues.calculateStartPadding() + iconSize + horizontalSpacing
 
     internal fun getDefaultIcon(painter: Painter?): (@Composable RowScope.() -> Unit)? =
         if (painter != null) {
             {
                 Icon(
                     modifier =
-                        Modifier.size(40.dp)
+                        Modifier.size(iconSize)
                             .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
                             .padding(8.dp),
                     painter = painter,
@@ -249,7 +335,7 @@ object ListItemDefaults {
             {
                 Icon(
                     modifier =
-                        Modifier.size(40.dp)
+                        Modifier.size(iconSize)
                             .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
                             .padding(8.dp),
                     imageVector = imageVector,
@@ -279,7 +365,7 @@ object ListItemDefaults {
         Box(
             modifier =
                 modifier
-                    .size(40.dp)
+                    .size(iconSize)
                     .background(color = colorScheme.onSurfaceVariant, shape = PillShape)
                     .padding(8.dp)
         ) {
@@ -292,8 +378,7 @@ object ListItemDefaults {
         if (!titleHighlightPosition.isEmpty()) {
             var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
             val highlightColor = colorScheme.primary
-            val highlightCornerRadiusPx =
-                with(LocalDensity.current) { dimens.list.itemTitleHighlightCornerRadius.toPx() }
+            val highlightCornerRadiusPx = with(LocalDensity.current) { 4.dp.toPx() }
             ListItemTitle(
                 text = title,
                 modifier =
@@ -359,7 +444,7 @@ object ListItemDefaults {
         LiftAppCheckbox(
             checked = checked,
             onCheckedChange = null,
-            modifier = modifier.padding(horizontal = dimens.padding.itemHorizontalSmall),
+            modifier = modifier.padding(start = 8.dp, end = 12.dp),
         )
     }
 }

@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.TriangleAlert
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
@@ -60,7 +59,7 @@ fun Error(
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
             )
-            Spacer(Modifier.height(LocalDimens.current.padding.itemVerticalSmall))
+            Spacer(Modifier.height(8.dp))
             Text(text = title, style = MaterialTheme.typography.headlineSmall)
 
             if (message != null) {
@@ -68,7 +67,7 @@ fun Error(
                 Text(text = message, style = MaterialTheme.typography.bodyLarge)
             }
 
-            Spacer(Modifier.height(LocalDimens.current.padding.itemVertical))
+            Spacer(Modifier.height(16.dp))
             LiftAppButton(onCloseClick) { Text(text = stringResource(R.string.action_close)) }
         }
     }

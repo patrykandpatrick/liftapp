@@ -1,18 +1,20 @@
 package com.patrykandpatrick.liftapp.newbodymeasuremententry.ui
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,9 +64,12 @@ private fun NewBodyMeasurementEntryScreen(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     LiftAppScaffold(
         topBar = {
             CompactTopAppBar(
+                scrollBehavior = topAppBarScrollBehavior,
                 title = {
                     Text(
                         text =
@@ -89,14 +94,13 @@ private fun NewBodyMeasurementEntryScreen(
                 BottomAppBar.Save(onClick = { onAction(Action.Save(state)) })
             }
         },
-        modifier = modifier,
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
     ) { contentPadding ->
         loadableState.Unfold(
             modifier =
-                Modifier.imePadding()
-                    .padding(contentPadding)
-                    .padding(horizontal = dimens.padding.contentHorizontal)
-                    .padding(top = dimens.padding.itemVertical)
+                Modifier.padding(contentPadding)
+                    .padding(horizontal = dimens.screen.horizontalPadding)
+                    .padding(top = 16.dp)
         ) { state ->
             Content(state, onAction)
         }
@@ -110,9 +114,9 @@ private fun Content(
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(dimens.grid.minCellWidthLarge),
-        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
-        verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
+        columns = GridCells.Adaptive(240.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier,
     ) {
         state.inputData.forEachTextField { textFieldState, hintRes, isLast ->

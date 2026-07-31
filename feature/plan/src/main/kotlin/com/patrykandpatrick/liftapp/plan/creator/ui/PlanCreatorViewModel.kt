@@ -10,6 +10,7 @@ import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatrick.liftapp.domain.plan.DeletePlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.routine.GetRoutineWithExercisesUseCase
@@ -20,9 +21,7 @@ import com.patrykandpatrick.liftapp.plan.creator.model.UpsertPlanUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -30,7 +29,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -40,6 +38,7 @@ constructor(
     private val routeData: PlanCreatorRouteData,
     private val getPlanUseCase: GetPlanUseCase,
     private val upsertPlanUseCase: UpsertPlanUseCase,
+    private val deletePlanUseCase: DeletePlanUseCase,
     private val getRoutineWithExercisesUseCase: GetRoutineWithExercisesUseCase,
     private val textFieldStateManager: TextFieldStateManager,
     private val savedStateHandle: SavedStateHandle,
@@ -54,8 +53,6 @@ constructor(
             savedStateHandle[KEY_ITEMS] = value
         }
 
-    private val error = MutableStateFlow<ScreenState.Error?>(null)
-
     private val name = textFieldStateManager.stringTextField()
     private val description = textFieldStateManager.stringTextField()
 
@@ -69,8 +66,10 @@ constructor(
     }
         .onEach { plan ->
             if (!savedStateHandle.contains(KEY_ITEMS)) {
+                // The placeholder is the row that adds a day, and both add actions insert
+                // ahead of it, so it has to close the list whether the plan is new or not.
                 planItems =
-                    plan?.items?.toNewScreenStateItems() ?: listOf(ScreenState.Item.PlaceholderItem)
+                    plan?.items.orEmpty().toNewScreenStateItems() + ScreenState.Item.PlaceholderItem
             }
         }
 
@@ -82,7 +81,7 @@ constructor(
                     plan to items
                 }
             }
-            .combine(error) { (plan, items), error ->
+            .map { (plan, items) ->
                 if (name.text.isBlank()) {
                     name.updateText(plan?.name.orEmpty())
                 }
@@ -95,7 +94,6 @@ constructor(
                     name = name,
                     description = description,
                     items = items,
-                    error = error,
                 )
             }
             .toLoadableStateFlow(viewModelScope)
@@ -115,17 +113,28 @@ constructor(
     fun onAction(action: Action) {
         when (action) {
             is Action.PopBackStack -> popBackStack()
-            is Action.OnPlanElementClick -> TODO("Support updating plan items")
+            is Action.OnRoutineClick -> openRoutine(action.routineID)
             is Action.AddRestDay -> updatePlanItems { add(lastIndex, ScreenState.Item.RestItem()) }
             is Action.AddRoutine -> setOrAddRoutine()
             is Action.RemoveItem -> updatePlanItems { removeAt(action.index) }
+            is Action.DeletePlan -> deletePlan(action.id)
             is Action.Save -> savePlan(action.state)
-            is Action.ClearError -> clearError()
         }
     }
 
     private fun popBackStack() {
         viewModelScope.launch { navigationCommander.popBackStack() }
+    }
+
+    private fun openRoutine(routineID: Long) {
+        viewModelScope.launch { navigationCommander.navigateTo(Routes.Routine.details(routineID)) }
+    }
+
+    private fun deletePlan(id: Long) {
+        viewModelScope.launch {
+            deletePlanUseCase(id)
+            navigationCommander.popBackStack()
+        }
     }
 
     private fun setOrAddRoutine() {
@@ -163,19 +172,12 @@ constructor(
     }
 
     private fun savePlan(state: ScreenState) {
-        viewModelScope.launch {
-            if (state.items.none { it is ScreenState.Item.RoutineItem }) {
-                error.emit(ScreenState.Error.NoRoutines)
-                return@launch
-            }
+        if (!state.canSave) return
 
+        viewModelScope.launch {
             upsertPlanUseCase(state)
             navigationCommander.popBackStack()
         }
-    }
-
-    private fun clearError() {
-        error.update { null }
     }
 
     companion object {

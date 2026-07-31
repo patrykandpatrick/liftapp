@@ -16,4 +16,12 @@
         <item quantity="one">week</item>
         <item quantity="other">weeks</item>
     </plurals>
+    <plurals name="exercise_count">
+        <item quantity="one">exercise</item>
+        <item quantity="other">exercises</item>
+    </plurals>
+    <plurals name="exercise_count_with_number">
+        <item quantity="one">%d exercise</item>
+        <item quantity="other">%d exercises</item>
+    </plurals>
 </resources>

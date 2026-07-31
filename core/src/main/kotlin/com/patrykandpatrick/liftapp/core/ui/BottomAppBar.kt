@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
@@ -60,14 +62,19 @@ fun BottomAppBar(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues =
         PaddingValues(
-            horizontal = LocalDimens.current.padding.contentHorizontal,
-            vertical = LocalDimens.current.padding.itemVertical,
+            horizontal = LocalDimens.current.screen.horizontalPadding,
+            vertical = 16.dp,
         ),
     content: @Composable RowScope.() -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.TopCenter,
-        modifier = modifier.background(colorScheme.surface).fillMaxWidth().navigationBarsPadding(),
+        modifier =
+            modifier
+                .background(colorScheme.surface)
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .imePadding(),
     ) {
         LiftAppHorizontalDivider()
         Row(modifier = Modifier.padding(paddingValues), content = content)

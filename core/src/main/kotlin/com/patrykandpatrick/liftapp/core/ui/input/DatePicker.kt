@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -24,6 +23,7 @@ import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.patrykandpatrick.liftapp.core.R
@@ -37,7 +37,6 @@ import com.patrykandpatrick.liftapp.domain.date.isValid
 import com.patrykandpatrick.liftapp.domain.date.month
 import com.patrykandpatrick.liftapp.domain.date.safeParseToCalendar
 import com.patrykandpatrick.liftapp.domain.date.year
-import com.patrykandpatrick.liftapp.ui.dimens.DialogDimens
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import java.text.SimpleDateFormat
@@ -57,36 +56,30 @@ fun DatePicker(
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     onTimePicked: (year: Int, month: Int, day: Int) -> Unit,
 ) {
-    CompositionLocalProvider(LocalDimens provides DialogDimens) {
-        if (state.isShowing) {
-            Dialog(onDismissRequest = { state.isShowing = false }, properties = properties) {
-                Surface(
-                    modifier =
-                        modifier
-                            .widthIn(
-                                min = LocalDimens.current.dialog.minWidth,
-                                max = LocalDimens.current.dialog.maxWidth,
-                            )
-                            .width(IntrinsicSize.Min)
-                            .padding(all = LocalDimens.current.dialog.paddingLarge),
-                    color = MaterialTheme.colorScheme.surface,
-                    tonalElevation = LocalDimens.current.dialog.tonalElevation,
-                    shape = MaterialTheme.shapes.extraLarge,
-                ) {
-                    DatePickerContent(
-                        modifier =
-                            Modifier.padding(
-                                horizontal = LocalDimens.current.padding.contentHorizontal,
-                                vertical = LocalDimens.current.padding.contentVertical,
-                            ),
-                        state = state,
-                        onPositiveButtonClick = onClick@{
-                                val calendar = state.resolvedDate ?: return@onClick
-                                onTimePicked(calendar.year, calendar.month + 1, calendar.day)
-                                state.hide()
-                            },
-                    )
-                }
+    if (state.isShowing) {
+        Dialog(onDismissRequest = { state.isShowing = false }, properties = properties) {
+            Surface(
+                modifier =
+                    modifier
+                        .widthIn(
+                            min = LocalDimens.current.dialog.minWidth,
+                            max = LocalDimens.current.dialog.maxWidth,
+                        )
+                        .width(IntrinsicSize.Min)
+                        .padding(all = LocalDimens.current.dialog.windowPadding),
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = LocalDimens.current.dialog.tonalElevation,
+                shape = MaterialTheme.shapes.extraLarge,
+            ) {
+                DatePickerContent(
+                    modifier = Modifier.padding(all = LocalDimens.current.dialog.contentPadding),
+                    state = state,
+                    onPositiveButtonClick = onClick@{
+                            val calendar = state.resolvedDate ?: return@onClick
+                            onTimePicked(calendar.year, calendar.month + 1, calendar.day)
+                            state.hide()
+                        },
+                )
             }
         }
     }
@@ -100,10 +93,10 @@ private fun DatePickerContent(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(LocalDimens.current.verticalItemSpacing),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            modifier = Modifier.padding(bottom = LocalDimens.current.padding.itemVertical),
+            modifier = Modifier.padding(bottom = 16.dp),
             text = stringResource(id = R.string.picker_date_title),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleSmall,
@@ -135,7 +128,7 @@ private fun DatePickerContent(
         )
 
         DialogButtons(
-            modifier = Modifier.padding(top = LocalDimens.current.dialog.paddingMedium),
+            modifier = Modifier.padding(top = 16.dp),
             onNegativeButtonClick = state::hide,
             onPositiveButtonClick = onPositiveButtonClick,
             isPositiveButtonEnabled = state.isInputValid,

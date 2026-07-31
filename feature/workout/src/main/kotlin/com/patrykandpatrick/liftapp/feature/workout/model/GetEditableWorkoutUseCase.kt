@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.feature.workout.model
 
 import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.format.Formatter
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.domain.validation.higherThanZero
@@ -19,6 +20,10 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+// This must not match WorkoutRouteData.workoutID: Navigation puts that route argument in the same
+// SavedStateHandle, including ID_NOT_SET for a workout that has yet to be created.
+internal const val RESOLVED_WORKOUT_ID = "resolvedWorkoutID"
+
 class GetEditableWorkoutUseCase
 @Inject
 constructor(
@@ -33,10 +38,11 @@ constructor(
         contract
             .getWorkout(
                 workoutRouteData.routineID,
-                savedStateHandle[WORKOUT_ID] ?: workoutRouteData.workoutID,
+                savedStateHandle[RESOLVED_WORKOUT_ID]
+                    ?: workoutRouteData.workoutID.takeUnless { it == ID_NOT_SET },
             )
             .map {
-                savedStateHandle[WORKOUT_ID] = it.id
+                savedStateHandle[RESOLVED_WORKOUT_ID] = it.id
                 it.editable()
             }
 
@@ -44,12 +50,17 @@ constructor(
         val exercises = exercises.map { exercise ->
             EditableWorkout.Exercise(
                 id = exercise.id,
+                workoutItemID = exercise.workoutItemID,
+                workoutItemType = exercise.workoutItemType,
+                workoutItemOrder = exercise.workoutItemOrder,
+                exerciseOrder = exercise.exerciseOrder,
                 name = exercise.name,
                 exerciseType = exercise.exerciseType,
                 mainMuscles = exercise.mainMuscles,
                 secondaryMuscles = exercise.secondaryMuscles,
                 tertiaryMuscles = exercise.tertiaryMuscles,
                 goal = exercise.goal,
+                notes = exercise.notes,
                 sets =
                     exercise.sets.mapIndexed { index, set ->
                         set.editable(
@@ -73,12 +84,13 @@ constructor(
             exercises = exercises,
             pages =
                 buildList {
-                    exercises.forEachIndexed { index, exercise ->
+                    val workoutItems = EditableWorkout.groupExercises(exercises)
+                    workoutItems.forEachIndexed { index, item ->
                         add(
                             WorkoutPage.Exercise(
-                                exercise = exercise,
+                                item = item,
                                 index = size,
-                                isLast = index == exercises.lastIndex,
+                                isLast = index == workoutItems.lastIndex,
                             )
                         )
                     }
@@ -209,6 +221,7 @@ constructor(
                         }
                     },
             weightUnit = weightUnit,
+            notesInput = notesInput(exerciseId, setIndex, notes),
         )
 
     private fun ExerciseSet.Calisthenics.editable(
@@ -258,6 +271,7 @@ constructor(
                         }
                     },
             weightUnit = weightUnit,
+            notesInput = notesInput(exerciseId, setIndex, notes),
         )
 
     private fun ExerciseSet.Reps.editable(
@@ -285,6 +299,7 @@ constructor(
                             }
                         }
                     },
+            notesInput = notesInput(exerciseId, setIndex, notes),
         )
 
     private fun ExerciseSet.Cardio.editable(
@@ -350,6 +365,7 @@ constructor(
                         }
                     },
             distanceUnit = distanceUnit,
+            notesInput = notesInput(exerciseId, setIndex, notes),
         )
 
     private fun ExerciseSet.Time.editable(
@@ -377,6 +393,13 @@ constructor(
                             }
                         }
                     },
+            notesInput = notesInput(exerciseId, setIndex, notes),
+        )
+
+    private fun notesInput(exerciseId: Long, setIndex: Int, notes: String) =
+        textFieldStateManager.stringTextField(
+            initialValue = notes,
+            savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "notes"),
         )
 
     private fun formatDecimal(value: Double): String =
@@ -392,8 +415,4 @@ constructor(
         setIndex: Int,
         inputType: String,
     ): String = "exercise_${exerciseId}_set_${setIndex}_$inputType"
-
-    private companion object {
-        const val WORKOUT_ID = "workoutID"
-    }
 }

@@ -6,7 +6,7 @@ import com.patrykandpatrick.liftapp.domain.workout.Workout
 sealed class PlanScheduleItem {
     data object Rest : PlanScheduleItem()
 
-    data object None : PlanScheduleItem()
+    data class None(val hasActivePlan: Boolean) : PlanScheduleItem()
 
     data class Routine(val routine: RoutineWithExercises, val workout: Workout?) :
         PlanScheduleItem()

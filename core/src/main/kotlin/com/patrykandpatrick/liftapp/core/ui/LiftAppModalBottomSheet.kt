@@ -1,9 +1,12 @@
 package com.patrykandpatrick.liftapp.core.ui
 
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import com.patrykandpatrick.liftapp.ui.component.LiftAppModalBottomSheet
 import com.patrykandpatrick.liftapp.ui.icons.Cross
@@ -23,7 +26,13 @@ fun LiftAppModalBottomSheetWithTopAppBar(
         sheetState = sheetState,
     ) { dismiss ->
         CompactTopAppBar(
-            title = { title?.invoke() },
+            title = {
+                CompositionLocalProvider(
+                    LocalTextStyle provides MaterialTheme.typography.titleMedium
+                ) {
+                    title?.invoke()
+                }
+            },
             navigationIcon = {
                 CompactTopAppBarDefaults.IconButton(
                     imageVector = LiftAppIcons.Cross,

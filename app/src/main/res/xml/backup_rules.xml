@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older that API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+    What Android's own backup takes on API 30 and below. API 31 and above use
+    data_extraction_rules.xml instead.
+
+    The Room database and the DataStore preferences are the whole of the user's data, and naming
+    them is what makes that a decision rather than whatever the defaults happen to cover. The
+    database domain is taken whole: Room journals in WAL mode, so the `-wal` and `-shm` files
+    alongside `LiftApp.db` can hold writes the `.db` file does not have yet.
+
+    Nothing else is worth carrying. The muscle bitmap cache is regenerated on demand, and the
+    directory the share action writes to holds a copy of what is already in the database.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <include
+        domain="database"
+        path="." />
+    <include
+        domain="file"
+        path="datastore/" />
 </full-backup-content>

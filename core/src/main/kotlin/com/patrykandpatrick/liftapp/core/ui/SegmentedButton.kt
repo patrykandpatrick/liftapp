@@ -54,7 +54,11 @@ fun SegmentedButtonContainer(
             modifier
                 .height(IntrinsicSize.Max)
                 .clip(shape)
-                .border(width = dimens.strokeWidth, color = colorScheme.outline, shape = shape),
+                .border(
+                    width = dimens.segmentedButton.borderWidth,
+                    color = colorScheme.outline,
+                    shape = shape,
+                ),
         verticalAlignment = Alignment.CenterVertically,
         content = buttons,
     )
@@ -88,7 +92,11 @@ fun VerticalSegmentedButtonContainer(
             modifier
                 .width(IntrinsicSize.Max)
                 .clip(shape)
-                .border(width = dimens.strokeWidth, color = colorScheme.outline, shape = shape),
+                .border(
+                    width = dimens.segmentedButton.borderWidth,
+                    color = colorScheme.outline,
+                    shape = shape,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
         content = buttons,
     )
@@ -118,7 +126,7 @@ fun VerticalDivider(modifier: Modifier = Modifier) {
             modifier
                 .background(color = colorScheme.outline)
                 .fillMaxHeight()
-                .width(dimens.strokeWidth)
+                .width(dimens.segmentedButton.borderWidth)
     )
 }
 
@@ -188,12 +196,12 @@ private fun SegmentedButton(
                         ),
                 )
                 .padding(
-                    horizontal = dimens.padding.segmentedButtonHorizontal,
-                    vertical = dimens.padding.segmentedButtonVertical,
+                    horizontal = dimens.segmentedButton.horizontalPadding,
+                    vertical = dimens.segmentedButton.verticalPadding,
                 ),
         horizontalArrangement =
             Arrangement.spacedBy(
-                space = dimens.padding.segmentedButtonElement,
+                space = dimens.segmentedButton.elementSpacing,
                 alignment = Alignment.CenterHorizontally,
             ),
     ) {

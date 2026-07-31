@@ -26,7 +26,12 @@ import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
-fun SetIndexIcon(setIndex: Int, isCompleted: Boolean, modifier: Modifier = Modifier) {
+fun SetIndexIcon(
+    setIndex: Int,
+    isCompleted: Boolean,
+    modifier: Modifier = Modifier,
+    label: String = "${setIndex + 1}",
+) {
     val shape = RoundedCornerShape(6.dp)
     val color = colorScheme.onSurfaceVariant
     Box(
@@ -48,7 +53,7 @@ fun SetIndexIcon(setIndex: Int, isCompleted: Boolean, modifier: Modifier = Modif
     ) {
         CompositionLocalProvider(LocalDensity provides Density(LocalDensity.current.density, 1f)) {
             LiftAppText(
-                text = "${setIndex + 1}",
+                text = label,
                 style = MaterialTheme.typography.bodyMedium,
                 color =
                     if (isCompleted) {

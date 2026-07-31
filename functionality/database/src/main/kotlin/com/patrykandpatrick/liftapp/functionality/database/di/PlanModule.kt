@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.functionality.database.di
 
 import com.patrykandpatrick.liftapp.domain.plan.AddPlanItemsScheduleContract
+import com.patrykandpatrick.liftapp.domain.plan.DeletePlanContract
 import com.patrykandpatrick.liftapp.domain.plan.GetAllPlansUseCase
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanItemContract
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanUseCase
@@ -9,10 +10,10 @@ import com.patrykandpatrick.liftapp.functionality.database.plan.RoomPlanReposito
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 interface PlanModule {
     @Binds fun bindGetPlanUseCase(repository: RoomPlanRepository): GetPlanUseCase
 
@@ -26,4 +27,6 @@ interface PlanModule {
     ): AddPlanItemsScheduleContract
 
     @Binds fun bindGetPlanItemContract(repository: RoomPlanRepository): GetPlanItemContract
+
+    @Binds fun bindDeletePlanContract(repository: RoomPlanRepository): DeletePlanContract
 }

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Only used to say that a scheduled backup could not be written. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name="com.patrykandpatrick.liftapp.app.LiftApp"
         android:allowBackup="true"
@@ -13,9 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LiftApp"
         tools:targetApi="31">
+        <!-- The v2 activity is packaged in the licenses AAR, but lint does not index it. -->
+        <activity
+            android:name="com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity"
+            android:theme="@style/Theme.LiftApp.OssLicenses"
+            tools:ignore="MissingClass"
+            tools:replace="android:theme" />
+
         <activity
             android:name="com.patrykandpatrick.liftapp.ui.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.LiftApp"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="uiMode">
@@ -29,7 +40,31 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="liftapp" />
             </intent-filter>
+
+            <!--
+                Opening a backup with LiftApp. The published app took the same two types: file
+                managers hand a .lfa file over as application/octet-stream, and the CSVs inside one
+                are offered as text/csv. Neither is an app link, hence the suppression.
+            -->
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="text/csv" />
+            </intent-filter>
         </activity>
+
+        <!-- Lets other apps read the backup LiftApp writes to its cache when sharing. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
     </application>
 
 </manifest>

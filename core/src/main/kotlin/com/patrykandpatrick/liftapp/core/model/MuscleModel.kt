@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.core.model
 
 import android.os.Parcelable
-import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.ui.resource.stringRes
@@ -13,10 +12,10 @@ import kotlinx.parcelize.Parcelize
 @Immutable
 data class MuscleModel(val muscle: Muscle, val type: Type, val nameRes: Int) : Parcelable {
 
-    enum class Type(@StringRes val nameRes: Int, @ColorRes val colorRes: Int) {
-        Primary(nameRes = R.string.primary_muscle, colorRes = R.color.muscle_primary),
-        Secondary(nameRes = R.string.secondary_muscle, colorRes = R.color.muscle_secondary),
-        Tertiary(nameRes = R.string.tertiary_muscle, colorRes = R.color.muscle_tertiary),
+    enum class Type(@StringRes val nameRes: Int) {
+        Primary(nameRes = R.string.primary_muscle),
+        Secondary(nameRes = R.string.secondary_muscle),
+        Tertiary(nameRes = R.string.tertiary_muscle),
     }
 
     companion object {

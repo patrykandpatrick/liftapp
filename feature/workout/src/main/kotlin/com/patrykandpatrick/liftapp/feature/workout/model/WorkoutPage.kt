@@ -16,7 +16,7 @@ sealed class WorkoutPage : Comparable<WorkoutPage> {
     override fun compareTo(other: WorkoutPage): Int = index.compareTo(other.index)
 
     data class Exercise(
-        val exercise: EditableWorkout.Exercise,
+        val item: EditableWorkout.Item,
         override val index: Int,
         val isLast: Boolean,
     ) : WorkoutPage() {

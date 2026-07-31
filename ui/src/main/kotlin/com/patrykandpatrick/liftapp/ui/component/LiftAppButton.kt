@@ -41,6 +41,19 @@ import com.patrykandpatrick.liftapp.ui.theme.ButtonShape
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 object LiftAppButtonDefaults {
+    /**
+     * The padding [PlainLiftAppButton] keeps around its label and underline. It only becomes
+     * visible while the button is pressed, so layouts that align the button by what is normally
+     * visible subtract it from their own spacing.
+     */
+    val plainContentPadding: PaddingValues
+        @Composable
+        get() =
+            PaddingValues(
+                horizontal = dimens.button.horizontalPadding,
+                vertical = dimens.button.verticalPadding - 2.dp,
+            )
+
     val primaryButtonColors: ContainerColors
         @Composable
         get() =
@@ -141,11 +154,7 @@ fun PlainLiftAppButton(
     enabled: Boolean = true,
     showDivider: Boolean = true,
     colors: ContainerColors = LiftAppButtonDefaults.noBackgroundColors,
-    contentPadding: PaddingValues =
-        PaddingValues(
-            horizontal = dimens.button.horizontalPadding,
-            vertical = dimens.button.verticalPadding - 2.dp,
-        ),
+    contentPadding: PaddingValues = LiftAppButtonDefaults.plainContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) {

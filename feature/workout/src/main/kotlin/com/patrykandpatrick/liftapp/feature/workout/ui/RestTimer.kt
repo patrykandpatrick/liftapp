@@ -2,7 +2,6 @@ package com.patrykandpatrick.liftapp.feature.workout.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -27,16 +26,20 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButtonDefaults
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Pause
+import com.patrykandpatrick.liftapp.ui.icons.Play
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.Shapes
 import com.patrykandpatrick.liftapp.ui.theme.Typography
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+
+internal val RestTimerContainerHeight = 96.dp
 
 @Composable
 fun RestTimer(
@@ -47,12 +50,17 @@ fun RestTimer(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors =
+        LiftAppCardDefaults.tonalCardColors.run {
+            copy(backgroundColor = backgroundColor.compositeOver(colorScheme.surface))
+        }
+
     LiftAppCard(
-        colors = LiftAppCardDefaults.tonalCardColors,
+        colors = colors,
         contentPadding =
             PaddingValues(
-                dimens.padding.itemHorizontalSmall,
-                vertical = dimens.padding.itemVerticalSmall,
+                8.dp,
+                vertical = 8.dp,
             ),
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -62,25 +70,22 @@ fun RestTimer(
             modifier = Modifier.fillMaxWidth(),
         ) {
             LiftAppIconButton(onClick = onCancel) {
-                Icon(imageVector = LiftAppIcons.Cross, contentDescription = null)
+                Icon(
+                    imageVector = LiftAppIcons.Cross,
+                    contentDescription = stringResource(R.string.rest_timer_action_cancel),
+                )
             }
 
             UpdateTimeBy(
                 sign = "-",
-                seconds = -Constants.UPDATE_TIMER_BY_SECONDS,
+                seconds = Constants.UPDATE_TIMER_BY_SECONDS,
                 onClick = { onUpdateTimerBy(-Constants.UPDATE_TIMER_BY_SECONDS.seconds) },
             )
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(0.dp),
-                modifier = Modifier,
-            ) {
-                Text(
-                    text = remainingDuration.formattedRemainingTime,
-                    style = Typography.titleLargeMono,
-                )
-            }
+            Text(
+                text = remainingDuration.formattedRemainingTime,
+                style = Typography.titleLargeMono,
+            )
 
             UpdateTimeBy(
                 sign = "+",
@@ -91,11 +96,12 @@ fun RestTimer(
             LiftAppIconButton(onClick = onToggleIsPaused) {
                 AnimatedContent(isPaused) { isPaused ->
                     Icon(
-                        painter =
-                            painterResource(
-                                id = if (isPaused) R.drawable.ic_play else R.drawable.ic_pause
+                        imageVector = if (isPaused) LiftAppIcons.Play else LiftAppIcons.Pause,
+                        contentDescription =
+                            stringResource(
+                                if (isPaused) R.string.rest_timer_action_resume
+                                else R.string.rest_timer_action_pause
                             ),
-                        contentDescription = null,
                     )
                 }
             }

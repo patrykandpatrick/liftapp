@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4a456b3d39b4b1e75aed12a856531948",
+    "identityHash": "be96cff0772d50a4bafe2459f08c8134",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -197,7 +197,7 @@
       },
       {
         "tableName": "routine",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `routine_name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `routine_name` TEXT NOT NULL, `routine_order_index` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -210,6 +210,13 @@
             "columnName": "routine_name",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "orderIndex",
+            "columnName": "routine_order_index",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -220,44 +227,59 @@
         }
       },
       {
-        "tableName": "exercise_with_routine",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, `order_index` INTEGER NOT NULL, PRIMARY KEY(`routine_id`, `exercise_id`), FOREIGN KEY(`routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "routine_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_item_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `routine_item_routine_id` INTEGER NOT NULL, `routine_item_order_index` INTEGER NOT NULL, `routine_item_type` TEXT NOT NULL, FOREIGN KEY(`routine_item_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "routineId",
-            "columnName": "routine_id",
+            "fieldPath": "id",
+            "columnName": "routine_item_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "exerciseId",
-            "columnName": "exercise_id",
+            "fieldPath": "routineID",
+            "columnName": "routine_item_routine_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "orderIndex",
-            "columnName": "order_index",
+            "columnName": "routine_item_order_index",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "routine_item_type",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "routine_id",
-            "exercise_id"
+            "routine_item_id"
           ]
         },
         "indices": [
           {
-            "name": "index_exercise_with_routine_exercise_id",
+            "name": "index_routine_item_routine_item_routine_id",
             "unique": false,
             "columnNames": [
-              "exercise_id"
+              "routine_item_routine_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_with_routine_exercise_id` ON `${TABLE_NAME}` (`exercise_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_routine_item_routine_item_routine_id` ON `${TABLE_NAME}` (`routine_item_routine_id`)"
+          },
+          {
+            "name": "index_routine_item_routine_item_routine_id_routine_item_order_index",
+            "unique": true,
+            "columnNames": [
+              "routine_item_routine_id",
+              "routine_item_order_index"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_routine_item_routine_item_routine_id_routine_item_order_index` ON `${TABLE_NAME}` (`routine_item_routine_id`, `routine_item_order_index`)"
           }
         ],
         "foreignKeys": [
@@ -266,10 +288,65 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "routine_id"
+              "routine_item_routine_id"
             ],
             "referencedColumns": [
               "routine_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "exercise_with_routine_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`routine_item_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, `routine_item_exercise_order_index` INTEGER NOT NULL, PRIMARY KEY(`routine_item_id`, `exercise_id`), FOREIGN KEY(`routine_item_id`) REFERENCES `routine_item`(`routine_item_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "routineItemID",
+            "columnName": "routine_item_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseID",
+            "columnName": "exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orderIndex",
+            "columnName": "routine_item_exercise_order_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "routine_item_id",
+            "exercise_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_exercise_with_routine_item_exercise_id",
+            "unique": false,
+            "columnNames": [
+              "exercise_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_with_routine_item_exercise_id` ON `${TABLE_NAME}` (`exercise_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "routine_item",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "routine_item_id"
+            ],
+            "referencedColumns": [
+              "routine_item_id"
             ]
           },
           {
@@ -281,6 +358,49 @@
             ],
             "referencedColumns": [
               "exercise_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "superset",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`superset_routine_item_id` INTEGER NOT NULL, `superset_sets` INTEGER NOT NULL, `superset_rest_time_millis` INTEGER NOT NULL, PRIMARY KEY(`superset_routine_item_id`), FOREIGN KEY(`superset_routine_item_id`) REFERENCES `routine_item`(`routine_item_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "routineItemID",
+            "columnName": "superset_routine_item_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sets",
+            "columnName": "superset_sets",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "restTimeMillis",
+            "columnName": "superset_rest_time_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "superset_routine_item_id"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "routine_item",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "superset_routine_item_id"
+            ],
+            "referencedColumns": [
+              "routine_item_id"
             ]
           }
         ]
@@ -484,44 +604,69 @@
         ]
       },
       {
-        "tableName": "workout_with_exercise",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, `order_index` INTEGER NOT NULL, PRIMARY KEY(`workout_id`, `exercise_id`), FOREIGN KEY(`workout_id`) REFERENCES `workout`(`workout_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "workout_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_item_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_item_workout_id` INTEGER NOT NULL, `workout_item_order_index` INTEGER NOT NULL, `workout_item_type` TEXT NOT NULL, `workout_item_sets` INTEGER, `workout_item_rest_time_millis` INTEGER, FOREIGN KEY(`workout_item_workout_id`) REFERENCES `workout`(`workout_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "workoutId",
-            "columnName": "workout_id",
+            "fieldPath": "id",
+            "columnName": "workout_item_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "exerciseId",
-            "columnName": "exercise_id",
+            "fieldPath": "workoutID",
+            "columnName": "workout_item_workout_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "orderIndex",
-            "columnName": "order_index",
+            "columnName": "workout_item_order_index",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "workout_item_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sets",
+            "columnName": "workout_item_sets",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "restTimeMillis",
+            "columnName": "workout_item_rest_time_millis",
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "workout_id",
-            "exercise_id"
+            "workout_item_id"
           ]
         },
         "indices": [
           {
-            "name": "index_workout_with_exercise_exercise_id",
+            "name": "index_workout_item_workout_item_workout_id",
             "unique": false,
             "columnNames": [
-              "exercise_id"
+              "workout_item_workout_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_workout_with_exercise_exercise_id` ON `${TABLE_NAME}` (`exercise_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workout_item_workout_item_workout_id` ON `${TABLE_NAME}` (`workout_item_workout_id`)"
+          },
+          {
+            "name": "index_workout_item_workout_item_workout_id_workout_item_order_index",
+            "unique": true,
+            "columnNames": [
+              "workout_item_workout_id",
+              "workout_item_order_index"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_workout_item_workout_item_workout_id_workout_item_order_index` ON `${TABLE_NAME}` (`workout_item_workout_id`, `workout_item_order_index`)"
           }
         ],
         "foreignKeys": [
@@ -530,10 +675,71 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "workout_id"
+              "workout_item_workout_id"
             ],
             "referencedColumns": [
               "workout_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "exercise_with_workout_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`workout_item_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, `workout_item_exercise_order_index` INTEGER NOT NULL, `workout_item_exercise_notes` TEXT NOT NULL, PRIMARY KEY(`workout_item_id`, `exercise_id`), FOREIGN KEY(`workout_item_id`) REFERENCES `workout_item`(`workout_item_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "workoutItemID",
+            "columnName": "workout_item_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseID",
+            "columnName": "exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orderIndex",
+            "columnName": "workout_item_exercise_order_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "workout_item_exercise_notes",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "workout_item_id",
+            "exercise_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_exercise_with_workout_item_exercise_id",
+            "unique": false,
+            "columnNames": [
+              "exercise_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercise_with_workout_item_exercise_id` ON `${TABLE_NAME}` (`exercise_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "workout_item",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "workout_item_id"
+            ],
+            "referencedColumns": [
+              "workout_item_id"
             ]
           },
           {
@@ -673,7 +879,7 @@
       },
       {
         "tableName": "exercise_set",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exercise_set_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exercise_set_workout_id` INTEGER NOT NULL, `exercise_set_exercise_id` INTEGER NOT NULL, `exercise_set_weight` REAL, `exercise_set_weight_unit` TEXT, `exercise_set_reps` INTEGER, `exercise_set_time` INTEGER, `exercise_set_distance` REAL, `exercise_set_distance_unit` TEXT, `exercise_set_kcal` REAL, `workout_exercise_set_index` INTEGER NOT NULL, FOREIGN KEY(`exercise_set_workout_id`) REFERENCES `workout`(`workout_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_set_exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exercise_set_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exercise_set_workout_id` INTEGER NOT NULL, `exercise_set_exercise_id` INTEGER NOT NULL, `exercise_set_weight` REAL, `exercise_set_weight_unit` TEXT, `exercise_set_reps` INTEGER, `exercise_set_time` INTEGER, `exercise_set_distance` REAL, `exercise_set_distance_unit` TEXT, `exercise_set_kcal` REAL, `exercise_set_notes` TEXT NOT NULL, `workout_exercise_set_index` INTEGER NOT NULL, FOREIGN KEY(`exercise_set_workout_id`) REFERENCES `workout`(`workout_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exercise_set_exercise_id`) REFERENCES `exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -727,6 +933,12 @@
             "fieldPath": "kcal",
             "columnName": "exercise_set_kcal",
             "affinity": "REAL"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "exercise_set_notes",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "setIndex",
@@ -824,7 +1036,7 @@
       },
       {
         "tableName": "plan_item",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`plan_item_plan_id` INTEGER NOT NULL, `plan_item_routine_id` INTEGER NOT NULL, `plan_item_order_index` INTEGER NOT NULL, PRIMARY KEY(`plan_item_plan_id`, `plan_item_routine_id`), FOREIGN KEY(`plan_item_plan_id`) REFERENCES `plan`(`plan_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`plan_item_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`plan_item_plan_id` INTEGER NOT NULL, `plan_item_routine_id` INTEGER NOT NULL, `plan_item_order_index` INTEGER NOT NULL, PRIMARY KEY(`plan_item_plan_id`, `plan_item_order_index`), FOREIGN KEY(`plan_item_plan_id`) REFERENCES `plan`(`plan_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`plan_item_routine_id`) REFERENCES `routine`(`routine_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "planId",
@@ -849,7 +1061,7 @@
           "autoGenerate": false,
           "columnNames": [
             "plan_item_plan_id",
-            "plan_item_routine_id"
+            "plan_item_order_index"
           ]
         },
         "indices": [
@@ -931,6 +1143,26 @@
             "plan_item_schedule_id"
           ]
         },
+        "indices": [
+          {
+            "name": "index_plan_item_schedule_plan_id",
+            "unique": false,
+            "columnNames": [
+              "plan_item_schedule_plan_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plan_item_schedule_plan_id` ON `${TABLE_NAME}` (`plan_item_schedule_plan_id`)"
+          },
+          {
+            "name": "index_plan_item_routine_id",
+            "unique": false,
+            "columnNames": [
+              "plan_item_routine_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plan_item_routine_id` ON `${TABLE_NAME}` (`plan_item_routine_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "routine",
@@ -964,12 +1196,12 @@
       },
       {
         "viewName": "routine_with_exercise_names",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT routine_id, routine_name, GROUP_CONCAT(exercise_name, ', ') as exercise_names from (SELECT routine.*, exercise.exercise_name , ewr.order_index FROM exercise_with_routine ewr LEFT JOIN routine ON routine.routine_id = ewr.routine_id LEFT JOIN exercise ON exercise.exercise_id = ewr.exercise_id ORDER BY ewr.routine_id, ewr.order_index) GROUP BY routine_id"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT routine_id, routine_name, routine_order_index, COALESCE(GROUP_CONCAT(exercise_name, ', '), '') as exercise_names FROM (SELECT routine.*, exercise.exercise_name, item.routine_item_order_index, membership.routine_item_exercise_order_index FROM routine LEFT JOIN routine_item item ON routine.routine_id = item.routine_item_routine_id LEFT JOIN exercise_with_routine_item membership ON membership.routine_item_id = item.routine_item_id LEFT JOIN exercise ON exercise.exercise_id = membership.exercise_id ORDER BY item.routine_item_routine_id, item.routine_item_order_index, membership.routine_item_exercise_order_index) GROUP BY routine_id"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4a456b3d39b4b1e75aed12a856531948')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'be96cff0772d50a4bafe2459f08c8134')"
     ]
   }
 }

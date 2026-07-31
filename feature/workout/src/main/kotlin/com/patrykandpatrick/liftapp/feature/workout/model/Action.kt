@@ -40,9 +40,21 @@ sealed interface Action {
 
     data class UpdateWorkoutNotes(val notes: TextFieldState<String>) : Action
 
-    data class AddSet(val exercise: EditableWorkout.Exercise) : Action
+    data class UpdateExerciseNotes(val exercise: EditableWorkout.Exercise, val notes: String) :
+        Action
 
-    data class RemoveSet(val exercise: EditableWorkout.Exercise) : Action
+    data class AddSet(val exercises: List<EditableWorkout.Exercise>) : Action
+
+    data class RemoveSet(val exercises: List<EditableWorkout.Exercise>) : Action
+
+    data class PickExercises(val disabledExerciseIDs: List<Long>) : Action
+
+    data class RemoveItem(val workoutItemID: Long) : Action
+
+    data class ReorderItems(
+        val workoutItemIDs: List<Long>,
+        val selectedWorkoutItemID: Long?,
+    ) : Action
 
     data class GoToExerciseDetails(val exerciseID: Long) : Action
 

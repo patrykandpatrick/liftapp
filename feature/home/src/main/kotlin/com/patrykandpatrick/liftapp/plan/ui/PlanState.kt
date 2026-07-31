@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.plan.ui
 
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.workout.Workout
 import java.time.LocalDate
 
 @Immutable
@@ -13,9 +14,10 @@ sealed class PlanState {
         val cycleCount: Int,
         val currentPlanItemIndex: Int,
         val cycleDates: List<Pair<LocalDate, LocalDate>>,
+        val currentWorkout: Workout?,
     ) : PlanState()
 
-    data object NoActivePlan : PlanState()
+    data class NoActivePlan(val hasPlans: Boolean) : PlanState()
 
     companion object {
         fun getAllCycleDates(
@@ -26,7 +28,7 @@ sealed class PlanState {
             val startDate = startDate
             for (i in 0 until cycleCount) {
                 val cycleStartDate = startDate.plusDays(i * daysInCycle)
-                val cycleEndDate = cycleStartDate.plusDays(daysInCycle)
+                val cycleEndDate = cycleStartDate.plusDays(daysInCycle - 1)
                 add(cycleStartDate to cycleEndDate)
             }
         }

@@ -5,20 +5,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.core.R
@@ -55,9 +57,12 @@ fun PlanConfiguratorScreen(viewModel: PlanConfiguratorViewModel = hiltViewModel(
 
 @Composable
 private fun PlanConfiguratorScreen(state: ScreenState, onAction: (Action) -> Unit) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     LiftAppScaffold(
         topBar = {
             CompactTopAppBar(
+                scrollBehavior = topAppBarScrollBehavior,
                 title = {
                     CompactTopAppBarDefaults.Title(stringResource(R.string.route_plan_configurator))
                 },
@@ -67,7 +72,7 @@ private fun PlanConfiguratorScreen(state: ScreenState, onAction: (Action) -> Uni
             )
         },
         bottomBar = { BottomAppBar.Save(onClick = { onAction(Action.Save(state)) }) },
-        modifier = Modifier.imePadding(),
+        modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         Content(state = state, modifier = Modifier.padding(paddingValues))
     }
@@ -75,22 +80,21 @@ private fun PlanConfiguratorScreen(state: ScreenState, onAction: (Action) -> Uni
 
 @Composable
 private fun Content(state: ScreenState, modifier: Modifier = Modifier) {
-    val padding = LocalDimens.current.padding
     Column(
         modifier =
             modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = padding.contentHorizontal),
-        verticalArrangement = Arrangement.spacedBy(padding.itemVertical),
+                .padding(horizontal = LocalDimens.current.screen.horizontalPadding),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(Modifier.height(padding.contentVerticalSmall))
+        Spacer(Modifier.height(10.dp))
 
         Text(
             text = state.plan.name ?: stringResource(R.string.training_plan_name_placeholder),
             style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(vertical = padding.contentVerticalSmall),
+            modifier = Modifier.padding(vertical = 10.dp),
         )
 
         DateInput(

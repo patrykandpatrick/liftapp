@@ -30,7 +30,7 @@ internal constructor(val mode: Mode, val disabledExerciseIDs: List<Long>?) {
 
     object ModeSerializer : KSerializer<Mode> {
         override val descriptor: SerialDescriptor =
-            buildClassSerialDescriptor(serialName = checkNotNull(Mode::class.qualifiedName)) {
+            buildClassSerialDescriptor(serialName = SERIAL_NAME) {
                 element(elementName = "type", descriptor = String.serializer().descriptor)
                 element(
                     elementName = "resultKey",
@@ -51,21 +51,37 @@ internal constructor(val mode: Mode, val disabledExerciseIDs: List<Long>?) {
                     }
                 }
                 when (type) {
-                    Mode.Pick::class.simpleName -> Mode.Pick(checkNotNull(resultKey))
-                    Mode.View::class.simpleName -> Mode.View
+                    TYPE_PICK,
+                    LEGACY_TYPE_PICK -> Mode.Pick(checkNotNull(resultKey))
+                    TYPE_VIEW,
+                    LEGACY_TYPE_VIEW -> Mode.View
                     else -> error("Unknown type: $type")
                 }
             }
 
         override fun serialize(encoder: Encoder, value: Mode) {
             encoder.beginStructure(descriptor).apply {
-                encodeStringElement(descriptor, 0, checkNotNull(value::class.simpleName))
+                encodeStringElement(
+                    descriptor,
+                    0,
+                    when (value) {
+                        is Mode.Pick -> TYPE_PICK
+                        Mode.View -> TYPE_VIEW
+                    },
+                )
                 if (value is Mode.Pick) {
                     encodeStringElement(descriptor, 1, value.resultKey)
                 }
                 endStructure(descriptor)
             }
         }
+
+        private const val SERIAL_NAME =
+            "com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData.Mode"
+        private const val TYPE_PICK = "pick"
+        private const val TYPE_VIEW = "view"
+        private const val LEGACY_TYPE_PICK = "Pick"
+        private const val LEGACY_TYPE_VIEW = "View"
     }
 
     object ModeNavType : NavType<Mode>(isNullableAllowed = false) {

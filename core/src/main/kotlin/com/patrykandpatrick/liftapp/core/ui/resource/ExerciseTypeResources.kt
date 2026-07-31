@@ -1,27 +1,27 @@
 package com.patrykandpatrick.liftapp.core.ui.resource
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.ui.icons.BicepsFlexed
+import com.patrykandpatrick.liftapp.ui.icons.Cardio
+import com.patrykandpatrick.liftapp.ui.icons.Dumbbell
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.icons.Repeat
+import com.patrykandpatrick.liftapp.ui.icons.Timer
 
-val ExerciseType.iconRes: Int
-    @DrawableRes
+val ExerciseType.icon: ImageVector
     get() =
         when (this) {
-            ExerciseType.Weight -> R.drawable.ic_workout
-            ExerciseType.Calisthenics -> R.drawable.ic_calisthenics
-            ExerciseType.Reps -> R.drawable.ic_reps
-            ExerciseType.Cardio -> R.drawable.ic_cardio
-            ExerciseType.Time -> R.drawable.ic_stopwatch
+            ExerciseType.Weight -> LiftAppIcons.Dumbbell
+            ExerciseType.Calisthenics -> LiftAppIcons.BicepsFlexed
+            ExerciseType.Reps -> LiftAppIcons.Repeat
+            ExerciseType.Cardio -> LiftAppIcons.Cardio
+            ExerciseType.Time -> LiftAppIcons.Timer
         }
-
-val ExerciseType.iconPainter: Painter
-    @Composable get() = painterResource(id = iconRes)
 
 val ExerciseType.nameRes: Int
     @StringRes

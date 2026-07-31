@@ -44,7 +44,7 @@ class TopSinShape(
 fun rememberTopSinShape(
     sinPeriodLength: Dp = LocalDimens.current.divider.sinPeriodLength,
     sinHeight: Dp = LocalDimens.current.divider.sinHeight,
-    strokeWidth: Dp = LocalDimens.current.strokeWidth,
+    strokeWidth: Dp = LocalDimens.current.divider.thickness,
 ): TopSinShape =
     remember(sinPeriodLength, sinHeight, strokeWidth) {
         TopSinShape(sinPeriodLength, sinHeight, strokeWidth)

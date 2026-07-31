@@ -105,9 +105,13 @@ constructor(
                                             dtos.map { it.exerciseSet },
                                         ),
                                     workoutStartDate = workoutStartDate,
+                                    notes = workout.exerciseNotes,
                                 )
                             }
                     }
             }
             .flowOn(dispatcher)
+
+    override fun hasExerciseSets(exerciseID: Long): Flow<Boolean> =
+        exerciseDao.hasExerciseSets(exerciseID).flowOn(dispatcher)
 }

@@ -17,15 +17,19 @@ kotlin = "2.4.10"
 kotlinxSerialization = "1.11.0"
 landscapist = "2.11.0"
 lifecycle = "2.11.0"
+paging = "3.5.0"
+playServicesOssLicenses = "17.5.1"
 reorderable = "3.1.0"
 room = "2.8.4"
 viewmodel = "2.11.0"
 timber = "5.0.1"
+work = "2.11.2"
 turbine = "1.2.1"
 vico = "3.2.3"
 
 androidPlugin = "9.3.1"
 kspPlugin = "2.3.10"
+ossLicensesPlugin = "0.13.0"
 
 [libraries]
 activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
@@ -66,6 +70,8 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 landscapist = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist" }
 lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+play-services-oss-licenses = { module = "com.google.android.gms:play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -73,6 +79,7 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 vico = { module = "com.patrykandpatrick.vico:compose-android", version.ref = "vico" }
 viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel" }
+work = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 
 [bundles]
 kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
@@ -87,3 +94,4 @@ kotlinXSerialization = { id = "kotlinx-serialization" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
 library = { id = "com.android.library", version.ref = "androidPlugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicensesPlugin" }

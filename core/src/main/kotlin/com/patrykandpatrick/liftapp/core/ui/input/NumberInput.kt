@@ -29,7 +29,6 @@ import com.patrykandpatrick.liftapp.core.ui.VerticalDivider
 import com.patrykandpatrick.liftapp.core.ui.button.IconButton
 import com.patrykandpatrick.liftapp.domain.validation.valueInRange
 import com.patrykandpatrick.liftapp.ui.component.LiftAppTextField
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
 import com.patrykandpatrick.liftapp.ui.icons.CirclePlus
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -64,7 +63,7 @@ fun NumberInput(
                 null
             },
         leadingIcon = {
-            Row(modifier = Modifier.padding(end = dimens.padding.itemVerticalSmall)) {
+            Row(modifier = Modifier.padding(end = 8.dp)) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     onLongClick = {
@@ -81,15 +80,12 @@ fun NumberInput(
                     )
                 }
 
-                VerticalDivider(
-                    modifier = Modifier.padding(vertical = dimens.padding.itemVerticalSmall)
-                )
+                VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 if (prefix != null) {
                     Text(
                         modifier =
-                            Modifier.align(Alignment.CenterVertically)
-                                .padding(start = dimens.padding.contentHorizontal),
+                            Modifier.align(Alignment.CenterVertically).padding(start = 16.dp),
                         text = prefix,
                         color = colorScheme.onSurfaceVariant,
                     )
@@ -97,20 +93,16 @@ fun NumberInput(
             }
         },
         trailingIcon = {
-            Row(modifier = Modifier.padding(start = dimens.padding.itemHorizontalSmall)) {
+            Row(modifier = Modifier.padding(start = 8.dp)) {
                 if (suffix != null) {
                     Text(
-                        modifier =
-                            Modifier.align(Alignment.CenterVertically)
-                                .padding(end = dimens.padding.contentHorizontal),
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(end = 16.dp),
                         text = suffix,
                         color = colorScheme.onSurfaceVariant,
                     )
                 }
 
-                VerticalDivider(
-                    modifier = Modifier.padding(vertical = dimens.padding.itemVerticalSmall)
-                )
+                VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),

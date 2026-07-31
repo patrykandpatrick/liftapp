@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <bool name="liftapp_use_dark_header_icons">true</bool>
+    <bool name="liftapp_use_dark_system_bar_icons">false</bool>
+
+</resources>

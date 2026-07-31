@@ -34,8 +34,8 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 internal fun Shortcuts(modifier: Modifier = Modifier, onAction: (Action) -> Unit) {
     VerticalGrid(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
-        verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Item(
             text = stringResource(R.string.shortcut_1rm_calculator),
@@ -92,8 +92,8 @@ private fun ShortcutsPreview() {
             Shortcuts(
                 modifier =
                     Modifier.padding(
-                        horizontal = dimens.padding.contentHorizontal,
-                        vertical = dimens.padding.contentVertical,
+                        horizontal = dimens.screen.horizontalPadding,
+                        vertical = dimens.screen.verticalPadding,
                     ),
                 onAction = {},
             )

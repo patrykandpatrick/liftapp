@@ -17,6 +17,7 @@ import com.patrykandpatrick.liftapp.domain.bodymeasurement.invoke
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.domain.unit.GetUnitForBodyMeasurementTypeUseCase
 import com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.model.Action
@@ -51,11 +52,13 @@ constructor(
     private val stringProvider: StringProvider,
     private val navigationCommander: NavigationCommander,
     savedStateHandle: SavedStateHandle,
+    preferenceRepository: PreferenceRepository,
 ) : ViewModel() {
 
     private val chartModelProducer = CartesianChartModelProducer()
 
-    private val dateIntervalOptions = DateInterval.bodyMeasurementOptions
+    private val dateIntervalOptions =
+        DateInterval.bodyMeasurementOptions(preferenceRepository.currentFirstDayOfWeek.value)
 
     private val dateInterval =
         savedStateHandle.getMutableStateFlow(DATE_INTERVAL_KEY, dateIntervalOptions.first())

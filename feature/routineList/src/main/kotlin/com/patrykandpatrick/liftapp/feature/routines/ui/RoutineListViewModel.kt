@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatrick.liftapp.domain.routine.ReorderRoutinesUseCase
+import com.patrykandpatrick.liftapp.domain.routine.invoke
 import com.patrykandpatrick.liftapp.feature.routines.model.Action
 import com.patrykandpatrick.liftapp.feature.routines.model.GetRoutineItemsUseCase
 import com.patrykandpatrick.liftapp.navigation.Routes
@@ -23,6 +25,7 @@ constructor(
     getRoutineItemsUseCase: GetRoutineItemsUseCase,
     private val routineListRouteData: RoutineListRouteData,
     private val navigationCommander: NavigationCommander,
+    private val reorderRoutines: ReorderRoutinesUseCase,
     scope: CoroutineScope,
 ) : ViewModel(scope) {
     val state: StateFlow<Loadable<RoutineListState>> =
@@ -40,6 +43,8 @@ constructor(
             is Action.PopBackStack -> popBackStack()
             is Action.RoutineClicked -> onRoutineClicked(action.routineID)
             is Action.AddNewRoutine -> addNewRoutine()
+            is Action.ReorderRoutines ->
+                viewModelScope.launch { reorderRoutines(action.routineIDs) }
         }
     }
 

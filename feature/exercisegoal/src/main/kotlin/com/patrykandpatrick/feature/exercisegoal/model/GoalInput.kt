@@ -15,7 +15,7 @@ data class GoalInput(
     val minReps: Input.MinReps?,
     val maxReps: Input.MaxReps?,
     val sets: Input.Sets?,
-    val restTime: Input.RestTime,
+    val restTime: Input.RestTime?,
     val duration: Input.Duration?,
     val distance: Input.Distance?,
     val calories: Input.Calories?,
@@ -30,6 +30,7 @@ data class GoalInput(
             goal: Goal,
             type: ExerciseType,
             longDistanceUnit: LongDistanceUnit,
+            isInSuperset: Boolean,
         ): GoalInput {
             val minReps =
                 if (
@@ -43,9 +44,10 @@ data class GoalInput(
             val maxReps =
                 if (minReps != null) getMaxRepsInput(textFieldStateManager, minReps, goal) else null
 
-            val sets = getSetsInput(textFieldStateManager, goal)
+            // A superset defines the set count and the rest time for all of its exercises.
+            val sets = if (isInSuperset) null else getSetsInput(textFieldStateManager, goal)
 
-            val restTime = getRestTimeInput(textFieldStateManager, goal)
+            val restTime = if (isInSuperset) null else getRestTimeInput(textFieldStateManager, goal)
 
             val duration =
                 if (type.isAnyOf(ExerciseType.Time, ExerciseType.Cardio)) {
@@ -68,7 +70,15 @@ data class GoalInput(
                     null
                 }
 
-            return GoalInput(minReps, maxReps, sets, restTime, duration, distance, calories)
+            return GoalInput(
+                minReps = minReps,
+                maxReps = maxReps,
+                sets = sets,
+                restTime = restTime,
+                duration = duration,
+                distance = distance,
+                calories = calories,
+            )
         }
 
         private fun getMinRepsInput(

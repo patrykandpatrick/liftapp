@@ -18,7 +18,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 
 @Composable
@@ -33,8 +32,8 @@ fun InputSuggestion(
         modifier = modifier,
         contentPadding =
             PaddingValues(
-                horizontal = LocalDimens.current.padding.itemHorizontalMedium,
-                vertical = LocalDimens.current.padding.itemVerticalSmall,
+                horizontal = 12.dp,
+                vertical = 8.dp,
             ),
         verticalArrangement = Arrangement.Top,
         colors = LiftAppCardDefaults.tonalCardColors,
@@ -48,8 +47,7 @@ fun InputSuggestion(
 fun InputSuggestionsRow(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
     Row(
         modifier = modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-        horizontalArrangement =
-            Arrangement.spacedBy(LocalDimens.current.padding.itemHorizontalSmall, Alignment.End),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
         verticalAlignment = Alignment.CenterVertically,
         content = content,
     )

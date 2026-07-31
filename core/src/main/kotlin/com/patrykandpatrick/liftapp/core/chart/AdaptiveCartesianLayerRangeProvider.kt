@@ -17,7 +17,7 @@ private class AdaptiveCartesianLayerRangeProvider(
     private val xAxisCartesianLayerRangeProvider: CartesianLayerRangeProvider,
 ) : CartesianLayerRangeProvider {
     override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
-        (minY - extentValue).round(maxY + extentValue, isMin = true)
+        (minY - extentValue).round(maxY + extentValue, isMin = true).coerceAtLeast(0.0)
 
     override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore): Double =
         (maxY + extentValue).round(minY - extentValue, isMin = false)

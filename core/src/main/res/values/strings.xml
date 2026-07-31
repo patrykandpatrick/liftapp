@@ -1,17 +1,17 @@
 <resources>
     <string name="app_name">LiftApp</string>
-    <string name="route_dashboard">This Week</string>
+    <string name="route_dashboard">This week</string>
+    <string name="route_dashboard_short">Week</string>
     <string name="route_more">More</string>
     <string name="route_body">Body</string>
-    <string name="route_new_body_measurement">New Body Measurement</string>
-    <string name="route_edit_body_measurement">Edit Body Measurement</string>
+    <string name="route_new_body_measurement">New body measurement</string>
+    <string name="route_edit_body_measurement">Edit body measurement</string>
     <string name="route_exercises">Exercises</string>
     <string name="route_settings">Settings</string>
-    <string name="route_about">About</string>
     <string name="route_routines">Routines</string>
-    <string name="route_pick_routine">Select a Routine</string>
+    <string name="route_pick_routine">Select a routine</string>
     <string name="route_routine">Routine</string>
-    <string name="route_one_rep_max">1RM Calculator</string>
+    <string name="route_one_rep_max">1RM calculator</string>
     <string name="route_workout">Workout</string>
     <string name="distance">Distance</string>
     <string name="mass">Mass</string>
@@ -19,10 +19,10 @@
     <string name="units">Units</string>
     <string name="mass_value_and_unit">%1$s %2$s</string>
     <string name="distance_value_and_unit">%1$s %2$s</string>
-    <string name="one_rep_max">One-Rep Max</string>
-    <string name="one_rep_max_description">1RM is the greatest weight you can lift once. It helps determine strength and best exercise load.</string>
+    <string name="one_rep_max">One-rep max</string>
+    <string name="one_rep_max_description">Your 1RM is the greatest weight you can lift once. It can help you measure your strength and choose an appropriate training load.</string>
     <string name="one_rep_max_history_section_title">History</string>
-    <string name="one_rep_max_history_entry">%s × %s = %s</string>
+    <string name="one_rep_max_history_entry">%1$s × %2$s = %3$s</string>
     <string name="reps">Reps</string>
     <string name="goal_info">Set your workout parameters here. Enter the minimum and maximum reps for each exercise, the number of sets, and the rest time between them. Adjust these based on your goals and fitness level.</string>
     <string name="goal_min_reps">Reps (min)</string>
@@ -32,7 +32,6 @@
     <string name="goal_distance">Distance</string>
     <string name="goal_duration">Duration</string>
     <string name="goal_calories">Calories</string>
-    <string name="and_in_a_list">&amp;</string>
     <string name="list_remove">Remove</string>
     <string name="energy_unit_kcal">kcal</string>
     <string name="unit_reps">reps</string>
@@ -44,16 +43,16 @@
     <string name="shortcut_plan">Plan</string>
     <string name="shortcut_routines">Routines</string>
 
-    <string name="point_separator" translatable="false">ꞏ</string>
+    <string name="point_separator" translatable="false">·</string>
     <string name="multiply_character" translatable="false">×</string>
     <string name="goal_format_time_separator">in</string>
     <string name="goal_time_format"><![CDATA[<b><color-surface-variant>%1$s</color-surface-variant></b>]]></string>
-    <string name="goal_reps_format_long"><![CDATA[<b><color-surface-variant>%1$s–%2$s</b-surface> %3$s × <b-surface>%4$s</color-surface-variant></b> %5$s]]></string>
-    <string name="goal_reps_format_long_single_rep"><![CDATA[<b><color-surface-variant>%1$s</b-surface> %2$s × <b-surface>%3$s</color-surface-variant></b> %4$s]]></string>
+    <string name="goal_reps_format_long"><![CDATA[<b><color-surface-variant>%1$s–%2$s</color-surface-variant></b> %3$s × <b><color-surface-variant>%4$s</color-surface-variant></b> %5$s]]></string>
+    <string name="goal_reps_format_long_single_rep"><![CDATA[<b><color-surface-variant>%1$s</color-surface-variant></b> %2$s × <b><color-surface-variant>%3$s</color-surface-variant></b> %4$s]]></string>
 
     <string name="exercise_set_set_index">Set %d</string>
-    <string name="exercise_set_set_index_with_total_count">Set %d/%d</string>
-    <string name="workout_exercise_set_info"><![CDATA[<b><color-surface-variant>Set %d</color-surface-variant></b> ꞏ %s]]></string>
+    <string name="exercise_set_set_index_with_total_count">Set %1$d/%2$d</string>
+    <string name="workout_exercise_set_info"><![CDATA[<b><color-surface-variant>Set %1$d</color-surface-variant></b> · %2$s]]></string>
     <string name="exercise_set_not_completed">Not completed</string>
     <!-- Example: 80 kg × 10 reps -->
     <string name="exercise_set_format_calisthenics">%1$s × %2$s</string>
@@ -61,10 +60,10 @@
     <string name="exercise_set_format_calisthenics_with_weight">%1$s (+%2$s) × %3$s</string>
     <!-- Example: 100 kg × 10 reps -->
     <string name="exercise_set_format_weight">%1$s × %2$s</string>
-    <!-- Example: 5 m 24 s ꞏ 2.21 km ꞏ 334 kcal -->
-    <string name="exercise_set_format_cardio">%1$s ꞏ %2$s ꞏ %3$s</string>
+    <!-- Example: 5 m 24 s · 2.21 km · 334 kcal -->
+    <string name="exercise_set_format_cardio">%1$s · %2$s · %3$s</string>
     <!-- Example: 3 of 4 sets -->
-    <string name="workout_exercise_list_set_format">&lt;b-surface>%1$d&lt;/b-surface> of &lt;b-surface>%2$d&lt;/b-surface> %3$s</string>
+    <string name="workout_exercise_list_set_format">&lt;b>&lt;color-surface-variant>%1$d&lt;/color-surface-variant>&lt;/b> of &lt;b>&lt;color-surface-variant>%2$d&lt;/color-surface-variant>&lt;/b> %3$s</string>
 
     <string name="body_measurement_left">Left</string>
     <string name="body_measurement_right">Right</string>
@@ -79,15 +78,33 @@
     <string name="muscle_glutes">Glutes</string>
     <string name="muscle_hamstrings">Hamstrings</string>
     <string name="muscle_lats">Lats</string>
-    <string name="muscle_lower_back">Lower Back</string>
+    <string name="muscle_lower_back">Lower back</string>
     <string name="muscle_quadriceps">Quadriceps</string>
     <string name="muscle_shoulders">Shoulders</string>
     <string name="muscle_traps">Traps</string>
     <string name="muscle_triceps">Triceps</string>
 
-    <string name="primary_muscle">Primary Muscle</string>
-    <string name="secondary_muscle">Secondary Muscle</string>
-    <string name="tertiary_muscle">Tertiary Muscle</string>
+    <!-- Forms used after the first item in a muscle list. Translators may retain
+         capitalization for proper nouns or use another grammatically appropriate form. -->
+    <string name="muscle_abductors_list_continuation">abductors</string>
+    <string name="muscle_abs_list_continuation">abs</string>
+    <string name="muscle_adductors_list_continuation">adductors</string>
+    <string name="muscle_biceps_list_continuation">biceps</string>
+    <string name="muscle_calves_list_continuation">calves</string>
+    <string name="muscle_chest_list_continuation">chest</string>
+    <string name="muscle_forearms_list_continuation">forearms</string>
+    <string name="muscle_glutes_list_continuation">glutes</string>
+    <string name="muscle_hamstrings_list_continuation">hamstrings</string>
+    <string name="muscle_lats_list_continuation">lats</string>
+    <string name="muscle_lower_back_list_continuation">lower back</string>
+    <string name="muscle_quadriceps_list_continuation">quadriceps</string>
+    <string name="muscle_shoulders_list_continuation">shoulders</string>
+    <string name="muscle_traps_list_continuation">traps</string>
+    <string name="muscle_triceps_list_continuation">triceps</string>
+
+    <string name="primary_muscle">Primary</string>
+    <string name="secondary_muscle">Secondary</string>
+    <string name="tertiary_muscle">Tertiary</string>
 
     <string name="exercise_type_weight">Weight</string>
     <string name="exercise_type_calisthenics">Calisthenics</string>
@@ -103,8 +120,17 @@
     <string name="exercise_set_input_distance">Distance</string>
     <string name="exercise_set_input_calories">Calories</string>
 
-    <string name="routine_delete_message">This won’t delete any exercises.</string>
-    <string name="exercise_delete_message">This will delete all assigned sets.</string>
+    <string name="routine_delete_message">This won’t delete any exercises</string>
+    <string name="routine_item_remove_message">This will remove it from the routine</string>
+    <string name="routine_superset_exercise_remove_message">This will remove it from the superset</string>
+    <string name="workout_delete_title">Delete workout?</string>
+    <string name="workout_delete_message">This will delete all its sets</string>
+    <string name="workout_item_remove_message">This will delete its recorded sets</string>
+    <string name="exercise_delete_message">This will delete all assigned sets</string>
+    <string name="body_measurement_entry_delete_title">Delete entry?</string>
+    <string name="body_measurement_entry_delete_message">This cannot be undone</string>
+    <string name="one_rep_max_clear_history_title">Clear history?</string>
+    <string name="one_rep_max_clear_history_message">This will delete all saved calculations</string>
     <string name="tab_stats">Statistics</string>
     <string name="tab_exercises">Exercises</string>
     <string name="tab_details">Details</string>
@@ -113,14 +139,16 @@
     <string name="generic_description">Description</string>
     <string name="generic_type">Type</string>
     <string name="generic_list">List</string>
-    <string name="generic_main_muscles">Main Muscles</string>
-    <string name="generic_secondary_muscles">Secondary Muscles</string>
-    <string name="generic_tertiary_muscles">Tertiary Muscles</string>
+    <string name="generic_main_muscles">Main muscles</string>
+    <string name="generic_secondary_muscles">Secondary muscles</string>
+    <string name="generic_tertiary_muscles">Tertiary muscles</string>
     <string name="generic_search">Search</string>
-    <string name="generic_group_by">Group By</string>
+    <string name="generic_group_by">Group by</string>
     <string name="generic_journal">Journal</string>
-    <string name="generic_quoted">”%s“</string>
+    <string name="generic_notes">Notes</string>
+    <string name="generic_quoted">“%s”</string>
     <string name="generic_delete_something">Delete “%s”?</string>
+    <string name="generic_remove_something">Remove “%s”?</string>
     <string name="generic_today">today</string>
     <string name="generic_tomorrow">tomorrow</string>
     <string name="generic_on_date">on %s</string>
@@ -133,30 +161,44 @@
     <string name="action_go_back">Go back</string>
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
-    <string name="action_add_exercise">Add Exercise</string>
-    <string name="action_new_exercise">New Exercise</string>
-    <string name="action_new_routine">New Routine</string>
+    <string name="action_add_exercise">Add exercise</string>
+    <string name="action_add_exercises">Add exercises</string>
+    <string name="action_reorder_list">Reorder list</string>
+    <string name="action_edit_goal">Edit goal</string>
+    <string name="action_new_exercise">New exercise</string>
+    <string name="action_new_routine">New routine</string>
     <string name="action_increase">Increase</string>
     <string name="action_decrease">Decrease</string>
-    <string name="action_new_entry">New Entry</string>
+    <string name="action_new_entry">New entry</string>
     <string name="action_done">Done</string>
     <string name="action_info">Additional information</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_work_out">Work out</string>
-    <string name="action_start_workout">Start Workout</string>
+    <string name="action_add">Add</string>
+    <string name="action_start_workout">Start workout</string>
     <string name="action_add_set">Add set</string>
     <string name="action_remove_set">Remove set</string>
+    <string name="action_remove">Remove</string>
     <string name="action_continue">Continue</string>
+    <string name="action_try_again">Try again</string>
     <string name="action_show">Show</string>
     <string name="action_more">More</string>
+    <string name="action_show_all">Show all</string>
 
-    <string name="title_new_exercise">New Exercise</string>
-    <string name="title_new_routine">New Routine</string>
-    <string name="title_edit_routine">Edit Routine</string>
+    <string name="title_new_exercise">New exercise</string>
+    <string name="title_new_routine">New routine</string>
+    <string name="title_rename_routine">Rename routine</string>
     <string name="title_exercises">Exercises</string>
-    <string name="title_x_selected">%s Selected</string>
+    <string name="title_x_selected">%s selected</string>
 
-    <string name="state_no_exercises">No exercises.</string>
+    <string name="state_no_exercises">No exercises</string>
+    <string name="state_no_results">No results</string>
+    <string name="state_no_training_plans">No training plans</string>
+    <string name="state_no_routines">No routines</string>
+    <string name="state_no_exercise_history">No workout history</string>
+    <string name="state_no_data_for_period">No data for this period</string>
+    <string name="state_no_measurements">No measurements</string>
+    <string name="state_no_workouts">No workouts</string>
 
     <string name="value">Value</string>
 
@@ -170,32 +212,43 @@
     <string name="picker_time_am" translatable="false">AM</string>
     <string name="picker_time_pm" translatable="false">PM</string>
 
-    <string name="picker_date_title">Select Date</string>
-    <string name="picker_date_action_title">Chosen Date</string>
+    <string name="picker_date_title">Select date</string>
+    <string name="picker_date_action_title">Chosen date</string>
     <string name="picker_date_input_title">Date</string>
-    <string name="picker_date_input_error">Incorrect format. Use the %1$s format—e.g., %2$s.</string>
+    <string name="picker_date_input_error">Incorrect format. Use %1$s—for example, %2$s.</string>
     <string name="picker_date_input_date_format">d.M.yy</string>
     <string name="picker_date_output_date_format">d MMM yyyy</string>
     <string name="picker_date_example_date_format">dd.MM.yyyy</string>
     <string name="picker_date_example">dd.mm.yyyy</string>
 
-    <string name="settings_time_and_date">Time &amp; Date</string>
-    <string name="settings_hour_format">Time Format</string>
-    <string name="settings_hour_format_option_12">12-Hour</string>
-    <string name="settings_hour_format_option_24">24-Hour</string>
+    <string name="settings_time_and_date">Time and date</string>
+    <string name="settings_hour_format">Time format</string>
+    <string name="settings_hour_format_option_12">12-hour</string>
+    <string name="settings_hour_format_option_24">24-hour</string>
     <string name="settings_hour_format_option_auto">Auto</string>
+    <string name="settings_first_day_of_week">Week starts on</string>
 
-    <string name="error_x_empty">%s cannot be empty.</string>
-    <string name="error_pick_main_muscles">Pick at least one main muscle.</string>
-    <string name="error_must_be_higher_than_zero">The value must be more than zero.</string>
-    <string name="error_must_be_higher_than_or_equal_to">The value must be more, or equal to %s.</string>
-    <string name="error_name_too_long">The name is too long (%1$s/%2$s).</string>
-    <string name="error_field_cannot_be_empty">This field cannot be empty.</string>
-    <string name="error_field_too_short">The value must have at least %s characters (%s/%s).</string>
-    <string name="error_field_too_long">The value must have at most %s characters (%s/%s).</string>
-    <string name="error_value_too_small">The value must be more than, or equal to %s.</string>
-    <string name="error_value_too_big">The value must be less than, or equal to %s.</string>
-    <string name="error_value_not_valid_number">The value is not a valid number.</string>
+    <string name="shortcut_start_workout">Work out</string>
+    <string name="shortcut_add_weight">Weight</string>
+
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_about">About</string>
+    <string name="settings_open_source_licenses">Open-source licenses</string>
+    <string name="settings_theme_option_follow_system">Follow system</string>
+    <string name="settings_theme_option_light">Light</string>
+    <string name="settings_theme_option_dark">Dark</string>
+
+    <string name="error_x_empty">%s cannot be empty</string>
+    <string name="error_pick_main_muscles">Pick at least one main muscle</string>
+    <string name="error_must_be_higher_than_zero">The value must be greater than zero</string>
+    <string name="error_must_be_higher_than_or_equal_to">The value must be greater than or equal to %s</string>
+    <string name="error_name_too_long">The name is too long (%1$s/%2$s)</string>
+    <string name="error_field_cannot_be_empty">This field cannot be empty</string>
+    <string name="error_field_too_short">The value must have at least %1$s characters (%2$s/%3$s)</string>
+    <string name="error_field_too_long">The value must have at most %1$s characters (%2$s/%3$s)</string>
+    <string name="error_value_too_small">The value must be greater than or equal to %s</string>
+    <string name="error_value_too_big">The value must be less than or equal to %s</string>
+    <string name="error_value_not_valid_number">The value is not a valid number</string>
     <string name="error_does_not_equal">%1$s does not equal %2$s</string>
 
     <string name="date_day">d</string>
@@ -214,31 +267,50 @@
     <string name="time_minutes_medium">min</string>
     <string name="time_seconds_medium">sec</string>
     <string name="date_range_format_separator">–</string>
-    <string name="exercise_summary_type_1rm">One-Rep Max</string>
-    <string name="exercise_summary_type_total_volume">Total Volume</string>
-    <string name="exercise_summary_type_total_reps">Total Reps</string>
-    <string name="exercise_summary_type_total_duration">Total Duration</string>
-    <string name="exercise_summary_type_total_distance">Total Distance</string>
-    <string name="exercise_summary_type_total_calories">Total Calories</string>
-    <string name="exercise_summary_type_avg_pace">Average Pace</string>
-    <string name="exercise_summary_type_avg_speed">Average Speed</string>
+    <string name="exercise_summary_type_1rm">One-rep max</string>
+    <string name="exercise_summary_type_total_volume">Total volume</string>
+    <string name="exercise_summary_type_total_reps">Total reps</string>
+    <string name="exercise_summary_type_total_duration">Total duration</string>
+    <string name="exercise_summary_type_total_distance">Total distance</string>
+    <string name="exercise_summary_type_total_calories">Total calories</string>
+    <string name="exercise_summary_type_avg_pace">Average pace</string>
+    <string name="exercise_summary_type_avg_speed">Average speed</string>
+    <string name="exercise_statistics_total_volume">Total volume</string>
+    <string name="exercise_statistics_total_reps">Total reps</string>
+    <string name="exercise_statistics_total_distance">Total distance</string>
+    <string name="exercise_statistics_total_duration">Total duration</string>
+    <string name="exercise_statistics_minimum_weight">Minimum weight</string>
+    <string name="exercise_statistics_maximum_weight">Maximum weight</string>
+    <string name="exercise_statistics_minimum_reps">Minimum reps</string>
+    <string name="exercise_statistics_maximum_reps">Maximum reps</string>
+    <string name="exercise_statistics_minimum_duration">Minimum duration</string>
+    <string name="exercise_statistics_maximum_duration">Maximum duration</string>
+    <string name="exercise_journal_exercise_note">Exercise note</string>
+    <string name="exercise_journal_set_note">Set note</string>
 
     <string name="content_description_remove_set">Remove set</string>
 
     <!-- Dashboard -->
-    <string name="dashboard_section_active_workout">Active Workout</string>
-    <string name="dashboard_section_active_workouts">Active Workouts</string>
-    <string name="dashboard_section_recent_workout">Recent Workout</string>
-    <string name="dashboard_section_recent_workouts">Recent Workouts</string>
+    <string name="dashboard_section_active_workout">Active workout</string>
+    <string name="dashboard_section_active_workouts">Active workouts</string>
+    <string name="dashboard_section_recent_workout">Recent workout</string>
+    <string name="dashboard_section_recent_workouts">Recent workouts</string>
+    <string name="dashboard_section_schedule">Schedule</string>
+    <string name="dashboard_statistics_lifted">Volume</string>
+    <string name="dashboard_statistics_reps">Reps</string>
+    <string name="dashboard_statistics_workouts">Workouts</string>
+    <string name="dashboard_statistics_time_exercised">Time exercised</string>
     <string name="dashboard_workout_date_pattern">E, d MMM</string>
     <string name="dashboard_active_workout_date_title"><![CDATA[Started on <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
     <string name="dashboard_completed_workout_date_title"><![CDATA[Completed on <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
 
     <!-- Rest timer -->
-    <string name="rest_timer_notification_channel_name">Rest Timer</string>
+    <string name="rest_timer_notification_channel_name">Rest timer</string>
     <string name="rest_timer_finished_notification_channel_name">End of rest</string>
     <string name="rest_timer_notification_body">Rest timer</string>
     <string name="rest_timer_finished_notification_body">End of rest</string>
+    <string name="rest_timer_action_start">Start rest timer</string>
+    <string name="rest_timer_action_stop">Stop rest timer</string>
     <string name="rest_timer_action_cancel">Cancel</string>
     <string name="rest_timer_action_resume">Resume</string>
     <string name="rest_timer_action_pause">Pause</string>
@@ -251,12 +323,20 @@
     <string name="workout_change_set_count_buttons_title">Sets</string>
     <string name="workout_set_suggestion_previous_set">Previous set</string>
     <string name="workout_set_suggestion_previous_workout">Previous workout</string>
+    <string name="workout_set_input_title">Set %d</string>
     <string name="workout_set_entry_section_past_sets">Past sets</string>
     <string name="workout_set_entry_section_previous_workout">Sets from the previous workout</string>
     <string name="workout_calisthenics_set_body_weight"><![CDATA[Body weight <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
     <string name="workout_action_next_exercise">Next exercise</string>
     <string name="workout_action_summary">Summary</string>
     <string name="workout_action_previous_exercise">Previous exercise</string>
+    <string name="workout_action_record_set_results">Record set results</string>
+    <string name="workout_action_skip_break">Skip break</string>
+    <string name="workout_ongoing_title">Workout in progress</string>
+    <string name="workout_ongoing_start_message">“%s” is unfinished. Continue it?</string>
+    <string name="workout_ongoing_close_message">“%s” is unfinished</string>
+    <string name="workout_ongoing_action_end">End</string>
+    <string name="workout_ongoing_action_pause">Pause</string>
     <string name="workout_summary_title">Summary</string>
     <string name="workout_summary_action_finish_workout">Finish workout</string>
     <string name="workout_summary_edit_workout_name">Workout name</string>
@@ -264,56 +344,140 @@
     <string name="workout_summary_edit_workout_start_time">Start time</string>
     <string name="workout_summary_edit_workout_end_date">End date</string>
     <string name="workout_summary_edit_workout_end_time">End time</string>
-    <string name="workout_summary_edit_workout_notes">Notes</string>
     <string name="workout_summary_edit_picker_confirm">Confirm</string>
     <string name="workout_summary_exercises">Exercises</string>
 
     <!-- Active Training Plan -->
-    <string name="route_active_plan_full">My Training Plan</string>
-    <string name="route_active_plan_short">My Plan</string>
-    <string name="plan_no_active_plan">You have no active training plan</string>
-    <string name="plan_no_active_plan_create_cta">Create new </string>
+    <string name="route_active_plan_full">My training plan</string>
+    <string name="route_active_plan_short">Plan</string>
+    <string name="plan_no_active_plan">No active training plan</string>
+    <string name="plan_no_active_plan_create_cta">Create new</string>
     <string name="plan_no_active_plan_choose_existing_cta">Choose existing</string>
-    <string name="plan_cycle_number_title"><![CDATA[Current Cycle <small>(%d/%d)</small>]]></string>
+    <string name="plan_cycle_title">Current cycle</string>
     <string name="plan_no_schedule_for_this_day">Nothing planned for this day</string>
+    <string name="plan_no_schedule_for_today">Nothing planned for today</string>
+    <string name="plan_see_training_plan">See training plan</string>
 
     <!-- New Training Plan -->
-    <string name="route_new_plan">New Training Plan</string>
-    <string name="training_plan_add_new">Add Training Plan</string>
-    <string name="route_new_plan_edit">Edit Training Plan</string>
-    <string name="training_plan_name_placeholder">My Training Plan</string>
+    <string name="route_new_plan">New training plan</string>
+    <string name="training_plan_add_new">Add training plan</string>
+    <string name="route_new_plan_edit">Edit training plan</string>
+    <string name="training_plan_name_placeholder">My training plan</string>
     <string name="training_plan_item_add_rest_day">Add rest day</string>
     <string name="training_plan_item_add_routine">Add routine</string>
     <string name="training_plan_item_rest_day">Rest day</string>
     <string name="training_plan_item_remove">Remove the plan item</string>
     <string name="training_plan_item_day_indicator_label">Day</string>
-    <string name="training_plan_error_no_routines">The plan needs to have at least one routine</string>
-    <string name="training_plan_change_title">Change Training Plan</string>
+    <string name="training_plan_delete_message">This won’t delete any routines</string>
+    <string name="training_plan_change_title">Change training plan</string>
 
     <!-- Training Plan list -->
-    <string name="route_training_plans">Training Plans</string>
-    <string name="route_training_plans_select">Select a Training Plan</string>
-    <string name="training_plan_cycle_length">%d-Day Cycle</string>
+    <string name="route_training_plans">Training plans</string>
+    <string name="route_training_plans_select">Select a training plan</string>
+    <string name="training_plan_cycle_length">%d-day cycle</string>
 
     <!-- Configure Training Plan -->
-    <string name="route_plan_configurator">Configure Training Plan</string>
+    <string name="route_plan_configurator">Configure training plan</string>
     <string name="training_plan_start_date">Start date</string>
     <string name="training_plan_cycle_count">Cycle count</string>
-    <string name="training_plan_configure_info_text"><![CDATA[Starts <b><color-surface-variant>%s</b-surface>. Ends in <b-surface>%s</b-surface>, on <b-surface>%s</color-surface-variant></b>.]]></string>
+    <string name="training_plan_configure_info_text"><![CDATA[Starts <b><color-surface-variant>%1$s</color-surface-variant></b> and ends <b><color-surface-variant>%2$s</color-surface-variant></b> later, on <b><color-surface-variant>%3$s</color-surface-variant></b>]]></string>
     <!-- Example: "2 weeks and 3 days" -->
     <string name="training_plan_configure_ends_in_weeks_days">%1$d %2$s and %3$d %4$s</string>
     <!-- Example: "2 weeks" -->
     <string name="training_plan_configure_ends_in_weeks">%1$d %2$s</string>
 
     <!-- Errors -->
-    <string name="generic_error_title">Unexpected Error</string>
-    <string name="error_routine_not_found">Routine has not been found.</string>
-    <string name="error_plan_not_found">Training plan has not been found.</string>
+    <string name="generic_error_title">Unexpected error</string>
+    <string name="error_routine_not_found">The routine could not be found</string>
+    <string name="error_plan_not_found">The training plan could not be found</string>
 
     <!-- Date Grouping -->
-    <string name="date_interval_rolling_days">Rolling %d %s</string>
+    <string name="date_interval_rolling_days">Rolling %1$d %2$s</string>
     <string name="date_interval_rolling_week">Weekly</string>
     <string name="date_interval_rolling_month">Monthly</string>
     <string name="date_interval_rolling_year">Yearly</string>
 
+    <string name="title_superset">Superset</string>
+    <string name="action_add_superset">Add superset</string>
+    <string name="superset_sets">Sets per exercise</string>
+    <string name="superset_rest_time">Break duration</string>
+    <string name="superset_summary_format"><![CDATA[<b><color-surface-variant>%1$s</color-surface-variant></b> %2$s × <b><color-surface-variant>%3$s</color-surface-variant></b> %4$s]]></string>
+    <string name="superset_description">Alternate between individual sets of 2–8 exercises. This enables active recovery.</string>
+    <string name="superset_error_too_few_exercises">Pick 2 or more exercises</string>
+    <string name="superset_error_too_many_exercises">Pick %1$d or fewer exercises</string>
+
+    <!-- Back up &amp; restore -->
+    <string name="route_backup">Back up &amp; restore</string>
+    <string name="route_backup_export">Back up</string>
+    <string name="route_backup_import">Restore</string>
+    <string name="route_backup_auto">Auto backup</string>
+
+    <string name="backup_data_type_routines">Routines</string>
+    <string name="backup_data_type_workouts">Workouts</string>
+    <string name="backup_data_type_training_plans">Training plans</string>
+    <string name="backup_data_type_body_measurements">Body measurements</string>
+    <string name="backup_data_type_settings">Settings</string>
+
+    <!-- The data types as they appear in the file name of a partial backup, where they modify
+         "backup" and so take the singular, hyphenated when more than one word. Translators may use
+         another grammatically appropriate attributive form. -->
+    <string name="backup_name_type_routines">Routine</string>
+    <string name="backup_name_type_workouts">Workout</string>
+    <string name="backup_name_type_training_plans">Training-plan</string>
+    <string name="backup_name_type_body_measurements">Body-measurement</string>
+    <!-- Kept plural: this is the app's settings, which has no singular attributive form. -->
+    <string name="backup_name_type_settings">Settings</string>
+    <!-- The forms that follow another entry in a list, as in "Routine, workout, and settings". -->
+    <string name="backup_name_type_routines_list_continuation">routine</string>
+    <string name="backup_name_type_workouts_list_continuation">workout</string>
+    <string name="backup_name_type_training_plans_list_continuation">training-plan</string>
+    <string name="backup_name_type_body_measurements_list_continuation">body-measurement</string>
+    <string name="backup_name_type_settings_list_continuation">settings</string>
+
+    <!-- Goes into the file name of a backup holding every data type. -->
+    <string name="backup_name_full">Full backup</string>
+    <!-- Goes into the file name of a scheduled backup. -->
+    <string name="backup_name_automatic">Auto backup</string>
+    <!-- Trails the data types in the file name of a partial backup, as in "Routines &amp; workouts backup". -->
+    <string name="backup_name_suffix">backup</string>
+    <!-- Example: " (30 Jul 2026)". The leading space separates the date from the name. -->
+    <string name="backup_name_date_format">" (d MMM yyyy)"</string>
+
+    <string name="backup_action_back_up">Back up</string>
+    <string name="backup_action_restore">Restore</string>
+    <string name="backup_action_share">Share</string>
+    <string name="backup_action_export">Export</string>
+
+    <string name="backup_section_data">Data</string>
+    <string name="backup_destination">Destination</string>
+
+    <string name="backup_auto_enabled">Auto backup</string>
+    <string name="backup_auto_turn_on">Turn on</string>
+    <string name="backup_auto_off">Off</string>
+    <string name="backup_auto_interval">Backup frequency</string>
+    <string name="backup_auto_retention">Delete backups after</string>
+    <!-- Example: "Every 2 days". -->
+    <!-- Both the backup frequency and the retention period, as in the published app. -->
+    <plurals name="backup_duration_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
+    <string name="backup_export_in_progress">Backing up</string>
+    <string name="backup_export_success">Backup created</string>
+    <string name="backup_import_in_progress">Restoring</string>
+    <string name="backup_import_success">Data restored</string>
+
+    <!-- Sits under a row titled "Destination", so it need not repeat the word. -->
+    <string name="backup_no_destination">None chosen</string>
+    <!-- Sits under a row titled "Auto backup", where "None" alone says nothing. -->
+    <string name="backup_auto_no_destination">No destination chosen</string>
+
+    <string name="backup_error_file_unsupported">This is not a LiftApp backup</string>
+    <string name="backup_error_file_unreadable">The backup file could not be read</string>
+    <string name="backup_error_export_failed">The backup could not be created</string>
+    <string name="backup_error_import_failed">The backup could not be restored</string>
+    <string name="backup_notification_failed_title">Auto backup failed</string>
+    <string name="backup_notification_failed_body">LiftApp no longer has access to the folder you chose</string>
+    <string name="backup_notification_channel">Auto backup</string>
 </resources>

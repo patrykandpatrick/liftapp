@@ -8,6 +8,7 @@ import kotlin.time.Duration.Companion.seconds
 
 sealed class ExerciseSet : Serializable {
     abstract val isCompleted: Boolean
+    abstract val notes: String
     open val weight: Double? = null
     open val weightUnit: MassUnit? = null
     open val reps: Int? = null
@@ -20,6 +21,7 @@ sealed class ExerciseSet : Serializable {
         override val weight: Double,
         override val reps: Int,
         override val weightUnit: MassUnit,
+        override val notes: String = "",
     ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = weight > 0 && reps > 0
@@ -34,10 +36,14 @@ sealed class ExerciseSet : Serializable {
             other is Weight &&
                 weight == other.weight &&
                 reps == other.reps &&
-                weightUnit == other.weightUnit
+                weightUnit == other.weightUnit &&
+                notes == other.notes
 
         override fun hashCode() =
-            weight.hashCode() * 31 + reps.hashCode() * 31 + weightUnit.hashCode()
+            weight.hashCode() * 31 +
+                reps.hashCode() * 31 +
+                weightUnit.hashCode() * 31 +
+                notes.hashCode()
     }
 
     open class Calisthenics(
@@ -45,6 +51,7 @@ sealed class ExerciseSet : Serializable {
         open val bodyWeight: Double,
         override val reps: Int,
         override val weightUnit: MassUnit,
+        override val notes: String = "",
     ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = reps > 0
@@ -62,16 +69,18 @@ sealed class ExerciseSet : Serializable {
                 weight == other.weight &&
                 bodyWeight == other.bodyWeight &&
                 reps == other.reps &&
-                weightUnit == other.weightUnit
+                weightUnit == other.weightUnit &&
+                notes == other.notes
 
         override fun hashCode() =
             weight.hashCode() * 31 +
                 bodyWeight.hashCode() * 31 +
                 reps.hashCode() * 31 +
-                weightUnit.hashCode()
+                weightUnit.hashCode() * 31 +
+                notes.hashCode()
     }
 
-    open class Reps(override val reps: Int) : ExerciseSet() {
+    open class Reps(override val reps: Int, override val notes: String = "") : ExerciseSet() {
         override val isCompleted: Boolean
             get() = reps > 0
 
@@ -81,9 +90,10 @@ sealed class ExerciseSet : Serializable {
 
         override fun toString() = "Reps(reps=$reps)"
 
-        override fun equals(other: Any?) = other is Reps && reps == other.reps
+        override fun equals(other: Any?) =
+            other is Reps && reps == other.reps && notes == other.notes
 
-        override fun hashCode() = reps.hashCode()
+        override fun hashCode() = reps.hashCode() * 31 + notes.hashCode()
     }
 
     open class Cardio(
@@ -91,6 +101,7 @@ sealed class ExerciseSet : Serializable {
         override val distance: Double,
         override val kcal: Double,
         override val distanceUnit: LongDistanceUnit,
+        override val notes: String = "",
     ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = duration.inWholeSeconds > 0 && distance > 0
@@ -107,16 +118,19 @@ sealed class ExerciseSet : Serializable {
                 duration == other.duration &&
                 distance == other.distance &&
                 kcal == other.kcal &&
-                distanceUnit == other.distanceUnit
+                distanceUnit == other.distanceUnit &&
+                notes == other.notes
 
         override fun hashCode() =
             duration.hashCode() * 31 +
                 distance.hashCode() * 31 +
                 kcal.hashCode() * 31 +
-                distanceUnit.hashCode()
+                distanceUnit.hashCode() * 31 +
+                notes.hashCode()
     }
 
-    open class Time(override val duration: Duration) : ExerciseSet() {
+    open class Time(override val duration: Duration, override val notes: String = "") :
+        ExerciseSet() {
         override val isCompleted: Boolean
             get() = duration.inWholeSeconds > 0
 
@@ -126,8 +140,9 @@ sealed class ExerciseSet : Serializable {
 
         override fun toString() = "Time(duration=$duration)"
 
-        override fun equals(other: Any?) = other is Time && duration == other.duration
+        override fun equals(other: Any?) =
+            other is Time && duration == other.duration && notes == other.notes
 
-        override fun hashCode() = duration.hashCode()
+        override fun hashCode() = duration.hashCode() * 31 + notes.hashCode()
     }
 }

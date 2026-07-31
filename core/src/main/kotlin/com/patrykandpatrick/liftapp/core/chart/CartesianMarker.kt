@@ -4,8 +4,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.shadow.Shadow
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
@@ -31,7 +29,6 @@ fun rememberCartesianMarker(
                         shape = MarkerCornerBasedShape(CircleShape),
                         strokeFill = Fill(colorScheme.outline),
                         strokeThickness = 1.dp,
-                        shadows = listOf(Shadow(radius = 2.dp, offset = DpOffset(0.dp, 2.dp))),
                     ),
                 padding = Insets(horizontal = 8.dp, vertical = 4.dp),
             ),

@@ -1,9 +1,13 @@
 package com.patrykandpatrick.liftapp.ui
 
+import android.content.Intent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.ModalBottomSheetLayout
@@ -13,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
@@ -32,7 +38,6 @@ import androidx.navigation.navOptions
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.core.deeplink.DeepLink
 import com.patrykandpatrick.liftapp.core.format.LocalFormatter
-import com.patrykandpatrick.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatrick.liftapp.core.text.rememberDefaultMarkupProcessor
 import com.patrykandpatrick.liftapp.core.ui.animation.EXIT_ANIM_DURATION
@@ -41,21 +46,28 @@ import com.patrykandpatrick.liftapp.core.ui.animation.sharedXAxisExitTransition
 import com.patrykandpatrick.liftapp.core.ui.animation.slideAndFadeIn
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatrick.liftapp.feature.about.ui.About
+import com.patrykandpatrick.liftapp.feature.backup.auto.AutoBackupScreen
+import com.patrykandpatrick.liftapp.feature.backup.export.BackupExportScreen
+import com.patrykandpatrick.liftapp.feature.backup.overview.BackupOverviewScreen
+import com.patrykandpatrick.liftapp.feature.backup.restore.BackupRestoreScreen
 import com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.ui.BodyMeasurementDetailScreen
 import com.patrykandpatrick.liftapp.feature.exercise.ui.ExerciseDetailsScreen
 import com.patrykandpatrick.liftapp.feature.exercises.ui.ExerciseListScreen
+import com.patrykandpatrick.liftapp.feature.journal.ui.JournalScreen
 import com.patrykandpatrick.liftapp.feature.newexercise.ui.NewExerciseScreen
 import com.patrykandpatrick.liftapp.feature.newroutine.ui.NewRoutineScreen
 import com.patrykandpatrick.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatrick.liftapp.feature.plan.configurator.ui.PlanConfiguratorScreen
 import com.patrykandpatrick.liftapp.feature.routine.ui.RoutineScreen
+import com.patrykandpatrick.liftapp.feature.routine.ui.SupersetScreen
 import com.patrykandpatrick.liftapp.feature.routines.ui.RoutineListScreen
 import com.patrykandpatrick.liftapp.feature.settings.ui.SettingsScreen
+import com.patrykandpatrick.liftapp.feature.workout.ui.ContinueActiveWorkoutDialog
 import com.patrykandpatrick.liftapp.feature.workout.ui.WorkoutScreen
 import com.patrykandpatrick.liftapp.navigation.BottomAppBarNavigationHost
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.bottomAppBarComposable
+import com.patrykandpatrick.liftapp.navigation.data.BackupRestoreRouteData
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
@@ -68,12 +80,16 @@ import com.patrykandpatrick.liftapp.navigation.data.PlanCreatorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.SupersetDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.navigationBarItems
 import com.patrykandpatrick.liftapp.navigation.rememberBottomAppBarNavigator
 import com.patrykandpatrick.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryScreen
 import com.patrykandpatrick.liftapp.plan.creator.ui.PlanCreatorScreen
 import com.patrykandpatrick.liftapp.plan.list.ui.PlanListScreen
+import com.patrykandpatrick.liftapp.ui.component.LiftAppSnackbarHost
+import com.patrykandpatrick.liftapp.ui.icons.CheckCircle
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -85,15 +101,27 @@ fun Root(
     modifier: Modifier = Modifier,
     darkTheme: Boolean,
     navigationCommander: NavigationCommander,
+    deepLinkIntent: Intent? = null,
+    onDeepLinkHandled: () -> Unit = {},
 ) {
     val viewModel: RootViewModel = hiltViewModel()
+    // Screens that raise an error host their own snackbar. Only confirmations that outlive the
+    // screen behind them are collected here, where the host sits above the navigation host.
     val snackbarHostState = remember { SnackbarHostState() }
-    CollectSnackbarMessages(messages = viewModel.messages, snackbarHostState = snackbarHostState)
+    LaunchedEffect(Unit) {
+        viewModel.confirmations.collect { message -> snackbarHostState.showSnackbar(message) }
+    }
 
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val bottomAppBarNavigator = rememberBottomAppBarNavigator()
     val navController = rememberNavController(bottomSheetNavigator, bottomAppBarNavigator)
-    navigationCommander.HandleCommands(navController)
+    navigationCommander.HandleCommands(navController, viewModel)
+
+    LaunchedEffect(deepLinkIntent) {
+        deepLinkIntent ?: return@LaunchedEffect
+        navController.handleDeepLink(deepLinkIntent)
+        onDeepLinkHandled()
+    }
 
     LiftAppTheme(darkTheme = darkTheme) {
         val markupProcessor = rememberDefaultMarkupProcessor()
@@ -107,46 +135,66 @@ fun Root(
                 sheetShape = BottomSheetShape,
                 sheetBackgroundColor = colorScheme.surface,
             ) {
-                BottomAppBarNavigationHost(
-                    navController = navController,
-                    navigator = bottomAppBarNavigator,
-                    navigationBar = {
-                        BottomNavigationBar(
-                            navController = navController,
-                            navigator = bottomAppBarNavigator,
-                            navItemRoutes = navigationBarItems,
-                        )
-                    },
-                    content = {
-                        NavHost(
-                            navController = navController,
-                            startDestination = Routes.Home,
-                            modifier = Modifier.background(colorScheme.background),
-                            enterTransition = { sharedXAxisEnterTransition() },
-                            exitTransition = { sharedXAxisExitTransition() },
-                            popEnterTransition = { sharedXAxisEnterTransition(forward = false) },
-                            popExitTransition = { sharedXAxisExitTransition(forward = false) },
-                        ) {
-                            addAbout()
-                            addBodyMeasurementDetailDestination()
-                            addExercises()
-                            addExerciseDetails()
-                            addNestedHomeGraph()
-                            addNewBodyMeasurementDestination()
-                            addNewExercise()
-                            addPlanCreator()
-                            addPlanList()
-                            addPlanConfigurator()
-                            addNewRoutine()
-                            addOneRepMax()
-                            addRoutine()
-                            addRoutineList()
-                            addRoutineExerciseGoal()
-                            addSettings()
-                            addWorkout()
-                        }
-                    },
-                    modifier = modifier.background(colorScheme.background),
+                Box {
+                    BottomAppBarNavigationHost(
+                        navController = navController,
+                        navigator = bottomAppBarNavigator,
+                        navigationBar = {
+                            BottomNavigationBar(
+                                navController = navController,
+                                navigator = bottomAppBarNavigator,
+                                navItemRoutes = navigationBarItems,
+                            )
+                        },
+                        content = {
+                            NavHost(
+                                navController = navController,
+                                startDestination = Routes.Home,
+                                modifier = Modifier.background(colorScheme.background),
+                                enterTransition = { sharedXAxisEnterTransition() },
+                                exitTransition = { sharedXAxisExitTransition() },
+                                popEnterTransition = {
+                                    sharedXAxisEnterTransition(forward = false)
+                                },
+                                popExitTransition = { sharedXAxisExitTransition(forward = false) },
+                            ) {
+                                addBackup()
+                                addBodyMeasurementDetailDestination()
+                                addExercises()
+                                addJournal()
+                                addExerciseDetails()
+                                addNestedHomeGraph()
+                                addNewBodyMeasurementDestination()
+                                addNewExercise()
+                                addPlanCreator()
+                                addPlanList()
+                                addPlanConfigurator()
+                                addNewRoutine()
+                                addOneRepMax()
+                                addRoutine()
+                                addSuperset()
+                                addRoutineList()
+                                addRoutineExerciseGoal()
+                                addSettings()
+                                addWorkout()
+                            }
+                        },
+                        modifier = modifier.background(colorScheme.background),
+                    )
+
+                    LiftAppSnackbarHost(
+                        hostState = snackbarHostState,
+                        icon = LiftAppIcons.CheckCircle,
+                        modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding(),
+                    )
+                }
+            }
+
+            viewModel.pendingWorkoutStart.collectAsStateWithLifecycle().value?.let { pending ->
+                ContinueActiveWorkoutDialog(
+                    workout = pending.workout,
+                    onDismissRequest = viewModel::cancelWorkoutStart,
+                    onContinue = viewModel::continueActiveWorkout,
                 )
             }
         }
@@ -154,11 +202,15 @@ fun Root(
 }
 
 @Composable
-private fun NavigationCommander.HandleCommands(navController: NavController) {
+private fun NavigationCommander.HandleCommands(
+    navController: NavController,
+    viewModel: RootViewModel,
+) {
     LaunchedEffect(this) {
         navigationCommand.collect { command ->
             when (command) {
                 is NavigationCommand.Route -> {
+                    if (viewModel.interceptWorkoutStart(command)) return@collect
                     navController.navigate(
                         route = command.route,
                         navOptions =
@@ -197,7 +249,7 @@ fun NavGraphBuilder.addNestedHomeGraph(modifier: Modifier = Modifier) {
             bottomAppBarComposable(item.route::class, item.typeMap) {
                 navBackStackEntry,
                 paddingValues ->
-                item.content(modifier.padding(paddingValues))
+                item.content(modifier.padding(paddingValues).consumeWindowInsets(paddingValues))
             }
         }
     }
@@ -205,6 +257,10 @@ fun NavGraphBuilder.addNestedHomeGraph(modifier: Modifier = Modifier) {
 
 fun NavGraphBuilder.addRoutine() {
     composable<RoutineDetailsRouteData> { RoutineScreen() }
+}
+
+fun NavGraphBuilder.addSuperset() {
+    composable<SupersetDetailsRouteData> { SupersetScreen() }
 }
 
 fun NavGraphBuilder.addRoutineList() {
@@ -250,11 +306,22 @@ fun NavGraphBuilder.addBodyMeasurementDetailDestination() {
 }
 
 fun NavGraphBuilder.addNewBodyMeasurementDestination() {
-    composable<NewBodyMeasurementRouteData> { NewBodyMeasurementEntryScreen() }
+    composable<NewBodyMeasurementRouteData>(
+        deepLinks = listOf(navDeepLink { uriPattern = DeepLink.NewBodyMeasurementRoute.uri })
+    ) {
+        NewBodyMeasurementEntryScreen()
+    }
 }
 
-fun NavGraphBuilder.addAbout() {
-    composable<Routes.About> { About() }
+fun NavGraphBuilder.addJournal() {
+    composable<Routes.Journal> { JournalScreen() }
+}
+
+fun NavGraphBuilder.addBackup() {
+    composable<Routes.Backup.Overview> { BackupOverviewScreen() }
+    composable<Routes.Backup.Export> { BackupExportScreen() }
+    composable<Routes.Backup.Automatic> { AutoBackupScreen() }
+    composable<BackupRestoreRouteData> { BackupRestoreScreen() }
 }
 
 fun NavGraphBuilder.addSettings() {

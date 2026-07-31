@@ -4,6 +4,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,7 +22,9 @@ import com.patrykandpatrick.liftapp.ui.interaction.extendedInteractions
 fun Modifier.interactiveButtonEffect(
     colors: InteractiveBorderColors,
     onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
     borderWidth: Dp = 1.dp,
+    borderHorizontalInset: Dp = 0.dp,
     maxBorderWidth: Dp? = null,
     maxBorderHeight: Dp? = null,
     enabled: Boolean = true,
@@ -38,20 +41,29 @@ fun Modifier.interactiveButtonEffect(
     val scope = rememberCoroutineScope()
 
     then(
-            if (onClick != null) {
+            if (onClick == null && onLongClick == null) {
+                Modifier
+            } else if (onLongClick == null) {
                 Modifier.clickable(
                     interactionSource = null,
                     indication = null,
                     enabled = enabled,
                     role = role,
-                    onClick = onClick,
+                    onClick = checkNotNull(onClick),
                 )
             } else {
-                Modifier
+                Modifier.combinedClickable(
+                    interactionSource = null,
+                    indication = null,
+                    enabled = enabled,
+                    role = role,
+                    onLongClick = onLongClick,
+                    onClick = onClick ?: {},
+                )
             }
         )
         .extendedInteractions(
-            enabled = enabled && onClick != null,
+            enabled = enabled && (onClick != null || onLongClick != null),
             interactionSource = interactionSource,
             coroutineScope = scope,
         )
@@ -64,6 +76,7 @@ fun Modifier.interactiveButtonEffect(
             interactionSource = interactionSource,
             colors = colors,
             width = borderWidth,
+            horizontalInset = borderHorizontalInset,
             shape = shape,
             checked = checked,
             animationSpec = colorAnimationSpec,

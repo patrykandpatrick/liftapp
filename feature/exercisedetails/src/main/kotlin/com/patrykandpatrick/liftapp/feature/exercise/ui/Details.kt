@@ -17,13 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.core.model.Unfold
 import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.core.ui.image.MuscleImage
+import com.patrykandpatrick.liftapp.core.ui.resource.color
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.feature.exercise.model.ScreenState
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
@@ -48,15 +48,15 @@ private fun Details(modifier: Modifier = Modifier, loadableScreenState: Loadable
             columns = GridCells.Adaptive(minSize = muscleDimens.gridCellMinSize),
             contentPadding =
                 PaddingValues(
-                    horizontal = dimens.padding.contentHorizontal,
-                    vertical = dimens.padding.contentVertical,
+                    horizontal = dimens.screen.horizontalPadding,
+                    vertical = dimens.screen.verticalPadding,
                 ),
             horizontalArrangement = Arrangement.spacedBy(muscleDimens.listItemHorizontalMargin),
         ) {
             item(key = "image", span = { GridItemSpan(maxLineSpan) }) {
                 MuscleImage(
                     model = state,
-                    modifier = Modifier.padding(vertical = dimens.padding.contentVertical),
+                    modifier = Modifier.padding(vertical = dimens.screen.verticalPadding),
                 )
             }
 
@@ -69,13 +69,12 @@ private fun Details(modifier: Modifier = Modifier, loadableScreenState: Loadable
                             modifier =
                                 Modifier.size(muscleDimens.tileSize)
                                     .background(
-                                        color = colorResource(id = muscleModel.type.colorRes),
+                                        color = muscleModel.type.color,
                                         shape = RoundedCornerShape(muscleDimens.tileCornerSize),
                                     )
                         )
                     },
-                    paddingValues =
-                        PaddingValues(vertical = dimens.padding.itemVertical, horizontal = 0.dp),
+                    paddingValues = PaddingValues(vertical = 16.dp, horizontal = 0.dp),
                 )
             }
         }

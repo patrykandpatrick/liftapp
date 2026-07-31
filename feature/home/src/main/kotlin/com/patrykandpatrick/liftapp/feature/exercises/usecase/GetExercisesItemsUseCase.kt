@@ -1,11 +1,10 @@
 package com.patrykandpatrick.liftapp.feature.exercises.usecase
 
 import com.patrykandpatrick.liftapp.core.search.SearchAlgorithm
-import com.patrykandpatrick.liftapp.core.ui.resource.iconRes
+import com.patrykandpatrick.liftapp.core.ui.resource.icon
 import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatrick.liftapp.domain.exercise.Exercise
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRepository
-import com.patrykandpatrick.liftapp.domain.extension.joinToPrettyString
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.feature.exercises.model.GroupBy
 import com.patrykandpatrick.liftapp.feature.exercises.ui.ExercisesItem
@@ -83,12 +82,8 @@ constructor(
             id = exercise.id,
             name = stringProvider.getResolvedName(exercise.name),
             key = key,
-            muscles =
-                exercise.primaryMuscles.joinToPrettyString(andText = stringProvider.andInAList) {
-                    muscle ->
-                    stringProvider.getMuscleName(muscle)
-                },
-            iconRes = exercise.exerciseType.iconRes,
+            muscles = stringProvider.getMuscleList(exercise.primaryMuscles),
+            icon = exercise.exerciseType.icon,
             nameHighlightPosition = nameHighlightPosition,
         )
 

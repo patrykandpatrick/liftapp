@@ -2,8 +2,8 @@ package com.patrykandpatrick.liftapp.ui.theme
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme as MaterialColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -16,66 +16,6 @@ import com.patrykandpatrick.liftapp.ui.isLandscape
 import com.patrykandpatrick.liftapp.ui.modifier.ScaleIndication
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.VicoTheme
-
-private val LightColorScheme =
-    lightColorScheme(
-        primary = Colors.Light.primary,
-        onPrimary = Colors.Light.onPrimary,
-        primaryContainer = Colors.Light.primaryContainer,
-        onPrimaryContainer = Colors.Light.onPrimaryContainer,
-        secondary = Colors.Light.secondary,
-        onSecondary = Colors.Light.onSecondary,
-        secondaryContainer = Colors.Light.secondaryContainer,
-        onSecondaryContainer = Colors.Light.onSecondaryContainer,
-        tertiary = Colors.Light.tertiary,
-        onTertiary = Colors.Light.onTertiary,
-        tertiaryContainer = Colors.Light.tertiaryContainer,
-        onTertiaryContainer = Colors.Light.onTertiaryContainer,
-        error = Colors.Light.error,
-        errorContainer = Colors.Light.errorContainer,
-        onError = Colors.Light.onError,
-        onErrorContainer = Colors.Light.onErrorContainer,
-        background = Colors.Light.background,
-        onBackground = Colors.Light.onBackground,
-        surface = Colors.Light.surface,
-        onSurface = Colors.Light.onSurface,
-        surfaceVariant = Colors.Light.surfaceVariant,
-        onSurfaceVariant = Colors.Light.onSurfaceVariant,
-        outline = Colors.Light.outline,
-        inverseOnSurface = Colors.Light.inverseOnSurface,
-        inverseSurface = Colors.Light.inverseSurface,
-        inversePrimary = Colors.Light.inversePrimary,
-    )
-
-private val DarkColorScheme =
-    darkColorScheme(
-        primary = Colors.Dark.primary,
-        onPrimary = Colors.Dark.onPrimary,
-        primaryContainer = Colors.Dark.primaryContainer,
-        onPrimaryContainer = Colors.Dark.onPrimaryContainer,
-        secondary = Colors.Dark.secondary,
-        onSecondary = Colors.Dark.onSecondary,
-        secondaryContainer = Colors.Dark.secondaryContainer,
-        onSecondaryContainer = Colors.Dark.onSecondaryContainer,
-        tertiary = Colors.Dark.tertiary,
-        onTertiary = Colors.Dark.onTertiary,
-        tertiaryContainer = Colors.Dark.tertiaryContainer,
-        onTertiaryContainer = Colors.Dark.onTertiaryContainer,
-        error = Colors.Dark.error,
-        errorContainer = Colors.Dark.errorContainer,
-        onError = Colors.Dark.onError,
-        onErrorContainer = Colors.Dark.onErrorContainer,
-        background = Colors.Dark.background,
-        onBackground = Colors.Dark.onBackground,
-        surface = Colors.Dark.surface,
-        onSurface = Colors.Dark.onSurface,
-        surfaceVariant = Colors.Dark.surfaceVariant,
-        onSurfaceVariant = Colors.Dark.onSurfaceVariant,
-        outline = Colors.Dark.outline,
-        inverseOnSurface = Colors.Dark.inverseOnSurface,
-        inverseSurface = Colors.Dark.inverseSurface,
-        inversePrimary = Colors.Dark.inversePrimary,
-    )
 
 data object Alpha {
     const val disabled: Float = 0.38f
@@ -99,12 +39,14 @@ val Color.unfocused: Color
 
 @Composable
 fun LiftAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
     val dimens = if (isLandscape) LandscapeDimens else PortraitDimens
     val liftAppColorScheme = getLiftAppColorScheme(darkTheme)
 
-    MaterialTheme(colorScheme = colorScheme, typography = LiftAppTypography, shapes = Shapes) {
+    MaterialTheme(
+        colorScheme = liftAppColorScheme.toMaterialColorScheme(),
+        typography = LiftAppTypography,
+        shapes = Shapes,
+    ) {
         CompositionLocalProvider(
             LocalDimens provides dimens,
             LocalColorScheme provides liftAppColorScheme,
@@ -127,4 +69,86 @@ private fun getVicoTheme(colorScheme: ColorScheme): VicoTheme =
         lineCartesianLayerColors = colorScheme.chartColors,
         lineColor = colorScheme.divider,
         textColor = colorScheme.onSurface,
+    )
+
+/**
+ * The palette Material's own components read.
+ *
+ * Everything the app draws itself goes through [ColorScheme]. This exists for the Material
+ * components still in use — the switch, the radio button, the date and time pickers, the snackbar,
+ * the text fields, the dividers — which resolve their colors from `MaterialTheme.colorScheme` and
+ * cannot see the app's palette. It replaces a red scheme left over from the app's previous look,
+ * which is why a switch used to come out red.
+ *
+ * Every role is filled, including the ones nothing reads today, so that no component can quietly
+ * fall back to Material's baseline purple.
+ */
+private fun ColorScheme.toMaterialColorScheme(): MaterialColorScheme =
+    // Both builders take the same roles, and every one is given below, so whichever seeds the
+    // values makes no difference to the result.
+    lightColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        // The tonal fill a checked card wears, which is also what Material tints a selected time
+        // in the picker with.
+        primaryContainer = primaryDisabled,
+        onPrimaryContainer = onSurface,
+        // The snackbar's action, read against `inverseSurface`: light on dark, and dark on light.
+        inversePrimary = onPrimary,
+        secondary = secondary,
+        onSecondary = onSecondary,
+        // Material tints a selected date range with this. Keeping it on the primary tint stops the
+        // pickers reaching for an accent the app does not have.
+        secondaryContainer = primaryDisabled,
+        onSecondaryContainer = onSurface,
+        tertiary = secondary,
+        onTertiary = onSecondary,
+        tertiaryContainer = primaryDisabled,
+        onTertiaryContainer = onSurface,
+        background = background,
+        onBackground = onBackground,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surfaceVariant,
+        onSurfaceVariant = onSurfaceVariant,
+        // Nothing. Material tints a raised `Surface` with this, which gave the dialogs still on
+        // `DialogContent` a blue cast that `LiftAppAlertDialog` — a flat `LiftAppCard` on
+        // `surface` — does not have. Transparent leaves an elevated surface exactly `surface`.
+        surfaceTint = Color.Transparent,
+        inverseSurface = onSurface,
+        inverseOnSurface = surface,
+        error = error,
+        onError = onError,
+        errorContainer = error,
+        // Only ever read as a hovered outline or label, drawn on an ordinary surface rather than on
+        // `errorContainer`, so the error color is what actually reads there.
+        onErrorContainer = error,
+        outline = outline,
+        // Material draws its dividers with this one.
+        outlineVariant = divider,
+        scrim = bottomSheetScrim,
+        // The palette has no neutral above `surfaceVariant`, and it does not need one: an unchecked
+        // switch track drawn in it comes out hollow inside an `outline` border, which is how the
+        // app's own checkbox and radio button already read.
+        surfaceBright = surfaceVariant,
+        surfaceContainer = surface,
+        surfaceContainerHigh = surfaceVariant,
+        surfaceContainerHighest = surfaceVariant,
+        surfaceContainerLow = surface,
+        surfaceContainerLowest = background,
+        surfaceDim = background,
+        // Nothing in the app reads the fixed roles. They are filled so that nothing can start to
+        // without it showing up as a stray purple.
+        primaryFixed = primaryDisabled,
+        primaryFixedDim = primaryDisabled,
+        onPrimaryFixed = onSurface,
+        onPrimaryFixedVariant = onSurfaceVariant,
+        secondaryFixed = primaryDisabled,
+        secondaryFixedDim = primaryDisabled,
+        onSecondaryFixed = onSurface,
+        onSecondaryFixedVariant = onSurfaceVariant,
+        tertiaryFixed = primaryDisabled,
+        tertiaryFixedDim = primaryDisabled,
+        onTertiaryFixed = onSurface,
+        onTertiaryFixedVariant = onSurfaceVariant,
     )

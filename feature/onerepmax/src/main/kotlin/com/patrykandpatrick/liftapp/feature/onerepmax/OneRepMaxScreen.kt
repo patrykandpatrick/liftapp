@@ -1,26 +1,31 @@
 package com.patrykandpatrick.liftapp.feature.onerepmax
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,11 +33,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -54,9 +67,13 @@ import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatrick.liftapp.core.ui.animation.StiffnessForAppearance
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.feature.onerepmax.model.Action
+import com.patrykandpatrick.liftapp.ui.component.LiftAppDestructiveActionDialog
+import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.LiftAppTextField
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
@@ -90,10 +107,13 @@ private fun OneRepMaxScreenCompact(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     LiftAppScaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CompactTopAppBar(
+                scrollBehavior = topAppBarScrollBehavior,
                 title = { Text(text = stringResource(id = R.string.route_one_rep_max)) },
                 navigationIcon = {
                     CompactTopAppBarDefaults.BackIcon { onAction(Action.PopBackStack) }
@@ -106,14 +126,14 @@ private fun OneRepMaxScreenCompact(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
-                Modifier.padding(horizontal = LocalDimens.current.padding.contentHorizontal)
+                Modifier.padding(horizontal = LocalDimens.current.screen.horizontalPadding)
                     .padding(paddingValues = paddingValues),
         ) {
             Calculator(state = state)
 
             InfoCard(
                 text = stringResource(id = R.string.one_rep_max_description),
-                modifier = Modifier.padding(top = LocalDimens.current.verticalItemSpacing),
+                modifier = Modifier.padding(top = 16.dp),
             )
 
             AnimatedVisibility(
@@ -142,7 +162,7 @@ private fun OneRepMaxScreenCompact(
                 History(
                     history = history,
                     removeHistory = state::clearHistory,
-                    modifier = Modifier.padding(vertical = LocalDimens.current.verticalItemSpacing),
+                    modifier = Modifier.padding(vertical = 16.dp),
                 )
             }
         }
@@ -163,7 +183,7 @@ fun OneRepMaxScreenLarge(
                 navigationIcon = {
                     IconButton(onClick = { onAction(Action.PopBackStack) }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            imageVector = LiftAppIcons.ArrowBack,
                             contentDescription = stringResource(id = R.string.action_close),
                         )
                     }
@@ -174,12 +194,11 @@ fun OneRepMaxScreenLarge(
         val history = state.history.collectAsStateWithLifecycle().value
 
         Row(
-            horizontalArrangement =
-                Arrangement.spacedBy(space = LocalDimens.current.padding.itemHorizontal),
+            horizontalArrangement = Arrangement.spacedBy(space = 16.dp),
             modifier =
                 Modifier.padding(
-                        horizontal = LocalDimens.current.padding.contentHorizontal,
-                        vertical = LocalDimens.current.padding.contentVertical,
+                        horizontal = LocalDimens.current.screen.horizontalPadding,
+                        vertical = LocalDimens.current.screen.verticalPadding,
                     )
                     .padding(paddingValues = paddingValues),
         ) {
@@ -189,7 +208,7 @@ fun OneRepMaxScreenLarge(
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(LocalDimens.current.verticalItemSpacing),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxHeight().weight(1f),
             ) {
                 InfoCard(text = stringResource(id = R.string.one_rep_max_description))
@@ -283,31 +302,60 @@ private fun History(
     removeHistory: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showClearHistoryDialog by rememberSaveable { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+    val showHeaderChrome =
+        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+    val headerColor by
+        animateColorAsState(
+            if (showHeaderChrome) colorScheme.surface else colorScheme.surface.copy(alpha = 0f)
+        )
+    val headerDividerAlpha by animateFloatAsState(if (showHeaderChrome) 1f else 0f)
+
+    LaunchedEffect(history.firstOrNull()?.id) {
+        if (history.isNotEmpty()) listState.scrollToItem(0)
+    }
+
     OutlinedCard(modifier = modifier) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(space = 8.dp),
-            modifier =
-                Modifier.padding(
-                    start = LocalDimens.current.padding.itemHorizontal,
-                    end = 8.dp,
-                    top = 8.dp,
-                    bottom = LocalDimens.current.verticalItemSpacing,
-                ),
-        ) {
-            ListSectionTitle(
-                title = stringResource(R.string.one_rep_max_history_section_title),
-                paddingValues = PaddingValues(),
-                trailingIcon = {
-                    IconButton(onClick = removeHistory) {
-                        Icon(imageVector = LiftAppIcons.Delete, contentDescription = null)
-                    }
-                },
-            )
+        Column {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth().height(56.dp).background(headerColor),
+            ) {
+                ListSectionTitle(
+                    title = stringResource(R.string.one_rep_max_history_section_title),
+                    // The 48 dp button centers a 24 dp icon. A 4 dp end inset therefore leaves
+                    // the icon itself 16 dp from the card edge.
+                    paddingValues = PaddingValues(start = 16.dp, end = 4.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    trailingIcon = {
+                        LiftAppIconButton(onClick = { showClearHistoryDialog = true }) {
+                            Icon(
+                                imageVector = LiftAppIcons.Delete,
+                                contentDescription =
+                                    stringResource(R.string.one_rep_max_clear_history_title),
+                            )
+                        }
+                    },
+                )
+                LiftAppHorizontalDivider(
+                    modifier =
+                        Modifier.align(Alignment.BottomCenter).graphicsLayer {
+                            alpha = headerDividerAlpha
+                        }
+                )
+            }
 
             LazyColumn(
-                verticalArrangement =
-                    Arrangement.spacedBy(space = LocalDimens.current.verticalItemSpacing),
-                reverseLayout = true,
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(space = 16.dp),
+                contentPadding =
+                    PaddingValues(
+                        start = 16.dp,
+                        top = 8.dp,
+                        end = 8.dp,
+                        bottom = 16.dp,
+                    ),
                 modifier = Modifier.weight(1f),
             ) {
                 items(history, key = { it.id }) { historyEntryModel ->
@@ -318,6 +366,20 @@ private fun History(
                 }
             }
         }
+    }
+
+    if (showClearHistoryDialog) {
+        LiftAppDestructiveActionDialog(
+            title = stringResource(R.string.one_rep_max_clear_history_title),
+            text = stringResource(R.string.one_rep_max_clear_history_message),
+            confirmText = stringResource(R.string.action_clear),
+            dismissText = stringResource(android.R.string.cancel),
+            onDismissRequest = { showClearHistoryDialog = false },
+            onConfirm = {
+                showClearHistoryDialog = false
+                removeHistory()
+            },
+        )
     }
 }
 

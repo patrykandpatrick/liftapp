@@ -4,17 +4,25 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.core.text.TextFieldState
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.Constants.Workout.EXERCISE_CHANGE_DELAY
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatrick.liftapp.domain.workout.GetActiveWorkoutsUseCase
+import com.patrykandpatrick.liftapp.domain.workout.Workout
 import com.patrykandpatrick.liftapp.feature.workout.model.Action
+import com.patrykandpatrick.liftapp.feature.workout.model.EditWorkoutItemsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseCase
+import com.patrykandpatrick.liftapp.feature.workout.model.RESOLVED_WORKOUT_ID
+import com.patrykandpatrick.liftapp.feature.workout.model.UpdateExerciseNotesUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpdateWorkoutUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutIterator
+import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,13 +34,16 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
@@ -49,15 +60,29 @@ constructor(
     private val upsertGoalSets: UpsertGoalSetsUseCase,
     private val upsertExerciseSet: UpsertExerciseSetUseCase,
     private val updateWorkoutUseCase: UpdateWorkoutUseCase,
+    private val updateExerciseNotesUseCase: UpdateExerciseNotesUseCase,
+    private val editWorkoutItems: EditWorkoutItemsUseCase,
     private val navigationCommander: NavigationCommander,
+    getActiveWorkoutsUseCase: GetActiveWorkoutsUseCase,
+    workoutRouteData: WorkoutRouteData,
     coroutineScope: CoroutineScope,
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel(coroutineScope) {
 
     private val customPage = MutableSharedFlow<Int>()
 
+    private val _entryState =
+        MutableStateFlow<WorkoutEntryState>(
+            if (workoutRouteData.workoutID != ID_NOT_SET) {
+                WorkoutEntryState.Ready
+            } else {
+                WorkoutEntryState.Loading
+            }
+        )
+    val entryState: StateFlow<WorkoutEntryState> = _entryState
+
     private val selectedItem =
-        savedStateHandle.getMutableStateFlow<WorkoutIterator.Item?>(
+        savedStateHandle.getMutableStateFlow<IntArray?>(
             "selectedExerciseAndSetIndex",
             null,
         )
@@ -72,9 +97,11 @@ constructor(
             }
             .combine(selectedItem) { workout, selectedExerciseAndSetIndex ->
                 workout.copy(
-                    selectedSelectedExerciseAndSet =
-                        selectedExerciseAndSetIndex?.let { (_, exerciseIndex, setIndex) ->
-                            workout.iterator.getItem(exerciseIndex, setIndex)
+                    selectedExerciseAndSet =
+                        selectedExerciseAndSetIndex?.let { (exerciseIndex, setIndex) ->
+                            workout.iterator.items.firstOrNull {
+                                it.exerciseIndex == exerciseIndex && it.setIndex == setIndex
+                            }
                         }
                 )
             }
@@ -94,6 +121,32 @@ constructor(
             )
             .stateIn(coroutineScope, SharingStarted.Lazily, 0)
 
+    init {
+        if (workoutRouteData.workoutID == ID_NOT_SET) {
+            viewModelScope.launch {
+                _entryState.value =
+                    getActiveWorkoutsUseCase().first().firstOrNull()?.let {
+                        WorkoutEntryState.ConfirmContinue(it)
+                    } ?: WorkoutEntryState.Ready
+            }
+        }
+
+        navigationCommander
+            .getResults<List<Long>>(KEY_EXERCISE_IDS)
+            .onEach { exerciseIDs -> editWorkoutItems.addExercises(getWorkout().id, exerciseIDs) }
+            .launchIn(viewModelScope)
+    }
+
+    fun continueActiveWorkout() {
+        val activeWorkout = (_entryState.value as? WorkoutEntryState.ConfirmContinue)?.workout
+        if (activeWorkout != null) savedStateHandle[RESOLVED_WORKOUT_ID] = activeWorkout.id
+        _entryState.value = WorkoutEntryState.Ready
+    }
+
+    fun cancelStartingWorkout() {
+        popBackStack()
+    }
+
     fun onAction(action: Action) {
         when (action) {
             is Action.MovePageBy -> onPageDelta(action.delta)
@@ -105,8 +158,12 @@ constructor(
                 updateWorkoutStartDateTime(action.date, action.time)
             is Action.UpdateWorkoutEndDateTime -> updateWorkoutEndDateTime(action.date, action.time)
             is Action.UpdateWorkoutNotes -> updateWorkoutNotes(action.notes)
-            is Action.AddSet -> updateSetCount(exercise = action.exercise, delta = 1)
-            is Action.RemoveSet -> updateSetCount(exercise = action.exercise, delta = -1)
+            is Action.UpdateExerciseNotes -> updateExerciseNotes(action.exercise, action.notes)
+            is Action.AddSet -> updateSetCount(exercises = action.exercises, delta = 1)
+            is Action.RemoveSet -> updateSetCount(exercises = action.exercises, delta = -1)
+            is Action.PickExercises -> pickExercises(action.disabledExerciseIDs)
+            is Action.RemoveItem -> removeItem(action.workoutItemID)
+            is Action.ReorderItems -> reorderItems(action)
             is Action.GoToExerciseDetails -> goToExerciseDetails(action.exerciseID)
             is Action.PopBackStack -> popBackStack()
         }
@@ -136,9 +193,21 @@ constructor(
         viewModelScope.launch { customPage.emit(page) }
     }
 
-    private fun updateSetCount(exercise: EditableWorkout.Exercise, delta: Int) {
+    private fun updateSetCount(exercises: List<EditableWorkout.Exercise>, delta: Int) {
         viewModelScope.launch {
-            upsertGoalSets(getWorkout().id, exercise, exercise.sets.size + delta)
+            val workoutID = getWorkout().id
+            val setCount = (exercises.first().sets.size + delta).coerceAtLeast(1)
+            if (exercises.first().isSuperset) {
+                editWorkoutItems.updateSetCount(
+                    workoutID = workoutID,
+                    workoutItemID = exercises.first().workoutItemID,
+                    setCount = setCount,
+                )
+            } else {
+                exercises.forEach { exercise ->
+                    upsertGoalSets(workoutID, exercise, setCount)
+                }
+            }
         }
     }
 
@@ -185,6 +254,10 @@ constructor(
         }
     }
 
+    private fun updateExerciseNotes(exercise: EditableWorkout.Exercise, notes: String) {
+        viewModelScope.launch { updateExerciseNotesUseCase(exercise, notes) }
+    }
+
     private fun finishWorkout() {
         viewModelScope.launch {
             returnToHome()
@@ -200,13 +273,66 @@ constructor(
     fun saveSet(workout: EditableWorkout, item: WorkoutIterator.Item) {
         viewModelScope.launch {
             upsertExerciseSet(workout.id, item.exercise.id, item.set, item.setIndex)
-            selectedItem.value = workout.iterator.getNextIncomplete(item)
+            selectedItem.value =
+                workout.iterator.getNextIncomplete(item)?.let {
+                    intArrayOf(it.exerciseIndex, it.setIndex)
+                }
         }
     }
 
     private fun goToExerciseDetails(exerciseID: Long) {
         viewModelScope.launch {
             navigationCommander.navigateTo(Routes.Exercise.details(exerciseID))
+        }
+    }
+
+    private fun pickExercises(disabledExerciseIDs: List<Long>) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(
+                Routes.Exercise.pick(KEY_EXERCISE_IDS, disabledExerciseIDs)
+            )
+        }
+    }
+
+    private fun reorderItems(action: Action.ReorderItems) {
+        viewModelScope.launch {
+            editWorkoutItems.reorderItems(
+                workoutID = getWorkout().id,
+                workoutItemIDs = action.workoutItemIDs,
+            )
+            if (action.selectedWorkoutItemID != null) {
+                val selectedPage = action.workoutItemIDs.indexOf(action.selectedWorkoutItemID)
+                if (selectedPage >= 0) customPage.emit(selectedPage)
+            }
+        }
+    }
+
+    private fun removeItem(workoutItemID: Long) {
+        viewModelScope.launch {
+            val currentWorkout = getWorkout()
+            val currentPage = selectedPage.value
+            val selectedWorkoutItemID =
+                (currentWorkout.pages.getOrNull(currentPage) as? WorkoutPage.Exercise)?.item?.id
+            val removedItemStart = currentWorkout.items.indexOfFirst { it.id == workoutItemID }
+
+            editWorkoutItems.removeItem(currentWorkout.id, workoutItemID)
+            selectedItem.value = null
+
+            val updatedWorkout =
+                workout.filterNotNull().first { workout ->
+                    workout.items.none { it.id == workoutItemID }
+                }
+            val updatedPage =
+                when {
+                    selectedWorkoutItemID == null -> updatedWorkout.items.size
+                    selectedWorkoutItemID == workoutItemID ->
+                        removedItemStart.coerceIn(0, updatedWorkout.items.size)
+                    else ->
+                        updatedWorkout.items.indexOfFirst { item ->
+                            item.id == selectedWorkoutItemID
+                        }
+                }
+            customPage.emit(updatedPage.coerceIn(0, updatedWorkout.items.size))
         }
     }
 
@@ -219,4 +345,16 @@ constructor(
             NavigationCommand.Route(route = Routes.Home, popUpTo = Routes.Home)
         )
     }
+
+    private companion object {
+        const val KEY_EXERCISE_IDS = "workout_exercise_ids"
+    }
+}
+
+sealed interface WorkoutEntryState {
+    data object Loading : WorkoutEntryState
+
+    data object Ready : WorkoutEntryState
+
+    data class ConfirmContinue(val workout: Workout) : WorkoutEntryState
 }

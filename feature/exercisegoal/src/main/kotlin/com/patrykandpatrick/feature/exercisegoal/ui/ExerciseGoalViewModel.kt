@@ -7,6 +7,7 @@ import com.patrykandpatrick.feature.exercisegoal.model.Action
 import com.patrykandpatrick.feature.exercisegoal.model.GetExerciseNameAndTypeUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GoalInput
+import com.patrykandpatrick.feature.exercisegoal.model.IsExerciseInSupersetUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.SaveGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.State
 import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
@@ -34,6 +35,7 @@ constructor(
     coroutineScope: CoroutineScope,
     getExerciseNameAndTypeUseCase: GetExerciseNameAndTypeUseCase,
     getGoalUseCase: GetGoalUseCase,
+    isExerciseInSupersetUseCase: IsExerciseInSupersetUseCase,
     private val saveGoalUseCase: SaveGoalUseCase,
     private val textFieldStateManager: TextFieldStateManager,
     @PreferenceQualifier.GoalInfoVisible private val infoVisiblePreference: Preference<Boolean>,
@@ -46,14 +48,22 @@ constructor(
         combine(
                 getExerciseNameAndTypeUseCase(),
                 getGoalUseCase(),
+                isExerciseInSupersetUseCase(),
                 infoVisiblePreference.get(),
                 longDistanceUnitPreference.get(),
-            ) { exercise, goal, infoVisible, distanceUnit ->
+            ) { exercise, goal, isInSuperset, infoVisible, distanceUnit ->
                 exercise?.let { (name, type) ->
                     State(
-                        goalID = goal.id,
+                        goal = goal,
                         exerciseName = name,
-                        input = GoalInput.create(textFieldStateManager, goal, type, distanceUnit),
+                        input =
+                            GoalInput.create(
+                                textFieldStateManager = textFieldStateManager,
+                                goal = goal,
+                                type = type,
+                                longDistanceUnit = distanceUnit,
+                                isInSuperset = isInSuperset,
+                            ),
                         goalInfoVisible = infoVisible,
                     )
                 }
@@ -81,20 +91,23 @@ constructor(
         viewModelScope.launch {
             val input = state.input
             navigationCommander.popBackStack()
-            withContext(NonCancellable) {}
-            saveGoalUseCase(
-                Goal(
-                    id = state.goalID,
-                    minReps = input.minReps?.state?.value ?: 0,
-                    maxReps = input.maxReps?.state?.value ?: 0,
-                    sets = input.sets?.state?.value ?: 0,
-                    restTime = input.restTime.state.value.milliseconds,
-                    duration = input.duration?.state?.value?.milliseconds ?: 0.milliseconds,
-                    distance = input.distance?.state?.value ?: 0.0,
-                    distanceUnit = input.distance?.unit ?: LongDistanceUnit.Kilometer,
-                    calories = input.calories?.state?.value ?: 0.0,
+            withContext(NonCancellable) {
+                saveGoalUseCase(
+                    Goal(
+                        id = state.goal.id,
+                        minReps = input.minReps?.state?.value ?: 0,
+                        maxReps = input.maxReps?.state?.value ?: 0,
+                        // The inputs a superset hides keep the value they were stored with.
+                        sets = input.sets?.state?.value ?: state.goal.sets,
+                        restTime =
+                            input.restTime?.state?.value?.milliseconds ?: state.goal.restTime,
+                        duration = input.duration?.state?.value?.milliseconds ?: 0.milliseconds,
+                        distance = input.distance?.state?.value ?: 0.0,
+                        distanceUnit = input.distance?.unit ?: LongDistanceUnit.Kilometer,
+                        calories = input.calories?.state?.value ?: 0.0,
+                    )
                 )
-            )
+            }
         }
     }
 }

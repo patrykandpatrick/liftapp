@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.extension.horizontal
 import com.patrykandpatrick.liftapp.core.extension.vertical
 import com.patrykandpatrick.liftapp.ui.component.LiftAppTextFieldDefaults
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -47,12 +46,12 @@ fun InputFieldLayout(
     modifier: Modifier = Modifier,
     cornerSize: CornerSize = CornerSize(8.dp),
     strokeWidth: Dp = 1.dp,
-    labelStartMargin: Dp = LocalDimens.current.input.labelStartMargin,
-    labelHorizontalPadding: Dp = LocalDimens.current.input.labelHorizontalPadding,
+    labelStartMargin: Dp = 12.dp,
+    labelHorizontalPadding: Dp = 4.dp,
     contentPadding: PaddingValues =
         PaddingValues(
-            horizontal = LocalDimens.current.padding.itemHorizontal,
-            vertical = LocalDimens.current.padding.itemVerticalSmall,
+            horizontal = 16.dp,
+            vertical = 8.dp,
         ),
     label: (@Composable RowScope.() -> Unit)? = null,
     isError: Boolean = false,

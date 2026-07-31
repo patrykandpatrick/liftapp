@@ -1,6 +1,7 @@
 plugins {
     id("liftapp.android.application")
     id("liftapp.android.compose")
+    alias(libs.plugins.oss.licenses)
 }
 
 android {
@@ -34,7 +35,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core"))
     implementation(project(":navigation"))
-    implementation(project(":feature:about"))
+    implementation(project(":feature:backup"))
     implementation(project(":feature:bodymeasurementdetails"))
     implementation(project(":feature:exercisedetails"))
     implementation(project(":feature:exercisegoal"))

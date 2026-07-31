@@ -13,7 +13,7 @@ import com.patrykandpatrick.liftapp.ui.icons.BicepsFlexed
 import com.patrykandpatrick.liftapp.ui.icons.House
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Menu
-import com.patrykandpatrick.liftapp.ui.icons.Routine
+import com.patrykandpatrick.liftapp.ui.icons.Plan
 import com.patrykandpatrick.liftapp.ui.icons.Scale
 
 @Stable
@@ -21,14 +21,14 @@ val navigationBarItems: List<NavItemRoute<Any>> by lazy {
     listOf(
         NavItemRoute(
             route = Routes.Home.Dashboard,
-            titleRes = R.string.route_dashboard,
+            titleRes = R.string.route_dashboard_short,
             icon = LiftAppIcons.House,
             content = { DashboardScreen(modifier = it) },
         ),
         NavItemRoute(
             route = Routes.Home.Plan,
             titleRes = R.string.route_active_plan_short,
-            icon = LiftAppIcons.Routine,
+            icon = LiftAppIcons.Plan,
             content = { PlanScreen(modifier = it) },
         ),
         NavItemRoute(

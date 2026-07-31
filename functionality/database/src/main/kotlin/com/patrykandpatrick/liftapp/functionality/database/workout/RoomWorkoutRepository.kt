@@ -3,14 +3,20 @@ package com.patrykandpatrick.liftapp.functionality.database.workout
 import androidx.room.InvalidationTracker
 import androidx.room.RoomRawQuery
 import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
+import com.patrykandpatrick.liftapp.domain.workout.DeleteWorkoutContract
+import com.patrykandpatrick.liftapp.domain.workout.EditWorkoutItemsContract
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
+import com.patrykandpatrick.liftapp.domain.workout.GetPastWorkoutPageContract
+import com.patrykandpatrick.liftapp.domain.workout.GetPastWorkoutsInRangeContract
 import com.patrykandpatrick.liftapp.domain.workout.GetWorkoutContract
 import com.patrykandpatrick.liftapp.domain.workout.GetWorkoutsByDateContract
 import com.patrykandpatrick.liftapp.domain.workout.GetWorkoutsContract
+import com.patrykandpatrick.liftapp.domain.workout.UpdateExerciseNotesContract
 import com.patrykandpatrick.liftapp.domain.workout.UpdateWorkoutContract
 import com.patrykandpatrick.liftapp.domain.workout.UpsertExerciseSetContract
 import com.patrykandpatrick.liftapp.domain.workout.UpsertWorkoutGoalContract
 import com.patrykandpatrick.liftapp.domain.workout.Workout
+import com.patrykandpatrick.liftapp.functionality.database.converter.LocalDateTimeConverters
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -27,8 +33,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transformLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RoomWorkoutRepository
 @Inject
@@ -43,7 +48,12 @@ constructor(
     UpsertWorkoutGoalContract,
     UpsertExerciseSetContract,
     UpdateWorkoutContract,
+    UpdateExerciseNotesContract,
     GetWorkoutsContract,
+    GetPastWorkoutPageContract,
+    GetPastWorkoutsInRangeContract,
+    DeleteWorkoutContract,
+    EditWorkoutItemsContract,
     GetWorkoutsByDateContract {
     private val coroutineContext = dispatcher + coroutineExceptionHandler
 
@@ -60,20 +70,12 @@ constructor(
 
     private fun getWorkoutEntity(routineID: Long, workoutID: Long?): Flow<WorkoutEntity> = flow {
         if (workoutID != null) {
-            emitAll(workoutDao.getWorkout(workoutID))
+            emitAll(workoutDao.getWorkout(workoutID).filterNotNull())
         } else {
-            emit(null)
+            emitAll(workoutDao.getWorkout(insertEmptyWorkout(routineID)).filterNotNull())
         }
     }
         .distinctUntilChanged()
-        .transformLatest { workout ->
-            if (workout == null) {
-                emitAll(workoutDao.getWorkout(insertEmptyWorkout(routineID)))
-            } else {
-                emit(workout)
-            }
-        }
-        .filterNotNull()
 
     private suspend fun insertEmptyWorkout(routineID: Long): Long = coroutineScope {
         val routineName = async {
@@ -83,9 +85,10 @@ constructor(
         }
 
         val bodyWeight = async { workoutDao.getLatestBodyWeight() }
+        val routineItems = async { workoutDao.getRoutineItems(routineID).first() }
 
-        val workoutID =
-            workoutDao.insertWorkout(
+        workoutDao.getOrInsertActiveWorkoutWithItemsAndGoals(
+            workout =
                 WorkoutEntity(
                     name = routineName.await(),
                     routineID = routineID,
@@ -93,20 +96,10 @@ constructor(
                     endDate = null,
                     notes = "",
                     bodyWeight = bodyWeight.await(),
-                )
-            )
-
-        launch { insertWorkoutWithExercises(workoutID, routineID) }
-        launch { workoutDao.copyRoutineGoalsToWorkoutGoals(routineID, workoutID) }
-        workoutID
-    }
-
-    private suspend fun insertWorkoutWithExercises(workoutID: Long, routineID: Long) {
-        val exerciseIDs = workoutDao.getExerciseIDs(routineID).first()
-        val workoutWithExercises = exerciseIDs.mapIndexed { index, id ->
-            WorkoutWithExerciseEntity(workoutID, id, index)
-        }
-        workoutDao.insertWorkoutWithExercises(workoutWithExercises)
+                ),
+            routineItems = routineItems.await(),
+            routineID = routineID,
+        )
     }
 
     override suspend fun upsertWorkoutGoal(workoutID: Long, exerciseID: Long, goal: Workout.Goal) {
@@ -143,8 +136,17 @@ constructor(
             set.distance,
             set.distanceUnit,
             set.kcal,
+            set.notes,
             setIndex,
         )
+    }
+
+    override suspend fun updateExerciseNotes(
+        workoutItemID: Long,
+        exerciseID: Long,
+        notes: String,
+    ) {
+        workoutDao.updateExerciseNotes(workoutItemID, exerciseID, notes)
     }
 
     override suspend fun updateWorkout(
@@ -162,21 +164,82 @@ constructor(
         }
         if (updatedColumns.isEmpty()) error("No workout columns to update")
         val query =
-            "UPDATE workout SET ${updatedColumns.joinToString { (column, value) -> "$column = '$value'" }} " +
-                "WHERE workout_id = $workoutID"
-        workoutDao.query(RoomRawQuery(query))
+            "UPDATE workout SET ${updatedColumns.joinToString { (column, _) -> "$column = ?" }} " +
+                "WHERE workout_id = ?"
+        workoutDao.query(
+            RoomRawQuery(query) { statement ->
+                updatedColumns.forEachIndexed { index, (_, value) ->
+                    val text =
+                        when (value) {
+                            is LocalDateTime -> LocalDateTimeConverters.toString(value)
+                            else -> value.toString()
+                        }
+                    statement.bindText(index + 1, text)
+                }
+                statement.bindLong(updatedColumns.size + 1, workoutID)
+            }
+        )
         invalidationTracker.refreshAsync()
     }
 
-    override fun getWorkouts(type: GetWorkoutsContract.WorkoutType): Flow<List<Workout>> =
+    override fun getWorkouts(
+        type: GetWorkoutsContract.WorkoutType,
+        limit: Int?,
+    ): Flow<List<Workout>> =
         workoutDao
             .getWorkouts(
                 WorkoutDao.getWorkoutsQuery(
-                    hasEndDate = type == GetWorkoutsContract.WorkoutType.PAST
+                    hasEndDate = type == GetWorkoutsContract.WorkoutType.PAST,
+                    limit = limit,
                 )
             )
             .map(workoutMapper::toDomain)
             .flowOn(coroutineContext)
+
+    override suspend fun getPastWorkoutPage(limit: Int, offset: Int): List<Workout> =
+        withContext(coroutineContext) {
+            workoutMapper.toDomain(
+                workoutDao.getWorkoutsOnce(
+                    WorkoutDao.getWorkoutsQuery(hasEndDate = true, limit = limit, offset = offset)
+                )
+            )
+        }
+
+    override fun getPastWorkouts(
+        start: LocalDateTime,
+        endExclusive: LocalDateTime,
+    ): Flow<List<Workout>> =
+        workoutDao
+            .getWorkouts(WorkoutDao.getPastWorkoutsQuery(start, endExclusive))
+            .map(workoutMapper::toDomain)
+            .flowOn(coroutineContext)
+
+    override suspend fun deleteWorkout(workoutID: Long) {
+        withContext(coroutineContext) { workoutDao.deleteWorkout(workoutID) }
+        invalidationTracker.refreshAsync()
+    }
+
+    override suspend fun addExercises(workoutID: Long, exerciseIDs: List<Long>) {
+        if (exerciseIDs.isEmpty()) return
+        withContext(coroutineContext) { workoutDao.addWorkoutExercises(workoutID, exerciseIDs) }
+        invalidationTracker.refreshAsync()
+    }
+
+    override suspend fun reorderItems(workoutID: Long, workoutItemIDs: List<Long>) {
+        withContext(coroutineContext) { workoutDao.reorderWorkoutItems(workoutID, workoutItemIDs) }
+        invalidationTracker.refreshAsync()
+    }
+
+    override suspend fun removeItem(workoutID: Long, workoutItemID: Long) {
+        withContext(coroutineContext) { workoutDao.removeWorkoutItem(workoutID, workoutItemID) }
+        invalidationTracker.refreshAsync()
+    }
+
+    override suspend fun updateSetCount(workoutID: Long, workoutItemID: Long, setCount: Int) {
+        withContext(coroutineContext) {
+            workoutDao.updateWorkoutItemSetCount(workoutID, workoutItemID, setCount)
+        }
+    }
 
     override fun getWorkouts(date: LocalDate): Flow<List<Workout>> =
         workoutDao

@@ -9,12 +9,11 @@ import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatrick.liftapp.domain.di.IODispatcher
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.muscle.MuscleImageProvider
-import com.patrykandpatrick.liftapp.functionality.musclebitmap.MuscleBitmapConfig
+import com.patrykandpatrick.liftapp.functionality.musclebitmap.MuscleBitmapConfigProvider
 import com.patrykandpatrick.liftapp.functionality.musclebitmap.MuscleBitmapGenerator
 import com.patrykandpatrick.liftapp.functionality.musclebitmap.model.NameInfoEncoder
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Provider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -31,7 +30,7 @@ constructor(
     @IODispatcher private val ioDispatcher: CoroutineDispatcher,
     private val nameInfoEncoder: NameInfoEncoder,
     private val filesDir: File,
-    private val configProvider: Provider<MuscleBitmapConfig>,
+    private val configProvider: MuscleBitmapConfigProvider,
 ) : MuscleImageProvider {
 
     override suspend fun getMuscleImagePath(
@@ -66,7 +65,7 @@ constructor(
                         Timber.d("Generating bitmap")
                         muscleImageGeneratorImpl
                             .generateBitmap(
-                                config = configProvider.get(),
+                                config = configProvider.get(isDark),
                                 primaryMuscles = primaryMuscles,
                                 secondaryMuscles = secondaryMuscles,
                                 tertiaryMuscles = tertiaryMuscles,

@@ -8,6 +8,7 @@ import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.domain.plan.GetAllPlansUseCase
 import com.patrykandpatrick.liftapp.domain.plan.invoke
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.plan.list.model.Action
 import com.patrykandpatrick.liftapp.plan.list.model.ScreenState
@@ -41,8 +42,9 @@ constructor(
     fun onAction(action: Action) {
         when (action) {
             Action.PopBackStack -> popBackStack()
+            Action.AddNewPlan -> addNewPlan()
             Action.SaveSelection -> saveSelection()
-            is Action.CheckPlan -> checkedPlanID(action.id)
+            is Action.OnPlanClick -> onPlanClick(action.id)
         }
     }
 
@@ -50,8 +52,20 @@ constructor(
         viewModelScope.launch { navigationCommander.popBackStack() }
     }
 
-    private fun checkedPlanID(id: Long) {
-        savedStateHandle[ID_KEY] = id
+    private fun addNewPlan() {
+        viewModelScope.launch { navigationCommander.navigateTo(Routes.Plan.new()) }
+    }
+
+    /**
+     * The same tap means different things in the two modes this screen has: it selects a plan when
+     * one is being picked, and opens it for editing when the list is browsed from `More`.
+     */
+    private fun onPlanClick(id: Long) {
+        if (routeData.isPickingTrainingPlan) {
+            savedStateHandle[ID_KEY] = id
+        } else {
+            viewModelScope.launch { navigationCommander.navigateTo(Routes.Plan.edit(id)) }
+        }
     }
 
     private fun saveSelection() {

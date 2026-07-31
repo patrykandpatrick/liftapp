@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 
@@ -26,8 +25,8 @@ fun DayIndicator(dayIndex: Int, modifier: Modifier = Modifier, highlighted: Bool
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding =
             PaddingValues(
-                horizontal = LocalDimens.current.padding.itemHorizontalSmall,
-                vertical = LocalDimens.current.padding.itemVerticalSmall,
+                horizontal = 8.dp,
+                vertical = 8.dp,
             ),
         colors =
             if (highlighted) {

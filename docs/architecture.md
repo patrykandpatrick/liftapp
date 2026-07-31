@@ -8,7 +8,7 @@
 | `:ui` | The design system: components, icons, theme, dimensions, and modifiers. |
 | `:core` | Shared UI and utilities that do know about domain models: charts, formatting, logging, text markup, search, and validation. |
 | `:domain` | Models, use case and contract interfaces, unit conversion, and validation. |
-| `:functionality:*` | Implementations of the domain interfaces: `database` (Room), `preference` (DataStore), and `musclebitmap`. |
+| `:functionality:*` | Implementations of the domain interfaces: `database` (Room), `preference` (DataStore), `backup` (the export format and its schedule), and `musclebitmap`. |
 | `:feature:*` | One screen or group of screens each: a `ViewModel`, a `ScreenState`, an `Action`, and the composables. |
 | `:navigation` | Route data and the `NavigationCommander` features use to navigate. |
 
@@ -52,4 +52,24 @@ implement it; it stays just as easy to fake in a test:
 val getExercise = GetExerciseUseCase { flowOf(exercise) }
 ```
 
+## The backup format
+
+A backup is a ZIP named `.lfa`, as in the published app. It holds a `manifest.json` naming the format
+version and what was written, and one CSV per database table under a directory named after the
+[`BackupDataType`][type] it belongs to. Preferences travel as a CSV of their own.
+
+Nothing in the reader or the writer names a column. The header row is whatever the table declares, so
+the file describes the schema it came from rather than a parallel description of it that could drift.
+Two details are worth knowing before touching it:
+
+- **A quoted field is a value; a bare field is `NULL`.** Plenty of columns are nullable and an empty
+  string is not the same as no value in any of them.
+- **The import runs with foreign keys off and checks them once before committing.** `INSERT OR
+  REPLACE` on a referenced row would otherwise cascade the delete it does first — restoring a
+  routines-only backup would take every workout started from those routines with it.
+
+Categories are not independent: a workout references the routine it came from, so
+[`BackupDataType.dependencies`][type] is what both the picker and the import expand a selection with.
+
+[type]: ../domain/src/main/kotlin/com/patrykandpatryk/liftapp/domain/backup/BackupDataType.kt
 [nia]: https://github.com/android/nowinandroid/blob/main/docs/ModularizationLearningJourney.md

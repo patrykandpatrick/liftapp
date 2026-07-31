@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.navigation
 
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatrick.liftapp.navigation.data.BackupRestoreRouteData
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
@@ -13,6 +14,7 @@ import com.patrykandpatrick.liftapp.navigation.data.PlanCreatorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.SupersetDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.serialization.ExercisesSerializer
 import kotlinx.serialization.Serializable
@@ -35,8 +37,7 @@ object Routes {
     object Routine {
         fun details(routineID: Long) = RoutineDetailsRouteData(routineID)
 
-        fun edit(routineID: Long, deleteResultKey: String) =
-            NewRoutineRouteData(routineID, deleteResultKey)
+        fun edit(routineID: Long) = NewRoutineRouteData(routineID)
 
         fun list() = RoutineListRouteData(isPickingRoutine = false)
 
@@ -44,6 +45,9 @@ object Routes {
 
         fun pickRoutine(resultKey: String) =
             RoutineListRouteData(isPickingRoutine = true, resultKey = resultKey)
+
+        fun superset(routineID: Long, routineItemID: Long = ID_NOT_SET) =
+            SupersetDetailsRouteData(routineID, routineItemID)
     }
 
     object Exercise {
@@ -76,9 +80,17 @@ object Routes {
             NewBodyMeasurementRouteData(bodyMeasurementID, bodyMeasurementEntryID)
     }
 
-    @Serializable object About
-
     @Serializable object Settings
+
+    object Backup {
+        @Serializable object Overview
+
+        @Serializable object Export
+
+        @Serializable object Automatic
+
+        fun restore(location: String) = BackupRestoreRouteData(location)
+    }
 
     @Serializable object OneRepMax
 
@@ -100,4 +112,6 @@ object Routes {
 
         fun edit(workoutID: Long) = WorkoutRouteData(workoutID = workoutID)
     }
+
+    @Serializable object Journal
 }

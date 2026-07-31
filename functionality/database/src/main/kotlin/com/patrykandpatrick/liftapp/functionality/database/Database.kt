@@ -17,15 +17,18 @@ import com.patrykandpatrick.liftapp.functionality.database.plan.PlanDao
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanEntity
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanItemEntity
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanItemSchedule
-import com.patrykandpatrick.liftapp.functionality.database.routine.ExerciseWithRoutineEntity
+import com.patrykandpatrick.liftapp.functionality.database.routine.ExerciseWithRoutineItemEntity
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineEntity
+import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineItemEntity
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineWithExerciseNamesView
+import com.patrykandpatrick.liftapp.functionality.database.routine.SupersetEntity
 import com.patrykandpatrick.liftapp.functionality.database.workout.ExerciseSetEntity
+import com.patrykandpatrick.liftapp.functionality.database.workout.ExerciseWithWorkoutItemEntity
 import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutDao
 import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutEntity
 import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutGoalEntity
-import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutWithExerciseEntity
+import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutItemEntity
 
 @androidx.room.Database(
     entities =
@@ -34,10 +37,13 @@ import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutWithEx
             BodyMeasurementEntryEntity::class,
             ExerciseEntity::class,
             RoutineEntity::class,
-            ExerciseWithRoutineEntity::class,
+            RoutineItemEntity::class,
+            ExerciseWithRoutineItemEntity::class,
+            SupersetEntity::class,
             GoalEntity::class,
             WorkoutEntity::class,
-            WorkoutWithExerciseEntity::class,
+            WorkoutItemEntity::class,
+            ExerciseWithWorkoutItemEntity::class,
             WorkoutGoalEntity::class,
             ExerciseSetEntity::class,
             PlanEntity::class,

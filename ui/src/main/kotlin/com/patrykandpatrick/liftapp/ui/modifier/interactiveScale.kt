@@ -65,8 +65,11 @@ private class ScaleNode(
 ) : DrawModifierNode, Modifier.Node() {
 
     private val currentScale = animatedFloatStateOf(1f, animationSpec)
+    private val activeDrags = mutableSetOf<DragInteraction.Start>()
 
     override fun onAttach() {
+        activeDrags.clear()
+        currentScale.value = scale.default
         coroutineScope.launch {
             interactionSource.interactions.collectLatest { interaction ->
                 when (interaction) {
@@ -77,20 +80,43 @@ private class ScaleNode(
                         currentScale.animate(scale.hover)
                     }
                     is PressInteraction.Release -> {
-                        currentScale.animate(scale.press)
-                        currentScale.animate(scale.default)
+                        if (activeDrags.isEmpty()) {
+                            currentScale.animate(scale.press)
+                            currentScale.animate(scale.default)
+                        } else {
+                            currentScale.animate(scale.drag)
+                        }
                     }
-                    is DragInteraction.Start -> currentScale.animate(scale.drag)
-                    is DragInteraction.Stop,
-                    is DragInteraction.Cancel,
+                    is DragInteraction.Start -> {
+                        activeDrags += interaction
+                        currentScale.animate(scale.drag)
+                    }
+                    is DragInteraction.Stop -> {
+                        activeDrags -= interaction.start
+                        currentScale.animate(
+                            if (activeDrags.isEmpty()) scale.default else scale.drag
+                        )
+                    }
+                    is DragInteraction.Cancel -> {
+                        activeDrags -= interaction.start
+                        currentScale.animate(
+                            if (activeDrags.isEmpty()) scale.default else scale.drag
+                        )
+                    }
                     is HoverInteraction.Exit,
                     is PressInteraction.Cancel -> {
-                        currentScale.animate(scale.default)
+                        currentScale.animate(
+                            if (activeDrags.isEmpty()) scale.default else scale.drag
+                        )
                     }
                     else -> Unit
                 }
             }
         }
+    }
+
+    override fun onDetach() {
+        activeDrags.clear()
     }
 
     override fun ContentDrawScope.draw() {

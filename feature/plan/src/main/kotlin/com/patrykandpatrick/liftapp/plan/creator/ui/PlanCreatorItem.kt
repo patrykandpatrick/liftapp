@@ -25,7 +25,6 @@ import com.patrykandpatrick.liftapp.core.ui.routine.RestCard
 import com.patrykandpatrick.liftapp.core.ui.routine.RoutineCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.icons.Routine
@@ -38,12 +37,14 @@ internal fun PlanCreatorItem(
     item: ScreenState.Item,
     onAddRestDayClick: () -> Unit,
     onAddRoutineClick: () -> Unit,
-    onClick: (ScreenState.Item.PlanElement) -> Unit,
+    onClick: (ScreenState.Item.RoutineItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LiftAppCard(
+        // Only routines lead anywhere. A rest day has nothing to show, so it stays inert rather
+        // than being clickable and doing nothing.
         onClick =
-            if (item is ScreenState.Item.PlanElement) {
+            if (item is ScreenState.Item.RoutineItem) {
                 { onClick(item) }
             } else null,
         modifier = modifier,
@@ -90,14 +91,11 @@ private fun PlaceholderItemButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val padding = LocalDimens.current.padding
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-            modifier
-                .clickable(onClick = onClick)
-                .padding(horizontal = padding.itemHorizontal, vertical = padding.itemVertical),
+            modifier.clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 16.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

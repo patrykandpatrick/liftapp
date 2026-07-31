@@ -102,7 +102,7 @@ fun LiftAppFAB(
                     .padding(contentPadding)
                     .align(Alignment.Center)
                     .fillMaxWidth()
-                    .heightIn(min = dimens.button.minContentHeight),
+                    .heightIn(min = 24.dp),
             content = content,
         )
     }

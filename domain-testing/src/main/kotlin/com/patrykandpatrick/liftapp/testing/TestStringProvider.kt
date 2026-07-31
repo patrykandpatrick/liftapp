@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.testing
 
+import com.patrykandpatrick.liftapp.domain.backup.BackupDataType
 import com.patrykandpatrick.liftapp.domain.extension.getTypeErrorMessage
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
@@ -12,8 +13,6 @@ import com.patrykandpatrick.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykandpatrick.liftapp.domain.unit.ValueUnit
 
 object TestStringProvider : StringProvider {
-
-    override val andInAList: String = "&"
 
     override val name: String = "Name"
 
@@ -41,6 +40,61 @@ object TestStringProvider : StringProvider {
 
     override val secondsShort: String = "s"
 
+    override val hoursMedium: String = "hr"
+
+    override val minutesMedium: String = "min"
+
+    override val secondsMedium: String = "sec"
+
+    override val backupNameFull: String = "Full backup"
+
+    override val backupNameAutomatic: String = "Auto backup"
+
+    override val backupNameSuffix: String = "backup"
+
+    override val backupNameDateFormat: String = " (d MMM yyyy)"
+
+    override val errorBackupFileUnsupported: String = "This is not a LiftApp backup"
+
+    override val errorBackupFileUnreadable: String = "The backup file could not be read"
+
+    override val backupExportSucceeded: String = "Backup created"
+
+    override val backupImportSucceeded: String = "Data restored"
+
+    override val errorBackupExportFailed: String = "The backup could not be created"
+
+    override val errorBackupImportFailed: String = "The backup could not be restored"
+
+    override val backupNotificationChannelName: String = "Auto backup"
+
+    override val backupFailedNotificationTitle: String = "Auto backup failed"
+
+    override val backupFailedNotificationBody: String =
+        "LiftApp no longer has access to the folder you chose"
+
+    override fun getBackupNameDataType(type: BackupDataType, listContinuation: Boolean): String =
+        when (type) {
+            BackupDataType.Routines -> "Routine"
+            BackupDataType.Workouts -> "Workout"
+            BackupDataType.TrainingPlans -> "Training-plan"
+            BackupDataType.BodyMeasurements -> "Body-measurement"
+            BackupDataType.Settings -> "Settings"
+        }.let { if (listContinuation) it.replaceFirstChar(Char::lowercaseChar) else it }
+
+    /**
+     * Approximates what `ListFormatter` does for English, serial comma included, so tests read the
+     * way the app does. Joining on ", " instead would make every expectation a string no user ever
+     * sees.
+     */
+    override fun formatList(items: List<String>): String =
+        when (items.size) {
+            0,
+            1 -> items.joinToString(separator = "")
+            2 -> "${items[0]} and ${items[1]}"
+            else -> "${items.dropLast(1).joinToString(separator = ", ")}, and ${items.last()}"
+        }
+
     override fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean): String =
         when (unit) {
             MassUnit.Kilograms -> "kg"
@@ -66,6 +120,8 @@ object TestStringProvider : StringProvider {
     override fun getErrorCannotBeEmpty(name: String): String = "%s cannot be empty.".format(name)
 
     override fun getMuscleName(muscle: Muscle): String = muscle.name
+
+    override fun getMuscleList(muscles: List<Muscle>): String = formatList(muscles.map { it.name })
 
     override fun getErrorNameTooLong(actual: Int, limit: Int): String =
         "The name is too long (%1\$d/%2\$d).".format(actual, limit)

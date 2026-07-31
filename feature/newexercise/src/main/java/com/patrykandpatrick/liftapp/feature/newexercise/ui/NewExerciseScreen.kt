@@ -24,9 +24,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.core.R
-import com.patrykandpatrick.liftapp.core.extension.joinToPrettyString
 import com.patrykandpatrick.liftapp.core.extension.thenIf
 import com.patrykandpatrick.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
@@ -35,6 +35,7 @@ import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatrick.liftapp.core.ui.resource.getMusclePrettyName
+import com.patrykandpatrick.liftapp.core.ui.resource.prettyList
 import com.patrykandpatrick.liftapp.core.ui.resource.prettyName
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
@@ -67,7 +68,7 @@ private fun NewExerciseScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     LiftAppScaffold(
         modifier =
@@ -76,6 +77,7 @@ private fun NewExerciseScreen(
                 .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CompactTopAppBar(
+                scrollBehavior = topAppBarScrollBehavior,
                 title = { Text(stringResource(id = R.string.title_new_exercise)) },
                 navigationIcon = {
                     CompactTopAppBarDefaults.BackIcon(onClick = { onAction(Action.PopBackStack) })
@@ -91,10 +93,10 @@ private fun NewExerciseScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(paddingValues)
                     .padding(
-                        horizontal = dimens.padding.contentHorizontal,
-                        vertical = dimens.padding.contentVertical,
+                        horizontal = dimens.screen.horizontalPadding,
+                        vertical = dimens.screen.verticalPadding,
                     ),
-            verticalArrangement = Arrangement.spacedBy(dimens.verticalItemSpacing),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Content(state = state, onAction = onAction)
         }
@@ -152,7 +154,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         selectedItems = state.primaryMuscles.value,
         items = remember { Muscle.entries },
         getItemText = getMusclePrettyName,
-        getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
+        getItemsText = { it.prettyList() },
         label = stringResource(id = R.string.generic_main_muscles),
         onClick = { onAction(Action.MainMuscleListAction(Action.ListAction.ToggleMuscle(it))) },
         onClear = { onAction(Action.MainMuscleListAction(Action.ListAction.Clear)) },
@@ -167,7 +169,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         selectedItems = state.secondaryMuscles,
         items = remember { Muscle.entries },
         getItemText = getMusclePrettyName,
-        getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
+        getItemsText = { it.prettyList() },
         label = stringResource(id = R.string.generic_secondary_muscles),
         onClick = {
             onAction(Action.SecondaryMuscleListAction(Action.ListAction.ToggleMuscle(it)))
@@ -182,7 +184,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         selectedItems = state.tertiaryMuscles,
         items = remember { Muscle.entries },
         getItemText = getMusclePrettyName,
-        getItemsText = { it.joinToPrettyString(getMusclePrettyName) },
+        getItemsText = { it.prettyList() },
         label = stringResource(id = R.string.generic_tertiary_muscles),
         onClick = { onAction(Action.TertiaryMuscleListAction(Action.ListAction.ToggleMuscle(it))) },
         onClear = { onAction(Action.TertiaryMuscleListAction(Action.ListAction.Clear)) },

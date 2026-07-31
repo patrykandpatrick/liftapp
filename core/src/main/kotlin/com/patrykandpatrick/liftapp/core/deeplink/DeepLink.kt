@@ -20,5 +20,8 @@ class DeepLink private constructor(val uri: String) {
         fun create(uriPattern: String): DeepLink = DeepLink("$SCHEME://$uriPattern")
 
         val WorkoutRoute = create("workout/{routineID}/{workoutID}")
+
+        val NewBodyMeasurementRoute =
+            create("body-measurement/{bodyMeasurementID}/entry/{bodyMeasurementEntryID}")
     }
 }

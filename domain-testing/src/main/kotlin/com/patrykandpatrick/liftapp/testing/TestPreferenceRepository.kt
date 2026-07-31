@@ -5,10 +5,12 @@ import com.patrykandpatrick.liftapp.domain.date.HourFormat
 import com.patrykandpatrick.liftapp.domain.model.AllPreferences
 import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
+import com.patrykandpatrick.liftapp.domain.theme.Theme
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatrick.liftapp.domain.unit.ShortDistanceUnit
+import java.time.DayOfWeek
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +43,10 @@ class TestPreferenceRepository(
 
     override val hourFormat: Preference<HourFormat> = preference(HourFormat.H24)
 
+    override val firstDayOfWeek: Preference<DayOfWeek> = preference(DayOfWeek.MONDAY)
+
+    override val theme: Preference<Theme> = preference(Theme.FollowSystem)
+
     override val is24H: StateFlow<Boolean> =
         hourFormat
             .get()
@@ -53,21 +59,29 @@ class TestPreferenceRepository(
             }
             .stateIn(coroutineScope, SharingStarted.Eagerly, true)
 
+    override val currentFirstDayOfWeek: StateFlow<DayOfWeek> =
+        firstDayOfWeek.get().stateIn(coroutineScope, SharingStarted.Eagerly, DayOfWeek.MONDAY)
+
     override val goalInfoVisible: Preference<Boolean> = preference(true)
 
     override val activePlan: Preference<ActivePlan?> = preference(null)
 
     override val allPreferences: Flow<AllPreferences> =
-        combine(massUnit.get(), longDistanceUnit.get(), hourFormat.get()) {
-            massUnit,
-            longDistanceUnit,
-            hourFormat ->
+        combine(
+            massUnit.get(),
+            longDistanceUnit.get(),
+            hourFormat.get(),
+            firstDayOfWeek.get(),
+            theme.get(),
+        ) { massUnit, longDistanceUnit, hourFormat, firstDayOfWeek, theme ->
             AllPreferences(
                 massUnit = massUnit,
                 longDistanceUnit = longDistanceUnit,
                 mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
                 shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
                 hourFormat = hourFormat,
+                firstDayOfWeek = firstDayOfWeek,
+                theme = theme,
             )
         }
 

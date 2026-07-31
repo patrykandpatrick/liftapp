@@ -14,12 +14,14 @@ import com.patrykandpatrick.liftapp.domain.exercise.invoke
 import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseSetGroup
 import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseSummaryType
 import com.patrykandpatrick.liftapp.domain.exerciseset.GetExerciseSetsUseCase
+import com.patrykandpatrick.liftapp.domain.exerciseset.GetExerciseStatisticsUseCase
 import com.patrykandpatrick.liftapp.domain.exerciseset.getSummaryTypes
 import com.patrykandpatrick.liftapp.domain.exerciseset.invoke
 import com.patrykandpatrick.liftapp.domain.exerciseset.summary.ExerciseSetToChartEntryMapper
 import com.patrykandpatrick.liftapp.domain.exerciseset.summary.GetValueUnitForExerciseSetSummaryUseCase
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.feature.exercise.model.Action
 import com.patrykandpatrick.liftapp.feature.exercise.model.ScreenState
@@ -29,10 +31,12 @@ import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProdu
 import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class ExerciseDetailsViewModel
@@ -48,11 +52,14 @@ constructor(
     private val navigationCommander: NavigationCommander,
     private val exerciseSetToChartEntryMapper: ExerciseSetToChartEntryMapper,
     private val getValueUnitForExerciseSetSummaryUseCase: GetValueUnitForExerciseSetSummaryUseCase,
+    private val getExerciseStatistics: GetExerciseStatisticsUseCase,
+    preferenceRepository: PreferenceRepository,
 ) : ViewModel(), LogPublisher by logger {
 
     private val cartesianChartModelProducer = CartesianChartModelProducer()
 
-    private val dateIntervalOptions: List<DateInterval> = DateInterval.exerciseOptions
+    private val dateIntervalOptions: List<DateInterval> =
+        DateInterval.exerciseOptions(preferenceRepository.currentFirstDayOfWeek.value)
 
     private val dateInterval =
         savedStateHandle.getMutableStateFlow(DATE_INTERVAL_KEY, dateIntervalOptions.first())
@@ -64,20 +71,31 @@ constructor(
         getExerciseSetsUseCase(routeData.exerciseID, dateInterval)
     }
 
+    private val exerciseSetState =
+        combine(
+            exerciseSets,
+            getExerciseSetsUseCase.hasExerciseSets(routeData.exerciseID),
+        ) { exerciseSetGroups, hasExerciseHistory ->
+            exerciseSetGroups to hasExerciseHistory
+        }
+
     val screenState: StateFlow<Loadable<ScreenState>> =
         combine(
                 getExercise(routeData.exerciseID),
                 savedStateHandle.getStateFlow(SHOW_DELETE_DIALOG_KEY, false),
-                exerciseSets,
+                exerciseSetState,
                 dateInterval,
                 summaryType,
-            ) { exercise, showDeleteDialog, exerciseSetGroups, dateInterval, summaryType ->
+            ) { exercise, showDeleteDialog, exerciseSetState, dateInterval, summaryType ->
                 if (exercise == null) {
                     error("Exercise with id ${routeData.exerciseID} not found, or deleted.")
                 } else {
+                    val (exerciseSetGroups, hasExerciseHistory) = exerciseSetState
                     val summaryTypes = exercise.exerciseType.getSummaryTypes()
                     val summaryType = summaryType ?: summaryTypes.first()
                     updateChartModel(exerciseSetGroups, dateInterval, summaryType)
+                    val exerciseStatistics =
+                        getExerciseStatistics(exercise.exerciseType, exerciseSetGroups)
 
                     ScreenState(
                         name = stringProvider.getResolvedName(exercise.name),
@@ -85,7 +103,9 @@ constructor(
                         primaryMuscles = exercise.primaryMuscles,
                         secondaryMuscles = exercise.secondaryMuscles,
                         tertiaryMuscles = exercise.tertiaryMuscles,
+                        hasExerciseHistory = hasExerciseHistory,
                         exerciseSetGroups = exerciseSetGroups,
+                        exerciseStatistics = exerciseStatistics,
                         cartesianChartModelProducer = cartesianChartModelProducer,
                         dateInterval = dateInterval,
                         dateIntervalOptions = dateIntervalOptions,
@@ -146,7 +166,10 @@ constructor(
 
     private fun deleteExercise() {
         setShowDeleteDialog(false)
-        viewModelScope.launch { deleteExercise(routeData.exerciseID) }
+        viewModelScope.launch {
+            navigationCommander.popBackStack()
+            withContext(NonCancellable) { deleteExercise(routeData.exerciseID) }
+        }
     }
 
     private fun popBackStack() {

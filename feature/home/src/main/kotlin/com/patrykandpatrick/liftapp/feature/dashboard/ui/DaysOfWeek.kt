@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.feature.dashboard.model.DashboardState
@@ -29,9 +30,9 @@ import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 internal fun DaysOfWeek(
@@ -40,7 +41,7 @@ internal fun DaysOfWeek(
     onClick: (LocalDate) -> Unit,
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
     ) {
         dateItems.forEach { dateItem ->
@@ -72,13 +73,17 @@ internal fun DayOfWeek(
                 )
                 .value,
         horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = PaddingValues(vertical = dimens.padding.itemVerticalMedium),
+        contentPadding = PaddingValues(vertical = 12.dp),
         shape = CircleShape,
         verticalArrangement = Arrangement.Center,
         modifier = modifier,
     ) {
         Text(
-            text = date.dayOfWeek.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()),
+            text =
+                date.dayOfWeek.getDisplayName(
+                    TextStyle.SHORT_STANDALONE,
+                    LocalConfiguration.current.locales[0],
+                ),
             textAlign = TextAlign.Center,
             color = colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
@@ -95,7 +100,7 @@ internal fun DayOfWeek(
                 sinHeight = 4.dp,
                 sinPeriodLength = 1.5.dp,
                 color = colorScheme.onSurfaceVariant,
-                thickness = dimens.button.underlineWidth,
+                thickness = 1.5.dp,
                 modifier = Modifier.graphicsLayer { alpha = if (isToday) 1f else 0f },
             )
         }
@@ -108,9 +113,9 @@ private fun DaysOfWeekPreview() {
     LiftAppTheme {
         LiftAppBackground {
             DaysOfWeek(
-                dateItems = DashboardViewModel.getWeekDays(LocalDate.now()),
+                dateItems = DashboardViewModel.getWeekDays(LocalDate.now(), DayOfWeek.MONDAY),
                 onClick = {},
-                modifier = Modifier.padding(horizontal = dimens.padding.contentHorizontal),
+                modifier = Modifier.padding(horizontal = dimens.screen.horizontalPadding),
             )
         }
     }

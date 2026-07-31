@@ -123,7 +123,6 @@ class NewBodyMeasurementStateTest {
 
     @Test
     fun `Name field has the name of the body measurement`() = runTest {
-        this
         val sut = getSut().getSuccessState()
         assertEquals(sut.name, weightMeasurement.name)
     }

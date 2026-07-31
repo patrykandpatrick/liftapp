@@ -15,23 +15,30 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.model.Unfold
 import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.core.ui.image.MuscleImage
+import com.patrykandpatrick.liftapp.core.ui.resource.color
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 
 @Composable
-internal fun Details(loadableState: Loadable<ScreenState>, modifier: Modifier = Modifier) {
-    loadableState.Unfold { state -> Details(modifier = modifier, state = state) }
+internal fun Details(
+    loadableState: Loadable<ScreenState>,
+    bottomPadding: Dp,
+    modifier: Modifier = Modifier,
+) {
+    loadableState.Unfold { state ->
+        Details(state = state, bottomPadding = bottomPadding, modifier = modifier)
+    }
 }
 
 @Composable
-private fun Details(state: ScreenState, modifier: Modifier = Modifier) {
+private fun Details(state: ScreenState, bottomPadding: Dp, modifier: Modifier = Modifier) {
     val dimens = LocalDimens.current
     val muscleDimens = dimens.muscle
 
@@ -40,15 +47,17 @@ private fun Details(state: ScreenState, modifier: Modifier = Modifier) {
         columns = GridCells.Adaptive(minSize = muscleDimens.gridCellMinSize),
         contentPadding =
             PaddingValues(
-                horizontal = dimens.padding.contentHorizontal,
-                vertical = dimens.padding.contentVertical,
+                start = dimens.screen.horizontalPadding,
+                top = dimens.screen.verticalPadding,
+                end = dimens.screen.horizontalPadding,
+                bottom = dimens.screen.verticalPadding + bottomPadding,
             ),
         horizontalArrangement = Arrangement.spacedBy(muscleDimens.listItemHorizontalMargin),
     ) {
         item(key = "image", span = { GridItemSpan(maxLineSpan) }) {
             MuscleImage(
                 model = state,
-                modifier = Modifier.padding(vertical = dimens.padding.contentVertical),
+                modifier = Modifier.padding(vertical = dimens.screen.verticalPadding),
             )
         }
 
@@ -61,13 +70,12 @@ private fun Details(state: ScreenState, modifier: Modifier = Modifier) {
                         modifier =
                             Modifier.size(muscleDimens.tileSize)
                                 .background(
-                                    color = colorResource(id = muscleModel.type.colorRes),
+                                    color = muscleModel.type.color,
                                     shape = RoundedCornerShape(muscleDimens.tileCornerSize),
                                 )
                     )
                 },
-                paddingValues =
-                    PaddingValues(vertical = dimens.padding.itemVertical, horizontal = 0.dp),
+                paddingValues = PaddingValues(vertical = 16.dp, horizontal = 0.dp),
             )
         }
     }

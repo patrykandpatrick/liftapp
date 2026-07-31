@@ -9,4 +9,5 @@ data class ExerciseSetGroup(
     val exerciseID: Long,
     val sets: List<ExerciseSet>,
     val workoutStartDate: LocalDateTime,
+    val notes: String = "",
 )

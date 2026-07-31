@@ -11,7 +11,7 @@ private constructor(
     val secondaryMuscles: List<Muscle>,
     val tertiaryMuscles: List<Muscle>,
     val isDark: Boolean,
-    val version: Int = 1,
+    val version: Int = VERSION,
     val muscleImageType: MuscleImageType,
 ) {
 
@@ -42,12 +42,18 @@ private constructor(
     }
 
     companion object {
+        /**
+         * Generated images are cached under the name this info encodes to, so bumping the version
+         * is what makes already cached ones give way to images drawn with new colors.
+         */
+        const val VERSION = 1
+
         fun create(
             mainMuscles: List<Muscle>,
             secondaryMuscles: List<Muscle>,
             tertiaryMuscles: List<Muscle>,
             isDark: Boolean,
-            version: Int = 1,
+            version: Int = VERSION,
             muscleImageType: MuscleImageType = MuscleImageType.FrontAndRear,
         ): NameInfo =
             NameInfo(

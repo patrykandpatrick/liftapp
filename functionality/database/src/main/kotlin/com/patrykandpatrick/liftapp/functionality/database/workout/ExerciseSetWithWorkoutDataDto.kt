@@ -8,4 +8,5 @@ class ExerciseSetWithWorkoutDataDto(
     @Embedded val exerciseSet: ExerciseSetEntity,
     @ColumnInfo(name = "workout_start_date") val workoutStartDate: LocalDateTime,
     @ColumnInfo(name = "workout_name") val workoutName: String,
+    @ColumnInfo(name = "workout_item_exercise_notes") val exerciseNotes: String,
 )

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+    The launcher shortcut icons, which are adaptive, so the background is the masked container the
+    launcher shows rather than a disc drawn inside one. Google's App Shortcuts Icon Design
+    Guidelines ask for the app's primary color on Material Grey 100; the colors follow the theme
+    instead, since the guidelines predate themed icons and a light launcher is no longer a given.
+    -->
+    <color name="shortcut_icon_background">#F5F5F5</color>
+    <color name="shortcut_icon_foreground">#5151FA</color>
+
+</resources>

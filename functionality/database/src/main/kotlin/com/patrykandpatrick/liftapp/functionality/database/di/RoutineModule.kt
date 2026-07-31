@@ -1,10 +1,12 @@
 package com.patrykandpatrick.liftapp.functionality.database.di
 
 import com.patrykandpatrick.liftapp.domain.routine.DeleteRoutineUseCase
-import com.patrykandpatrick.liftapp.domain.routine.GetRoutineWithExerciseIDsUseCase
 import com.patrykandpatrick.liftapp.domain.routine.GetRoutineWithExercisesUseCase
+import com.patrykandpatrick.liftapp.domain.routine.GetRoutineWithItemsUseCase
 import com.patrykandpatrick.liftapp.domain.routine.GetRoutinesWithExerciseNamesContract
-import com.patrykandpatrick.liftapp.domain.routine.UpsertRoutineWithExerciseIdsUseCase
+import com.patrykandpatrick.liftapp.domain.routine.ReorderRoutinesUseCase
+import com.patrykandpatrick.liftapp.domain.routine.UpsertRoutineUseCase
+import com.patrykandpatrick.liftapp.domain.routine.UpsertRoutineWithItemsUseCase
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoomRoutineRepository
 import dagger.Binds
 import dagger.Module
@@ -20,19 +22,23 @@ interface RoutineModule {
     ): GetRoutineWithExercisesUseCase
 
     @Binds
-    fun bindGetRoutineWithExerciseIDsUseCase(
+    fun bindGetRoutineWithItemsUseCase(
         repository: RoomRoutineRepository
-    ): GetRoutineWithExerciseIDsUseCase
+    ): GetRoutineWithItemsUseCase
+
+    @Binds fun bindUpsertRoutineUseCase(repository: RoomRoutineRepository): UpsertRoutineUseCase
 
     @Binds
-    fun bindUpsertRoutineWithExerciseIdsUseCase(
+    fun bindUpsertRoutineWithItemsUseCase(
         repository: RoomRoutineRepository
-    ): UpsertRoutineWithExerciseIdsUseCase
+    ): UpsertRoutineWithItemsUseCase
 
     @Binds
     fun bindGetRoutinesWithExerciseNamesContract(
         repository: RoomRoutineRepository
     ): GetRoutinesWithExerciseNamesContract
+
+    @Binds fun bindReorderRoutinesUseCase(repository: RoomRoutineRepository): ReorderRoutinesUseCase
 
     @Binds fun bindDeleteRoutineContract(repository: RoomRoutineRepository): DeleteRoutineUseCase
 }

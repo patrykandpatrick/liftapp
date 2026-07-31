@@ -3,6 +3,7 @@ package com.patrykandpatrick.liftapp.functionality.database.plan
 import com.patrykandpatrick.liftapp.domain.di.IODispatcher
 import com.patrykandpatrick.liftapp.domain.exception.PlanNotFoundException
 import com.patrykandpatrick.liftapp.domain.plan.AddPlanItemsScheduleContract
+import com.patrykandpatrick.liftapp.domain.plan.DeletePlanContract
 import com.patrykandpatrick.liftapp.domain.plan.GetAllPlansUseCase
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanItemContract
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanUseCase
@@ -11,6 +12,7 @@ import com.patrykandpatrick.liftapp.domain.plan.UpsertPlanContract
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -27,7 +29,8 @@ constructor(
     GetPlanUseCase,
     UpsertPlanContract,
     AddPlanItemsScheduleContract,
-    GetPlanItemContract {
+    GetPlanItemContract,
+    DeletePlanContract {
     override fun getPlans(): Flow<List<Plan>> =
         dao.getAllPlans().map { plans -> mapper.toDomain(plans) }.flowOn(dispatcher)
 
@@ -38,10 +41,15 @@ constructor(
             }
             .flowOn(dispatcher)
 
+    // `plan_item` and `plan_item_schedule` both declare `onDelete = CASCADE` against `plan_id`, so
+    // removing the plan row takes its items and its schedule with it.
+    override suspend fun deletePlan(id: Long) {
+        withContext(dispatcher + NonCancellable) { dao.deletePlan(id) }
+    }
+
     override suspend fun upsertPlan(plan: Plan) {
-        withContext(dispatcher) {
-            val planID = dao.upsertPlan(toPlanEntity(plan))
-            dao.upsertPlanItems(toPlanItems(plan.copy(id = planID)))
+        withContext(dispatcher + NonCancellable) {
+            dao.upsertPlanWithItems(toPlanEntity(plan), toPlanItems(plan))
         }
     }
 

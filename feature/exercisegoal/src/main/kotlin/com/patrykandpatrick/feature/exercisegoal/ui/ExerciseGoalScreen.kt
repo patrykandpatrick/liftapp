@@ -14,20 +14,21 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,6 +36,7 @@ import com.patrykandpatrick.feature.exercisegoal.model.Action
 import com.patrykandpatrick.feature.exercisegoal.model.GetExerciseNameAndTypeUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GetGoalUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.GoalInput
+import com.patrykandpatrick.feature.exercisegoal.model.IsExerciseInSupersetUseCase
 import com.patrykandpatrick.feature.exercisegoal.model.SaveGoalUseCase
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.extension.interfaceStub
@@ -66,6 +68,8 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.Info
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.Dispatchers
@@ -86,10 +90,13 @@ fun ExerciseGoalScreen(
         }
     }
 
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     LiftAppScaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CompactTopAppBar(
+                scrollBehavior = topAppBarScrollBehavior,
                 title = { Text(text = state?.exerciseName?.getDisplayName().orEmpty()) },
                 navigationIcon = {
                     CompactTopAppBarDefaults.BackIcon { viewModel.onAction(Action.PopBackStack) }
@@ -103,7 +110,7 @@ fun ExerciseGoalScreen(
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.TwoTone.Info,
+                            imageVector = LiftAppIcons.Info,
                             contentDescription = stringResource(id = R.string.action_info),
                         )
                     }
@@ -126,15 +133,15 @@ fun ExerciseGoalScreen(
                     )
                     .padding(paddingValues)
                     .fillMaxSize(),
-            columns = GridCells.Adaptive(minSize = dimens.grid.minCellWidthLarge),
+            columns = GridCells.Adaptive(minSize = 240.dp),
             state = lazyGridState,
             contentPadding =
                 PaddingValues(
-                    horizontal = dimens.padding.contentHorizontal,
-                    vertical = dimens.padding.contentVertical,
+                    horizontal = dimens.screen.horizontalPadding,
+                    vertical = dimens.screen.verticalPadding,
                 ),
-            verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
-            horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (state != null) {
                 content(
@@ -247,24 +254,26 @@ private fun LazyGridScope.content(
         }
     }
 
-    item(key = "divider", span = { GridItemSpan(maxLineSpan) }) {
-        SinHorizontalDivider(
-            horizontalExtent = LocalDimens.current.padding.contentHorizontal,
-            modifier = itemModifier,
-        )
-    }
-
-    item(key = "rest_time") {
-        InputFieldLayout(
-            isError = goalInput.restTime.state.hasError,
-            label = { Text(text = stringResource(R.string.exercise_set_input_rest_time)) },
-            modifier = itemModifier,
-        ) {
-            DurationPicker(
-                duration = goalInput.restTime.state.value.milliseconds,
-                onDurationChange = { goalInput.restTime.state.updateValue(it.inWholeMilliseconds) },
-                includeHours = false,
+    goalInput.restTime?.also { input ->
+        item(key = "divider", span = { GridItemSpan(maxLineSpan) }) {
+            SinHorizontalDivider(
+                horizontalExtent = LocalDimens.current.screen.horizontalPadding,
+                modifier = itemModifier,
             )
+        }
+
+        item(key = "rest_time") {
+            InputFieldLayout(
+                isError = input.state.hasError,
+                label = { Text(text = stringResource(R.string.exercise_set_input_rest_time)) },
+                modifier = itemModifier,
+            ) {
+                DurationPicker(
+                    duration = input.state.value.milliseconds,
+                    onDurationChange = { input.state.updateValue(it.inWholeMilliseconds) },
+                    includeHours = false,
+                )
+            }
         }
     }
 }
@@ -299,6 +308,8 @@ private fun ExerciseGoalPreview() {
                             ),
                         getGoalUseCase =
                             GetGoalUseCase({ _, _ -> flowOf(Goal.default) }, routeData),
+                        isExerciseInSupersetUseCase =
+                            IsExerciseInSupersetUseCase({ flowOf(null) }, routeData),
                         saveGoalUseCase = SaveGoalUseCase(saveGoalContract, routeData),
                         coroutineScope = coroutineScope,
                         textFieldStateManager = textFieldStateManager,

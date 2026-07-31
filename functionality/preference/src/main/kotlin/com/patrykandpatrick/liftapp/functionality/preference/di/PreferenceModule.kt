@@ -5,12 +5,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.patrykandpatrick.liftapp.domain.backup.BackupPreferenceRepository
 import com.patrykandpatrick.liftapp.domain.datastore.Preference
+import com.patrykandpatrick.liftapp.domain.date.GetFirstDayOfWeekUseCase
 import com.patrykandpatrick.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatrick.liftapp.domain.unit.GetPreferredMassUnitUseCase
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
+import com.patrykandpatrick.liftapp.functionality.preference.repository.BackupPreferenceRepositoryImpl
 import com.patrykandpatrick.liftapp.functionality.preference.repository.PreferenceRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -30,9 +33,19 @@ interface PreferenceModule {
     fun bindPreferenceRepository(repositoryImpl: PreferenceRepositoryImpl): PreferenceRepository
 
     @Binds
+    fun bindBackupPreferenceRepository(
+        repositoryImpl: BackupPreferenceRepositoryImpl
+    ): BackupPreferenceRepository
+
+    @Binds
     fun bindGetPreferredMassUnitUseCase(
         repositoryImpl: PreferenceRepositoryImpl
     ): GetPreferredMassUnitUseCase
+
+    @Binds
+    fun bindGetFirstDayOfWeekUseCase(
+        repositoryImpl: PreferenceRepositoryImpl
+    ): GetFirstDayOfWeekUseCase
 
     companion object {
 

@@ -10,4 +10,5 @@ ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+    testImplementation(project(":domain-testing"))
 }

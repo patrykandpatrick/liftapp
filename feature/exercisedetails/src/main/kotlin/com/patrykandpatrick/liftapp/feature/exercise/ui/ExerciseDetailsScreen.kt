@@ -1,6 +1,10 @@
 package com.patrykandpatrick.liftapp.feature.exercise.ui
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -9,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,6 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -31,10 +38,13 @@ import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.core.ui.TopAppBarWithTabs
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseSetGroup
+import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseStatistics
 import com.patrykandpatrick.liftapp.domain.exerciseset.getSummaryTypes
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.model.toLoadable
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
+import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.feature.exercise.model.Action
 import com.patrykandpatrick.liftapp.feature.exercise.model.ExerciseTab
 import com.patrykandpatrick.liftapp.feature.exercise.model.ScreenState
@@ -44,6 +54,7 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialogDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -51,6 +62,8 @@ import com.patrykandpatrick.liftapp.ui.icons.MoreVertical
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import java.time.DayOfWeek
+import java.time.LocalDateTime
 import kotlin.random.Random
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -72,7 +85,7 @@ fun ExerciseDetailsScreen(modifier: Modifier = Modifier) {
         snackbarHostState = snackbarHostState,
     )
 
-    loadableState.Unfold { state ->
+    loadableState.Unfold(onError = null) { state ->
         DeleteExerciseDialog(
             isVisible = state.showDeleteDialog,
             exerciseName = state.name,
@@ -91,12 +104,15 @@ private fun ExerciseDetailsScreen(
 ) {
     val pagerState = rememberPagerState { ExerciseTab.entries.size }
     val scope = rememberCoroutineScope()
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     LiftAppScaffold(
-        modifier = modifier.imePadding(),
+        modifier =
+            modifier.imePadding().nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBarWithTabs(
                 title = screenState.valueOrNull()?.name.orEmpty(),
+                scrollBehavior = topAppBarScrollBehavior,
                 onBackClick = { onAction(Action.PopBackStack) },
                 selectedTabIndex = { pagerState.currentPage },
                 selectedTabOffset = { pagerState.currentPageOffsetFraction },
@@ -122,7 +138,15 @@ private fun ExerciseDetailsScreen(
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-        screenState.Unfold(modifier = Modifier.padding(paddingValues)) { state ->
+        val layoutDirection = LocalLayoutDirection.current
+        screenState.Unfold(
+            modifier =
+                Modifier.padding(
+                    start = paddingValues.calculateStartPadding(layoutDirection),
+                    top = paddingValues.calculateTopPadding(),
+                    end = paddingValues.calculateEndPadding(layoutDirection),
+                )
+        ) { state ->
             HorizontalPager(modifier = Modifier.fillMaxSize(), state = pagerState) { index ->
                 when (ExerciseTab.entries[index]) {
                     ExerciseTab.Statistics ->
@@ -130,6 +154,7 @@ private fun ExerciseDetailsScreen(
                             modifier = Modifier.fillMaxSize(),
                             state = state,
                             onAction = onAction,
+                            bottomContentPadding = paddingValues.calculateBottomPadding(),
                         )
 
                     ExerciseTab.Details -> Details()
@@ -174,6 +199,8 @@ private fun OptionsModal(
                     onAction(Action.ShowDeleteDialog)
                 },
             )
+
+            Spacer(modifier = Modifier.height(dimens.screen.verticalPadding))
         }
     }
 }
@@ -212,7 +239,7 @@ private fun DeleteExerciseDialog(
 @Composable
 internal fun getScreenStateForPreview(): ScreenState {
     val cartesianChartModelProducer = CartesianChartModelProducer()
-    val dateInterval = DateInterval.exerciseOptions.first()
+    val dateInterval = DateInterval.exerciseOptions(DayOfWeek.MONDAY).first()
     val summaryTypeOptions = ExerciseType.Weight.getSummaryTypes()
 
     runBlocking {
@@ -258,16 +285,56 @@ internal fun getScreenStateForPreview(): ScreenState {
         }
     }
 
+    val exerciseSetGroups =
+        listOf(
+            ExerciseSetGroup(
+                workoutID = 1,
+                workoutName = "Upper body",
+                exerciseID = 1,
+                sets =
+                    listOf(
+                        ExerciseSet.Weight(
+                            weight = 42.5,
+                            reps = 8,
+                            weightUnit = MassUnit.Kilograms,
+                            notes = "Keep the eccentric slow and controlled.",
+                        ),
+                        ExerciseSet.Weight(
+                            weight = 42.5,
+                            reps = 7,
+                            weightUnit = MassUnit.Kilograms,
+                        ),
+                        ExerciseSet.Weight(
+                            weight = 40.0,
+                            reps = 8,
+                            weightUnit = MassUnit.Kilograms,
+                            notes = "Reduce the weight before form breaks down.",
+                        ),
+                    ),
+                workoutStartDate = LocalDateTime.now().minusDays(2),
+                notes = "Keep the elbows close to the body.",
+            )
+        )
+
     return ScreenState(
         name = "Bicep Curl",
         showDeleteDialog = false,
         primaryMuscles = emptyList(),
         secondaryMuscles = emptyList(),
         tertiaryMuscles = emptyList(),
-        exerciseSetGroups = emptyList(),
+        hasExerciseHistory = true,
+        exerciseSetGroups = exerciseSetGroups,
+        exerciseStatistics =
+            ExerciseStatistics.Weight(
+                totalVolume = 957.5,
+                totalReps = 23,
+                minimumWeight = 40.0,
+                maximumWeight = 42.5,
+                massUnit = MassUnit.Kilograms,
+            ),
         cartesianChartModelProducer = cartesianChartModelProducer,
         dateInterval = dateInterval,
-        dateIntervalOptions = DateInterval.exerciseOptions,
+        dateIntervalOptions = DateInterval.exerciseOptions(DayOfWeek.MONDAY),
         summaryType = summaryTypeOptions.first(),
         summaryTypeOptions = summaryTypeOptions,
     )

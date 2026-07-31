@@ -3,9 +3,6 @@ package com.patrykandpatrick.liftapp.core.chart
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,6 +13,9 @@ import com.patrykandpatrick.liftapp.core.date.displayDateInterval
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.ArrowForward
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
@@ -32,7 +32,7 @@ fun DateIntervalController(
         modifier = modifier.fillMaxWidth(),
     ) {
         LiftAppIconButton(onClick = decrementDateInterval) {
-            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
+            Icon(LiftAppIcons.ArrowBack, null)
         }
 
         Text(
@@ -42,7 +42,7 @@ fun DateIntervalController(
         )
 
         LiftAppIconButton(onClick = incrementDateInterval, enabled = dateInterval.isIncrementable) {
-            Icon(Icons.AutoMirrored.Rounded.ArrowForward, null)
+            Icon(LiftAppIcons.ArrowForward, null)
         }
     }
 }

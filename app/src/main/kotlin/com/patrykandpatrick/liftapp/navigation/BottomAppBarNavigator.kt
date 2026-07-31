@@ -6,12 +6,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.saveable.SaveableStateHolder
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
@@ -50,12 +52,15 @@ class BottomAppBarNavigator : Navigator<BottomAppBarNavigator.Destination>() {
             }
 
     @Composable
-    internal fun Content(navigationBar: @Composable () -> Unit) {
-        val saveableStateHolder = rememberSaveableStateHolder()
-        val entry by
-            produceState<NavBackStackEntry?>(null, state.backStack) {
-                state.backStack.collect { value = it.lastOrNull() }
-            }
+    internal fun Content(
+        saveableStateHolder: SaveableStateHolder,
+        navigationBar: @Composable () -> Unit,
+    ) {
+        // Collecting the back stack starts from the entry already on it, so the first composition
+        // renders the current tab outright. Starting from `null` instead made that entry arrive as
+        // a change, which played the tab-change transition on launch.
+        val backStack by state.backStack.collectAsState()
+        val entry = backStack.lastOrNull()
 
         LiftAppScaffold(
             bottomBar = navigationBar,
@@ -64,9 +69,12 @@ class BottomAppBarNavigator : Navigator<BottomAppBarNavigator.Destination>() {
             AnimatedContent(
                 targetState = entry,
                 transitionSpec = {
+                    // See `BottomAppBarNavigationHost` for why the size transform is opted out of.
                     slideAndFadeIn() togetherWith
-                        fadeOut(animationSpec = tween(durationMillis = EXIT_ANIM_DURATION))
+                        fadeOut(animationSpec = tween(durationMillis = EXIT_ANIM_DURATION)) using
+                        null
                 },
+                modifier = Modifier.fillMaxSize(),
             ) { backStackEntry ->
                 backStackEntry?.LocalOwnersProvider(saveableStateHolder) {
                     val content = (backStackEntry.destination as Destination).content

@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -19,12 +21,18 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.core.R
@@ -59,14 +67,18 @@ import com.patrykandpatrick.liftapp.domain.format.Formatter
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.model.Action
 import com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.model.ScreenState
+import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChip
+import com.patrykandpatrick.liftapp.ui.component.LiftAppDestructiveActionDialog
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
+import com.patrykandpatrick.liftapp.ui.component.LiftAppFilterChipDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.ChevronDown
 import com.patrykandpatrick.liftapp.ui.icons.Delete
-import com.patrykandpatrick.liftapp.ui.icons.Dropdown
 import com.patrykandpatrick.liftapp.ui.icons.Edit
+import com.patrykandpatrick.liftapp.ui.icons.History
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -82,6 +94,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import java.time.DayOfWeek
 import java.time.LocalDate
 import kotlinx.coroutines.runBlocking
 
@@ -100,10 +113,17 @@ private fun BodyMeasurementDetailScreen(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val fabHeight = 24.dp + dimens.fab.verticalPadding * 2
+    var entryIDToDelete by rememberSaveable { mutableStateOf<Long?>(null) }
+    // The scaffold leaves 16 dp below the FAB; use the standard screen padding above it.
+    val scrollableContentBottomPadding = fabHeight + 16.dp + dimens.screen.verticalPadding
+
     LiftAppScaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             CompactTopAppBar(
+                scrollBehavior = topAppBarScrollBehavior,
                 title = { Text(state.valueOrNull()?.name.orEmpty()) },
                 navigationIcon = {
                     CompactTopAppBarDefaults.BackIcon { onAction(Action.PopBackStack) }
@@ -128,16 +148,34 @@ private fun BodyMeasurementDetailScreen(
                 CompactContent(
                     state = state,
                     onAction = onAction,
+                    onDeleteRequest = { entryIDToDelete = it },
+                    bottomPadding = scrollableContentBottomPadding,
                     modifier = Modifier.padding(paddingValues),
                 )
             } else {
                 LargeContent(
                     state = state,
                     onAction = onAction,
+                    onDeleteRequest = { entryIDToDelete = it },
+                    bottomPadding = scrollableContentBottomPadding,
                     modifier = Modifier.padding(paddingValues),
                 )
             }
         }
+    }
+
+    entryIDToDelete?.let { entryID ->
+        LiftAppDestructiveActionDialog(
+            title = stringResource(R.string.body_measurement_entry_delete_title),
+            text = stringResource(R.string.body_measurement_entry_delete_message),
+            confirmText = stringResource(R.string.action_delete),
+            dismissText = stringResource(android.R.string.cancel),
+            onDismissRequest = { entryIDToDelete = null },
+            onConfirm = {
+                entryIDToDelete = null
+                onAction(Action.DeleteBodyMeasurementEntry(entryID))
+            },
+        )
     }
 }
 
@@ -145,29 +183,43 @@ private fun BodyMeasurementDetailScreen(
 private fun CompactContent(
     state: ScreenState,
     onAction: (Action) -> Unit,
+    onDeleteRequest: (Long) -> Unit,
+    bottomPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val padding = dimens.padding
+    if (state.entries.isEmpty()) {
+        EmptyMeasurementContent(state = state, onAction = onAction, modifier = modifier)
+        return
+    }
+
+    val horizontalPadding = dimens.screen.horizontalPadding
     LazyColumn(
         modifier = modifier,
         contentPadding =
-            PaddingValues(vertical = padding.contentVertical) +
-                WindowInsets.navigationBars.toPaddingValues(),
+            PaddingValues(
+                top = dimens.screen.verticalPadding,
+                bottom = bottomPadding,
+            ) + WindowInsets.navigationBars.toPaddingValues(),
     ) {
         item {
-            ChartControls(state, onAction, Modifier.padding(horizontal = padding.contentHorizontal))
+            ChartControls(
+                state,
+                onAction,
+                alignToScreenEdges = true,
+            )
         }
         item {
             Chart(
                 state.modelProducer,
                 state.valueUnit,
-                Modifier.padding(horizontal = padding.contentHorizontal),
+                Modifier.padding(horizontal = dimens.screen.horizontalPadding),
             )
         }
         journalItems(
             entries = state.entries,
             onAction = onAction,
-            paddingValues = PaddingValues(padding.contentHorizontal, padding.itemVerticalMedium),
+            onDeleteRequest = onDeleteRequest,
+            paddingValues = PaddingValues(horizontalPadding, 12.dp),
         )
     }
 }
@@ -176,16 +228,23 @@ private fun CompactContent(
 private fun LargeContent(
     state: ScreenState,
     onAction: (Action) -> Unit,
+    onDeleteRequest: (Long) -> Unit,
+    bottomPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val padding = dimens.padding
+    if (state.entries.isEmpty()) {
+        EmptyMeasurementContent(state = state, onAction = onAction, modifier = modifier)
+        return
+    }
 
     Row(
-        modifier = modifier.fillMaxSize().padding(horizontal = padding.contentHorizontal),
-        horizontalArrangement = Arrangement.spacedBy(padding.itemHorizontal),
+        modifier = modifier.fillMaxSize().padding(horizontal = dimens.screen.horizontalPadding),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Column(
-            Modifier.weight(1f).padding(vertical = padding.contentVertical).navigationBarsPadding()
+            Modifier.weight(1f)
+                .padding(vertical = dimens.screen.verticalPadding)
+                .navigationBarsPadding()
         ) {
             ChartControls(state, onAction)
             Chart(state.modelProducer, state.valueUnit, modifier = Modifier.fillMaxSize())
@@ -194,28 +253,51 @@ private fun LargeContent(
         LazyColumn(
             modifier = Modifier.weight(1f),
             contentPadding =
-                PaddingValues(vertical = padding.contentVertical) +
-                    WindowInsets.navigationBars.toPaddingValues(),
+                PaddingValues(
+                    top = dimens.screen.verticalPadding,
+                    bottom = bottomPadding,
+                ) + WindowInsets.navigationBars.toPaddingValues(),
         ) {
             journalItems(
                 entries = state.entries,
                 onAction = onAction,
-                paddingValues = PaddingValues(vertical = padding.itemVerticalMedium),
+                onDeleteRequest = onDeleteRequest,
+                paddingValues = PaddingValues(vertical = 12.dp),
             )
         }
+    }
+}
+
+@Composable
+private fun EmptyMeasurementContent(
+    state: ScreenState,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxSize().padding(vertical = dimens.screen.verticalPadding)) {
+        ChartControls(state, onAction, alignToScreenEdges = true)
+        EmptyState(
+            icon = LiftAppIcons.History,
+            message = stringResource(R.string.state_no_measurements),
+            modifier =
+                Modifier.weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.screen.horizontalPadding),
+        )
     }
 }
 
 private fun LazyListScope.journalItems(
     entries: List<ScreenState.Entry>,
     onAction: (Action) -> Unit,
+    onDeleteRequest: (Long) -> Unit,
     paddingValues: PaddingValues,
 ) {
     if (entries.isNotEmpty()) {
         item {
             ListSectionTitle(
                 title = stringResource(id = R.string.generic_journal),
-                modifier = Modifier.padding(top = dimens.padding.itemVertical),
+                modifier = Modifier.padding(top = 16.dp),
             )
         }
     }
@@ -234,7 +316,7 @@ private fun LazyListScope.journalItems(
             OptionsBottomSheet(
                 onDismissRequest = { setModalVisible(false) },
                 onEdit = { onAction(Action.EditBodyMeasurement(entry.id)) },
-                onDelete = { onAction(Action.DeleteBodyMeasurementEntry(entry.id)) },
+                onDelete = { onDeleteRequest(entry.id) },
             )
         }
     }
@@ -266,7 +348,7 @@ private fun OptionsBottomSheet(
             },
         )
 
-        Spacer(modifier = Modifier.height(dimens.padding.contentVertical))
+        Spacer(modifier = Modifier.height(dimens.screen.verticalPadding))
     }
 }
 
@@ -275,32 +357,48 @@ private fun ChartControls(
     state: ScreenState,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
+    alignToScreenEdges: Boolean = false,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVerticalSmall),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        DropdownMenu(
-            selectedItems = listOf(state.dateInterval),
-            items = state.dateIntervalOptions,
-            getItemText = { it.name() },
-            onClick = { onAction(Action.SetDateInterval(it)) },
-            isMultiSelect = false,
-        ) { expanded, setExpanded ->
-            LiftAppChip(
-                onClick = { setExpanded(true) },
-                colors = LiftAppButtonDefaults.outlinedButtonColors,
-                trailingIcon = {
-                    Icon(imageVector = LiftAppIcons.Dropdown, contentDescription = null)
-                },
-                label = { Text(text = state.dateInterval.name()) },
-            )
+        Box(
+            modifier =
+                if (alignToScreenEdges) {
+                    Modifier.padding(horizontal = dimens.screen.horizontalPadding)
+                } else {
+                    Modifier
+                }
+        ) {
+            DropdownMenu(
+                selectedItems = listOf(state.dateInterval),
+                items = state.dateIntervalOptions,
+                getItemText = { it.name() },
+                onClick = { onAction(Action.SetDateInterval(it)) },
+                isMultiSelect = false,
+            ) { expanded, setExpanded ->
+                LiftAppChip(
+                    onClick = { setExpanded(true) },
+                    colors = LiftAppButtonDefaults.outlinedButtonColors,
+                    trailingIcon = {
+                        LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.ChevronDown)
+                    },
+                    label = { Text(text = state.dateInterval.name()) },
+                )
+            }
         }
 
         DateIntervalController(
             dateInterval = state.dateInterval,
             incrementDateInterval = { onAction(Action.IncrementDateInterval) },
             decrementDateInterval = { onAction(Action.DecrementDateInterval) },
+            modifier =
+                if (alignToScreenEdges) {
+                    Modifier.padding(horizontal = 4.dp)
+                } else {
+                    Modifier
+                },
         )
     }
 }
@@ -368,8 +466,9 @@ private fun BodyMeasurementDetailScreenPreview() {
                                 .reversed(),
                         modelProducer = modelProducer,
                         valueUnit = "kg",
-                        dateInterval = DateInterval.bodyMeasurementOptions.first(),
-                        dateIntervalOptions = DateInterval.bodyMeasurementOptions,
+                        dateInterval =
+                            DateInterval.bodyMeasurementOptions(DayOfWeek.MONDAY).first(),
+                        dateIntervalOptions = DateInterval.bodyMeasurementOptions(DayOfWeek.MONDAY),
                     )
                 ),
             onAction = {},

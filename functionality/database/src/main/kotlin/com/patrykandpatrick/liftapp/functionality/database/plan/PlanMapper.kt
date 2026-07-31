@@ -21,7 +21,7 @@ class PlanMapper @Inject constructor(private val routineMapper: RoutineMapper) {
                             val plansWithRoutines = routineIndexes[index]
                             if (plansWithRoutines != null) {
                                 val routineWithExercises =
-                                    routineMapper.toDomain(
+                                    routineMapper.toDomainFlat(
                                         checkNotNull(plansWithRoutines.first().routine),
                                         plansWithRoutines.mapNotNull { planWithRoutine ->
                                             if (planWithRoutine.exercise == null)
@@ -46,7 +46,7 @@ class PlanMapper @Inject constructor(private val routineMapper: RoutineMapper) {
         if (routine == null) return Plan.Item.Rest
 
         val routineWithExercises =
-            routineMapper.toDomain(
+            routineMapper.toDomainFlat(
                 routine = routine,
                 exercises =
                     schedule.mapNotNull { (_, exercise, goal) ->

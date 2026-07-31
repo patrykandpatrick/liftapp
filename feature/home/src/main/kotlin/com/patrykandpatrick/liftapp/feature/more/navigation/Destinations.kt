@@ -3,8 +3,8 @@ package com.patrykandpatrick.liftapp.feature.more.navigation
 import androidx.compose.runtime.Stable
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.ui.icons.Archive
 import com.patrykandpatrick.liftapp.ui.icons.Calculator
-import com.patrykandpatrick.liftapp.ui.icons.Info
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plan
 import com.patrykandpatrick.liftapp.ui.icons.Routine
@@ -35,8 +35,8 @@ val destinations =
             imageVector = LiftAppIcons.Settings,
         ),
         Destination(
-            getRoute = { Routes.About },
-            titleResourceId = R.string.route_about,
-            imageVector = LiftAppIcons.Info,
+            getRoute = { Routes.Backup.Overview },
+            titleResourceId = R.string.route_backup,
+            imageVector = LiftAppIcons.Archive,
         ),
     )

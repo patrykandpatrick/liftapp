@@ -5,5 +5,6 @@ import javax.inject.Inject
 class GetActiveWorkoutsUseCase
 @Inject
 constructor(private val getWorkoutsContract: GetWorkoutsContract) {
-    operator fun invoke() = getWorkoutsContract.getWorkouts(GetWorkoutsContract.WorkoutType.ACTIVE)
+    operator fun invoke() =
+        getWorkoutsContract.getWorkouts(GetWorkoutsContract.WorkoutType.ACTIVE, limit = null)
 }

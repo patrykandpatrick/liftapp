@@ -42,6 +42,7 @@ private fun PlanScreen(
     modifier: Modifier = Modifier,
 ) {
     val (isEditVisible, setEditVisible) = rememberSaveable { mutableStateOf(false) }
+    val hasStickyCycleHeader = state is Loadable.Success && state.data is PlanState.ActivePlan
 
     LiftAppScaffold(
         modifier = modifier.fillMaxSize(),
@@ -50,6 +51,9 @@ private fun PlanScreen(
                 title = {
                     CompactTopAppBarDefaults.Title(stringResource(R.string.route_active_plan_full))
                 },
+                // The sticky cycle header continues this surface and supplies the lower edge.
+                alwaysShowChrome = hasStickyCycleHeader,
+                divider = !hasStickyCycleHeader,
                 actions = {
                     state.Unfold { state ->
                         if (state is PlanState.ActivePlan) {
@@ -69,7 +73,8 @@ private fun PlanScreen(
         state.Unfold(modifier = Modifier.padding(paddingValues).fillMaxSize()) { planState ->
             when (planState) {
                 is PlanState.ActivePlan -> ActivePlanScreen(planState, onAction)
-                PlanState.NoActivePlan -> NoActivePlanScreen(onAction)
+                is PlanState.NoActivePlan ->
+                    NoActivePlanScreen(hasPlans = planState.hasPlans, onAction = onAction)
             }
         }
     }
@@ -101,6 +106,7 @@ internal val previewActivePlanState: PlanState.ActivePlan
             cycleCount = 6,
             currentPlanItemIndex = 2,
             cycleDates = PlanState.getAllCycleDates(LocalDate.now().minusDays(7), 6, 6L),
+            currentWorkout = null,
         )
 
 @MultiDevicePreview
@@ -112,5 +118,5 @@ private fun PlanScreenPreview() {
 @MultiDevicePreview
 @Composable
 private fun NoActivePlanScreenPreview() {
-    PreviewTheme { PlanScreen(Loadable.Success(PlanState.NoActivePlan), {}) }
+    PreviewTheme { PlanScreen(Loadable.Success(PlanState.NoActivePlan(hasPlans = true)), {}) }
 }

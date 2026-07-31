@@ -120,8 +120,11 @@ fun Backdrop(
                         maxHeight = frontMaxHeight,
                     )
                 )
+            // The front content's peek is the only way to close an open backdrop. Keep it on
+            // screen even when the back content asks for the full available height (as lazy lists
+            // naturally do).
             val backdropOpenLength =
-                maxOf(constraints.maxHeight - contentPeekHeight().toPx(), backdrop.height.toFloat())
+                (constraints.maxHeight - contentPeekHeight().toPx()).coerceAtLeast(0f)
 
             state.anchoredDraggableState.updateAnchors(
                 DraggableAnchors {
@@ -151,7 +154,7 @@ private class BackdropScopeImpl(
     private val backdropState: BackdropState,
     private val columnScope: ColumnScope,
 ) : BackdropScope, ColumnScope by columnScope {
-    override fun Modifier.revealHandle(): Modifier = Modifier.onLayoutRectChanged { layoutBounds ->
+    override fun Modifier.revealHandle(): Modifier = onLayoutRectChanged { layoutBounds ->
         backdropState.setHandleHeight(layoutBounds.height)
     }
 }

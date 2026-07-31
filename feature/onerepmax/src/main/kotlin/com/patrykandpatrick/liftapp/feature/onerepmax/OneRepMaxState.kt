@@ -122,8 +122,8 @@ class OneRepMaxState(
             if (history.value.firstOrNull() == historyEntry) return@launch
             savedStateHandle.update<List<HistoryEntryModel>>(HISTORY_KEY) { history ->
                 buildList {
-                    history?.also(::addAll)
                     add(historyEntry)
+                    history?.also(::addAll)
                 }
             }
         }

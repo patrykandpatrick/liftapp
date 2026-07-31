@@ -13,14 +13,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
 fun VerticalGrid(
     modifier: Modifier = Modifier,
-    cells: GridCells = GridCells.Adaptive(dimens.grid.minCellWidthMedium),
+    cells: GridCells = GridCells.Adaptive(164.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     content: @Composable () -> Unit,

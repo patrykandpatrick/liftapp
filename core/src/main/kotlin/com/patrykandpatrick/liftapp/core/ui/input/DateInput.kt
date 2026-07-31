@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
@@ -86,7 +87,7 @@ fun DateInput(
                         )
                         onDateSelected?.invoke(date)
                     },
-                    modifier = modifier.padding(end = dimens.padding.itemHorizontalSmall),
+                    modifier = modifier.padding(end = 8.dp),
                 ) {
                     Text(stringResource(R.string.workout_summary_edit_picker_confirm))
                 }

@@ -107,6 +107,23 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: S
             else -> formatNumber(value, format = NumberFormat.Decimal)
         }
 
+    /**
+     * Spells the unit out — `1 hr 14 min` rather than `01:14`, which reads as either hours and
+     * minutes or minutes and seconds. Hours are not rolled up into days, so a long total stays
+     * comparable. Seconds appear only when there is nothing larger to report.
+     */
+    fun formatDurationWithUnits(duration: Duration): String =
+        duration.toComponents { hours, minutes, seconds, _ ->
+            buildList {
+                    if (hours > 0) add("$hours ${stringProvider.hoursMedium}")
+                    if (minutes > 0) add("$minutes ${stringProvider.minutesMedium}")
+                    if (hours == 0L && minutes == 0) {
+                        add("$seconds ${stringProvider.secondsMedium}")
+                    }
+                }
+                .joinToString(separator = " ")
+        }
+
     fun formatDuration(value: Long): String = formatDuration(value.milliseconds)
 
     fun formatDuration(duration: Duration): String {

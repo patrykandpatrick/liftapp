@@ -2,7 +2,6 @@ package com.patrykandpatrick.liftapp.functionality.database.exercise
 
 import com.patrykandpatrick.liftapp.domain.exercise.Exercise
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseNameAndType
-import com.patrykandpatrick.liftapp.domain.extension.joinToPrettyString
 import com.patrykandpatrick.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.functionality.database.goal.toDomain
@@ -32,11 +31,7 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
         RoutineExerciseItem(
             id = exercise.id,
             name = stringProvider.getResolvedName(exercise.name),
-            muscles =
-                exercise.mainMuscles.joinToPrettyString(
-                    andText = stringProvider.andInAList,
-                    toString = stringProvider::getMuscleName,
-                ),
+            muscles = stringProvider.getMuscleList(exercise.mainMuscles),
             type = exercise.exerciseType,
             goal = exercise.goal,
         )
@@ -50,11 +45,7 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
         RoutineExerciseItem(
             id = exercise.id,
             name = stringProvider.getResolvedName(exercise.name),
-            muscles =
-                exercise.mainMuscles.joinToPrettyString(
-                    andText = stringProvider.andInAList,
-                    toString = stringProvider::getMuscleName,
-                ),
+            muscles = stringProvider.getMuscleList(exercise.mainMuscles),
             type = exercise.exerciseType,
             goal = goal,
         )

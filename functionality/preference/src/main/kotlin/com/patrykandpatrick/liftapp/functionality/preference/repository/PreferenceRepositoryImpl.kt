@@ -7,11 +7,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.patrykandpatrick.liftapp.domain.datastore.Preference
+import com.patrykandpatrick.liftapp.domain.date.GetFirstDayOfWeekUseCase
 import com.patrykandpatrick.liftapp.domain.date.HourFormat
+import com.patrykandpatrick.liftapp.domain.date.getDefaultFirstDayOfWeek
 import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatrick.liftapp.domain.model.AllPreferences
 import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
+import com.patrykandpatrick.liftapp.domain.theme.Theme
 import com.patrykandpatrick.liftapp.domain.unit.GetPreferredMassUnitUseCase
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
@@ -19,6 +22,7 @@ import com.patrykandpatrick.liftapp.domain.unit.MediumDistanceUnit
 import com.patrykandpatrick.liftapp.domain.unit.ShortDistanceUnit
 import com.patrykandpatrick.liftapp.functionality.preference.datastore.PreferenceImpl
 import com.patrykandpatrick.liftapp.functionality.preference.datastore.PreferenceManager
+import java.time.DayOfWeek
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,6 +38,8 @@ import kotlinx.serialization.json.Json
 private const val KEY_MASS_UNIT = "mass_unit"
 private const val KEY_DISTANCE_UNIT = "distance_unit"
 private const val KEY_HOUR_FORMAT = "hour_format"
+private const val KEY_FIRST_DAY_OF_WEEK = "first_day_of_week"
+private const val KEY_THEME = "theme"
 private const val KEY_GOAL_INFO_VISIBLE = "goal_info_visible"
 private const val KEY_ACTIVE_PLAN_ID = "active_plan_id"
 
@@ -45,7 +51,7 @@ constructor(
     private val application: Application,
     private val json: Json,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-) : PreferenceRepository, PreferenceManager, GetPreferredMassUnitUseCase {
+) : PreferenceRepository, PreferenceManager, GetPreferredMassUnitUseCase, GetFirstDayOfWeekUseCase {
 
     private val coroutineScope = CoroutineScope(dispatcher + SupervisorJob())
     override val massUnit = enumPreference(KEY_MASS_UNIT, MassUnit.Kilograms)
@@ -65,6 +71,12 @@ constructor(
         }
 
     override val hourFormat = enumPreference(KEY_HOUR_FORMAT, HourFormat.Auto)
+
+    override val firstDayOfWeek = enumPreference(KEY_FIRST_DAY_OF_WEEK, getDefaultFirstDayOfWeek())
+
+    override fun getFirstDayOfWeek(): Flow<DayOfWeek> = firstDayOfWeek.get()
+
+    override val theme = enumPreference(KEY_THEME, Theme.FollowSystem)
 
     override val goalInfoVisible: Preference<Boolean> =
         preference(booleanPreferencesKey(KEY_GOAL_INFO_VISIBLE), true)
@@ -89,6 +101,11 @@ constructor(
             }
             .stateIn(coroutineScope, SharingStarted.Eagerly, getDefaultIs24H())
 
+    override val currentFirstDayOfWeek: StateFlow<DayOfWeek> =
+        firstDayOfWeek
+            .get()
+            .stateIn(coroutineScope, SharingStarted.Eagerly, getDefaultFirstDayOfWeek())
+
     override val allPreferences =
         dataStore.data.map { preferences ->
             val longDistanceUnit = longDistanceUnit.get(preferences)
@@ -99,6 +116,8 @@ constructor(
                 mediumDistanceUnit = longDistanceUnit.getCorrespondingMediumDistanceUnit(),
                 shortDistanceUnit = longDistanceUnit.getCorrespondingShortDistanceUnit(),
                 hourFormat = hourFormat.get(preferences),
+                firstDayOfWeek = firstDayOfWeek.get(preferences),
+                theme = theme.get(preferences),
             )
         }
 

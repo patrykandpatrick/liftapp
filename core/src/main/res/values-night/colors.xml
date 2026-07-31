@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="liftapp_primary">#7878EF</color>
+    <color name="liftapp_on_primary">#00002C</color>
+    <color name="liftapp_background">#02020A</color>
+    <color name="liftapp_on_background">#E5E5FF</color>
+    <color name="liftapp_on_surface_variant">#C8C8EC</color>
+
     <color name="muscle_border">#FF464653</color>
     <color name="muscle_primary">#FF00FFCC</color>
     <color name="muscle_secondary">#FFFFE100</color>

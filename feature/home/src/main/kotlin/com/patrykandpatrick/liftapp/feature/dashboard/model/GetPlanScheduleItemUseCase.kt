@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.dashboard.model
 
+import com.patrykandpatrick.liftapp.domain.plan.GetActivePlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanItemContract
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.workout.GetWorkoutsByDateContract
@@ -13,13 +14,15 @@ class GetPlanScheduleItemUseCase
 constructor(
     private val getPlanItemContract: GetPlanItemContract,
     private val getWorkoutsByDateContract: GetWorkoutsByDateContract,
+    private val getActivePlanUseCase: GetActivePlanUseCase,
 ) {
 
     operator fun invoke(date: LocalDate): Flow<PlanScheduleItem> =
         combine(
             getPlanItemContract.getPlanItem(date),
             getWorkoutsByDateContract.getWorkouts(date),
-        ) { planItem, workouts ->
+            getActivePlanUseCase(),
+        ) { planItem, workouts, activePlan ->
             when (planItem) {
                 Plan.Item.Rest -> PlanScheduleItem.Rest
                 is Plan.Item.Routine ->
@@ -28,7 +31,7 @@ constructor(
                         workout = workouts.firstOrNull { it.routineID == planItem.id },
                     )
 
-                null -> PlanScheduleItem.None
+                null -> PlanScheduleItem.None(hasActivePlan = activePlan != null)
             }
         }
 }

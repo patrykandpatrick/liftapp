@@ -3,6 +3,7 @@ package com.patrykandpatrick.liftapp.domain.workout
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
+import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
 import java.io.Serializable
 import java.time.LocalDateTime
@@ -29,11 +30,19 @@ data class Workout(
         val secondaryMuscles: List<Muscle>,
         val tertiaryMuscles: List<Muscle>,
         val goal: Goal,
+        val notes: String = "",
         val sets: List<ExerciseSet>,
         val lastSets: List<ExerciseSet> = emptyList(),
+        val workoutItemID: Long = id,
+        val workoutItemType: RoutineItemType = RoutineItemType.Exercise,
+        val workoutItemOrder: Int = 0,
+        val exerciseOrder: Int = 0,
     ) : Serializable {
         val completedSets = sets.count { it.isCompleted }
         val totalSets = sets.size
+
+        val isSuperset: Boolean
+            get() = workoutItemType == RoutineItemType.Superset
     }
 
     data class Goal(

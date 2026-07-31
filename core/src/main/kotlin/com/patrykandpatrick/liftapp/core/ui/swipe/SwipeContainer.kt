@@ -28,10 +28,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.patrykandpatrick.liftapp.core.extension.pixels
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -134,7 +133,7 @@ fun BoxScope.SwipeableBackgroundContent(
             if (swipeProgress > 0f) Alignment.CenterStart else Alignment.CenterEnd
         }
 
-    val backgroundVisibilityThreshold = dimens.swipe.backgroundVisibilityThreshold.pixels
+    val backgroundVisibilityThreshold = 56.dp.pixels
 
     val scaleAndAlpha = (abs(swipeOffset) / backgroundVisibilityThreshold).coerceAtMost(1f)
 
@@ -155,7 +154,7 @@ fun BoxScope.SwipeableBackgroundContent(
                     alpha = scaleAndAlpha
                 }
                 .align(alignment)
-                .padding(horizontal = LocalDimens.current.padding.contentHorizontal),
+                .padding(horizontal = 16.dp),
     )
 }
 

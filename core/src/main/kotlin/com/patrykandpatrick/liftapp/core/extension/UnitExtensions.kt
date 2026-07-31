@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.domain.date.HourFormat
 import com.patrykandpatrick.liftapp.domain.extension.getTypeErrorMessage
+import com.patrykandpatrick.liftapp.domain.theme.Theme
 import com.patrykandpatrick.liftapp.domain.unit.DurationUnit
 import com.patrykandpatrick.liftapp.domain.unit.EnergyUnit
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
@@ -42,6 +43,15 @@ inline val HourFormat.stringResourceId: Int
             HourFormat.Auto -> R.string.settings_hour_format_option_auto
             HourFormat.H12 -> R.string.settings_hour_format_option_12
             HourFormat.H24 -> R.string.settings_hour_format_option_24
+        }
+
+inline val Theme.stringResourceId: Int
+    @StringRes
+    get() =
+        when (this) {
+            Theme.FollowSystem -> R.string.settings_theme_option_follow_system
+            Theme.Light -> R.string.settings_theme_option_light
+            Theme.Dark -> R.string.settings_theme_option_dark
         }
 
 @Composable fun ValueUnit.prettyString(): String = stringResource(stringResourceId)

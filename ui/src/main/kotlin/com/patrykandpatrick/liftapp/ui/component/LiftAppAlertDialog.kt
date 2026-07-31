@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -15,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -38,11 +44,20 @@ fun LiftAppAlertDialog(
     icon: @Composable (() -> Unit)? = null,
     properties: DialogProperties = DialogProperties(),
 ) {
+    val buttonPadding = LiftAppButtonDefaults.plainContentPadding
+    val layoutDirection = LocalLayoutDirection.current
+    val cardColors = LiftAppCardDefaults.cardColors
+
     Dialog(onDismissRequest = onDismissRequest, properties = properties) {
         LiftAppCard(
             modifier = modifier.defaultMinSize(minWidth = dimens.dialog.minWidth),
-            verticalArrangement = Arrangement.spacedBy(dimens.padding.itemVertical),
-            contentPadding = PaddingValues(dimens.dialog.paddingLarge),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(dimens.dialog.contentPadding),
+            colors =
+                cardColors.copy(
+                    interactiveBorderColors =
+                        cardColors.interactiveBorderColors.copy(color = Color.Transparent)
+                ),
             shape = AlertDialogShape,
         ) {
             Box(modifier = Modifier.align(Alignment.CenterHorizontally)) { icon?.invoke() }
@@ -50,24 +65,36 @@ fun LiftAppAlertDialog(
             Box(
                 modifier =
                     Modifier.align(
-                        if (icon != null) Alignment.CenterHorizontally else Alignment.Start
-                    )
+                            if (icon != null) Alignment.CenterHorizontally else Alignment.Start
+                        )
+                        .then(if (icon != null) Modifier.fillMaxWidth() else Modifier)
             ) {
                 CompositionLocalProvider(
                     LocalContentColor provides colorScheme.onSurface,
-                    LocalTextStyle provides MaterialTheme.typography.headlineSmall,
+                    LocalTextStyle provides
+                        MaterialTheme.typography.headlineSmall.copy(
+                            textAlign = if (icon != null) TextAlign.Center else TextAlign.Start
+                        ),
                 ) {
                     title()
                 }
             }
 
-            text()
+            CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyMedium) {
+                text()
+            }
 
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontalSmall),
+                // Each plain button has 16 dp of horizontal padding on both sides. Overlap the
+                // adjacent padding slightly so the visible labels sit 24 dp apart.
+                horizontalArrangement = Arrangement.spacedBy((-8).dp),
                 modifier =
                     Modifier.align(Alignment.End)
-                        .padding(top = dimens.padding.contentVerticalSmall),
+                        .padding(top = 10.dp)
+                        .offset(
+                            x = buttonPadding.calculateEndPadding(layoutDirection),
+                            y = buttonPadding.calculateBottomPadding(),
+                        ),
             ) {
                 dismissButton?.invoke()
                 confirmButton()

@@ -3,6 +3,7 @@ package com.patrykandpatrick.liftapp.feature.routine.di
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
+import com.patrykandpatrick.liftapp.navigation.data.SupersetDetailsRouteData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,5 +17,10 @@ interface RoutineModule {
         fun provideRoutineDetailsRouteData(
             savedStateHandle: SavedStateHandle
         ): RoutineDetailsRouteData = savedStateHandle.toRoute()
+
+        @Provides
+        fun provideSupersetDetailsRouteData(
+            savedStateHandle: SavedStateHandle
+        ): SupersetDetailsRouteData = savedStateHandle.toRoute()
     }
 }

@@ -1,7 +1,7 @@
 package com.patrykandpatrick.liftapp.feature.exercises.ui
 
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class ExercisesItem(open val key: Any) {
 
@@ -13,7 +13,7 @@ sealed class ExercisesItem(open val key: Any) {
         override val key: Any,
         val name: String,
         val muscles: String,
-        @DrawableRes val iconRes: Int,
+        val icon: ImageVector,
         val checked: Boolean = false,
         val enabled: Boolean = true,
         val nameHighlightPosition: IntRange = IntRange.EMPTY,

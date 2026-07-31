@@ -77,7 +77,7 @@ fun ExerciseSetStepper(
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(dimens.padding.itemHorizontal),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         LazyRow(
             state = lazyListState,
@@ -114,7 +114,7 @@ fun ExerciseSetStepper(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(end = dimens.padding.contentHorizontal),
+            modifier = Modifier.padding(end = dimens.screen.horizontalPadding),
         ) {
             LiftAppIconButton(
                 onClick = onRemoveSet,

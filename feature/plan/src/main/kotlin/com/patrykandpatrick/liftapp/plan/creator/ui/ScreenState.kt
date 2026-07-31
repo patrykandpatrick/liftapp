@@ -1,9 +1,6 @@
 package com.patrykandpatrick.liftapp.plan.creator.ui
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.res.stringResource
-import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.text.StringTextFieldState
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.routine.RoutineWithExercises
@@ -16,18 +13,27 @@ data class ScreenState(
     val name: StringTextFieldState,
     val description: StringTextFieldState,
     val items: List<Item>,
-    val error: Error?,
 ) {
     val isEdit: Boolean
         get() = id != ID_NOT_SET
+
+    val canSave: Boolean
+        get() = items.any { it is Item.RoutineItem }
 
     sealed class Item : Serializable {
         abstract val id: String
 
         sealed class PlanElement : Item()
 
-        data class RoutineItem(val routine: RoutineWithExercises) : PlanElement() {
-            override val id: String = "RoutineItem:${routine.id}"
+        /**
+         * [uuid], rather than the routine's own ID, is what tells two days apart — a plan may hold
+         * the same routine more than once, and the list key has to stay unique when it does.
+         */
+        data class RoutineItem(
+            val routine: RoutineWithExercises,
+            val uuid: UUID = UUID.randomUUID(),
+        ) : PlanElement() {
+            override val id: String = "RoutineItem:$uuid"
         }
 
         data class RestItem(val uuid: UUID = UUID.randomUUID()) : PlanElement() {
@@ -40,14 +46,4 @@ data class ScreenState(
             private fun readResolve(): Any = PlaceholderItem
         }
     }
-
-    sealed class Error {
-        data object NoRoutines : Error()
-    }
 }
-
-@Composable
-internal fun ScreenState.Error.getText(): String =
-    when (this) {
-        ScreenState.Error.NoRoutines -> stringResource(R.string.training_plan_error_no_routines)
-    }

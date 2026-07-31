@@ -10,4 +10,6 @@ sealed interface Action {
     data class OnPlanItemClick(val item: Plan.Item) : Action
 
     data class StartWorkout(val item: Plan.Item.Routine) : Action
+
+    data class GoToWorkout(val workoutID: Long) : Action
 }
