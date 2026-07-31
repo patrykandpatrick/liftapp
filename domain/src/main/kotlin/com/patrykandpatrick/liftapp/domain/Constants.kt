@@ -64,6 +64,25 @@ object Constants {
         const val DEFAULT_CYCLE_COUNT = 6
     }
 
+    /**
+     * What the published app left on the device. The database migration and the preference
+     * migration read these independently, so the names live where both can see them.
+     */
+    object LegacyApp {
+        /** The `SharedPreferences` key holding the scheduled routine IDs of the training plan. */
+        const val PLAN_IDS_KEY = "plan_ids"
+
+        /**
+         * The ID given to the plan recreated from [PLAN_IDS_KEY]. The table starts empty on a
+         * migrated database, and an explicit ID lets the preference migration point the active-plan
+         * preference at the plan without opening the database.
+         */
+        const val PLAN_ID = 1L
+
+        /** The published app kept everything in the default `SharedPreferences` file. */
+        fun preferencesFileName(packageName: String): String = "${packageName}_preferences"
+    }
+
     object Algorithms {
         const val SCREEN_STATE_KEY = "screenState"
         const val SHA1_NAME = "SHA-1"

@@ -111,6 +111,8 @@
     <string name="routine_calisthenics_1">Calisthenics 1</string>
     <string name="routine_calisthenics_2">Calisthenics 2</string>
 
+    <string name="plan_migrated_from_published_app">My training plan</string>
+
     <string name="body_body_weight">Weight</string>
     <string name="body_fat_percentage">Fat percentage</string>
     <string name="body_muscle_percentage">Muscle percentage</string>

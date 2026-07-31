@@ -20,7 +20,9 @@ lifecycle = "2.11.0"
 paging = "3.5.0"
 playServicesOssLicenses = "17.5.1"
 reorderable = "3.1.0"
+robolectric = "4.16"
 room = "2.8.4"
+testCore = "1.7.0"
 viewmodel = "2.11.0"
 timber = "5.0.1"
 work = "2.11.2"
@@ -61,6 +63,7 @@ junit = { module = "junit:junit", version.ref = "junit" }
 jupiter = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
 jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "jupiter" }
+junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "jupiter" }
 kmpWheelPicker = { module = "com.swmansion.kmpwheelpicker:kmp-wheel-picker", version.ref = "kmpWheelPicker" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -73,8 +76,11 @@ lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", versi
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 play-services-oss-licenses = { module = "com.google.android.gms:play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
+test-core = { module = "androidx.test:core", version.ref = "testCore" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 vico = { module = "com.patrykandpatrick.vico:compose-android", version.ref = "vico" }

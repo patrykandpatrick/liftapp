@@ -13,6 +13,7 @@ import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatrick.liftapp.domain.unit.GetPreferredMassUnitUseCase
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
+import com.patrykandpatrick.liftapp.functionality.preference.legacy.LegacySharedPreferencesMigration
 import com.patrykandpatrick.liftapp.functionality.preference.repository.BackupPreferenceRepositoryImpl
 import com.patrykandpatrick.liftapp.functionality.preference.repository.PreferenceRepositoryImpl
 import dagger.Binds
@@ -22,6 +23,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.Json
 
 private const val PREFERENCES_NAME = "preferences"
 
@@ -51,9 +53,10 @@ interface PreferenceModule {
 
         @Provides
         @Singleton
-        fun provideDataStore(application: Application): DataStore<Preferences> =
+        fun provideDataStore(application: Application, json: Json): DataStore<Preferences> =
             PreferenceDataStoreFactory.create(
-                produceFile = { application.preferencesDataStoreFile(PREFERENCES_NAME) }
+                migrations = listOf(LegacySharedPreferencesMigration(application, json)),
+                produceFile = { application.preferencesDataStoreFile(PREFERENCES_NAME) },
             )
 
         @Provides

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "934dc3fdd4f3c04fa74a7439d9e653ef",
+    "version": 12,
+    "identityHash": "be96cff0772d50a4bafe2459f08c8134",
     "entities": [
       {
         "tableName": "body_measurements",
@@ -1143,6 +1143,26 @@
             "plan_item_schedule_id"
           ]
         },
+        "indices": [
+          {
+            "name": "index_plan_item_schedule_plan_id",
+            "unique": false,
+            "columnNames": [
+              "plan_item_schedule_plan_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plan_item_schedule_plan_id` ON `${TABLE_NAME}` (`plan_item_schedule_plan_id`)"
+          },
+          {
+            "name": "index_plan_item_routine_id",
+            "unique": false,
+            "columnNames": [
+              "plan_item_routine_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_plan_item_routine_id` ON `${TABLE_NAME}` (`plan_item_routine_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "routine",
@@ -1181,7 +1201,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '934dc3fdd4f3c04fa74a7439d9e653ef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'be96cff0772d50a4bafe2459f08c8134')"
     ]
   }
 }

@@ -1,0 +1,446 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 11,
+    "identityHash": "215495038c1684a034b82ba383380292",
+    "entities": [
+      {
+        "tableName": "Routine",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `exercise_ids` TEXT NOT NULL, `order_number` INTEGER NOT NULL, `strategy` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseListInfo",
+            "columnName": "exercise_ids",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orderNumber",
+            "columnName": "order_number",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "strategy",
+            "columnName": "strategy",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "RoutineRecord",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `end_time` INTEGER NOT NULL, `routine_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `exercise_ids` TEXT NOT NULL, `record_ids` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "end_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routineId",
+            "columnName": "routine_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseListInfo",
+            "columnName": "exercise_ids",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recordListInfo",
+            "columnName": "record_ids",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_RoutineRecord_routine_id",
+            "unique": false,
+            "columnNames": [
+              "routine_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RoutineRecord_routine_id` ON `${TABLE_NAME}` (`routine_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Exercise",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exercise_id` INTEGER NOT NULL, `exercise_type` TEXT, `exercise_name` TEXT, `exercise_goal` TEXT, `exercise_main_muscles` TEXT, `exercise_secondary_muscles` TEXT, `exercise_tertiary_muscles` TEXT, PRIMARY KEY(`exercise_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "exercise_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "exercise_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "goal",
+            "columnName": "exercise_goal",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mainMuscles",
+            "columnName": "exercise_main_muscles",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "secondaryMuscles",
+            "columnName": "exercise_secondary_muscles",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tertiaryMuscles",
+            "columnName": "exercise_tertiary_muscles",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "exercise_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ExerciseRecord",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ex_record_id` INTEGER NOT NULL, `ex_record_exercise_id` INTEGER NOT NULL, `ex_records` TEXT, `ex_comment` TEXT, PRIMARY KEY(`ex_record_id`), FOREIGN KEY(`ex_record_exercise_id`) REFERENCES `Exercise`(`exercise_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "ex_record_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseId",
+            "columnName": "ex_record_exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sets",
+            "columnName": "ex_records",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "ex_comment",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "ex_record_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_ExerciseRecord_ex_record_exercise_id",
+            "unique": false,
+            "columnNames": [
+              "ex_record_exercise_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ExerciseRecord_ex_record_exercise_id` ON `${TABLE_NAME}` (`ex_record_exercise_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Exercise",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ex_record_exercise_id"
+            ],
+            "referencedColumns": [
+              "exercise_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "Body",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`m_id` INTEGER NOT NULL, `m_type` TEXT, PRIMARY KEY(`m_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "m_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "m_type",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "m_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BodyRecord",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`r_id` INTEGER NOT NULL, `r_m_id` INTEGER NOT NULL, `r_value_left` REAL NOT NULL, `r_value_right` REAL NOT NULL, `r_unit` TEXT, PRIMARY KEY(`r_id`), FOREIGN KEY(`r_m_id`) REFERENCES `Body`(`m_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "r_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measureId",
+            "columnName": "r_m_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "valueLeft",
+            "columnName": "r_value_left",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "valueRight",
+            "columnName": "r_value_right",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "r_unit",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "r_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_BodyRecord_r_m_id",
+            "unique": false,
+            "columnNames": [
+              "r_m_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_BodyRecord_r_m_id` ON `${TABLE_NAME}` (`r_m_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Body",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "r_m_id"
+            ],
+            "referencedColumns": [
+              "m_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ChangelogItem",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `rolloutDate` TEXT NOT NULL, `releaseName` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rolloutDate",
+            "columnName": "rolloutDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "releaseName",
+            "columnName": "releaseName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contents",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ExerciseGoal",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `routine_id` INTEGER NOT NULL, `exercise_id` INTEGER NOT NULL, `set_count` INTEGER NOT NULL, `break_time` INTEGER NOT NULL, `rep_range` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routineId",
+            "columnName": "routine_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseId",
+            "columnName": "exercise_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "setCount",
+            "columnName": "set_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "breakTime",
+            "columnName": "break_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "repRange",
+            "columnName": "rep_range",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_ExerciseGoal_routine_id",
+            "unique": false,
+            "columnNames": [
+              "routine_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ExerciseGoal_routine_id` ON `${TABLE_NAME}` (`routine_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SuperExerciseModel",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exercise_ids` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exerciseIds",
+            "columnName": "exercise_ids",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '215495038c1684a034b82ba383380292')"
+    ]
+  }
+}

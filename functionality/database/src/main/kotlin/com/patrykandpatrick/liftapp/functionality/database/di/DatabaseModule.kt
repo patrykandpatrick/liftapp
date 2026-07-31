@@ -10,12 +10,16 @@ import com.patrykandpatrick.liftapp.domain.routine.RoutineRepository
 import com.patrykandpatrick.liftapp.domain.serialization.PolymorphicEnumSerializer
 import com.patrykandpatrick.liftapp.functionality.database.Database
 import com.patrykandpatrick.liftapp.functionality.database.DatabaseCallback
+import com.patrykandpatrick.liftapp.functionality.database.R
 import com.patrykandpatrick.liftapp.functionality.database.bodymeasurement.BodyMeasurementDao
 import com.patrykandpatrick.liftapp.functionality.database.bodymeasurement.BodyMeasurementRepositoryImpl
 import com.patrykandpatrick.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatrick.liftapp.functionality.database.exercise.RoomExerciseRepository
 import com.patrykandpatrick.liftapp.functionality.database.goal.GoalDao
+import com.patrykandpatrick.liftapp.functionality.database.migration.Migration11To12
+import com.patrykandpatrick.liftapp.functionality.database.migration.Migration1To12
+import com.patrykandpatrick.liftapp.functionality.database.migration.PublishedMigrations
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanDao
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoomRoutineRepository
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineDao
@@ -33,6 +37,7 @@ import java.util.Locale
 import javax.inject.Singleton
 import kotlin.reflect.KClass
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
 
 @Suppress("UNCHECKED_CAST")
 @Module
@@ -62,11 +67,44 @@ interface DatabaseModule {
             application: Application,
             jsonConverters: JsonConverters,
             databaseCallback: DatabaseCallback,
+            json: Json,
         ): Database =
             Room.databaseBuilder(application, Database::class.java, Constants.Database.Name)
                 .addCallback(databaseCallback)
                 .addTypeConverter(jsonConverters)
+                .addMigrations(
+                    PublishedMigrations.MIGRATION_6_7,
+                    PublishedMigrations.MIGRATION_7_8,
+                    PublishedMigrations.MIGRATION_6_8,
+                    PublishedMigrations.MIGRATION_8_9,
+                    PublishedMigrations.MIGRATION_9_10,
+                    PublishedMigrations.MIGRATION_10_11,
+                    Migration11To12(json, legacyPlan = { readLegacyPlan(application) }),
+                    Migration1To12,
+                )
                 .build()
+
+        /**
+         * The published app kept the training plan in its default `SharedPreferences` rather than
+         * in the database. Read lazily: the migration runs off the main thread, the module runs on
+         * it.
+         */
+        private fun readLegacyPlan(application: Application): Migration11To12.LegacyPlan? {
+            val ids =
+                application
+                    .getSharedPreferences(
+                        Constants.LegacyApp.preferencesFileName(application.packageName),
+                        Application.MODE_PRIVATE,
+                    )
+                    .getString(Constants.LegacyApp.PLAN_IDS_KEY, null)
+                    ?.let { value -> Regex("-?\\d+").findAll(value).map { it.value.toLong() } }
+                    ?.toList()
+            if (ids.isNullOrEmpty()) return null
+            return Migration11To12.LegacyPlan(
+                name = application.getString(R.string.plan_migrated_from_published_app),
+                legacyIDs = ids,
+            )
+        }
 
         @Provides
         fun provideBodyMeasurementDao(database: Database): BodyMeasurementDao =
