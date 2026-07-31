@@ -16,8 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.patrykandpatrick.liftapp.core.permission.getPermissionGrantedState
 import com.patrykandpatrick.liftapp.feature.workout.model.RestTimerState
-import com.patrykandpatryk.liftapp.core.permission.getPermissionGrantedState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.time.Duration

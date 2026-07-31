@@ -3,6 +3,10 @@ package com.patrykandpatrick.liftapp.feature.workout.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.liftapp.core.text.TextFieldState
+import com.patrykandpatrick.liftapp.domain.Constants.Workout.EXERCISE_CHANGE_DELAY
+import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommand
+import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.feature.workout.model.Action
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.GetEditableWorkoutUseCase
@@ -11,10 +15,6 @@ import com.patrykandpatrick.liftapp.feature.workout.model.UpsertExerciseSetUseCa
 import com.patrykandpatrick.liftapp.feature.workout.model.UpsertGoalSetsUseCase
 import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutIterator
 import com.patrykandpatrick.liftapp.navigation.Routes
-import com.patrykandpatryk.liftapp.core.text.TextFieldState
-import com.patrykandpatryk.liftapp.domain.Constants.Workout.EXERCISE_CHANGE_DELAY
-import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommand
-import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime

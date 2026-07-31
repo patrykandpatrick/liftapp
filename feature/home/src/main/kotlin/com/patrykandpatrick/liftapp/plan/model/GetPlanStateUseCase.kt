@@ -1,9 +1,9 @@
 package com.patrykandpatrick.liftapp.plan.model
 
+import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
+import com.patrykandpatrick.liftapp.domain.plan.GetActivePlanUseCase
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.plan.ui.PlanState
-import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
-import com.patrykandpatryk.liftapp.domain.plan.GetActivePlanUseCase
-import com.patrykandpatryk.liftapp.domain.plan.Plan
 import jakarta.inject.Inject
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

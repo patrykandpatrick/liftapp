@@ -1,9 +1,9 @@
 package com.patrykandpatrick.liftapp.plan.list.model
 
 import androidx.compose.runtime.Immutable
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.plan.list.model.ScreenState.PlanItem
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
-import com.patrykandpatryk.liftapp.domain.plan.Plan
 
 @Immutable
 data class ScreenState(

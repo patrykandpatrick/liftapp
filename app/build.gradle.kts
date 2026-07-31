@@ -4,9 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "pl.patrykgoworowski.mintlift"
+    namespace = "com.patrykandpatrick.liftapp"
 
     defaultConfig {
+        applicationId = "pl.patrykgoworowski.mintlift"
         versionCode = 1
         versionName = "1.0"
     }

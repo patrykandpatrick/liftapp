@@ -9,11 +9,11 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.deeplink.DeepLink
+import com.patrykandpatrick.liftapp.core.time.formattedRemainingTime
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.feature.workout.model.RestTimerState
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.deeplink.DeepLink
-import com.patrykandpatryk.liftapp.core.time.formattedRemainingTime
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import javax.inject.Inject
 
 class RestTimerNotificationManager

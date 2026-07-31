@@ -12,19 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.model.Unfold
+import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatrick.liftapp.core.preview.PreviewRoutineWithExercises
+import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
+import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
+import com.patrykandpatrick.liftapp.domain.model.Loadable
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.model.Unfold
-import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
-import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
-import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
-import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
-import com.patrykandpatryk.liftapp.domain.model.Loadable
-import com.patrykandpatryk.liftapp.domain.plan.Plan
 import java.time.LocalDate
 
 @Composable

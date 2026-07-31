@@ -19,11 +19,11 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
 
 @Composable
 fun SetIndexIcon(setIndex: Int, isCompleted: Boolean, modifier: Modifier = Modifier) {

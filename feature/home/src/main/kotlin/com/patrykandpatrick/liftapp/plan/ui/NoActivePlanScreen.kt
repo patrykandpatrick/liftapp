@@ -17,6 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
+import com.patrykandpatrick.liftapp.core.ui.BottomSheetContent
+import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
@@ -28,11 +33,6 @@ import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Open
 import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
-import com.patrykandpatryk.liftapp.core.ui.BottomSheetContent
-import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
 import kotlinx.coroutines.launch
 
 @Composable

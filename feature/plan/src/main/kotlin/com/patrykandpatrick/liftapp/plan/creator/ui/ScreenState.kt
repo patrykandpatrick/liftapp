@@ -3,10 +3,10 @@ package com.patrykandpatrick.liftapp.plan.creator.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.res.stringResource
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.text.StringTextFieldState
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
-import com.patrykandpatryk.liftapp.domain.routine.RoutineWithExercises
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.text.StringTextFieldState
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatrick.liftapp.domain.routine.RoutineWithExercises
 import java.io.Serializable
 import java.util.UUID
 

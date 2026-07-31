@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.navigation
 
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
@@ -14,7 +15,6 @@ import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
 import com.patrykandpatrick.liftapp.navigation.serialization.ExercisesSerializer
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
 import kotlinx.serialization.Serializable
 
 object Routes {

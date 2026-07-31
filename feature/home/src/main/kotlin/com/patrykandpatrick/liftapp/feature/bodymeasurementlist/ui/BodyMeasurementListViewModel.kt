@@ -1,0 +1,63 @@
+package com.patrykandpatrick.liftapp.feature.bodymeasurementlist.ui
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.FormatBodyMeasurementValueToStringUseCase
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.GetBodyMeasurementsWithLatestEntriesUseCase
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.invoke
+import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatrick.liftapp.feature.bodymeasurementlist.model.Action
+import com.patrykandpatrick.liftapp.navigation.Routes
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+
+@HiltViewModel
+class BodyMeasurementListViewModel
+@Inject
+constructor(
+    getBodyMeasurementsWithLatestEntries: GetBodyMeasurementsWithLatestEntriesUseCase,
+    exceptionHandler: CoroutineExceptionHandler,
+    private val formatBodyMeasurementValueToString: FormatBodyMeasurementValueToStringUseCase,
+    private val navigationCommander: NavigationCommander,
+) : ViewModel() {
+
+    val items =
+        getBodyMeasurementsWithLatestEntries()
+            .map { bodyMeasurementsWithLatestEntries ->
+                bodyMeasurementsWithLatestEntries.map { bodyMeasurementWithLatestEntry ->
+                    bodyMeasurementWithLatestEntry.toBodyMeasurementListItem()
+                }
+            }
+            .stateIn(
+                scope = viewModelScope + exceptionHandler,
+                started = SharingStarted.Eagerly,
+                initialValue = emptyList(),
+            )
+
+    private suspend fun BodyMeasurementWithLatestEntry.toBodyMeasurementListItem() =
+        BodyMeasurementListItem(
+            headline = name,
+            supportingText = latestEntry?.let { formatBodyMeasurementValueToString(it.value) },
+            bodyMeasurementID = id,
+            bodyMeasurementType = type,
+        )
+
+    fun onAction(action: Action) {
+        when (action) {
+            is Action.OpenDetails -> openDetails(action.bodyMeasurementID)
+        }
+    }
+
+    private fun openDetails(bodyMeasurementID: Long) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(Routes.BodyMeasurement.details(bodyMeasurementID))
+        }
+    }
+}

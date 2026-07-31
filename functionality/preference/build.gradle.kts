@@ -1,6 +1,6 @@
 plugins { id("liftapp.android.functionality") }
 
-android { namespace = "com.patrykandpatryk.liftapp.functionality.preference" }
+android { namespace = "com.patrykandpatrick.liftapp.functionality.preference" }
 
 dependencies {
     implementation(libs.datastore)

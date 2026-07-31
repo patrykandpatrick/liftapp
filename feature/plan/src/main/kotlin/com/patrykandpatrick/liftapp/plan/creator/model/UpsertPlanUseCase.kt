@@ -1,8 +1,8 @@
 package com.patrykandpatrick.liftapp.plan.creator.model
 
+import com.patrykandpatrick.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.plan.UpsertPlanContract
 import com.patrykandpatrick.liftapp.plan.creator.ui.ScreenState
-import com.patrykandpatryk.liftapp.domain.plan.Plan
-import com.patrykandpatryk.liftapp.domain.plan.UpsertPlanContract
 import javax.inject.Inject
 
 class UpsertPlanUseCase @Inject constructor(private val upsertPlanContract: UpsertPlanContract) {

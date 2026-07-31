@@ -1,3 +1,3 @@
 plugins { id("liftapp.android.feature") }
 
-android { namespace = "com.patrykandpatryk.liftapp.feature.onerepmax" }
+android { namespace = "com.patrykandpatrick.liftapp.feature.onerepmax" }

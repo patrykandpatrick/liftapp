@@ -1,0 +1,55 @@
+package com.patrykandpatrick.liftapp.domain.workout
+
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.model.Name
+import com.patrykandpatrick.liftapp.domain.muscle.Muscle
+import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
+import java.io.Serializable
+import java.time.LocalDateTime
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+
+data class Workout(
+    val id: Long,
+    val routineID: Long,
+    val name: String,
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime?,
+    val notes: String,
+    val exercises: List<Exercise>,
+) : Serializable {
+    val isCompleted: Boolean
+        get() = endDate != null
+
+    data class Exercise(
+        val id: Long,
+        val name: Name,
+        val exerciseType: ExerciseType,
+        val mainMuscles: List<Muscle>,
+        val secondaryMuscles: List<Muscle>,
+        val tertiaryMuscles: List<Muscle>,
+        val goal: Goal,
+        val sets: List<ExerciseSet>,
+        val lastSets: List<ExerciseSet> = emptyList(),
+    ) : Serializable {
+        val completedSets = sets.count { it.isCompleted }
+        val totalSets = sets.size
+    }
+
+    data class Goal(
+        val id: Long,
+        val minReps: Int,
+        val maxReps: Int,
+        val sets: Int,
+        val restTime: Duration,
+        val duration: Duration,
+        val distance: Double,
+        val distanceUnit: LongDistanceUnit,
+        val calories: Double,
+    ) {
+        companion object {
+            val default =
+                Goal(0, 8, 12, 3, 2L.minutes, 5L.minutes, 0.5, LongDistanceUnit.Kilometer, 50.0)
+        }
+    }
+}

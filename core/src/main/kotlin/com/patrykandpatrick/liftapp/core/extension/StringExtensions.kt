@@ -1,0 +1,27 @@
+package com.patrykandpatrick.liftapp.core.extension
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.domain.extension.joinToPrettyString
+
+private fun String.prepForConversionToNumber() =
+    replace(oldChar = ',', newChar = '.').replace(oldValue = " ", newValue = "")
+
+fun String.smartToIntOrNull() = prepForConversionToNumber().toIntOrNull()
+
+fun String.smartToFloatOrNull() = prepForConversionToNumber().toFloatOrNull()
+
+fun String.smartToDoubleOrNull() = prepForConversionToNumber().toDoubleOrNull()
+
+@Composable
+inline fun <T : Any> Collection<T>.joinToPrettyString(
+    toString: @Composable (T) -> String = { it.toString() }
+): String =
+    joinToPrettyString(
+        andText = stringResource(id = R.string.and_in_a_list),
+        toString = { toString(it) },
+    )
+
+val String?.nonBlankOrNull: String?
+    get() = this?.takeIf(String::isNotBlank)

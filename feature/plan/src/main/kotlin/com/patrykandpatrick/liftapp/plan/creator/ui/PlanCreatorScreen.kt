@@ -29,6 +29,18 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.model.Unfold
+import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatrick.liftapp.core.preview.PreviewResource
+import com.patrykandpatrick.liftapp.core.preview.PreviewRoutineWithExercises
+import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
+import com.patrykandpatrick.liftapp.core.ui.BottomAppBar
+import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
+import com.patrykandpatrick.liftapp.core.ui.DayIndicator
+import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
+import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.plan.creator.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
@@ -38,18 +50,6 @@ import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.TriangleAlert
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.model.Unfold
-import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.preview.PreviewResource
-import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
-import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
-import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
-import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
-import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
-import com.patrykandpatryk.liftapp.core.ui.DayIndicator
-import com.patrykandpatryk.liftapp.core.ui.LiftAppTextFieldWithSupportingText
-import com.patrykandpatryk.liftapp.domain.model.Loadable
 
 @Composable
 fun PlanCreatorScreen(modifier: Modifier = Modifier) {

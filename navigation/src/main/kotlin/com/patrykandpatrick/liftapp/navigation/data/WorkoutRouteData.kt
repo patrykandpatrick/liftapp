@@ -1,6 +1,6 @@
 package com.patrykandpatrick.liftapp.navigation.data
 
-import com.patrykandpatryk.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import kotlinx.serialization.Serializable
 
 @Serializable

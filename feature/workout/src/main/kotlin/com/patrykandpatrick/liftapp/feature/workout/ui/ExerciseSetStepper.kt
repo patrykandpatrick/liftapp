@@ -16,6 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
+import com.patrykandpatrick.liftapp.core.ui.StepConnector
+import com.patrykandpatrick.liftapp.core.ui.StepperItem
+import com.patrykandpatrick.liftapp.core.ui.StepperItemLabel
+import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
@@ -26,12 +32,6 @@ import com.patrykandpatrick.liftapp.ui.icons.CirclePlus
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.modifier.fadingEdges
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
-import com.patrykandpatryk.liftapp.core.ui.StepConnector
-import com.patrykandpatryk.liftapp.core.ui.StepperItem
-import com.patrykandpatryk.liftapp.core.ui.StepperItemLabel
-import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
 
 @Composable
 fun ExerciseSetStepper(

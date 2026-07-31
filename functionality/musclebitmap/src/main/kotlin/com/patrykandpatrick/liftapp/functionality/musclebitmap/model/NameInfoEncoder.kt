@@ -1,0 +1,13 @@
+package com.patrykandpatrick.liftapp.functionality.musclebitmap.model
+
+import com.patrykandpatrick.liftapp.domain.muscle.Muscle
+
+interface NameInfoEncoder {
+
+    fun encodeToName(
+        primaryMuscles: List<Muscle>,
+        secondaryMuscles: List<Muscle>,
+        tertiaryMuscles: List<Muscle>,
+        isDark: Boolean,
+    ): String
+}

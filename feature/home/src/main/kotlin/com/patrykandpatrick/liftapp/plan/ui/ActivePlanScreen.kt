@@ -21,6 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.date.formatDateRange
+import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
+import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
+import com.patrykandpatrick.liftapp.core.ui.DayIndicator
+import com.patrykandpatrick.liftapp.core.ui.routine.RestCard
+import com.patrykandpatrick.liftapp.core.ui.routine.RoutineCard
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
@@ -29,15 +38,6 @@ import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.graphics.rememberBottomSinShape
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.date.formatDateRange
-import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
-import com.patrykandpatryk.liftapp.core.text.LocalMarkupProcessor
-import com.patrykandpatryk.liftapp.core.ui.DayIndicator
-import com.patrykandpatryk.liftapp.core.ui.routine.RestCard
-import com.patrykandpatryk.liftapp.core.ui.routine.RoutineCard
-import com.patrykandpatryk.liftapp.domain.plan.Plan
 
 @Composable
 internal fun ActivePlanScreen(

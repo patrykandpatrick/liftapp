@@ -2,12 +2,12 @@ package com.patrykandpatrick.liftapp.feature.workout.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
 import com.patrykandpatrick.liftapp.ui.icons.ArrowForward
 import com.patrykandpatrick.liftapp.ui.icons.Check
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.text.TextFieldState
 import java.time.LocalDate
 import java.time.LocalTime
 

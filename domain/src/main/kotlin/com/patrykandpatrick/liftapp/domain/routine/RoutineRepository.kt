@@ -1,0 +1,14 @@
+package com.patrykandpatrick.liftapp.domain.routine
+
+import kotlinx.coroutines.flow.Flow
+
+interface RoutineRepository {
+
+    fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?>
+
+    suspend fun upsert(routine: Routine, exerciseIds: List<Long>): Long
+
+    suspend fun reorderExercises(routineId: Long, exerciseIds: List<Long>)
+
+    suspend fun delete(routineId: Long)
+}

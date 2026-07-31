@@ -1,6 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.workout.model
 
-import com.patrykandpatryk.liftapp.domain.workout.UpsertWorkoutGoalContract
+import com.patrykandpatrick.liftapp.domain.workout.UpsertWorkoutGoalContract
 import javax.inject.Inject
 
 class UpsertGoalSetsUseCase @Inject constructor(private val contract: UpsertWorkoutGoalContract) {

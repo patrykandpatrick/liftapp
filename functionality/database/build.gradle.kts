@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-android { namespace = "com.patrykandpatryk.liftapp.functionality.database" }
+android { namespace = "com.patrykandpatrick.liftapp.functionality.database" }
 
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 

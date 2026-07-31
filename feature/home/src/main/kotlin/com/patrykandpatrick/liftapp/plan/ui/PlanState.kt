@@ -1,7 +1,7 @@
 package com.patrykandpatrick.liftapp.plan.ui
 
 import androidx.compose.runtime.Immutable
-import com.patrykandpatryk.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 import java.time.LocalDate
 
 @Immutable

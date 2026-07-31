@@ -1,6 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.workout.model
 
-import com.patrykandpatryk.liftapp.domain.workout.UpdateWorkoutContract
+import com.patrykandpatrick.liftapp.domain.workout.UpdateWorkoutContract
 import java.time.LocalDateTime
 import javax.inject.Inject
 

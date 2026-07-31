@@ -189,7 +189,7 @@ val LocalDimens = staticCompositionLocalOf { Dimens() }
 
 @Deprecated(
     "Use `dimens` instead.",
-    ReplaceWith("dimens", "com.patrykandpatryk.liftapp.core.ui.dimens.dimens"),
+    ReplaceWith("dimens", "com.patrykandpatrick.liftapp.core.ui.dimens.dimens"),
 )
 val MaterialTheme.dimens: Dimens
     @Composable @ReadOnlyComposable get() = LocalDimens.current

@@ -1,11 +1,8 @@
 package com.patrykandpatrick.liftapp.domain.unit
 
-import com.patrykandpatryk.liftapp.domain.format.Formatter
-import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
-import com.patrykandpatryk.liftapp.domain.unit.MassUnit
-import com.patrykandpatryk.liftapp.domain.unit.UnitConverter
-import com.patrykandpatryk.liftapp.testing.TestPreferenceRepository
-import com.patrykandpatryk.liftapp.testing.TestStringProvider
+import com.patrykandpatrick.liftapp.domain.format.Formatter
+import com.patrykandpatrick.liftapp.testing.TestPreferenceRepository
+import com.patrykandpatrick.liftapp.testing.TestStringProvider
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Test

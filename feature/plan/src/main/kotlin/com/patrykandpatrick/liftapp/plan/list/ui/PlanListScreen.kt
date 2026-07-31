@@ -20,6 +20,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.extension.joinToPrettyString
+import com.patrykandpatrick.liftapp.core.model.Unfold
+import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatrick.liftapp.core.ui.BottomAppBar
+import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
+import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
+import com.patrykandpatrick.liftapp.core.ui.ListItem
+import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.plan.list.model.Action
 import com.patrykandpatrick.liftapp.plan.list.model.ScreenState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
@@ -30,15 +39,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.extension.joinToPrettyString
-import com.patrykandpatryk.liftapp.core.model.Unfold
-import com.patrykandpatryk.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatryk.liftapp.core.ui.BottomAppBar
-import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBar
-import com.patrykandpatryk.liftapp.core.ui.CompactTopAppBarDefaults
-import com.patrykandpatryk.liftapp.core.ui.ListItem
-import com.patrykandpatryk.liftapp.domain.model.Loadable
 
 @Composable
 fun PlanListScreen(modifier: Modifier = Modifier, viewModel: PlanListViewModel = hiltViewModel()) {

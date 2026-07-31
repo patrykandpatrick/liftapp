@@ -2,16 +2,16 @@ package com.patrykandpatrick.liftapp.plan.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.liftapp.core.model.toLoadableStateFlow
+import com.patrykandpatrick.liftapp.domain.datastore.Preference
+import com.patrykandpatrick.liftapp.domain.di.PreferenceQualifier
+import com.patrykandpatrick.liftapp.domain.model.Loadable
+import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
+import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.plan.model.GetPlanStateUseCase
-import com.patrykandpatryk.liftapp.core.model.toLoadableStateFlow
-import com.patrykandpatryk.liftapp.domain.datastore.Preference
-import com.patrykandpatryk.liftapp.domain.di.PreferenceQualifier
-import com.patrykandpatryk.liftapp.domain.model.Loadable
-import com.patrykandpatryk.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatryk.liftapp.domain.plan.ActivePlan
-import com.patrykandpatryk.liftapp.domain.plan.Plan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope

@@ -1,7 +1,7 @@
 package com.patrykandpatrick.feature.exercisegoal.model
 
 import androidx.compose.runtime.Stable
-import com.patrykandpatryk.liftapp.domain.model.Name
+import com.patrykandpatrick.liftapp.domain.model.Name
 
 @Stable
 data class State(

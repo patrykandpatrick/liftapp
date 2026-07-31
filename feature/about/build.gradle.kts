@@ -1,3 +1,3 @@
 plugins { id("liftapp.android.feature") }
 
-android { namespace = "com.patrykandpatryk.liftapp.feature.about" }
+android { namespace = "com.patrykandpatrick.liftapp.feature.about" }

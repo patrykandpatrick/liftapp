@@ -1,10 +1,10 @@
 package com.patrykandpatrick.feature.exercisegoal.model
 
 import androidx.compose.runtime.Stable
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.text.TextFieldState
-import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
-import com.patrykandpatryk.liftapp.domain.unit.ValueUnit
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.text.TextFieldState
+import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
+import com.patrykandpatrick.liftapp.domain.unit.ValueUnit
 
 @Stable
 sealed interface Input<T : Any> {

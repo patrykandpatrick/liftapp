@@ -1,7 +1,7 @@
 package com.patrykandpatrick.liftapp.feature.workout.model
 
-import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
-import com.patrykandpatryk.liftapp.domain.workout.UpsertExerciseSetContract
+import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
+import com.patrykandpatrick.liftapp.domain.workout.UpsertExerciseSetContract
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 

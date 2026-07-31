@@ -1,0 +1,47 @@
+package com.patrykandpatrick.liftapp.core.chart
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import com.patrykandpatrick.liftapp.core.format.LocalFormatter
+import com.patrykandpatrick.liftapp.domain.format.Formatter
+import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.LineCartesianLayerMarkerTarget
+
+class ValueUnitCartesianMarkerValueFormatter(private val formatter: Formatter) :
+    DefaultCartesianMarker.ValueFormatter {
+    private val delegate = DefaultCartesianMarker.ValueFormatter.default()
+
+    override fun format(
+        context: CartesianDrawingContext,
+        targets: List<CartesianMarker.Target>,
+    ): CharSequence {
+        val valueUnit = context.model.extraStore.getOrNull(ExtraStoreKey.ValueUnit)
+        return if (valueUnit != null) {
+            targets.joinToString { target ->
+                when (target) {
+                    is LineCartesianLayerMarkerTarget -> {
+                        target.points.joinToString { point ->
+                            formatter.formatValue(point.entry.y, valueUnit)
+                        }
+                    }
+                    is ColumnCartesianLayerMarkerTarget ->
+                        target.columns.joinToString { column ->
+                            formatter.formatValue(column.entry.y, valueUnit)
+                        }
+                    else -> ""
+                }
+            }
+        } else {
+            delegate.format(context, targets)
+        }
+    }
+}
+
+@Composable
+fun rememberValueUnitCartesianMarkerValueFormatter(): ValueUnitCartesianMarkerValueFormatter {
+    val formatter = LocalFormatter.current
+    return remember(formatter) { ValueUnitCartesianMarkerValueFormatter(formatter) }
+}

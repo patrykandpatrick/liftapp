@@ -1,0 +1,289 @@
+package com.patrykandpatrick.liftapp.core.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.icons.Check
+import com.patrykandpatrick.liftapp.ui.icons.CirclePlus
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.PillShape
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+
+@Composable
+fun SegmentedButtonContainer(
+    modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
+    buttons: @Composable RowScope.() -> Unit,
+) {
+    Row(
+        modifier =
+            modifier
+                .height(IntrinsicSize.Max)
+                .clip(shape)
+                .border(width = dimens.strokeWidth, color = colorScheme.outline, shape = shape),
+        verticalAlignment = Alignment.CenterVertically,
+        content = buttons,
+    )
+}
+
+@Composable
+fun <T> SegmentedButtonContainer(
+    items: List<T>,
+    modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
+    getItem: @Composable RowScope.(Int, T) -> Unit,
+) {
+    SegmentedButtonContainer(modifier = modifier, shape = shape) {
+        items.forEachIndexed { index, item ->
+            getItem(index, item)
+            if (index < items.lastIndex) {
+                VerticalDivider()
+            }
+        }
+    }
+}
+
+@Composable
+fun VerticalSegmentedButtonContainer(
+    modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
+    buttons: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier =
+            modifier
+                .width(IntrinsicSize.Max)
+                .clip(shape)
+                .border(width = dimens.strokeWidth, color = colorScheme.outline, shape = shape),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = buttons,
+    )
+}
+
+@Composable
+fun <T> VerticalSegmentedButtonContainer(
+    items: List<T>,
+    modifier: Modifier = Modifier,
+    shape: Shape = PillShape,
+    getItem: @Composable ColumnScope.(Int, T) -> Unit,
+) {
+    VerticalSegmentedButtonContainer(modifier = modifier, shape = shape) {
+        items.forEachIndexed { index, item ->
+            getItem(index, item)
+            if (index < items.lastIndex) {
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
+@Composable
+fun VerticalDivider(modifier: Modifier = Modifier) {
+    Box(
+        modifier =
+            modifier
+                .background(color = colorScheme.outline)
+                .fillMaxHeight()
+                .width(dimens.strokeWidth)
+    )
+}
+
+@Composable
+fun RowScope.SegmentedButton(
+    text: String,
+    onClick: () -> Unit,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    showIcon: Boolean = true,
+) {
+    com.patrykandpatrick.liftapp.core.ui.SegmentedButton(
+        text = text,
+        onClick = onClick,
+        selected = selected,
+        icon = icon,
+        modifier = modifier.fillMaxHeight().weight(weight = 1f),
+        showIcon = showIcon,
+    )
+}
+
+@Composable
+fun ColumnScope.SegmentedButton(
+    text: String,
+    onClick: () -> Unit,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    showIcon: Boolean = icon != null,
+) {
+    com.patrykandpatrick.liftapp.core.ui.SegmentedButton(
+        text = text,
+        onClick = onClick,
+        selected = selected,
+        icon = icon,
+        modifier = modifier.fillMaxWidth().weight(weight = 1f, fill = false),
+        showIcon = showIcon,
+    )
+}
+
+@Composable
+private fun SegmentedButton(
+    text: String,
+    onClick: () -> Unit,
+    selected: Boolean,
+    showIcon: Boolean,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+) {
+
+    Row(
+        modifier =
+            modifier
+                .background(color = if (selected) colorScheme.primary else Color.Transparent)
+                .clickable(
+                    onClick = onClick,
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication =
+                        ripple(
+                            color =
+                                if (selected) {
+                                    colorScheme.onPrimary
+                                } else {
+                                    colorScheme.onSurface
+                                }
+                        ),
+                )
+                .padding(
+                    horizontal = dimens.padding.segmentedButtonHorizontal,
+                    vertical = dimens.padding.segmentedButtonVertical,
+                ),
+        horizontalArrangement =
+            Arrangement.spacedBy(
+                space = dimens.padding.segmentedButtonElement,
+                alignment = Alignment.CenterHorizontally,
+            ),
+    ) {
+        val imageVector =
+            when {
+                showIcon.not() -> null
+                selected -> LiftAppIcons.Check
+                else -> icon
+            }
+
+        val tint = if (selected) colorScheme.onPrimary else colorScheme.onSurface
+
+        if (imageVector != null) {
+            Icon(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                imageVector = imageVector,
+                contentDescription = null,
+                tint = tint,
+            )
+        }
+
+        Text(
+            modifier = Modifier.align(Alignment.CenterVertically),
+            text = text,
+            color = tint,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
+}
+
+@LightAndDarkThemePreview
+@Composable
+fun PreviewSegmentedButtonWithIcons() {
+    LiftAppTheme {
+        Surface {
+            var selectedIndex by remember { mutableStateOf(1) }
+
+            SegmentedButtonContainer(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                items = listOf("First Item", "Second Item", "Third Item"),
+            ) { index, text ->
+                SegmentedButton(
+                    text = text,
+                    onClick = { selectedIndex = index },
+                    selected = selectedIndex == index,
+                    icon = LiftAppIcons.CirclePlus,
+                )
+            }
+        }
+    }
+}
+
+@LightAndDarkThemePreview
+@Composable
+fun PreviewSegmentedButtonWithNoIcons() {
+    LiftAppTheme {
+        Surface {
+            var selectedIndex by remember { mutableStateOf(1) }
+
+            SegmentedButtonContainer(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                items = listOf("First Item", "Second Item"),
+            ) { index, text ->
+                SegmentedButton(
+                    text = text,
+                    onClick = { selectedIndex = index },
+                    selected = selectedIndex == index,
+                )
+            }
+        }
+    }
+}
+
+@LightAndDarkThemePreview
+@Composable
+fun PreviewVerticalSegmentedButtonWithNoIcons() {
+    LiftAppTheme {
+        Surface {
+            var selectedIndex by remember { mutableStateOf(1) }
+
+            VerticalSegmentedButtonContainer(
+                modifier = Modifier.padding(16.dp),
+                items = listOf("First Item", "Second Item"),
+            ) { index, text ->
+                SegmentedButton(
+                    text = text,
+                    onClick = { selectedIndex = index },
+                    selected = selectedIndex == index,
+                )
+            }
+        }
+    }
+}

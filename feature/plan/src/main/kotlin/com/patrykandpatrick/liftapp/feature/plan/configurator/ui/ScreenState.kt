@@ -1,9 +1,9 @@
 package com.patrykandpatrick.liftapp.feature.plan.configurator.ui
 
 import androidx.compose.runtime.Stable
-import com.patrykandpatryk.liftapp.core.text.IntTextFieldState
-import com.patrykandpatryk.liftapp.core.text.LocalDateTextFieldState
-import com.patrykandpatryk.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.core.text.IntTextFieldState
+import com.patrykandpatrick.liftapp.core.text.LocalDateTextFieldState
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 import java.time.LocalDate
 
 @Stable

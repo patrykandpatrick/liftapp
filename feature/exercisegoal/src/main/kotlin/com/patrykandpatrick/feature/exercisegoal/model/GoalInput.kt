@@ -1,14 +1,14 @@
 package com.patrykandpatrick.feature.exercisegoal.model
 
 import androidx.compose.runtime.Stable
-import com.patrykandpatryk.liftapp.core.text.TextFieldStateManager
-import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
-import com.patrykandpatryk.liftapp.domain.goal.Goal
-import com.patrykandpatryk.liftapp.domain.type.isAnyOf
-import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
-import com.patrykandpatryk.liftapp.domain.validation.isHigherOrEqualTo
-import com.patrykandpatryk.liftapp.domain.validation.validNumber
-import com.patrykandpatryk.liftapp.domain.validation.valueInRange
+import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.goal.Goal
+import com.patrykandpatrick.liftapp.domain.type.isAnyOf
+import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
+import com.patrykandpatrick.liftapp.domain.validation.isHigherOrEqualTo
+import com.patrykandpatrick.liftapp.domain.validation.validNumber
+import com.patrykandpatrick.liftapp.domain.validation.valueInRange
 
 @Stable
 data class GoalInput(

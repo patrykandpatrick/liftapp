@@ -1,8 +1,8 @@
 package com.patrykandpatrick.feature.exercisegoal.model
 
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseNameAndType
+import com.patrykandpatrick.liftapp.domain.exercise.GetExerciseNameAndTypeContract
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
-import com.patrykandpatryk.liftapp.domain.exercise.ExerciseNameAndType
-import com.patrykandpatryk.liftapp.domain.exercise.GetExerciseNameAndTypeContract
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 

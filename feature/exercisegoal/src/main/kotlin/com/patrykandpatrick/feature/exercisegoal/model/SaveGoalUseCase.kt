@@ -1,8 +1,8 @@
 package com.patrykandpatrick.feature.exercisegoal.model
 
+import com.patrykandpatrick.liftapp.domain.goal.Goal
+import com.patrykandpatrick.liftapp.domain.goal.SaveGoalContract
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
-import com.patrykandpatryk.liftapp.domain.goal.Goal
-import com.patrykandpatryk.liftapp.domain.goal.SaveGoalContract
 import javax.inject.Inject
 
 class SaveGoalUseCase

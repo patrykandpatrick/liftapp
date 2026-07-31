@@ -1,11 +1,11 @@
 package com.patrykandpatrick.liftapp.feature.workout.model
 
 import androidx.compose.runtime.Stable
-import com.patrykandpatryk.liftapp.domain.exercise.ExerciseType
-import com.patrykandpatryk.liftapp.domain.model.Name
-import com.patrykandpatryk.liftapp.domain.muscle.Muscle
-import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
-import com.patrykandpatryk.liftapp.domain.workout.Workout
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.model.Name
+import com.patrykandpatrick.liftapp.domain.muscle.Muscle
+import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
+import com.patrykandpatrick.liftapp.domain.workout.Workout
 import java.io.Serializable
 import java.time.LocalDateTime
 

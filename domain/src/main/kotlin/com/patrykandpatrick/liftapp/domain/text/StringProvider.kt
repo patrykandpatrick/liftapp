@@ -1,0 +1,70 @@
+package com.patrykandpatrick.liftapp.domain.text
+
+import com.patrykandpatrick.liftapp.domain.Constants
+import com.patrykandpatrick.liftapp.domain.model.Name
+import com.patrykandpatrick.liftapp.domain.muscle.Muscle
+import com.patrykandpatrick.liftapp.domain.unit.ValueUnit
+
+interface StringProvider {
+    val andInAList: String
+    val name: String
+
+    val list: String
+
+    val dateFormatDay: String
+
+    val dateFormatDayMonth: String
+
+    val dateFormatWeekdayDayMonth: String
+
+    val dateFormatDayMonthYear: String
+
+    val dateWeekdayDayMonthYear: String
+
+    val dateMonthYear: String
+
+    val dateYear: String
+
+    val errorMustBeHigherThanZero: String
+
+    val hoursShort: String
+
+    val minutesShort: String
+
+    val secondsShort: String
+
+    fun getDisplayUnit(unit: ValueUnit, respectLeadingSpaceSetting: Boolean = true): String
+
+    fun getRepsString(reps: Int): String
+
+    fun quoted(value: String): String
+
+    fun getErrorNameTooLong(actual: Int, limit: Int = Constants.Input.NAME_MAX_CHARS): String
+
+    fun getErrorCannotBeEmpty(name: String): String
+
+    fun getMuscleName(muscle: Muscle): String
+
+    fun getResolvedName(name: Name): String
+
+    fun fieldTooShort(actual: Int, minLength: Int): String
+
+    fun fieldTooLong(actual: Int, maxLength: Int): String
+
+    fun valueTooSmall(minValue: String): String
+
+    fun valueTooBig(maxValue: String): String
+
+    fun valueNotValidNumber(): String
+
+    fun fieldCannotBeEmpty(): String
+
+    fun fieldMustBeHigherThanZero(): String
+
+    fun fieldMustBeHigherOrEqualTo(value: String): String
+
+    fun doesNotEqual(formula: String, actual: String): String
+}
+
+inline fun StringProvider.getErrorCannotBeEmpty(getName: StringProvider.() -> String): String =
+    getErrorCannotBeEmpty(getName())

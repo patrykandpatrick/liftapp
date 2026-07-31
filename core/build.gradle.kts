@@ -3,7 +3,7 @@ plugins {
     id("liftapp.android.compose")
 }
 
-android { namespace = "com.patrykandpatryk.liftapp.core" }
+android { namespace = "com.patrykandpatrick.liftapp.core" }
 
 dependencies {
     api(project(":ui"))

@@ -1,13 +1,13 @@
 package com.patrykandpatrick.liftapp.feature.workout.model
 
 import androidx.compose.runtime.Composable
-import com.patrykandpatryk.liftapp.core.exercise.prettyString
-import com.patrykandpatryk.liftapp.core.text.DoubleTextFieldState
-import com.patrykandpatryk.liftapp.core.text.IntTextFieldState
-import com.patrykandpatryk.liftapp.core.text.LongTextFieldState
-import com.patrykandpatryk.liftapp.domain.unit.LongDistanceUnit
-import com.patrykandpatryk.liftapp.domain.unit.MassUnit
-import com.patrykandpatryk.liftapp.domain.workout.ExerciseSet
+import com.patrykandpatrick.liftapp.core.exercise.prettyString
+import com.patrykandpatrick.liftapp.core.text.DoubleTextFieldState
+import com.patrykandpatrick.liftapp.core.text.IntTextFieldState
+import com.patrykandpatrick.liftapp.core.text.LongTextFieldState
+import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
+import com.patrykandpatrick.liftapp.domain.unit.MassUnit
+import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import java.io.Serializable
 import kotlin.time.Duration
 

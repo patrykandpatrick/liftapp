@@ -17,6 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
+import com.patrykandpatrick.liftapp.core.text.parseMarkup
+import com.patrykandpatrick.liftapp.core.time.formattedRemainingTime
 import com.patrykandpatrick.liftapp.feature.workout.Constants
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
@@ -30,10 +34,6 @@ import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.Shapes
 import com.patrykandpatrick.liftapp.ui.theme.Typography
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.preview.PreviewTheme
-import com.patrykandpatryk.liftapp.core.text.parseMarkup
-import com.patrykandpatryk.liftapp.core.time.formattedRemainingTime
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds

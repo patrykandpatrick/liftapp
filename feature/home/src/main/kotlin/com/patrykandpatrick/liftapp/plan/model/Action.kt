@@ -1,6 +1,6 @@
 package com.patrykandpatrick.liftapp.plan.model
 
-import com.patrykandpatryk.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.plan.Plan
 
 sealed interface Action {
     data object CreateNewPlan : Action

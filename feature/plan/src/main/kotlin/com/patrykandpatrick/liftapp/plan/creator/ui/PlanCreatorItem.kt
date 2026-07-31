@@ -19,6 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.preview.PreviewRoutineWithExercises
+import com.patrykandpatrick.liftapp.core.ui.routine.RestCard
+import com.patrykandpatrick.liftapp.core.ui.routine.RoutineCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
@@ -28,10 +32,6 @@ import com.patrykandpatrick.liftapp.ui.icons.Routine
 import com.patrykandpatrick.liftapp.ui.icons.TreePalm
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatryk.liftapp.core.R
-import com.patrykandpatryk.liftapp.core.preview.PreviewRoutineWithExercises
-import com.patrykandpatryk.liftapp.core.ui.routine.RestCard
-import com.patrykandpatryk.liftapp.core.ui.routine.RoutineCard
 
 @Composable
 internal fun PlanCreatorItem(
