@@ -2,4 +2,6 @@ package com.patrykandpatrick.liftapp.feature.bodymeasurementlist.model
 
 sealed class Action {
     data class OpenDetails(val bodyMeasurementID: Long) : Action()
+
+    data class AddEntry(val bodyMeasurementID: Long) : Action()
 }

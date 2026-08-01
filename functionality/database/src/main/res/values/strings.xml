@@ -114,13 +114,13 @@
     <string name="plan_migrated_from_published_app">My training plan</string>
 
     <string name="body_body_weight">Weight</string>
-    <string name="body_fat_percentage">Fat percentage</string>
-    <string name="body_muscle_percentage">Muscle percentage</string>
-    <string name="body_forearm_circumference">Forearm circumference</string>
-    <string name="body_bicep_circumference">Bicep circumference</string>
-    <string name="body_chest_circumference">Chest circumference</string>
-    <string name="body_ab_circumference">Abdominal circumference</string>
-    <string name="body_glute_circumference">Glute circumference</string>
-    <string name="body_thigh_circumference">Thigh circumference</string>
-    <string name="body_calf_circumference">Calf circumference</string>
+    <string name="body_fat_percentage">Fat</string>
+    <string name="body_muscle_percentage">Muscle</string>
+    <string name="body_forearm_circumference">Forearm</string>
+    <string name="body_bicep_circumference">Bicep</string>
+    <string name="body_chest_circumference">Chest</string>
+    <string name="body_ab_circumference">Abdomen</string>
+    <string name="body_glute_circumference">Glute</string>
+    <string name="body_thigh_circumference">Thigh</string>
+    <string name="body_calf_circumference">Calf</string>
 </resources>

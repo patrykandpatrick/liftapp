@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 data class Dimens(
+    val badge: Badge = Badge(),
     val button: Button = Button(),
     val checkbox: Checkbox = Checkbox(),
     val chip: Chip = Chip(),
@@ -17,7 +18,9 @@ data class Dimens(
     val fab: FAB = FAB(),
     val iconButton: IconButton = IconButton(),
     val muscle: Muscle = Muscle(),
+    val progress: Progress = Progress(),
     val radioButton: RadioButton = RadioButton(),
+    val ratioBar: RatioBar = RatioBar(),
     val routine: Routine = Routine(),
     val screen: Screen = Screen(),
     val segmentedButton: SegmentedButton = SegmentedButton(),
@@ -56,6 +59,23 @@ data class Dimens(
         val minHeight: Dp = 20.dp,
     )
 
+    /**
+     * A badge is smaller than a chip because nothing taps it: it needs to be read, not hit, so it
+     * is free of the touch target a chip has to carry. The compact sizes are for a badge sharing a
+     * line with text that needs the rest of the room.
+     */
+    @Immutable
+    data class Badge(
+        val iconSize: Dp = 14.dp,
+        val spacing: Dp = 2.dp,
+        val horizontalPadding: Dp = 8.dp,
+        val verticalPadding: Dp = 3.dp,
+        val borderWidth: Dp = 1.dp,
+        val compactIconSize: Dp = 12.dp,
+        val compactHorizontalPadding: Dp = 5.dp,
+        val compactVerticalPadding: Dp = 1.dp,
+    )
+
     @Immutable
     data class Muscle(
         val tileSize: Dp = 20.dp,
@@ -68,6 +88,11 @@ data class Dimens(
     data class Checkbox(val size: Dp = 20.dp, val cornerSize: Dp = 4.dp, val strokeWidth: Dp = 2.dp)
 
     @Immutable data class RadioButton(val size: Dp = 20.dp)
+
+    @Immutable data class Progress(val thickness: Dp = 5.dp)
+
+    /** Thinner than a [Progress] bar, which has one weight to carry rather than two. */
+    @Immutable data class RatioBar(val thickness: Dp = 4.dp, val spacing: Dp = 3.dp)
 
     @Immutable data class Routine(val minCardWidth: Dp = 140.dp)
 

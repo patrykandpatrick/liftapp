@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.chart.BodyMeasurementChartColors
 import com.patrykandpatrick.liftapp.core.chart.DateIntervalController
 import com.patrykandpatrick.liftapp.core.chart.bodyMeasurementLegend
 import com.patrykandpatrick.liftapp.core.chart.bottom
@@ -81,7 +82,6 @@ import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.History
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
-import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.Zoom
@@ -416,8 +416,8 @@ private fun Chart(
                 rememberLineCartesianLayer(
                     lineProvider =
                         LineCartesianLayer.LineProvider.series(
-                            LineCartesianLayer.rememberLine(colorScheme.chartColors[0]),
-                            LineCartesianLayer.rememberLine(colorScheme.chartColors[1]),
+                            LineCartesianLayer.rememberLine(BodyMeasurementChartColors.leading),
+                            LineCartesianLayer.rememberLine(BodyMeasurementChartColors.trailing),
                         ),
                     rangeProvider =
                         rememberAdaptiveCartesianLayerRangeProvider(

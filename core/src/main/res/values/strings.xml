@@ -68,6 +68,15 @@
     <string name="body_measurement_left">Left</string>
     <string name="body_measurement_right">Right</string>
 
+    <string name="body_measurement_section_composition">Composition</string>
+    <!-- Heads the tape measurements, whose names are the body part alone: the heading is what
+         says they are circumferences, so each tile does not have to repeat it. -->
+    <string name="body_measurement_section_circumference">Circumference</string>
+    <string name="body_measurement_first_entry">First entry</string>
+    <string name="body_measurement_never_logged">Not logged yet</string>
+    <!-- Example: Add weight entry -->
+    <string name="body_measurement_add_entry">Add %1$s entry</string>
+
     <string name="muscle_abductors">Abductors</string>
     <string name="muscle_abs">Abs</string>
     <string name="muscle_adductors">Adductors</string>

@@ -7,6 +7,9 @@ object ExtraStoreKey {
 
     data object MaxX : ExtraStore.Key<Double>()
 
+    /** The _x_ of the newest reading, for a layer that draws that one differently. */
+    data object LatestPointX : ExtraStore.Key<Double>()
+
     data object DateInterval :
         ExtraStore.Key<com.patrykandpatrick.liftapp.domain.date.DateInterval>()
 

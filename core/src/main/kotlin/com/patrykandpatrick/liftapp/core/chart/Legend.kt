@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
-import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
 import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.common.Fill
@@ -20,7 +19,8 @@ import com.patrykandpatrick.vico.compose.common.component.TextComponent
 @Composable
 fun bodyMeasurementLegend(
     labelComponent: TextComponent = rememberTextComponent(MaterialTheme.typography.titleSmall),
-    chartColors: List<Color> = colorScheme.chartColors,
+    leadingColor: Color = BodyMeasurementChartColors.leading,
+    trailingColor: Color = BodyMeasurementChartColors.trailing,
     labelLeft: String = stringResource(R.string.body_measurement_left),
     labelRight: String = stringResource(R.string.body_measurement_right),
 ) =
@@ -29,7 +29,7 @@ fun bodyMeasurementLegend(
             if (extraStore[ExtraStoreKey.ShowLeftRightLegend]) {
                 add(
                     LegendItem(
-                        icon = ShapeComponent(shape = CircleShape, fill = Fill(chartColors[0])),
+                        icon = ShapeComponent(shape = CircleShape, fill = Fill(leadingColor)),
                         labelComponent = labelComponent,
                         label = labelLeft,
                     )
@@ -37,7 +37,7 @@ fun bodyMeasurementLegend(
 
                 add(
                     LegendItem(
-                        icon = ShapeComponent(shape = CircleShape, fill = Fill(chartColors[1])),
+                        icon = ShapeComponent(shape = CircleShape, fill = Fill(trailingColor)),
                         labelComponent = labelComponent,
                         label = labelRight,
                     )

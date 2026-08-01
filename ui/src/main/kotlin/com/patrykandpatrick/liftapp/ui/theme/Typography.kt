@@ -71,6 +71,13 @@ val LiftAppTypography =
     }
 
 object Typography {
+    val headlineMediumMono =
+        TextStyle(
+            fontFamily = martianMonoFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 28.sp,
+        )
+
     val titleLargeMono =
         TextStyle(
             fontFamily = martianMonoFamily,

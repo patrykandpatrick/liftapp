@@ -14,6 +14,32 @@ interface BodyMeasurementDao {
     @Query("SELECT * FROM body_measurements WHERE id = :id")
     fun getBodyMeasurement(id: Long): Flow<BodyMeasurementEntity>
 
+    @Query("SELECT * FROM body_measurements ORDER BY id")
+    fun getBodyMeasurements(): Flow<List<BodyMeasurementEntity>>
+
+    /**
+     * The newest [maxEntriesPerMeasurement] entries of every body measurement, newest first. The
+     * per-measurement cap is expressed as "how many entries are newer than this one" because SQLite
+     * has no per-group LIMIT.
+     *
+     * Newer means later, and where two entries share a time, the one entered second. Times are kept
+     * to the minute, so two readings logged within one minute of each other are equal on time
+     * alone; counting only what is strictly later would then let a whole tied group through the
+     * cap, returning more entries than were asked for.
+     */
+    @Query(
+        "SELECT * FROM body_measurement_entries AS entry " +
+            "WHERE (SELECT COUNT(*) FROM body_measurement_entries AS newer " +
+            "WHERE newer.body_measurement_id = entry.body_measurement_id " +
+            "AND (newer.time > entry.time " +
+            "OR newer.time = entry.time AND newer.id > entry.id)) " +
+            "< :maxEntriesPerMeasurement " +
+            "ORDER BY entry.time DESC, entry.id DESC"
+    )
+    fun getRecentBodyMeasurementEntries(
+        maxEntriesPerMeasurement: Int
+    ): Flow<List<BodyMeasurementEntryEntity>>
+
     @Query("SELECT * FROM body_measurements_with_latest_entries WHERE id = :id")
     fun getBodyMeasurementWithLatestEntry(id: Long): Flow<BodyMeasurementWithLatestEntryViewResult>
 

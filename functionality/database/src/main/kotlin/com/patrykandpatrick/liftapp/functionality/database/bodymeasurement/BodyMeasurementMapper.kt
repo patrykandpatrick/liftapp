@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.functionality.database.bodymeasurement
 
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurement
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementEntry
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementWithHistory
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
 import com.patrykandpatrick.liftapp.domain.format.Formatter
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
@@ -20,6 +21,17 @@ constructor(private val formatter: Formatter, private val stringProvider: String
 
     fun toDomain(entry: BodyMeasurementEntryEntity) =
         BodyMeasurementEntry(id = entry.id, value = entry.value, localDateTime = entry.time)
+
+    fun toDomain(
+        bodyMeasurement: BodyMeasurementEntity,
+        entries: List<BodyMeasurementEntryEntity>,
+    ): BodyMeasurementWithHistory =
+        BodyMeasurementWithHistory(
+            id = bodyMeasurement.id,
+            name = stringProvider.getResolvedName(bodyMeasurement.name),
+            type = bodyMeasurement.type,
+            entries = entries.map { entry -> toDomain(entry) },
+        )
 
     fun toDomain(input: BodyMeasurementWithLatestEntryViewResult): BodyMeasurementWithLatestEntry =
         BodyMeasurementWithLatestEntry(

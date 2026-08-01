@@ -4,10 +4,12 @@ import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurement
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementValue
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementWithHistory
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.GetBodyMeasurementEntriesUseCase
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.GetBodyMeasurementEntryUseCase
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.GetBodyMeasurementWithLatestEntryUseCase
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.GetBodyMeasurementsWithHistoriesUseCase
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.GetBodyMeasurementsWithLatestEntriesUseCase
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.UpsertBodyMeasurementUseCase
 import com.patrykandpatrick.liftapp.domain.di.IODispatcher
@@ -15,6 +17,7 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -31,6 +34,7 @@ constructor(
     GetBodyMeasurementEntryUseCase,
     GetBodyMeasurementWithLatestEntryUseCase,
     GetBodyMeasurementsWithLatestEntriesUseCase,
+    GetBodyMeasurementsWithHistoriesUseCase,
     GetBodyMeasurementEntriesUseCase {
 
     override fun getBodyMeasurement(id: Long): Flow<BodyMeasurement> =
@@ -45,6 +49,23 @@ constructor(
         Flow<List<BodyMeasurementWithLatestEntry>> =
         dao.getBodyMeasurementsWithLatestEntries()
             .map { entries -> entries.map { entry -> bodyMeasurementMapper.toDomain(entry) } }
+            .flowOn(dispatcher)
+
+    override fun getBodyMeasurementsWithHistories(
+        maxEntriesPerMeasurement: Int
+    ): Flow<List<BodyMeasurementWithHistory>> =
+        combine(
+                dao.getBodyMeasurements(),
+                dao.getRecentBodyMeasurementEntries(maxEntriesPerMeasurement),
+            ) { bodyMeasurements, entries ->
+                val entriesByBodyMeasurement = entries.groupBy { entry -> entry.bodyMeasurementID }
+                bodyMeasurements.map { bodyMeasurement ->
+                    bodyMeasurementMapper.toDomain(
+                        bodyMeasurement,
+                        entriesByBodyMeasurement[bodyMeasurement.id].orEmpty(),
+                    )
+                }
+            }
             .flowOn(dispatcher)
 
     override fun getBodyMeasurementEntries(
