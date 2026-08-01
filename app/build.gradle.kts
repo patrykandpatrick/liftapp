@@ -4,18 +4,35 @@ plugins {
     alias(libs.plugins.oss.licenses)
 }
 
+val releaseVersionCode =
+    providers.gradleProperty("releaseVersionCode").map(String::toInt).getOrElse(1)
+val releaseVersionName = providers.gradleProperty("releaseVersionName").getOrElse("0.0.0")
+val releaseKeystorePath = providers.environmentVariable("RELEASE_KEYSTORE_PATH").orNull
+
 android {
     namespace = "com.patrykandpatrick.liftapp"
 
     defaultConfig {
         applicationId = "pl.patrykgoworowski.mintlift"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = releaseVersionCode
+        versionName = releaseVersionName
+    }
+
+    signingConfigs {
+        create("release") {
+            if (releaseKeystorePath != null) {
+                storeFile = file(releaseKeystorePath)
+                storePassword = providers.environmentVariable("RELEASE_KEYSTORE_PASSWORD").orNull
+                keyAlias = providers.environmentVariable("RELEASE_KEY_ALIAS").orNull
+                keyPassword = providers.environmentVariable("RELEASE_KEY_PASSWORD").orNull
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

@@ -1,0 +1,128 @@
+name: Build release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-release
+  cancel-in-progress: false
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate version tag
+        id: version
+        env:
+          TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ ! "$TAG" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "Expected a version tag such as v0.10.0, got: $TAG" >&2
+            exit 1
+          fi
+
+          releases="$({
+            gh api --paginate "/repos/$GITHUB_REPOSITORY/releases?per_page=100"
+          } | jq -s '[.[][]]')"
+          asset_pattern='^liftapp-v[0-9]+\.[0-9]+\.[0-9]+-(?<code>[0-9]+)\.apk$'
+          existing_code="$(jq -r \
+            --arg tag "$TAG" \
+            --arg pattern "$asset_pattern" \
+            '[.[] | select(.tag_name == $tag) | .assets[]?.name
+              | select(test($pattern)) | capture($pattern).code] | first // empty' \
+            <<< "$releases")"
+
+          if [[ -n "$existing_code" ]]; then
+            version_code="$existing_code"
+          else
+            highest_code="$(jq -r \
+              --arg pattern "$asset_pattern" \
+              '[2012041] + [.[] | .assets[]?.name | select(test($pattern))
+                | capture($pattern).code | tonumber] | max' \
+              <<< "$releases")"
+            version_code="$((highest_code + 1))"
+          fi
+
+          if (( version_code > 2100000000 )); then
+            echo "The next version code exceeds Android's supported maximum." >&2
+            exit 1
+          fi
+
+          version_name="${TAG#v}"
+          echo "name=$version_name" >> "$GITHUB_OUTPUT"
+          echo "code=$version_code" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 21
+          cache: gradle
+
+      - name: Restore signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [[ -z "$KEYSTORE_BASE64" ]]; then
+            echo "KEYSTORE_BASE64 is not configured." >&2
+            exit 1
+          fi
+          keystore_path="$RUNNER_TEMP/release.keystore"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore_path"
+          chmod 600 "$keystore_path"
+          echo "RELEASE_KEYSTORE_PATH=$keystore_path" >> "$GITHUB_ENV"
+
+      - name: Build signed release
+        env:
+          RELEASE_KEY_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [[ -z "$RELEASE_KEY_ALIAS" || -z "$RELEASE_KEYSTORE_PASSWORD" || -z "$RELEASE_KEY_PASSWORD" ]]; then
+            echo "One or more signing secrets are not configured." >&2
+            exit 1
+          fi
+          ./gradlew bundleRelease assembleRelease \
+            -PreleaseVersionName="${{ steps.version.outputs.name }}" \
+            -PreleaseVersionCode="${{ steps.version.outputs.code }}"
+
+      - name: Collect release files
+        run: |
+          mkdir release-files
+          cp app/build/outputs/bundle/release/app-release.aab \
+            "release-files/liftapp-${{ github.ref_name }}-${{ steps.version.outputs.code }}.aab"
+          cp app/build/outputs/apk/release/app-release.apk \
+            "release-files/liftapp-${{ github.ref_name }}-${{ steps.version.outputs.code }}.apk"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: liftapp-${{ github.ref_name }}-${{ steps.version.outputs.code }}
+          path: release-files/*
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Create or update draft GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if release_is_draft="$(gh release view "$GITHUB_REF_NAME" --json isDraft --jq .isDraft 2>/dev/null)"; then
+            if [[ "$release_is_draft" != "true" ]]; then
+              echo "Release $GITHUB_REF_NAME is already published." >&2
+              exit 1
+            fi
+            gh release edit "$GITHUB_REF_NAME" --draft --title "$GITHUB_REF_NAME" --notes ""
+            gh release upload "$GITHUB_REF_NAME" release-files/*.apk --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" release-files/*.apk \
+              --draft \
+              --title "$GITHUB_REF_NAME" \
+              --verify-tag \
+              --notes ""
+          fi
