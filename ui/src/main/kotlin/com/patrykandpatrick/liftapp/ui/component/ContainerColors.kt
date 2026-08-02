@@ -12,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import com.patrykandpatrick.liftapp.ui.InteractiveBorderColors
-import com.patrykandpatrick.liftapp.ui.lerp
 import com.patrykandpatrick.liftapp.ui.theme.disabled
 
 data class ContainerColors(
@@ -30,8 +29,9 @@ fun lerp(start: ContainerColors, end: ContainerColors, fraction: Float): Contain
     ContainerColors(
         backgroundColor = lerp(start.backgroundColor, end.backgroundColor, fraction),
         contentColor = lerp(start.contentColor, end.contentColor, fraction),
-        interactiveBorderColors =
-            lerp(start.interactiveBorderColors, end.interactiveBorderColors, fraction),
+        // Borders own their animation. Keeping their target discrete avoids continuously
+        // retargeting that animation while the container colors interpolate.
+        interactiveBorderColors = end.interactiveBorderColors,
         disabledBackgroundColor =
             lerp(start.disabledBackgroundColor, end.disabledBackgroundColor, fraction),
         disabledContentColor = lerp(start.disabledContentColor, end.disabledContentColor, fraction),

@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.core.ui.button
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
@@ -16,7 +15,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButtonDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.modifier.interactiveBorder
+import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 
 @Composable
 fun IconButton(
@@ -40,19 +39,17 @@ fun IconButton(
             modifier
                 .defaultMinSize(minWidth = minSize, minHeight = minSize)
                 .background(color = colors.containerColor(enabled).value)
-                .combinedClickable(
+                .interactiveButtonEffect(
+                    colors = LiftAppIconButtonDefaults.colors,
                     onClick = onClick,
                     onLongClick = {}, // This is handled by `InteractionSource#onRepeatedLongPress`.
                     enabled = enabled,
                     role = Role.Button,
                     interactionSource = interactionSource,
-                )
-                .interactiveBorder(
-                    interactionSource = interactionSource,
-                    colors = LiftAppIconButtonDefaults.colors,
                     shape = CircleShape,
-                    maxWidth = 40.dp,
-                    maxHeight = 40.dp,
+                    indicationScale = LiftAppIconButtonDefaults.indicationScale,
+                    maxBorderWidth = 40.dp,
+                    maxBorderHeight = 40.dp,
                 ),
         contentAlignment = Alignment.Center,
     ) {

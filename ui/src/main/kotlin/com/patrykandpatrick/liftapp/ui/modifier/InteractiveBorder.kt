@@ -209,14 +209,8 @@ private class BorderNode(
 
                         is HoverInteraction.EnterFromRelease -> {
                             touchOffset.value = interaction.position
-                            launch {
-                                borderPrimaryColor.animate(colors.hoverForegroundColor)
-                                borderPrimaryColor.animate(colors.pressedColor)
-                            }
-                            launch {
-                                borderSecondaryColor.animate(colors.pressedColor)
-                                borderSecondaryColor.animate(colors.hoverBackgroundColor)
-                            }
+                            launch { borderPrimaryColor.animate(colors.hoverForegroundColor) }
+                            launch { borderSecondaryColor.animate(colors.hoverBackgroundColor) }
                         }
 
                         is PressInteraction.Release -> {

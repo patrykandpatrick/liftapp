@@ -5,9 +5,9 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
@@ -38,7 +38,6 @@ fun Modifier.interactiveButtonEffect(
     interactionSource: MutableInteractionSource? = null,
 ): Modifier = composed {
     val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
-    val scope = rememberCoroutineScope()
 
     then(
             if (onClick == null && onLongClick == null) {
@@ -65,9 +64,37 @@ fun Modifier.interactiveButtonEffect(
         .extendedInteractions(
             enabled = enabled && (onClick != null || onLongClick != null),
             interactionSource = interactionSource,
-            coroutineScope = scope,
         )
-        .interactiveScale(
+        .interactiveButtonVisualEffect(
+            colors = colors,
+            interactionSource = interactionSource,
+            borderWidth = borderWidth,
+            borderHorizontalInset = borderHorizontalInset,
+            maxBorderWidth = maxBorderWidth,
+            maxBorderHeight = maxBorderHeight,
+            checked = checked,
+            shape = shape,
+            indicationScale = indicationScale,
+            scaleAnimationSpec = scaleAnimationSpec,
+            colorAnimationSpec = colorAnimationSpec,
+        )
+}
+
+fun Modifier.interactiveButtonVisualEffect(
+    colors: InteractiveBorderColors,
+    interactionSource: InteractionSource,
+    borderWidth: Dp = 1.dp,
+    borderHorizontalInset: Dp = 0.dp,
+    maxBorderWidth: Dp? = null,
+    maxBorderHeight: Dp? = null,
+    checked: Boolean = false,
+    shape: Shape = RectangleShape,
+    indicationScale: IndicationScale = IndicationScale(),
+    scaleAnimationSpec: AnimationSpec<Float> =
+        spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMediumLow),
+    colorAnimationSpec: AnimationSpec<Color> = spring(stiffness = Spring.StiffnessLow),
+): Modifier =
+    this.interactiveScale(
             interactionSource = interactionSource,
             animationSpec = scaleAnimationSpec,
             scale = indicationScale,
@@ -83,4 +110,3 @@ fun Modifier.interactiveButtonEffect(
             maxWidth = maxBorderWidth,
             maxHeight = maxBorderHeight,
         )
-}

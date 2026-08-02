@@ -9,10 +9,6 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isOutOfBounds
 import androidx.compose.ui.input.pointer.pointerInput
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 sealed interface HoverInteraction : Interaction {
     data class Enter(val position: Offset) : HoverInteraction
@@ -25,7 +21,6 @@ sealed interface HoverInteraction : Interaction {
 fun Modifier.extendedInteractions(
     enabled: Boolean,
     interactionSource: MutableInteractionSource,
-    coroutineScope: CoroutineScope,
     key: Any = Unit,
 ) =
     then(
@@ -34,64 +29,65 @@ fun Modifier.extendedInteractions(
                 awaitPointerEventScope {
                     var lastPressInteraction: PressInteraction.Press? = null
                     var hadHoverInteraction = false
-                    var emitJob: Job? = null
                     while (true) {
                         val event = awaitPointerEvent(PointerEventPass.Main)
                         val change = event.changes.first()
                         val position = change.position
-                        emitJob?.cancel()
-
-                        emitJob = coroutineScope.launch {
-                            val isOutOfBounds = change.isOutOfBounds(size, extendedTouchPadding)
-                            when (event.type) {
-                                PointerEventType.Press -> {
-                                    val pressInteraction = PressInteraction.Press(position)
-                                    lastPressInteraction = pressInteraction
-                                    delay(viewConfiguration.doubleTapMinTimeMillis)
-                                    interactionSource.emit(pressInteraction)
+                        val isOutOfBounds = change.isOutOfBounds(size, extendedTouchPadding)
+                        when (event.type) {
+                            PointerEventType.Press -> {
+                                lastPressInteraction?.also {
+                                    interactionSource.tryEmit(PressInteraction.Cancel(it))
                                 }
-
-                                PointerEventType.Move -> {
-                                    when {
-                                        (isOutOfBounds || change.pressed) &&
-                                            lastPressInteraction != null -> {
-                                            if (change.isConsumed) {
-                                                interactionSource.emit(
-                                                    PressInteraction.Cancel(lastPressInteraction!!)
-                                                )
-                                                lastPressInteraction = null
-                                            }
-                                        }
-                                        isOutOfBounds -> {
-                                            interactionSource.emit(HoverInteraction.Exit(position))
-                                        }
-                                        !change.pressed -> {
-                                            interactionSource.emit(HoverInteraction.Enter(position))
-                                        }
-                                    }
-                                    hadHoverInteraction = !change.pressed
+                                PressInteraction.Press(position).also {
+                                    lastPressInteraction = it
+                                    interactionSource.tryEmit(it)
                                 }
-
-                                PointerEventType.Release -> {
-                                    if (hadHoverInteraction && !isOutOfBounds) {
-                                        interactionSource.emit(
-                                            HoverInteraction.EnterFromRelease(position)
-                                        )
-                                    } else {
-                                        hadHoverInteraction = false
-                                        lastPressInteraction?.also {
-                                            interactionSource.emit(PressInteraction.Release(it))
-                                        }
-                                    }
-                                    lastPressInteraction = null
-                                }
-
-                                PointerEventType.Exit -> {
-                                    interactionSource.emit(HoverInteraction.Exit(position))
-                                }
-
-                                else -> Unit
                             }
+
+                            PointerEventType.Move -> {
+                                when {
+                                    lastPressInteraction != null &&
+                                        (isOutOfBounds || change.isConsumed) -> {
+                                        interactionSource.tryEmit(
+                                            PressInteraction.Cancel(lastPressInteraction!!)
+                                        )
+                                        lastPressInteraction = null
+                                    }
+                                    !change.pressed && isOutOfBounds -> {
+                                        interactionSource.tryEmit(HoverInteraction.Exit(position))
+                                        hadHoverInteraction = false
+                                    }
+                                    !change.pressed -> {
+                                        interactionSource.tryEmit(HoverInteraction.Enter(position))
+                                        hadHoverInteraction = true
+                                    }
+                                }
+                            }
+
+                            PointerEventType.Release -> {
+                                lastPressInteraction?.also {
+                                    interactionSource.tryEmit(PressInteraction.Release(it))
+                                }
+                                lastPressInteraction = null
+
+                                if (hadHoverInteraction && !isOutOfBounds) {
+                                    interactionSource.tryEmit(
+                                        HoverInteraction.EnterFromRelease(position)
+                                    )
+                                }
+                            }
+
+                            PointerEventType.Exit -> {
+                                lastPressInteraction?.also {
+                                    interactionSource.tryEmit(PressInteraction.Cancel(it))
+                                }
+                                lastPressInteraction = null
+                                hadHoverInteraction = false
+                                interactionSource.tryEmit(HoverInteraction.Exit(position))
+                            }
+
+                            else -> Unit
                         }
                     }
                 }

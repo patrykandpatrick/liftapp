@@ -74,18 +74,12 @@ private class ScaleNode(
             interactionSource.interactions.collectLatest { interaction ->
                 when (interaction) {
                     is PressInteraction.Press -> currentScale.animate(scale.press)
-                    is HoverInteraction.Enter -> currentScale.animate(scale.hover)
-                    is HoverInteraction.EnterFromRelease -> {
-                        currentScale.animate(scale.press)
-                        currentScale.animate(scale.hover)
-                    }
+                    is HoverInteraction.Enter,
+                    is HoverInteraction.EnterFromRelease -> currentScale.animate(scale.hover)
                     is PressInteraction.Release -> {
-                        if (activeDrags.isEmpty()) {
-                            currentScale.animate(scale.press)
-                            currentScale.animate(scale.default)
-                        } else {
-                            currentScale.animate(scale.drag)
-                        }
+                        currentScale.animate(
+                            if (activeDrags.isEmpty()) scale.default else scale.drag
+                        )
                     }
                     is DragInteraction.Start -> {
                         activeDrags += interaction
