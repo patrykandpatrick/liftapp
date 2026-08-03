@@ -68,6 +68,10 @@ class BottomAppBarNavigator : Navigator<BottomAppBarNavigator.Destination>() {
         ) { paddingValues ->
             AnimatedContent(
                 targetState = entry,
+                // Restoring an entry can create a new NavBackStackEntry instance with the same ID.
+                // LocalOwnersProvider uses that ID as its saveable-state key, so treating the
+                // wrapper instance as new can compose the same key twice during an interruption.
+                contentKey = { it?.id },
                 transitionSpec = {
                     // See `BottomAppBarNavigationHost` for why the size transform is opted out of.
                     slideAndFadeIn() togetherWith

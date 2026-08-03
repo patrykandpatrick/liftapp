@@ -87,7 +87,11 @@ internal fun BottomNavigationBar(
                                 navOptions {
                                     launchSingleTop = true
                                     restoreState = true
-                                    popUpTo<Routes.Home> { saveState = true }
+                                    // Keep the graph's start destination on the stack. Popping to
+                                    // the graph itself can save Dashboard together with another
+                                    // tab;
+                                    // restoring Dashboard would then put that tab back on top.
+                                    popUpTo<Routes.Home.Dashboard> { saveState = true }
                                 },
                             )
                         },
