@@ -31,23 +31,14 @@ jobs:
             gh api --paginate "/repos/$GITHUB_REPOSITORY/releases?per_page=100"
           } | jq -s '[.[][]]')"
           asset_pattern='^liftapp-v[0-9]+\.[0-9]+\.[0-9]+-(?<code>[0-9]+)\.apk$'
-          existing_code="$(jq -r \
-            --arg tag "$TAG" \
+          # Play consumes a version code when an artifact is uploaded, even if that artifact is
+          # rejected. A rebuilt tag must therefore receive a new code while keeping its version name.
+          highest_code="$(jq -r \
             --arg pattern "$asset_pattern" \
-            '[.[] | select(.tag_name == $tag) | .assets[]?.name
-              | select(test($pattern)) | capture($pattern).code] | first // empty' \
+            '[2012041] + [.[] | .assets[]?.name | select(test($pattern))
+              | capture($pattern).code | tonumber] | max' \
             <<< "$releases")"
-
-          if [[ -n "$existing_code" ]]; then
-            version_code="$existing_code"
-          else
-            highest_code="$(jq -r \
-              --arg pattern "$asset_pattern" \
-              '[2012041] + [.[] | .assets[]?.name | select(test($pattern))
-                | capture($pattern).code | tonumber] | max' \
-              <<< "$releases")"
-            version_code="$((highest_code + 1))"
-          fi
+          version_code="$((highest_code + 1))"
 
           if (( version_code > 2100000000 )); then
             echo "The next version code exceeds Android's supported maximum." >&2
