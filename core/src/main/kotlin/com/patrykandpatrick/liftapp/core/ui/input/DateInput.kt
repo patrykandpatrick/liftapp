@@ -79,14 +79,17 @@ fun DateInput(
             confirmButton = {
                 TextButton(
                     onClick = {
+                        val selectedDateMillis =
+                            datePickerState.selectedDateMillis ?: return@TextButton
                         setShowDatePicker(false)
                         date.updateValue(
-                            Instant.ofEpochMilli(checkNotNull(datePickerState.selectedDateMillis))
+                            Instant.ofEpochMilli(selectedDateMillis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
                         )
                         onDateSelected?.invoke(date)
                     },
+                    enabled = datePickerState.selectedDateMillis != null,
                     modifier = modifier.padding(end = 8.dp),
                 ) {
                     Text(stringResource(R.string.workout_summary_edit_picker_confirm))
