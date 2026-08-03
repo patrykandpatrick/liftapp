@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.liftapp.core.R
-import com.patrykandpatrick.liftapp.core.ui.ListItem
-import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.icons.Folder
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -28,18 +28,18 @@ fun DestinationItem(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: ImageVector? = LiftAppIcons.Folder,
-    horizontalVisualInset: Dp = ListItemDefaults.horizontalVisualInset(checked = null),
+    position: LiftAppListItemPosition = LiftAppListItemPosition.Single,
 ) {
-    ListItem(
+    LiftAppListItem(
         title = { Text(stringResource(R.string.backup_destination)) },
         description = { NoDestinationAwareText(name, enabled) },
         icon =
             if (icon == null) null
             else {
-                { ListItemDefaults.Icon { Icon(icon, contentDescription = null) } }
+                { LiftAppListItemDefaults.Icon { Icon(icon, contentDescription = null) } }
             },
         enabled = enabled,
-        horizontalVisualInset = horizontalVisualInset,
+        position = position,
         onClick = onClick,
         modifier = modifier,
     )

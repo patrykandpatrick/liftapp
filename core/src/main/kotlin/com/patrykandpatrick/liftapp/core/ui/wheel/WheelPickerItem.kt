@@ -25,7 +25,7 @@ fun WheelPickerItem(
         color =
             lerp(
                 colorScheme.primary,
-                colorScheme.onSurface,
+                colorScheme.foreground,
                 abs(pickerValue - index).coerceIn(0f, 1f),
             ),
         modifier =

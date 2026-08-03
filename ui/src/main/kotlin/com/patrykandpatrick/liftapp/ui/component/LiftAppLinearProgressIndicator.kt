@@ -50,12 +50,9 @@ fun LiftAppLinearProgressIndicator(
 }
 
 object LiftAppLinearProgressIndicatorDefaults {
-    /**
-     * The track has to stay visible in both schemes, which `surfaceVariant` does not: it is white
-     * in the light one, leaving the bar with a fill and nothing to read it against.
-     */
+    /** The track is a supporting boundary, so it uses the decorative outline variant. */
     val trackColor: Color
-        @Composable get() = colorScheme.divider
+        @Composable get() = colorScheme.outline
 
     val thickness: Dp
         @Composable get() = dimens.progress.thickness

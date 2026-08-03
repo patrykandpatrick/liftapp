@@ -52,7 +52,7 @@ fun RestTimer(
 ) {
     val colors =
         LiftAppCardDefaults.tonalCardColors.run {
-            copy(backgroundColor = backgroundColor.compositeOver(colorScheme.surface))
+            copy(backgroundColor = backgroundColor.compositeOver(colorScheme.background))
         }
 
     LiftAppCard(
@@ -99,8 +99,11 @@ fun RestTimer(
                         imageVector = if (isPaused) LiftAppIcons.Play else LiftAppIcons.Pause,
                         contentDescription =
                             stringResource(
-                                if (isPaused) R.string.rest_timer_action_resume
-                                else R.string.rest_timer_action_pause
+                                if (isPaused) {
+                                    R.string.rest_timer_action_resume
+                                } else {
+                                    R.string.rest_timer_action_pause
+                                }
                             ),
                     )
                 }

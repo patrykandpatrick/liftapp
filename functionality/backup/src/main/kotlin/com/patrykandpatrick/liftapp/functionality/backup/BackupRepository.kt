@@ -186,8 +186,11 @@ constructor(
                             val where = if (routineID == null) null else table.routineFilter
                             if (routineID != null && where == null) return@forEach
                             val arguments =
-                                if (routineID == null) emptyArray<Any>()
-                                else Array<Any>(table.routineArgumentCount) { routineID }
+                                if (routineID == null) {
+                                    emptyArray<Any>()
+                                } else {
+                                    Array<Any>(table.routineArgumentCount) { routineID }
+                                }
                             archive.entry(table.entryPath) { writer ->
                                 SqliteCsv.write(db, table.tableName, writer, where, arguments)
                             }

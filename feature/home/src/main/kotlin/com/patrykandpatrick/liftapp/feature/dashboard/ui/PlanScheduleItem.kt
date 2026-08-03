@@ -31,7 +31,12 @@ import com.patrykandpatrick.liftapp.ui.icons.TreePalm
 
 @Composable
 internal fun RestPlanItem(modifier: Modifier = Modifier) {
-    LiftAppCard(onClick = null, modifier = modifier.fillMaxWidth()) { RestCard() }
+    LiftAppCard(
+        onClick = null,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        RestCard()
+    }
 }
 
 @Composable
@@ -44,7 +49,10 @@ internal fun NonePlanItem(
     val buttonPadding = LiftAppButtonDefaults.plainContentPadding
     val layoutDirection = LocalLayoutDirection.current
 
-    LiftAppCard(onClick = null, modifier = modifier.fillMaxWidth()) {
+    LiftAppCard(
+        onClick = null,
+        modifier = modifier.fillMaxWidth(),
+    ) {
         Icon(imageVector = LiftAppIcons.TreePalm, contentDescription = null)
         LiftAppText(
             text =
@@ -90,13 +98,13 @@ internal fun RoutinePlanItem(
 ) {
     LiftAppCard(
         onClick = { onAction(Action.GoToRoutine(planItem.routine.id)) },
-        modifier = modifier.fillMaxWidth(),
         colors =
             if (planItem.workout?.isCompleted == false) {
                 LiftAppCardDefaults.tonalCardColors
             } else {
                 LiftAppCardDefaults.cardColors
             },
+        modifier = modifier.fillMaxWidth(),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             planItem.workout?.also { workout -> WorkoutStatusWithDate(workout) }

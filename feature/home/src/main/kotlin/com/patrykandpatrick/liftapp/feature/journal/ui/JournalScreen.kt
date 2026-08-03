@@ -74,7 +74,7 @@ private fun JournalScreen(
         },
         contentWindowInsets = WindowInsets.systemBars,
     ) { paddingValues ->
-        val contentHorizontal = LocalDimens.current.screen.horizontalPadding
+        val contentHorizontal = LocalDimens.current.screen.padding
         if (pagedWorkouts.itemCount == 0 && pagedWorkouts.loadState.refresh is LoadState.Error) {
             EmptyState(
                 icon = LiftAppIcons.TriangleAlert,
@@ -99,8 +99,10 @@ private fun JournalScreen(
                     Modifier.fillMaxSize()
                         .padding(paddingValues)
                         .padding(
-                            horizontal = contentHorizontal,
-                            vertical = LocalDimens.current.screen.verticalPadding,
+                            start = contentHorizontal,
+                            top = LocalDimens.current.screen.padding,
+                            end = contentHorizontal,
+                            bottom = LocalDimens.current.screen.padding,
                         ),
             )
         } else {
@@ -108,7 +110,10 @@ private fun JournalScreen(
                 // As on the dashboard, only the vertical inset belongs to the list; the cards inset
                 // themselves.
                 contentPadding =
-                    paddingValues.increaseBy(vertical = LocalDimens.current.screen.verticalPadding),
+                    paddingValues.increaseBy(
+                        top = LocalDimens.current.screen.padding,
+                        bottom = LocalDimens.current.screen.padding,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(CardSpacing),
                 modifier = Modifier.fillMaxHeight(),
             ) {

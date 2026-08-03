@@ -403,12 +403,18 @@ constructor(
         )
 
     private fun formatDecimal(value: Double): String =
-        if (value == 0.0) ""
-        else formatter.formatNumber(value, format = Formatter.NumberFormat.Decimal)
+        if (value == 0.0) {
+            ""
+        } else {
+            formatter.formatNumber(value, format = Formatter.NumberFormat.Decimal)
+        }
 
     private fun formatInteger(value: Number): String =
-        if (value == 0) ""
-        else formatter.formatNumber(value, format = Formatter.NumberFormat.Integer)
+        if (value == 0) {
+            ""
+        } else {
+            formatter.formatNumber(value, format = Formatter.NumberFormat.Integer)
+        }
 
     private fun getTextFieldStateManagerKey(
         exerciseId: Long,

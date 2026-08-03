@@ -1,6 +1,5 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
@@ -32,7 +30,7 @@ internal fun ExerciseNotesBottomSheet(
     val focusManager = LocalFocusManager.current
 
     LiftAppModalBottomSheetWithTopAppBar(onDismissRequest = onDismissRequest) { dismiss ->
-        WorkoutInputBottomSheetContent(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        WorkoutInputBottomSheetContent {
             LiftAppTextField(
                 value = notes,
                 onValueChange = { notes = it },

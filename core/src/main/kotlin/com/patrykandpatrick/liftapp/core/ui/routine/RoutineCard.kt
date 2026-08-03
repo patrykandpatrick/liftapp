@@ -80,7 +80,7 @@ fun RoutineCard(
                     buildAnnotatedString { appendBulletList(exerciseNames) }
                 },
             style = MaterialTheme.typography.bodySmall.copy(lineHeight = 20.sp),
-            color = colorScheme.onSurfaceVariant,
+            color = colorScheme.foregroundVariant,
         )
 
         if (actionsRow != null) {

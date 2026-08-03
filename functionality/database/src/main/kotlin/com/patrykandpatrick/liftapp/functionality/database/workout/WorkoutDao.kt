@@ -380,9 +380,11 @@ interface WorkoutDao {
             val endDate = if (hasEndDate) "NOT NULL" else "NULL"
             val condition = "w.workout_end_date IS $endDate"
             return getWorkoutsSql(
-                if (limit == null) condition
-                else
+                if (limit == null) {
+                    condition
+                } else {
                     "$condition AND ${workoutWindow("workout_end_date IS $endDate", limit, offset)}"
+                }
             )
         }
 

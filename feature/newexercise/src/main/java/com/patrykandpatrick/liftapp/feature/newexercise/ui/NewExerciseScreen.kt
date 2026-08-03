@@ -93,8 +93,10 @@ private fun NewExerciseScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(paddingValues)
                     .padding(
-                        horizontal = dimens.screen.horizontalPadding,
-                        vertical = dimens.screen.verticalPadding,
+                        start = dimens.screen.padding,
+                        top = dimens.screen.padding,
+                        end = dimens.screen.padding,
+                        bottom = dimens.screen.padding,
                     ),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {

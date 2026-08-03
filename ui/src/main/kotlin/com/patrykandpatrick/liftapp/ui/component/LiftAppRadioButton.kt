@@ -16,10 +16,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.layer.CompositingStrategy
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -27,7 +25,6 @@ import com.patrykandpatrick.liftapp.ui.preview.ComponentPreview
 import com.patrykandpatrick.liftapp.ui.preview.GridPreviewSurface
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.liftapp.ui.theme.disabled
-import com.patrykandpatrick.liftapp.ui.theme.unfocused
 
 @Composable
 fun LiftAppRadioButton(
@@ -40,21 +37,11 @@ fun LiftAppRadioButton(
 ) {
     val radioButtonSize = dimens.radioButton.size
     val animatedColor = animateColorAsState(colors.getColor(selected, enabled))
-    val innerCircleSize =
+    val selectedCircleSize =
         animateDpAsState(
-            targetValue = if (selected) 0.dp else radioButtonSize - 4.dp,
-            animationSpec =
-                if (selected) tween(easing = FastOutSlowInEasing)
-                else tween(delayMillis = 100, easing = FastOutSlowInEasing),
+            targetValue = if (selected) radioButtonSize - 10.dp else 0.dp,
+            animationSpec = tween(easing = FastOutSlowInEasing),
         )
-    val outerCircleSize =
-        animateDpAsState(
-                targetValue = radioButtonSize - if (selected) 10.dp else 0.dp,
-                animationSpec =
-                    if (selected) tween(delayMillis = 100, easing = FastOutSlowInEasing)
-                    else tween(easing = FastOutSlowInEasing),
-            )
-            .value
 
     Canvas(
         modifier =
@@ -75,21 +62,18 @@ fun LiftAppRadioButton(
                 )
                 .defaultMinSize(radioButtonSize, radioButtonSize)
     ) {
-        drawContext.graphicsLayer?.compositingStrategy = CompositingStrategy.Offscreen
-
-        drawCircle(color = animatedColor.value, radius = outerCircleSize.toPx() / 2)
-
-        drawCircle(
-            color = Color.Black,
-            radius = (innerCircleSize.value).toPx() / 2,
-            blendMode = BlendMode.DstOut,
-        )
-
         drawCircle(
             color = animatedColor.value,
             radius = (radioButtonSize - 2.dp).toPx() / 2,
             style = Stroke(width = 2.dp.toPx()),
         )
+
+        if (selectedCircleSize.value > 0.dp) {
+            drawCircle(
+                color = animatedColor.value,
+                radius = selectedCircleSize.value.toPx() / 2,
+            )
+        }
     }
 }
 
@@ -118,16 +102,16 @@ object LiftAppRadioButtonDefaults {
         @Composable
         get() =
             colors(
-                checkedColor = colorScheme.onSurface,
-                uncheckedColor = colorScheme.onSurface.unfocused,
-                checkedDisabledColor = colorScheme.onSurfaceVariant.disabled,
-                uncheckedDisabledColor = colorScheme.onSurfaceVariant.disabled,
+                checkedColor = colorScheme.foreground,
+                uncheckedColor = colorScheme.foregroundVariant,
+                checkedDisabledColor = colorScheme.foregroundVariant.disabled,
+                uncheckedDisabledColor = colorScheme.foregroundVariant.disabled,
             )
 
     @Composable
     fun colors(
         checkedColor: Color = colorScheme.primary,
-        uncheckedColor: Color = colorScheme.onSurfaceVariant,
+        uncheckedColor: Color = colorScheme.foregroundVariant,
         checkedDisabledColor: Color = checkedColor.disabled,
         uncheckedDisabledColor: Color = uncheckedColor.disabled,
     ): LiftAppRadioButtonColors =

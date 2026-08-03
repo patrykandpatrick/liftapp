@@ -48,6 +48,4 @@ dependencies {
 
     "testImplementation"(project(":domain-testing"))
     "testImplementation"(libs.bundle("testing"))
-
-    "ksp"(libs.library("glide-ksp"))
 }

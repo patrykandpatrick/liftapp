@@ -20,7 +20,6 @@ import com.patrykandpatrick.liftapp.core.chart.BodyMeasurementChartColors
 import com.patrykandpatrick.liftapp.core.chart.Sparkline
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBadgeDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
-import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppLinearProgressIndicator
 import com.patrykandpatrick.liftapp.ui.component.LiftAppRatioBar
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
@@ -59,7 +58,7 @@ internal fun BodyMeasurementTile(
             LiftAppText(
                 text = item.name,
                 style = typography.labelMedium,
-                color = colorScheme.onSurfaceVariant,
+                color = colorScheme.foregroundVariant,
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
             )
@@ -76,8 +75,11 @@ internal fun BodyMeasurementTile(
 
         // Two numbers in a half-width tile need the smaller size to leave the unit its room.
         val valueStyle =
-            if (item.value.secondary != null) Typography.titleMediumMono
-            else Typography.titleLargeMono
+            if (item.value.secondary != null) {
+                Typography.titleMediumMono
+            } else {
+                Typography.titleLargeMono
+            }
 
         Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {
             LiftAppText(text = item.value.primary, style = valueStyle, maxLines = 1)
@@ -93,7 +95,7 @@ internal fun BodyMeasurementTile(
                 LiftAppText(
                     text = secondary,
                     style = valueStyle,
-                    color = colorScheme.onSurfaceVariant,
+                    color = colorScheme.foregroundVariant,
                     maxLines = 1,
                 )
             }
@@ -103,7 +105,7 @@ internal fun BodyMeasurementTile(
             LiftAppText(
                 text = item.value.unit,
                 style = typography.labelSmall,
-                color = colorScheme.onSurfaceVariant,
+                color = colorScheme.foregroundVariant,
                 maxLines = 1,
                 softWrap = false,
                 modifier = Modifier.padding(start = UnitMinSpacing, bottom = 2.dp),
@@ -147,7 +149,6 @@ private fun EmptyBodyMeasurementTile(
 ) {
     LiftAppCard(
         onClick = onClick,
-        colors = LiftAppCardDefaults.outlinedColors,
         verticalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = TileContentPadding,
         modifier = modifier,
@@ -155,7 +156,7 @@ private fun EmptyBodyMeasurementTile(
         LiftAppText(
             text = name,
             style = typography.labelMedium,
-            color = colorScheme.onSurfaceVariant,
+            color = colorScheme.foregroundVariant,
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )

@@ -82,6 +82,10 @@ object Routes {
 
     @Serializable object Settings
 
+    @Serializable object OpenSourceLicenses
+
+    @Serializable data class OpenSourceLicense(val name: String, val offset: Int, val length: Int)
+
     object Backup {
         @Serializable object Overview
 

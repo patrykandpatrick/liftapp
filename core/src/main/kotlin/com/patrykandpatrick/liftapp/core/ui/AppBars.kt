@@ -55,12 +55,12 @@ fun TopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    // Expanded, the bar is part of the content behind it. As it collapses it fades in the surface
-    // and divider the bottom bar wears, so the content scrolling under it ends at a visible edge.
+    // Expanded, the bar is part of the content behind it. As it collapses, its background and
+    // divider fade in so the content scrolling underneath ends at a visible edge.
     val chromeAlpha = { scrollBehavior?.state?.collapsedFraction ?: 1f }
-    val surfaceColor = colorScheme.surface
+    val backgroundColor = colorScheme.background
 
-    Column(Modifier.drawBehind { drawRect(color = surfaceColor, alpha = chromeAlpha()) }) {
+    Column(Modifier.drawBehind { drawRect(color = backgroundColor, alpha = chromeAlpha()) }) {
         Box {
             LargeTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -132,7 +132,6 @@ private fun CollapsingTitle(
                 )
         val titleBaseline =
             titlePlaceable[FirstBaseline].takeIf { it != AlignmentLine.Unspecified } ?: 0
-
         val expandedX = expandedStart
         val collapsedX = (constraints.maxWidth - titlePlaceable.width) / 2
         val titleX = (expandedX + (collapsedX - expandedX) * fraction).roundToInt()
@@ -164,7 +163,7 @@ fun TopAppBarWithTabs(
     actions: @Composable RowScope.() -> Unit = {},
     tabs: @Composable () -> Unit,
 ) {
-    val dividerColor = colorScheme.divider
+    val dividerColor = colorScheme.outline
     val dividerThickness = LocalDimens.current.divider.thickness
 
     CompactTopAppBar(
@@ -232,8 +231,11 @@ fun TopAppBarWithTabs(
                                 Modifier.align(Alignment.CenterHorizontally)
                                     .padding(
                                         bottom =
-                                            if (tabItem.text != null) tabDimens.iconToTextPadding
-                                            else 0.dp
+                                            if (tabItem.text != null) {
+                                                tabDimens.iconToTextPadding
+                                            } else {
+                                                0.dp
+                                            }
                                     ),
                             imageVector = tabItem.icon,
                             contentDescription = null,
@@ -281,9 +283,9 @@ object AppBars {
      */
     @Composable
     fun colors(
-        scrolledContainerColor: Color = colorScheme.surface,
+        scrolledContainerColor: Color = colorScheme.background,
         containerColor: Color = scrolledContainerColor.copy(alpha = 0f),
-        contentColor: Color = colorScheme.onSurface,
+        contentColor: Color = colorScheme.foreground,
     ): TopAppBarColors =
         TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,

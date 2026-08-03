@@ -21,13 +21,11 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.layer.CompositingStrategy
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,7 +48,9 @@ fun LiftAppCheckbox(
     val checkboxCornerSize = dimens.checkbox.cornerSize
     val strokeWidth = dimens.checkbox.strokeWidth
     val animatedColor = animateColorAsState(colors.getColor(checked, enabled))
-    val innerRectSize = remember { mutableStateOf(if (checked) 0.dp else checkboxSize - 4.dp) }
+    val animatedCheckmarkColor =
+        animateColorAsState(if (enabled) colors.checkmark else colors.checkmarkDisabled)
+    val fillRectSize = remember { mutableStateOf(if (checked) checkboxSize else 0.dp) }
     val path = remember { Path() }
     val pathMeasure = remember { PathMeasure() }
     val pathProgress = remember { mutableFloatStateOf(if (checked) 1f else 0f) }
@@ -58,11 +58,11 @@ fun LiftAppCheckbox(
     LaunchedEffect(checked) {
         if (checked) {
             animate(
-                initialValue = innerRectSize.value,
-                targetValue = 0.dp,
+                initialValue = fillRectSize.value,
+                targetValue = checkboxSize,
                 typeConverter = Dp.VectorConverter,
             ) { value, velocity ->
-                innerRectSize.value = value
+                fillRectSize.value = value
             }
 
             animate(initialValue = pathProgress.floatValue, targetValue = 1f) { value, velocity ->
@@ -74,11 +74,11 @@ fun LiftAppCheckbox(
             }
 
             animate(
-                initialValue = innerRectSize.value,
-                targetValue = checkboxSize - 4.dp,
+                initialValue = fillRectSize.value,
+                targetValue = 0.dp,
                 typeConverter = Dp.VectorConverter,
             ) { value, velocity ->
-                innerRectSize.value = value
+                fillRectSize.value = value
             }
         }
     }
@@ -91,7 +91,7 @@ fun LiftAppCheckbox(
                         Modifier.selectable(
                             selected = checked,
                             enabled = enabled,
-                            role = Role.RadioButton,
+                            role = Role.Checkbox,
                             onClick = { onCheckedChange(!checked) },
                             interactionSource =
                                 interactionSource ?: remember { MutableInteractionSource() },
@@ -102,34 +102,36 @@ fun LiftAppCheckbox(
                 )
                 .defaultMinSize(checkboxSize, checkboxSize)
     ) {
-        drawContext.graphicsLayer?.compositingStrategy = CompositingStrategy.Offscreen
+        val checkboxSizePx = checkboxSize.toPx()
+        val checkboxTopLeft =
+            Offset(
+                size.width / 2 - checkboxSizePx / 2,
+                size.height / 2 - checkboxSizePx / 2,
+            )
+        val fillSizePx = fillRectSize.value.toPx()
+        if (fillSizePx > 0f) {
+            val fillCornerRadius = minOf(checkboxCornerSize.toPx(), fillSizePx / 2)
+            drawRoundRect(
+                color = animatedColor.value,
+                topLeft =
+                    Offset(
+                        size.width / 2 - fillSizePx / 2,
+                        size.height / 2 - fillSizePx / 2,
+                    ),
+                size = Size(fillSizePx, fillSizePx),
+                cornerRadius = CornerRadius(fillCornerRadius, fillCornerRadius),
+            )
+        }
 
-        drawRoundRect(
-            color = animatedColor.value,
-            topLeft =
-                Offset(
-                    size.width / 2 - checkboxSize.toPx() / 2,
-                    size.height / 2 - checkboxSize.toPx() / 2,
-                ),
-            size = Size(checkboxSize.toPx(), checkboxSize.toPx()),
-            cornerRadius = CornerRadius(checkboxCornerSize.toPx(), checkboxCornerSize.toPx()),
-        )
-
-        drawRoundRect(
-            color = Color.Black,
-            topLeft =
-                Offset(
-                    size.width / 2 - innerRectSize.value.toPx() / 2,
-                    size.height / 2 - innerRectSize.value.toPx() / 2,
-                ),
-            size = Size(innerRectSize.value.toPx(), innerRectSize.value.toPx()),
-            cornerRadius =
-                CornerRadius(
-                    x = checkboxCornerSize.toPx() - strokeWidth.toPx(),
-                    y = checkboxCornerSize.toPx() - strokeWidth.toPx(),
-                ),
-            blendMode = BlendMode.DstOut,
-        )
+        if (fillSizePx < checkboxSizePx) {
+            drawRoundRect(
+                color = animatedColor.value,
+                topLeft = checkboxTopLeft,
+                size = Size(checkboxSizePx, checkboxSizePx),
+                cornerRadius = CornerRadius(checkboxCornerSize.toPx(), checkboxCornerSize.toPx()),
+                style = Stroke(width = strokeWidth.toPx()),
+            )
+        }
 
         path.rewind()
         path.moveTo(size.center.x - 6.dp.toPx(), size.center.y)
@@ -139,7 +141,7 @@ fun LiftAppCheckbox(
 
         drawPath(
             path = path,
-            color = colors.checkmark,
+            color = animatedCheckmarkColor.value,
             style =
                 Stroke(
                     width = strokeWidth.toPx(),
@@ -178,7 +180,7 @@ object LiftAppCheckboxDefaults {
     @Composable
     fun colors(
         checkedColor: Color = colorScheme.primary,
-        uncheckedColor: Color = colorScheme.onSurfaceVariant,
+        uncheckedColor: Color = colorScheme.foregroundVariant,
         checkmarkColor: Color = colorScheme.onPrimary,
         checkedDisabledColor: Color = checkedColor.disabled,
         uncheckedDisabledColor: Color = uncheckedColor.disabled,

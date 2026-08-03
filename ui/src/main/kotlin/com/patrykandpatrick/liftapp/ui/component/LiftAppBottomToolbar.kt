@@ -13,7 +13,7 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
 fun LiftAppBottomToolbar(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
-    Column(modifier = modifier.fillMaxWidth().background(colorScheme.surface)) {
+    Column(modifier = modifier.fillMaxWidth().background(colorScheme.background)) {
         LiftAppHorizontalDivider()
         Box(
             modifier = Modifier.fillMaxWidth().navigationBarsPadding().imePadding(),

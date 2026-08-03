@@ -20,7 +20,7 @@ object LiftAppSwitchDefaults {
     fun colors(
         checkedColor: Color = colorScheme.primary,
         checkedThumbColor: Color = colorScheme.onPrimary,
-        uncheckedColor: Color = colorScheme.onSurfaceVariant,
+        uncheckedColor: Color = colorScheme.foregroundVariant,
         uncheckedTrackColor: Color = colorScheme.surface,
     ): SwitchColors =
         SwitchDefaults.colors(

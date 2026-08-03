@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -26,7 +25,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -113,16 +111,11 @@ private fun PlanCreatorScreen(
                 )
             },
         ) { paddingValues ->
-            val screenVerticalPadding = LocalDimens.current.screen.verticalPadding
-            val floatingLabelTopInset =
-                with(LocalDensity.current) {
-                    MaterialTheme.typography.bodySmall.lineHeight.toDp() / 2
-                }
             LazyColumn(
                 contentPadding =
                     PaddingValues(
-                        top = screenVerticalPadding - floatingLabelTopInset,
-                        bottom = screenVerticalPadding,
+                        top = LocalDimens.current.screen.padding,
+                        bottom = LocalDimens.current.screen.padding,
                     ),
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
             ) {
@@ -177,17 +170,14 @@ private fun LazyListScope.items(state: ScreenState, onAction: (Action) -> Unit) 
     item(key = "input") {
         EditableDetails(
             state,
-            Modifier.padding(horizontal = LocalDimens.current.screen.horizontalPadding)
+            Modifier.padding(horizontal = LocalDimens.current.screen.padding)
                 .fillMaxWidth()
                 .animateItem(),
         )
     }
 
     item(key = "details_divider", contentType = "divider") {
-        val supportingTextSlotHeight = LocalDimens.current.supportingText.verticalPadding * 2
-        SinHorizontalDivider(
-            Modifier.padding(top = VISIBLE_SECTION_SPACING - supportingTextSlotHeight).animateItem()
-        )
+        SinHorizontalDivider(Modifier.padding(top = VISIBLE_SECTION_SPACING).animateItem())
     }
 
     itemsIndexed(items = state.items, key = { _, item -> item.id }) { index, item ->
@@ -206,16 +196,11 @@ private fun LazyListScope.items(state: ScreenState, onAction: (Action) -> Unit) 
 
 @Composable
 private fun EditableDetails(state: ScreenState, modifier: Modifier = Modifier) {
-    val supportingTextVerticalPadding = LocalDimens.current.supportingText.verticalPadding
-    val floatingLabelTopPadding =
-        with(LocalDensity.current) { MaterialTheme.typography.bodySmall.lineHeight.toDp() / 2 }
-    val outlineSpacing =
-        VISIBLE_INPUT_SPACING - supportingTextVerticalPadding * 2 - floatingLabelTopPadding
-
     Column(
         modifier = modifier,
-        // Measure between borders, excluding the empty supporting slot and the next label's inset.
-        verticalArrangement = Arrangement.spacedBy(outlineSpacing),
+        // The field wrapper now has no empty supporting slot, so this directly measures from the
+        // preceding outline to the next field's visible label.
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         val focusManager = LocalFocusManager.current
 
@@ -236,7 +221,6 @@ private fun EditableDetails(state: ScreenState, modifier: Modifier = Modifier) {
     }
 }
 
-private val VISIBLE_INPUT_SPACING = 16.dp
 private val VISIBLE_SECTION_SPACING = 20.dp
 private val ITEM_VERTICAL_SPACING = 16.dp
 
@@ -252,8 +236,8 @@ private fun PlanCreatorItem(
             modifier
                 .fillMaxWidth()
                 .padding(
-                    start = LocalDimens.current.screen.horizontalPadding,
-                    end = LocalDimens.current.screen.horizontalPadding - 8.dp,
+                    start = LocalDimens.current.screen.padding,
+                    end = LocalDimens.current.screen.padding - 8.dp,
                 ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -265,8 +249,7 @@ private fun PlanCreatorItem(
             onAddRoutineClick = { onAction(Action.AddRoutine) },
             onClick = { onAction(Action.OnRoutineClick(it.routine.id)) },
             modifier =
-                Modifier.weight(1f)
-                    .padding(start = LocalDimens.current.screen.horizontalPadding - 8.dp),
+                Modifier.weight(1f).padding(start = LocalDimens.current.screen.padding - 8.dp),
         )
 
         if (item is ScreenState.Item.PlaceholderItem) {
@@ -276,8 +259,11 @@ private fun PlanCreatorItem(
                 onClick = { onAction(Action.RemoveItem(index)) },
                 modifier =
                     Modifier.align(
-                        if (item is ScreenState.Item.RestItem) Alignment.CenterVertically
-                        else Alignment.Top
+                        if (item is ScreenState.Item.RestItem) {
+                            Alignment.CenterVertically
+                        } else {
+                            Alignment.Top
+                        }
                     ),
             ) {
                 Icon(

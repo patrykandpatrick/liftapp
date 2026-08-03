@@ -109,7 +109,7 @@ fun SwipeableDeleteBackground(swipeProgress: Float, swipeOffset: Float) {
 fun SwipeableBackground(
     swipeProgress: Float,
     swipeOffset: Float,
-    contentColor: Color = colorScheme.onSurface,
+    contentColor: Color = colorScheme.foreground,
     backgroundColor: Color = colorScheme.background,
     content: @Composable BoxScope.(swipeProgress: Float, swipeOffset: Float) -> Unit,
 ) {

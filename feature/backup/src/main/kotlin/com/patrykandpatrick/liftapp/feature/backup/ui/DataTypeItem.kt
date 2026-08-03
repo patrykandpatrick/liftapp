@@ -4,10 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.core.extension.stringResourceId
-import com.patrykandpatrick.liftapp.core.ui.ListItem
-import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults
 import com.patrykandpatrick.liftapp.core.ui.resource.imageVector
 import com.patrykandpatrick.liftapp.domain.backup.BackupDataType
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 
 /**
  * One row of the data picker the back up and restore screens share.
@@ -22,14 +23,20 @@ fun DataTypeItem(
     required: Boolean,
     onCheckedChange: () -> Unit,
     modifier: Modifier = Modifier,
+    position: LiftAppListItemPosition = LiftAppListItemPosition.Single,
+    nextItemSelected: Boolean = false,
 ) {
-    ListItem(
+    LiftAppListItem(
         title = stringResource(type.stringResourceId),
         imageVector = type.imageVector,
         checked = checked,
+        nextItemSelected = nextItemSelected,
         enabled = !required,
-        actions = { ListItemDefaults.Checkbox(checked) },
-        onClick = if (required) null else onCheckedChange,
+        actions = {
+            LiftAppCheckbox(checked = checked, onCheckedChange = null, enabled = !required)
+        },
+        onCheckedChange = { if (!required) onCheckedChange() },
+        position = position,
         modifier = modifier,
     )
 }

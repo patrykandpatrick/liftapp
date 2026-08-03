@@ -198,7 +198,7 @@ private fun InputFieldLayoutPreview() {
                     Text(
                         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = colorScheme.onSurface,
+                        color = colorScheme.foreground,
                     )
                 },
             )

@@ -77,7 +77,6 @@ import com.patrykandpatrick.liftapp.core.ui.AppBars
 import com.patrykandpatrick.liftapp.core.ui.Backdrop
 import com.patrykandpatrick.liftapp.core.ui.BackdropState
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
-import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatrick.liftapp.core.ui.animation.sharedXAxisTransition
 import com.patrykandpatrick.liftapp.core.ui.rememberBackdropState
@@ -103,6 +102,7 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppDestructiveActionDialog
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
@@ -122,6 +122,7 @@ import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.Typography
 import com.patrykandpatrick.liftapp.ui.theme.bottomSheetShadow
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import com.patrykandpatrick.liftapp.ui.theme.getLiftAppColorScheme
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -180,6 +181,7 @@ fun WorkoutScreen(
     val timerState = restTimerService.value?.timer?.collectAsStateWithLifecycle(null)?.value
     val isTimerActive = timerState != null && !timerState.isFinished
     val manualTimerDuration = workout?.restTimerDuration(selectedPage)
+    val backdropBackground = getLiftAppColorScheme(isDarkTheme = true).background
 
     LaunchedEffect(isBackdropClosed) {
         if (isBackdropClosed) backdropListScrolled = false
@@ -235,17 +237,20 @@ fun WorkoutScreen(
                                 imageVector = LiftAppIcons.Hourglass,
                                 contentDescription =
                                     stringResource(
-                                        if (isTimerActive) R.string.rest_timer_action_stop
-                                        else R.string.rest_timer_action_start
+                                        if (isTimerActive) {
+                                            R.string.rest_timer_action_stop
+                                        } else {
+                                            R.string.rest_timer_action_start
+                                        }
                                     ),
                             )
                         }
                     },
                     colors =
                         AppBars.colors(
-                            containerColor = colorScheme.bottomSheetScrim,
-                            scrolledContainerColor = colorScheme.surface,
-                            contentColor = colorScheme.onSurface,
+                            containerColor = colorScheme.background,
+                            scrolledContainerColor = colorScheme.background,
+                            contentColor = colorScheme.foreground,
                         ),
                     alwaysShowChrome = backdropState.offsetFraction > 0f && backdropListScrolled,
                 )
@@ -291,7 +296,7 @@ fun WorkoutScreen(
             }
         },
         modifier = modifier,
-        containerColor = colorScheme.bottomSheetScrim,
+        containerColor = backdropBackground,
         contentWindowInsets = WindowInsets.statusBars,
     ) { paddingValues ->
         if (workout != null) {
@@ -487,7 +492,7 @@ private fun Content(
             Column(
                 modifier =
                     Modifier.bottomSheetShadow()
-                        .background(color = colorScheme.surface, shape = BottomSheetShape)
+                        .background(color = colorScheme.background, shape = BottomSheetShape)
                         .topTintedEdge(BottomSheetShape)
             ) {
                 val coroutineScope = rememberCoroutineScope()
@@ -558,20 +563,22 @@ private fun Content(
 private fun LazyListScope.setCountButtons(
     exercises: List<EditableWorkout.Exercise>,
     notesExercise: EditableWorkout.Exercise,
-    showDivider: Boolean,
     onAction: (Action) -> Unit,
     onEditNotes: () -> Unit,
 ) {
-    item(key = "add_set_${exercises.first().workoutItemID}") {
-        LiftAppHorizontalDivider(Modifier.animateItem().padding(top = 8.dp))
+    item(key = "set_actions_divider_${exercises.first().workoutItemID}") {
+        LiftAppHorizontalDivider(Modifier.animateItem().padding(top = 16.dp))
+    }
 
+    item(key = "add_set_${exercises.first().workoutItemID}") {
         Row(
             modifier =
                 Modifier.animateItem()
                     .fillMaxWidth()
                     .padding(
-                        horizontal = dimens.screen.horizontalPadding,
-                        vertical = 16.dp,
+                        start = dimens.screen.padding,
+                        top = 16.dp,
+                        end = dimens.screen.padding,
                     ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -582,8 +589,11 @@ private fun LazyListScope.setCountButtons(
             ) {
                 Icon(
                     imageVector =
-                        if (notesExercise.notes.isBlank()) LiftAppIcons.MessageSquare
-                        else LiftAppIcons.MessageSquareText,
+                        if (notesExercise.notes.isBlank()) {
+                            LiftAppIcons.MessageSquare
+                        } else {
+                            LiftAppIcons.MessageSquareText
+                        },
                     contentDescription = null,
                 )
                 LiftAppText(text = stringResource(R.string.generic_notes))
@@ -637,10 +647,6 @@ private fun LazyListScope.setCountButtons(
                 }
             }
         }
-
-        if (showDivider) {
-            LiftAppHorizontalDivider(Modifier.animateItem().padding(vertical = 8.dp))
-        }
     }
 }
 
@@ -677,7 +683,7 @@ private fun BottomBar(
 ) {
     val revealFraction = addExercisesRevealFraction.takeIf { it.isFinite() }?.coerceIn(0f, 1f) ?: 0f
 
-    Column(modifier = modifier.fillMaxWidth().background(colorScheme.surface)) {
+    Column(modifier = modifier.fillMaxWidth().background(colorScheme.background)) {
         LiftAppHorizontalDivider()
         BoxWithConstraints(
             modifier =
@@ -688,7 +694,7 @@ private fun BottomBar(
         ) {
             val pageWidthPixels = constraints.maxWidth
             val horizontalPaddingPixels =
-                with(LocalDensity.current) { dimens.screen.horizontalPadding.roundToPx() }
+                with(LocalDensity.current) { dimens.screen.padding.roundToPx() }
             val buttonGapPixels = with(LocalDensity.current) { 16.dp.roundToPx() }
             val slideStridePixels =
                 (pageWidthPixels - horizontalPaddingPixels * 2 + buttonGapPixels).coerceAtLeast(0)
@@ -701,7 +707,7 @@ private fun BottomBar(
                                 y = 0,
                             )
                         }
-                        .padding(horizontal = dimens.screen.horizontalPadding)
+                        .padding(horizontal = dimens.screen.padding)
             ) {
                 LiftAppButton(
                     onClick = onPrimaryClick,
@@ -725,7 +731,7 @@ private fun BottomBar(
                                 y = 0,
                             )
                         }
-                        .padding(horizontal = dimens.screen.horizontalPadding)
+                        .padding(horizontal = dimens.screen.padding)
             ) {
                 LiftAppButton(
                     onClick = onAddExercisesClick,
@@ -809,7 +815,11 @@ private fun Page(
     LazyColumn(
         state = listState,
         contentPadding =
-            PaddingValues(bottom = if (isRestTimerVisible) RestTimerContainerHeight else 0.dp),
+            PaddingValues(
+                bottom =
+                    dimens.screen.padding +
+                        if (isRestTimerVisible) RestTimerContainerHeight else 0.dp
+            ),
         modifier = modifier.fillMaxSize(),
     ) {
         val regularExercise = item.exercises.singleOrNull()
@@ -819,21 +829,9 @@ private fun Page(
                 items = List(item.setCount) { it },
                 key = { _, setIndex -> "superset_set_$setIndex" },
             ) { _, setIndex ->
-                Column(
-                    modifier =
-                        Modifier.animateItem()
-                            .fillMaxWidth()
-                            .padding(bottom = if (setIndex == item.setCount - 1) 4.dp else 0.dp)
-                ) {
+                Column(modifier = Modifier.animateItem().fillMaxWidth()) {
                     ListSectionTitle(
-                        title = stringResource(R.string.exercise_set_set_index, setIndex + 1),
-                        paddingValues =
-                            PaddingValues(
-                                start = ListItemDefaults.leadingContentStartPadding,
-                                top = 16.dp,
-                                end = dimens.screen.horizontalPadding,
-                                bottom = 16.dp,
-                            ),
+                        title = stringResource(R.string.exercise_set_set_index, setIndex + 1)
                     )
                     item.exercises.forEachIndexed { supersetExerciseIndex, exercise ->
                         val set = exercise.sets.getOrNull(setIndex) ?: return@forEachIndexed
@@ -849,7 +847,17 @@ private fun Page(
                                 selectedItem?.exerciseIndex == workoutExerciseIndex &&
                                     selectedItem.setIndex == setIndex,
                             onSelect = { onEditSet(iteratorItem) },
-                            modifier = Modifier.fillMaxWidth(),
+                            position =
+                                LiftAppListItemPosition(
+                                    supersetExerciseIndex,
+                                    item.exercises.size,
+                                ),
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .padding(
+                                        start = dimens.screen.padding,
+                                        end = dimens.screen.padding,
+                                    ),
                         )
                     }
                 }
@@ -869,7 +877,14 @@ private fun Page(
                     index = index,
                     isSelected = isActiveSet,
                     onSelectSet = { onEditSet(iteratorItem) },
-                    modifier = Modifier.animateItem().fillMaxWidth().padding(vertical = 4.dp),
+                    position = LiftAppListItemPosition(index, regularExercise.sets.size),
+                    modifier =
+                        Modifier.animateItem()
+                            .fillMaxWidth()
+                            .padding(
+                                start = dimens.screen.padding,
+                                end = dimens.screen.padding,
+                            ),
                 )
             }
         }
@@ -877,7 +892,6 @@ private fun Page(
         setCountButtons(
             exercises = item.exercises,
             notesExercise = notesExercise,
-            showDivider = false,
             onAction = onAction,
             onEditNotes = { showExerciseNotes = true },
         )

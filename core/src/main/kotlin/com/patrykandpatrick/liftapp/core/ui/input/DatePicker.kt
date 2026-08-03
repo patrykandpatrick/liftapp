@@ -1,8 +1,9 @@
 package com.patrykandpatrick.liftapp.core.ui.input
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -67,9 +68,9 @@ fun DatePicker(
                         )
                         .width(IntrinsicSize.Min)
                         .padding(all = LocalDimens.current.dialog.windowPadding),
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 tonalElevation = LocalDimens.current.dialog.tonalElevation,
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = MaterialTheme.shapes.large,
             ) {
                 DatePickerContent(
                     modifier = Modifier.padding(all = LocalDimens.current.dialog.contentPadding),
@@ -91,22 +92,22 @@ private fun DatePickerContent(
     state: DatePickerState,
     onPositiveButtonClick: () -> Unit,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
+    Column(modifier = modifier) {
         Text(
-            modifier = Modifier.padding(bottom = 16.dp),
             text = stringResource(id = R.string.picker_date_title),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleSmall,
         )
+
+        Spacer(Modifier.height(32.dp))
 
         Text(
             text = state.resolvedFormattedDate,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineMedium,
         )
+
+        Spacer(Modifier.height(16.dp))
 
         LiftAppTextFieldWithSupportingText(
             value = state.input,
@@ -127,8 +128,9 @@ private fun DatePickerContent(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
 
+        Spacer(Modifier.height(32.dp))
+
         DialogButtons(
-            modifier = Modifier.padding(top = 16.dp),
             onNegativeButtonClick = state::hide,
             onPositiveButtonClick = onPositiveButtonClick,
             isPositiveButtonEnabled = state.isInputValid,

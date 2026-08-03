@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <style name="Theme.LiftApp.OssLicenses" parent="Theme.LiftApp.OssLicenses.Base">
-        <item name="android:windowLightNavigationBar">@bool/liftapp_use_dark_system_bar_icons</item>
-    </style>
-
-</resources>

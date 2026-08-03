@@ -78,7 +78,7 @@ private fun Item(value: String, label: String, modifier: Modifier = Modifier) {
         LiftAppText(
             text = label,
             style = typography.bodyMedium,
-            color = colorScheme.onSurfaceVariant,
+            color = colorScheme.foregroundVariant,
         )
     }
 }
@@ -99,8 +99,10 @@ private fun StatisticsPreview() {
                     ),
                 modifier =
                     Modifier.padding(
-                        horizontal = dimens.screen.horizontalPadding,
-                        vertical = dimens.screen.verticalPadding,
+                        start = dimens.screen.padding,
+                        top = 8.dp,
+                        end = dimens.screen.padding,
+                        bottom = 16.dp,
                     ),
             )
         }

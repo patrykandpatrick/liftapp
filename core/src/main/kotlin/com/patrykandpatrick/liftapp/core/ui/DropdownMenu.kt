@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +27,8 @@ import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppModalBottomSheet
 import com.patrykandpatrick.liftapp.ui.component.LiftAppRadioButton
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
@@ -126,6 +128,7 @@ private fun <T> ListBottomSheet(
             onDismissRequest = onDismissRequest,
             sheetState = sheetState,
             modifier = modifier,
+            containerColor = colorScheme.background,
         ) {
             ListBottomSheetContent(
                 onDismissRequest = {
@@ -161,7 +164,7 @@ private fun <T> ListBottomSheetContent(
     isMultiSelect: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.background(colorScheme.surface)) {
+    Column(modifier = modifier.background(colorScheme.background)) {
         CompactTopAppBar(
             title = { Text(text = title, style = MaterialTheme.typography.titleMedium) },
             navigationIcon = {
@@ -182,7 +185,7 @@ private fun <T> ListBottomSheetContent(
                 Text(
                     text = stringResource(R.string.title_x_selected, selectedItems.size),
                     style = MaterialTheme.typography.titleMedium,
-                    color = colorScheme.onSurface,
+                    color = colorScheme.foreground,
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                 )
 
@@ -198,51 +201,73 @@ private fun <T> ListBottomSheetContent(
 
         LazyColumn(
             state = lazyListState,
-            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 8.dp),
+            contentPadding =
+                PaddingValues(
+                    start = 16.dp,
+                    top = 8.dp,
+                    end = 16.dp,
+                    bottom = if (isMultiSelect) 8.dp else 16.dp,
+                ),
             modifier =
                 Modifier.fadingEdges(verticalEdgeLength = 32.dp, lazyListState = lazyListState)
                     .weight(1f, fill = false),
         ) {
-            items(items) { item ->
+            itemsIndexed(items) { index, item ->
                 val enabled = disabledItems?.contains(item) != true
+                val selected = selectedItems.contains(item)
+                val selectItem = {
+                    onClick(item)
+                    if (!isMultiSelect) onDismissRequest()
+                }
 
-                ListItem(
+                LiftAppListItem(
                     title = { Text(getItemText(item)) },
                     icon = {
                         if (isMultiSelect) {
                             LiftAppCheckbox(
-                                checked = selectedItems.contains(item),
+                                checked = selected,
                                 onCheckedChange = null,
                             )
                         } else {
                             LiftAppRadioButton(
-                                selected = selectedItems.contains(item),
+                                selected = selected,
                                 onCheck = null,
                             )
                         }
                     },
-                    modifier = Modifier,
+                    position = LiftAppListItemPosition(index, items.size),
+                    checked = selected.takeIf { isMultiSelect },
+                    selected = selected.takeIf { !isMultiSelect },
+                    nextItemSelected = items.getOrNull(index + 1) in selectedItems,
+                    onCheckedChange =
+                        if (isMultiSelect) {
+                            { selectItem() }
+                        } else {
+                            null
+                        },
                     enabled = enabled,
-                    paddingValues =
+                    contentPadding =
                         PaddingValues(
                             horizontal = 16.dp,
                             vertical = 12.dp,
                         ),
-                    onClick = { onClick(item) },
+                    onClick = selectItem,
                 )
             }
         }
 
-        LiftAppButton(
-            onClick = onDismissRequest,
-            modifier =
-                Modifier.fillMaxWidth()
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 16.dp,
-                    ),
-        ) {
-            Text(text = stringResource(id = R.string.action_apply))
+        if (isMultiSelect) {
+            LiftAppButton(
+                onClick = onDismissRequest,
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 16.dp,
+                        ),
+            ) {
+                Text(text = stringResource(id = R.string.action_apply))
+            }
         }
     }
 }

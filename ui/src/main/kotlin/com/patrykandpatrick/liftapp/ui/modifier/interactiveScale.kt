@@ -12,10 +12,12 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.InspectorInfo
 import com.patrykandpatrick.liftapp.ui.interaction.HoverInteraction
 import com.patrykandpatrick.liftapp.ui.state.animatedFloatStateOf
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 fun Modifier.interactiveScale(
@@ -39,9 +41,7 @@ private data class InteractiveScaleElement(
     override fun create(): ScaleNode = ScaleNode(interactionSource, scale, animationSpec)
 
     override fun update(node: ScaleNode) {
-        node.interactionSource = interactionSource
-        node.scale = scale
-        node.animationSpec = animationSpec
+        node.update(interactionSource, scale, animationSpec)
     }
 
     override fun InspectorInfo.inspectableProperties() {
@@ -59,50 +59,72 @@ data class ScaleIndication(
 }
 
 private class ScaleNode(
-    var interactionSource: InteractionSource,
-    var scale: IndicationScale,
-    var animationSpec: AnimationSpec<Float>,
+    private var interactionSource: InteractionSource,
+    private var scale: IndicationScale,
+    private var animationSpec: AnimationSpec<Float>,
 ) : DrawModifierNode, Modifier.Node() {
 
-    private val currentScale = animatedFloatStateOf(1f, animationSpec)
+    private var currentScale = animatedFloatStateOf(1f, animationSpec)
     private val activeDrags = mutableSetOf<DragInteraction.Start>()
+    private var interactionCollectionJob: Job? = null
+    private var pressAnimationJob: Job? = null
+    private var postPressAnimationJob: Job? = null
+
+    private fun animatePress() {
+        postPressAnimationJob?.cancel()
+        pressAnimationJob?.cancel()
+        pressAnimationJob = coroutineScope.launch { currentScale.animate(scale.press) }
+    }
+
+    private fun animateAfterPress(target: Float) {
+        postPressAnimationJob?.cancel()
+        val pressAnimationJob = pressAnimationJob
+        postPressAnimationJob = coroutineScope.launch {
+            pressAnimationJob?.join()
+            currentScale.animate(target)
+        }
+    }
+
+    private fun animateImmediately(target: Float) {
+        pressAnimationJob?.cancel()
+        postPressAnimationJob?.cancel()
+        postPressAnimationJob = coroutineScope.launch { currentScale.animate(target) }
+    }
 
     override fun onAttach() {
+        currentScale.value = scale.default
+        observeInteractions()
+    }
+
+    private fun observeInteractions() {
+        interactionCollectionJob?.cancel()
+        pressAnimationJob?.cancel()
+        postPressAnimationJob?.cancel()
         activeDrags.clear()
         currentScale.value = scale.default
-        coroutineScope.launch {
-            interactionSource.interactions.collectLatest { interaction ->
+        interactionCollectionJob = coroutineScope.launch {
+            interactionSource.interactions.collect { interaction ->
                 when (interaction) {
-                    is PressInteraction.Press -> currentScale.animate(scale.press)
-                    is HoverInteraction.Enter,
-                    is HoverInteraction.EnterFromRelease -> currentScale.animate(scale.hover)
-                    is PressInteraction.Release -> {
-                        currentScale.animate(
-                            if (activeDrags.isEmpty()) scale.default else scale.drag
-                        )
-                    }
+                    is PressInteraction.Press -> animatePress()
+                    is HoverInteraction.Enter -> animateImmediately(scale.hover)
+                    is HoverInteraction.EnterFromRelease -> animateAfterPress(scale.hover)
+                    is PressInteraction.Release ->
+                        animateAfterPress(if (activeDrags.isEmpty()) scale.default else scale.drag)
                     is DragInteraction.Start -> {
                         activeDrags += interaction
-                        currentScale.animate(scale.drag)
+                        animateImmediately(scale.drag)
                     }
                     is DragInteraction.Stop -> {
                         activeDrags -= interaction.start
-                        currentScale.animate(
-                            if (activeDrags.isEmpty()) scale.default else scale.drag
-                        )
+                        animateImmediately(if (activeDrags.isEmpty()) scale.default else scale.drag)
                     }
                     is DragInteraction.Cancel -> {
                         activeDrags -= interaction.start
-                        currentScale.animate(
-                            if (activeDrags.isEmpty()) scale.default else scale.drag
-                        )
+                        animateImmediately(if (activeDrags.isEmpty()) scale.default else scale.drag)
                     }
                     is HoverInteraction.Exit,
-                    is PressInteraction.Cancel -> {
-                        currentScale.animate(
-                            if (activeDrags.isEmpty()) scale.default else scale.drag
-                        )
-                    }
+                    is PressInteraction.Cancel ->
+                        animateImmediately(if (activeDrags.isEmpty()) scale.default else scale.drag)
                     else -> Unit
                 }
             }
@@ -110,7 +132,30 @@ private class ScaleNode(
     }
 
     override fun onDetach() {
+        interactionCollectionJob?.cancel()
         activeDrags.clear()
+        pressAnimationJob?.cancel()
+        postPressAnimationJob?.cancel()
+    }
+
+    fun update(
+        interactionSource: InteractionSource,
+        scale: IndicationScale,
+        animationSpec: AnimationSpec<Float>,
+    ) {
+        val interactionSourceChanged = this.interactionSource !== interactionSource
+        val animationSpecChanged = this.animationSpec != animationSpec
+        val currentValue = currentScale.value
+
+        this.interactionSource = interactionSource
+        this.scale = scale
+        this.animationSpec = animationSpec
+
+        if (animationSpecChanged) {
+            currentScale = animatedFloatStateOf(currentValue, animationSpec)
+        }
+        if (interactionSourceChanged && isAttached) observeInteractions()
+        invalidateDraw()
     }
 
     override fun ContentDrawScope.draw() {

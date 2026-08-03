@@ -54,8 +54,7 @@ internal fun ActivePlanScreen(
     LazyColumn(
         state = lazyListState,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(bottom = dimens.screen.verticalPadding),
+        contentPadding = PaddingValues(bottom = 16.dp),
         modifier = modifier.fillMaxSize(),
     ) {
         stickyHeader { Header(planState) }
@@ -68,6 +67,7 @@ internal fun ActivePlanScreen(
                 workout =
                     planState.currentWorkout.takeIf { index == planState.currentPlanItemIndex },
                 onAction = onAction,
+                modifier = Modifier.padding(top = if (index == 0) 20.dp else 16.dp),
             )
         }
     }
@@ -81,10 +81,12 @@ private fun Header(planState: PlanState.ActivePlan, modifier: Modifier = Modifie
         Column(
             modifier =
                 Modifier.clip(rememberBottomSinShape())
-                    .background(colorScheme.surface)
+                    .background(colorScheme.background)
                     .padding(
-                        horizontal = dimens.screen.horizontalPadding,
-                        vertical = 16.dp,
+                        start = dimens.screen.padding,
+                        top = dimens.screen.padding,
+                        end = dimens.screen.padding,
+                        bottom = 20.dp,
                     )
                     .padding(bottom = dimens.divider.sinHeight)
                     .fillMaxWidth(),
@@ -109,7 +111,7 @@ private fun Header(planState: PlanState.ActivePlan, modifier: Modifier = Modifie
             )
         }
         SinHorizontalDivider(
-            color = colorScheme.divider,
+            color = colorScheme.outline,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
     }
@@ -125,7 +127,7 @@ private fun PlanItem(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = dimens.screen.horizontalPadding),
+        modifier = modifier.fillMaxWidth().padding(horizontal = dimens.screen.padding),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         DayIndicator(dayIndex = dayIndex, highlighted = isActive)

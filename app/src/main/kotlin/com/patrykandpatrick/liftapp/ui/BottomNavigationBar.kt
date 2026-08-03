@@ -63,7 +63,7 @@ internal fun BottomNavigationBar(
         LiftAppHorizontalDivider()
 
         BoxWithConstraints(
-            Modifier.background(colorScheme.surface).navigationBarsPadding().height(64.dp)
+            Modifier.background(colorScheme.background).navigationBarsPadding().height(64.dp)
         ) {
             val itemCount = navItemRoutes.size
             val horizontalPadding =
@@ -156,7 +156,7 @@ fun RowScope.NavigationBarItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = colorScheme.onSurface,
+                tint = colorScheme.foreground,
                 modifier = Modifier.size(24.dp),
             )
         }
@@ -164,7 +164,7 @@ fun RowScope.NavigationBarItem(
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = colorScheme.onSurface,
+            color = colorScheme.foreground,
             textAlign = TextAlign.Center,
             maxLines = 1,
         )

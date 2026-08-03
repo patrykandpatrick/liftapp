@@ -27,7 +27,7 @@ import com.patrykandpatrick.liftapp.ui.interaction.HoverInteraction
 import com.patrykandpatrick.liftapp.ui.state.animatedColorStateOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 fun Modifier.interactiveBorder(
@@ -126,6 +126,9 @@ private class BorderNode(
     private var borderSecondaryColor = animatedColorStateOf(idleColor, animationSpec)
 
     private var interactionCollectionJob: Job? = null
+    private var pressAnimationJob: Job? = null
+    private var postPressAnimationJob: Job? = null
+    private var isPressed = false
     private val activeDrags = mutableSetOf<DragInteraction.Start>()
 
     private fun resetBorderColors() {
@@ -135,8 +138,49 @@ private class BorderNode(
 
     private val touchOffset = mutableStateOf(Offset.Companion.Zero)
 
+    private suspend fun animateBorder(primary: Color, secondary: Color) {
+        coroutineScope {
+            launch { borderPrimaryColor.animate(primary) }
+            launch { borderSecondaryColor.animate(secondary) }
+        }
+    }
+
+    private fun animatePress() {
+        postPressAnimationJob?.cancel()
+        pressAnimationJob?.cancel()
+        pressAnimationJob = coroutineScope.launch {
+            animateBorder(colors.pressedColor, colors.pressedColor)
+        }
+    }
+
+    private fun animateAfterPress(targetColors: () -> Pair<Color, Color>) {
+        postPressAnimationJob?.cancel()
+        val pressAnimationJob = pressAnimationJob
+        postPressAnimationJob = coroutineScope.launch {
+            pressAnimationJob?.join()
+            val (primary, secondary) = targetColors()
+            animateBorder(primary, secondary)
+        }
+    }
+
+    private fun animateImmediately(primary: Color, secondary: Color = primary) {
+        pressAnimationJob?.cancel()
+        postPressAnimationJob?.cancel()
+        postPressAnimationJob = coroutineScope.launch { animateBorder(primary, secondary) }
+    }
+
     override fun onAttach() {
+        resetBorderColors()
         observeInteractions()
+    }
+
+    override fun onDetach() {
+        interactionCollectionJob?.cancel()
+        pressAnimationJob?.cancel()
+        postPressAnimationJob?.cancel()
+        isPressed = false
+        activeDrags.clear()
+        resetBorderColors()
     }
 
     fun update(
@@ -174,12 +218,7 @@ private class BorderNode(
                     borderSecondaryColor =
                         animatedColorStateOf(currentSecondaryColor, animationSpec)
                 }
-                coroutineScope.launch {
-                    coroutineScope {
-                        launch { borderPrimaryColor.animate(idleColor) }
-                        launch { borderSecondaryColor.animate(idleColor) }
-                    }
-                }
+                animateImmediately(idleColor)
             } else {
                 resetBorderColors()
             }
@@ -190,65 +229,69 @@ private class BorderNode(
 
     private fun observeInteractions() {
         interactionCollectionJob?.cancel()
+        pressAnimationJob?.cancel()
+        postPressAnimationJob?.cancel()
+        isPressed = false
         activeDrags.clear()
         interactionCollectionJob = coroutineScope.launch {
-            interactionSource.interactions.collectLatest { interaction ->
-                coroutineScope {
-                    when (interaction) {
-                        is PressInteraction.Press -> {
-                            touchOffset.value = interaction.pressPosition
-                            launch { borderPrimaryColor.animate(colors.pressedColor) }
-                            launch { borderSecondaryColor.animate(colors.pressedColor) }
-                        }
+            interactionSource.interactions.collect { interaction ->
+                when (interaction) {
+                    is PressInteraction.Press -> {
+                        isPressed = true
+                        touchOffset.value = interaction.pressPosition
+                        animatePress()
+                    }
 
-                        is HoverInteraction.Enter -> {
-                            touchOffset.value = interaction.position
-                            launch { borderPrimaryColor.animate(colors.hoverForegroundColor) }
-                            launch { borderSecondaryColor.animate(colors.hoverBackgroundColor) }
-                        }
+                    is HoverInteraction.Enter -> {
+                        touchOffset.value = interaction.position
+                        animateImmediately(
+                            colors.hoverForegroundColor,
+                            colors.hoverBackgroundColor,
+                        )
+                    }
 
-                        is HoverInteraction.EnterFromRelease -> {
-                            touchOffset.value = interaction.position
-                            launch { borderPrimaryColor.animate(colors.hoverForegroundColor) }
-                            launch { borderSecondaryColor.animate(colors.hoverBackgroundColor) }
+                    is HoverInteraction.EnterFromRelease -> {
+                        touchOffset.value = interaction.position
+                        animateAfterPress {
+                            colors.hoverForegroundColor to colors.hoverBackgroundColor
                         }
+                    }
 
-                        is PressInteraction.Release -> {
+                    is PressInteraction.Release -> {
+                        isPressed = false
+                        animateAfterPress {
                             val targetColor =
                                 if (activeDrags.isEmpty()) idleColor else colors.draggedColor
-                            launch { borderPrimaryColor.animate(targetColor) }
-                            launch { borderSecondaryColor.animate(targetColor) }
+                            targetColor to targetColor
                         }
+                    }
 
-                        is DragInteraction.Start -> {
-                            activeDrags += interaction
-                            launch { borderPrimaryColor.animate(colors.draggedColor) }
-                            launch { borderSecondaryColor.animate(colors.draggedColor) }
-                        }
+                    is DragInteraction.Start -> {
+                        isPressed = false
+                        activeDrags += interaction
+                        animateImmediately(colors.draggedColor)
+                    }
 
-                        is DragInteraction.Stop -> {
-                            activeDrags -= interaction.start
-                            val targetColor =
-                                if (activeDrags.isEmpty()) idleColor else colors.draggedColor
-                            launch { borderPrimaryColor.animate(targetColor) }
-                            launch { borderSecondaryColor.animate(targetColor) }
-                        }
+                    is DragInteraction.Stop -> {
+                        activeDrags -= interaction.start
+                        val targetColor =
+                            if (activeDrags.isEmpty()) idleColor else colors.draggedColor
+                        animateImmediately(targetColor)
+                    }
 
-                        is DragInteraction.Cancel -> {
-                            activeDrags -= interaction.start
-                            val targetColor =
-                                if (activeDrags.isEmpty()) idleColor else colors.draggedColor
-                            launch { borderPrimaryColor.animate(targetColor) }
-                            launch { borderSecondaryColor.animate(targetColor) }
-                        }
+                    is DragInteraction.Cancel -> {
+                        activeDrags -= interaction.start
+                        val targetColor =
+                            if (activeDrags.isEmpty()) idleColor else colors.draggedColor
+                        animateImmediately(targetColor)
+                    }
 
-                        is HoverInteraction.Exit,
-                        is PressInteraction.Cancel -> {
-                            val targetColor =
-                                if (activeDrags.isEmpty()) idleColor else colors.draggedColor
-                            launch { borderPrimaryColor.animate(targetColor) }
-                            launch { borderSecondaryColor.animate(targetColor) }
-                        }
+                    is HoverInteraction.Exit,
+                    is PressInteraction.Cancel -> {
+                        isPressed = false
+                        val targetColor =
+                            if (activeDrags.isEmpty()) idleColor else colors.draggedColor
+                        animateImmediately(targetColor)
                     }
                 }
             }

@@ -29,11 +29,7 @@ data class Dimens(
     val tab: Tab = Tab(),
 ) {
 
-    @Immutable
-    data class Screen(
-        val horizontalPadding: Dp = 16.dp,
-        val verticalPadding: Dp = 20.dp,
-    )
+    @Immutable data class Screen(val padding: Dp = 16.dp)
 
     @Immutable
     data class IconButton(
@@ -81,7 +77,6 @@ data class Dimens(
         val tileSize: Dp = 20.dp,
         val tileCornerSize: Dp = 6.dp,
         val gridCellMinSize: Dp = 164.dp,
-        val listItemHorizontalMargin: Dp = 16.dp,
     )
 
     @Immutable
@@ -146,7 +141,7 @@ data class Dimens(
 
 val PortraitDimens = Dimens()
 
-val LandscapeDimens = Dimens(screen = Dimens.Screen(horizontalPadding = 56.dp))
+val LandscapeDimens = Dimens()
 
 val LocalDimens = staticCompositionLocalOf { Dimens() }
 

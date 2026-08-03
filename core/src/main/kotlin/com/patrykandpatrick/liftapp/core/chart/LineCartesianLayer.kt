@@ -42,7 +42,7 @@ fun LineCartesianLayer.Companion.rememberLine(
 @Composable
 fun rememberLineCartesianLayerPointComponent(
     strokeColor: Color = colorScheme.primary,
-    innerColor: Color = colorScheme.surface,
+    innerColor: Color = colorScheme.background,
     strokeThickness: Dp = 2.dp,
 ): ShapeComponent =
     rememberShapeComponent(

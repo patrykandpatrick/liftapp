@@ -1,14 +1,16 @@
 package com.patrykandpatrick.liftapp.feature.exercises.ui
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -16,19 +18,28 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,10 +53,8 @@ import com.patrykandpatrick.liftapp.core.extension.thenIf
 import com.patrykandpatrick.liftapp.core.model.Unfold
 import com.patrykandpatrick.liftapp.core.model.valueOrNull
 import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
-import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
-import com.patrykandpatrick.liftapp.core.ui.ListItem
-import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
+import com.patrykandpatrick.liftapp.core.ui.ListSectionTitleDefaults
 import com.patrykandpatrick.liftapp.core.ui.SearchBar
 import com.patrykandpatrick.liftapp.core.ui.error.Error
 import com.patrykandpatrick.liftapp.domain.model.Loadable
@@ -58,10 +67,15 @@ import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBottomToolbar
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChipRow
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFilterChip
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFilterChipDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -72,6 +86,7 @@ import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.icons.Search
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import kotlin.math.roundToInt
 
 @Composable
 fun ExerciseListScreen(modifier: Modifier = Modifier) {
@@ -93,8 +108,8 @@ private fun ExerciseListScreen(
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val fabHeight = 24.dp + dimens.fab.verticalPadding * 2
-    // The scaffold leaves 16 dp below the FAB; use the standard screen padding above it.
-    val scrollableContentBottomPadding = fabHeight + 16.dp + dimens.screen.verticalPadding
+    // The scaffold leaves one screen inset below the FAB; mirror it above the FAB.
+    val scrollableContentBottomPadding = fabHeight + dimens.screen.padding * 2
 
     LiftAppScaffold(
         modifier = modifier.fillMaxSize(),
@@ -158,10 +173,15 @@ private fun ListContent(
     emptyStatePadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    val segmentPositions =
+        remember(state.exercises) { state.exercises.getExerciseSegmentPositions() }
+    val firstSectionHeaderIndex =
+        remember(state.exercises) {
+            state.exercises.indexOfFirst { it is ExercisesItem.Header }
+        }
     Box(modifier = modifier.imePadding()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = contentPadding,
         ) {
             if (state.query.value.isEmpty()) {
@@ -173,27 +193,36 @@ private fun ListContent(
                 }
             }
 
-            items(
+            itemsIndexed(
                 items = state.exercises,
-                key = { item -> item.key },
-                contentType = { item -> item::class },
-            ) { item ->
+                key = { _, item -> item.key },
+                contentType = { _, item -> item::class },
+            ) { index, item ->
                 when (item) {
                     is ExercisesItem.Exercise -> {
-                        ExerciseItem(state = state, item = item, onAction = onAction)
+                        ExerciseItem(
+                            state = state,
+                            item = item,
+                            segmentPosition = segmentPositions[index],
+                            nextItemSelected =
+                                (state.exercises.getOrNull(index + 1) as? ExercisesItem.Exercise)
+                                    ?.checked == true,
+                            onAction = onAction,
+                        )
                     }
 
                     is ExercisesItem.Header -> {
                         ListSectionTitle(
                             title = item.title,
+                            spacing =
+                                if (
+                                    state.query.value.isEmpty() && index == firstSectionHeaderIndex
+                                ) {
+                                    ListSectionTitleDefaults.Spacing.AfterDivider
+                                } else {
+                                    ListSectionTitleDefaults.Spacing.Standard
+                                },
                             modifier = Modifier.animateItem(),
-                            paddingValues =
-                                PaddingValues(
-                                    start = ListItemDefaults.leadingContentStartPadding,
-                                    top = 16.dp,
-                                    end = dimens.screen.horizontalPadding,
-                                    bottom = 16.dp,
-                                ),
                         )
                     }
                 }
@@ -208,8 +237,10 @@ private fun ListContent(
                     Modifier.padding(emptyStatePadding)
                         .fillMaxSize()
                         .padding(
-                            horizontal = dimens.screen.horizontalPadding,
-                            vertical = dimens.screen.verticalPadding,
+                            start = dimens.screen.padding,
+                            top = dimens.screen.padding,
+                            end = dimens.screen.padding,
+                            bottom = dimens.screen.padding,
                         ),
             )
         }
@@ -220,31 +251,89 @@ private fun ListContent(
 private fun LazyItemScope.ExerciseItem(
     state: ScreenState,
     item: ExercisesItem.Exercise,
+    segmentPosition: SegmentPosition?,
+    nextItemSelected: Boolean,
     onAction: (Action) -> Unit,
 ) {
+    val position = checkNotNull(segmentPosition)
+    val listItemPosition =
+        LiftAppListItemPosition(
+            index = position.index,
+            count = position.count,
+        )
+
     if (state.pickingMode) {
-        ListItem(
-            title = item.name,
-            description = item.muscles,
-            imageVector = item.icon,
-            modifier = Modifier.animateItem(),
+        LiftAppListItem(
             checked = item.checked,
-            onClick = { onAction(Action.SetExerciseChecked(item.id, !item.checked)) },
+            nextItemSelected = nextItemSelected,
+            onCheckedChange = { onAction(Action.SetExerciseChecked(item.id, it)) },
+            position = listItemPosition,
+            modifier = Modifier.animateItem().padding(horizontal = dimens.screen.padding),
             enabled = item.enabled,
-            actions = { ListItemDefaults.Checkbox(item.checked) },
-            titleHighlightPosition = item.nameHighlightPosition,
+            icon = {
+                LiftAppListItemDefaults.Icon {
+                    Icon(imageVector = item.icon, contentDescription = null)
+                }
+            },
+            actions = {
+                LiftAppCheckbox(
+                    checked = item.checked,
+                    onCheckedChange = null,
+                    enabled = item.enabled,
+                )
+            },
+            description = { Text(item.muscles) },
+            title = {
+                LiftAppListItemDefaults.Title(
+                    text = item.name,
+                    highlightPosition = item.nameHighlightPosition,
+                )
+            },
         )
     } else {
-        ListItem(
-            title = item.name,
-            description = item.muscles,
-            imageVector = item.icon,
-            modifier = Modifier.animateItem(),
-            enabled = item.enabled,
-            titleHighlightPosition = item.nameHighlightPosition,
+        LiftAppListItem(
             onClick = { onAction(Action.GoToExerciseDetails(item.id)) },
+            position = listItemPosition,
+            modifier = Modifier.animateItem().padding(horizontal = dimens.screen.padding),
+            enabled = item.enabled,
+            icon = {
+                LiftAppListItemDefaults.Icon {
+                    Icon(imageVector = item.icon, contentDescription = null)
+                }
+            },
+            description = { Text(item.muscles) },
+            title = {
+                LiftAppListItemDefaults.Title(
+                    text = item.name,
+                    highlightPosition = item.nameHighlightPosition,
+                )
+            },
         )
     }
+}
+
+private data class SegmentPosition(val index: Int, val count: Int)
+
+private fun List<ExercisesItem>.getExerciseSegmentPositions(): List<SegmentPosition?> {
+    val positions = MutableList<SegmentPosition?>(size) { null }
+    var itemIndex = 0
+
+    while (itemIndex < size) {
+        if (this[itemIndex] !is ExercisesItem.Exercise) {
+            itemIndex++
+            continue
+        }
+
+        val segmentStart = itemIndex
+        while (itemIndex < size && this[itemIndex] is ExercisesItem.Exercise) itemIndex++
+        val segmentSize = itemIndex - segmentStart
+
+        repeat(segmentSize) { index ->
+            positions[segmentStart + index] = SegmentPosition(index = index, count = segmentSize)
+        }
+    }
+
+    return positions
 }
 
 @Composable
@@ -253,52 +342,183 @@ private fun TopBar(
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     navigateBack: () -> Unit,
 ) {
+    val backgroundColor = colorScheme.background
+    val searchBottomPadding = if (state.query.value.isEmpty()) 20.dp else 16.dp
+    val gradient =
+        Brush.verticalGradient(colors = listOf(backgroundColor, backgroundColor.copy(alpha = 0f)))
+
     if (state.mode is ExerciseListRouteData.Mode.Pick) {
-        CompactTopAppBar(
-            title = {
-                Text(
-                    text = stringResource(id = R.string.title_x_selected, state.selectedItemCount),
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Start,
-                )
-            },
-            scrollBehavior = topAppBarScrollBehavior,
-            navigationIcon = {
-                IconButton(onClick = navigateBack) {
-                    Icon(
-                        imageVector = LiftAppIcons.Cross,
-                        contentDescription = stringResource(id = R.string.action_close),
-                        tint = colorScheme.onSurface,
-                    )
-                }
-            },
-            content = {
+        SelectionTopBar(
+            selectedItemCount = state.selectedItemCount,
+            searchBar = {
+                val horizontalPadding = dimens.screen.padding
                 SearchBar(
                     textFieldState = state.query,
-                    modifier = Modifier.padding(all = dimens.screen.horizontalPadding),
+                    modifier =
+                        Modifier.padding(
+                                start = horizontalPadding,
+                                end = horizontalPadding,
+                                bottom = searchBottomPadding,
+                            )
+                            .fractionalTopPadding(
+                                maxPaddingPx =
+                                    with(LocalDensity.current) { horizontalPadding.toPx() },
+                                fraction = {
+                                    topAppBarScrollBehavior.state.collapsedFraction
+                                },
+                            ),
                 )
             },
+            backgroundColor = backgroundColor,
+            scrollBehavior = topAppBarScrollBehavior,
+            navigateBack = navigateBack,
         )
     } else {
-        val background = colorScheme.background
         SearchBar(
             textFieldState = state.query,
             modifier =
-                Modifier.background(
-                        Brush.verticalGradient(
-                            colors = listOf(background, background.copy(alpha = 0f))
-                        )
-                    )
+                Modifier.background(gradient)
                     .statusBarsPadding()
-                    .padding(all = dimens.screen.horizontalPadding),
+                    .padding(
+                        start = dimens.screen.padding,
+                        top = dimens.screen.padding,
+                        end = dimens.screen.padding,
+                        bottom = searchBottomPadding,
+                    ),
         )
+    }
+}
+
+@Composable
+private fun SelectionTopBar(
+    selectedItemCount: Int,
+    searchBar: @Composable () -> Unit,
+    backgroundColor: Color,
+    scrollBehavior: TopAppBarScrollBehavior,
+    navigateBack: () -> Unit,
+) {
+    val headerHeight = TopAppBarDefaults.TopAppBarExpandedHeight
+    val density = LocalDensity.current
+    val collapseDistancePx = with(density) { headerHeight.toPx() }
+    val headerTranslationDistancePx =
+        with(density) { (headerHeight - dimens.screen.padding).toPx() }
+    val contentScrolled by remember {
+        derivedStateOf { scrollBehavior.state.overlappedFraction > 0.01f }
+    }
+    val scrolledChromeAlpha by
+        animateFloatAsState(
+            targetValue = if (contentScrolled) 1f else 0f,
+            label = "selection header scrolled chrome",
+        )
+    val scrolledBackgroundColor = colorScheme.background
+    val dividerColor = colorScheme.outline
+    val dividerThickness = dimens.divider.thickness
+
+    SideEffect { scrollBehavior.state.heightOffsetLimit = -collapseDistancePx }
+
+    Column(
+        modifier =
+            Modifier.drawWithCache {
+                    val gradient =
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    backgroundColor,
+                                    backgroundColor.copy(alpha = 0f),
+                                ),
+                            endY = size.height,
+                        )
+                    val dividerThicknessPx = dividerThickness.toPx()
+                    onDrawBehind {
+                        drawRect(brush = gradient)
+
+                        val headerVisibleFraction =
+                            1f - scrollBehavior.state.collapsedFraction.coerceIn(0f, 1f)
+                        val chromeAlpha = scrolledChromeAlpha * headerVisibleFraction
+                        drawRect(color = scrolledBackgroundColor, alpha = chromeAlpha)
+                        drawLine(
+                            color = dividerColor,
+                            start = Offset(0f, size.height - dividerThicknessPx / 2f),
+                            end = Offset(size.width, size.height - dividerThicknessPx / 2f),
+                            strokeWidth = dividerThicknessPx,
+                            alpha = chromeAlpha,
+                        )
+                    }
+                }
+                .statusBarsPadding()
+                .collapseBy(
+                    distancePx = collapseDistancePx,
+                    fraction = { scrollBehavior.state.collapsedFraction },
+                )
+    ) {
+        Box(
+            modifier =
+                Modifier.fillMaxWidth().height(headerHeight).graphicsLayer {
+                    val collapsedFraction = scrollBehavior.state.collapsedFraction
+                    alpha = 1f - collapsedFraction
+                    translationY = -headerTranslationDistancePx * collapsedFraction
+                }
+        ) {
+            LiftAppIconButton(
+                onClick = navigateBack,
+                modifier = Modifier.align(Alignment.CenterStart),
+            ) {
+                Icon(
+                    imageVector = LiftAppIcons.Cross,
+                    contentDescription = stringResource(id = R.string.action_close),
+                    tint = colorScheme.foreground,
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.title_x_selected, selectedItemCount),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+
+        Box(
+            modifier =
+                Modifier.graphicsLayer {
+                    translationY = -collapseDistancePx * scrollBehavior.state.collapsedFraction
+                }
+        ) {
+            searchBar()
+        }
+    }
+}
+
+private fun Modifier.collapseBy(distancePx: Float, fraction: () -> Float): Modifier =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        val collapsedHeight = (distancePx * fraction().coerceIn(0f, 1f)).roundToInt()
+        layout(placeable.width, (placeable.height - collapsedHeight).coerceAtLeast(0)) {
+            placeable.placeRelative(0, 0)
+        }
+    }
+
+private fun Modifier.fractionalTopPadding(
+    maxPaddingPx: Float,
+    fraction: () -> Float,
+): Modifier = layout { measurable, constraints ->
+    val topPadding = (maxPaddingPx * fraction().coerceIn(0f, 1f)).roundToInt()
+    val placeable =
+        measurable.measure(
+            constraints.copy(
+                minHeight = (constraints.minHeight - topPadding).coerceAtLeast(0),
+                maxHeight = (constraints.maxHeight - topPadding).coerceAtLeast(0),
+            )
+        )
+    layout(placeable.width, placeable.height + topPadding) {
+        placeable.placeRelative(0, topPadding)
     }
 }
 
 @Composable
 private fun BottomBar(mode: ExerciseListRouteData.Mode.Pick, onAction: (Action) -> Unit) {
     LiftAppBottomToolbar {
-        Box(modifier = Modifier.fillMaxWidth().padding(dimens.screen.horizontalPadding)) {
+        Box(modifier = Modifier.fillMaxWidth().padding(dimens.screen.padding)) {
             LiftAppButton(
                 onClick = { onAction(Action.FinishPickingExercises(mode.resultKey)) },
                 modifier = Modifier.fillMaxWidth(),
@@ -316,22 +536,21 @@ private fun BottomBar(mode: ExerciseListRouteData.Mode.Pick, onAction: (Action) 
 
 @Composable
 private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(vertical = 8.dp),
-    ) {
+    Column {
         Text(
             text = stringResource(id = R.string.generic_group_by),
             style = MaterialTheme.typography.titleMedium,
-            color = colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = dimens.screen.horizontalPadding),
+            color = colorScheme.foregroundVariant,
+            modifier = Modifier.padding(horizontal = dimens.screen.padding),
         )
+
+        Spacer(Modifier.height(8.dp))
 
         LiftAppChipRow(
             modifier =
                 Modifier.fillMaxWidth()
                     .horizontalScroll(state = rememberScrollState())
-                    .padding(horizontal = dimens.screen.horizontalPadding)
+                    .padding(horizontal = dimens.screen.padding)
         ) {
             GroupBy.entries.forEach {
                 val selected = groupBy == it
@@ -353,7 +572,9 @@ private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
             }
         }
 
-        SinHorizontalDivider(modifier = Modifier.padding(top = 8.dp))
+        Spacer(Modifier.height(20.dp))
+
+        SinHorizontalDivider()
     }
 }
 

@@ -6,7 +6,6 @@ composeNavigation = "2.9.8"
 coroutines = "1.11.0"
 datastore = "1.2.1"
 documentfile = "1.1.0"
-glide = "5.0.9"
 hilt = "2.60.1"
 hiltNavigation = "1.4.0"
 immutableCollections = "0.5.1"
@@ -15,10 +14,8 @@ jupiter = "6.1.2"
 kmpWheelPicker = "0.3.0"
 kotlin = "2.4.10"
 kotlinxSerialization = "1.11.0"
-landscapist = "2.11.0"
 lifecycle = "2.11.0"
 paging = "3.5.0"
-playServicesOssLicenses = "17.5.1"
 reorderable = "3.1.0"
 robolectric = "4.16"
 room = "2.8.4"
@@ -52,7 +49,6 @@ compose-navigation = { module = "androidx.navigation:navigation-compose", versio
 compose-navigation-material = { module = "androidx.compose.material:material-navigation" }
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
-glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hilt" }
@@ -71,10 +67,8 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlin-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-landscapist = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapist" }
 lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
-play-services-oss-licenses = { module = "com.google.android.gms:play-services-oss-licenses", version.ref = "playServicesOssLicenses" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
@@ -90,7 +84,7 @@ work = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 [bundles]
 kotlin = ["kotlin-stdlib", "kotlin-coroutines"]
 hilt = ["hilt-android", "hilt-navigation"]
-ui = ["landscapist", "compose-ui", "compose-ui-preview", "compose-material-icons", "compose-material3", "compose-navigation", "vico", "immutable-collections", "compose-navigation-material", "compose-material3-adaptive"]
+ui = ["compose-ui", "compose-ui-preview", "compose-material-icons", "compose-material3", "compose-navigation", "vico", "immutable-collections", "compose-navigation-material", "compose-material3-adaptive"]
 testing = ["junit", "jupiter", "kotlin-test", "kotlin-coroutines-test", "turbine"]
 
 [plugins]

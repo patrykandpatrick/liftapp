@@ -21,12 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -44,6 +41,7 @@ import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
+import com.patrykandpatrick.liftapp.ui.theme.floatingSurfaceShadow
 
 @Composable
 fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifier) {
@@ -76,18 +74,8 @@ fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifie
                     enabled = true,
                     shape = CircleShape,
                 )
-                .dropShadow(CircleShape) {
-                    radius = 8.dp.toPx()
-                    spread = 1.dp.toPx()
-                    color = Color.Black.copy(alpha = .06f)
-                }
-                .dropShadow(CircleShape) {
-                    radius = 1.dp.toPx()
-                    spread = 1.dp.toPx()
-                    color = Color.Black.copy(alpha = .06f)
-                    offset = Offset(0f, 1.dp.toPx())
-                }
-                .background(color = colorScheme.surfaceVariant, shape = CircleShape)
+                .floatingSurfaceShadow(CircleShape)
+                .background(color = colorScheme.surface, shape = CircleShape)
                 .padding(horizontal = 4.dp)
                 .height(IntrinsicSize.Min),
     ) {
@@ -98,7 +86,7 @@ fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifie
                 Icon(
                     imageVector = if (targetState) LiftAppIcons.ArrowBack else LiftAppIcons.Search,
                     contentDescription = null,
-                    tint = colorScheme.onSurface,
+                    tint = colorScheme.foreground,
                 )
             }
         }
@@ -106,7 +94,7 @@ fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifie
             BasicTextField(
                 value = textFieldState.textFieldValue,
                 onValueChange = textFieldState::updateText,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = colorScheme.onSurface),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = colorScheme.foreground),
                 modifier =
                     Modifier.fillMaxWidth()
                         .focusRequester(focusRequester = focusRequester)
@@ -118,7 +106,7 @@ fun SearchBar(textFieldState: StringTextFieldState, modifier: Modifier = Modifie
                         Text(
                             text = stringResource(id = R.string.generic_search),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = colorScheme.onSurfaceVariant,
+                            color = colorScheme.foregroundVariant,
                         )
                     }
                 },

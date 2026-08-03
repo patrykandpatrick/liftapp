@@ -8,10 +8,15 @@ val PillShape = RoundedCornerShape(100.dp)
 
 val BottomSheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
 
-val Shapes = Shapes(extraSmall = RoundedCornerShape(8.dp), small = RoundedCornerShape(8.dp))
+val LargeCornerRadius = 16.dp
+
+val Shapes =
+    Shapes(
+        extraSmall = RoundedCornerShape(8.dp),
+        small = RoundedCornerShape(8.dp),
+        large = RoundedCornerShape(LargeCornerRadius),
+    )
 
 val ButtonShape = RoundedCornerShape(12.dp)
 
 val ButtonBorderShape = RoundedCornerShape(11.dp)
-
-val AlertDialogShape = RoundedCornerShape(16.dp)

@@ -1,16 +1,14 @@
 package com.patrykandpatrick.liftapp.feature.routine.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -21,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -33,7 +30,6 @@ import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.model.Unfold
 import com.patrykandpatrick.liftapp.core.model.getPrettyStringLong
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.domain.extension.moved
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.routine.RoutineExerciseItem
@@ -43,6 +39,8 @@ import com.patrykandpatrick.liftapp.feature.routine.model.Action
 import com.patrykandpatrick.liftapp.feature.routine.model.ScreenState
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.BicepsFlexed
 import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
@@ -89,8 +87,8 @@ private fun Exercises(
                 modifier
                     .fillMaxSize()
                     .padding(
-                        start = LocalDimens.current.screen.horizontalPadding,
-                        end = LocalDimens.current.screen.horizontalPadding,
+                        start = LocalDimens.current.screen.padding,
+                        end = LocalDimens.current.screen.padding,
                     ),
         )
         return
@@ -98,6 +96,17 @@ private fun Exercises(
 
     var items by remember(state.items) { mutableStateOf(state.items) }
     val currentItems by rememberUpdatedState(items)
+    val (segmentStartIndices, segmentCount) =
+        remember(items) {
+            var nextIndex = 0
+            val startIndices = items.associate { item ->
+                item.id to
+                    nextIndex.also {
+                        nextIndex += if (item.isSuperset) item.exercises.size + 1 else 1
+                    }
+            }
+            startIndices to nextIndex
+        }
     var orderBeforeDrag by remember { mutableStateOf(emptyList<Long>()) }
     val lazyListState = rememberLazyListState()
     val reorderableState =
@@ -108,11 +117,22 @@ private fun Exercises(
     LazyColumn(
         state = lazyListState,
         modifier = modifier.fillMaxSize().background(colorScheme.background),
-        contentPadding = PaddingValues(bottom = bottomPadding),
+        contentPadding =
+            PaddingValues(
+                start = LocalDimens.current.screen.padding,
+                top = LocalDimens.current.screen.padding,
+                end = LocalDimens.current.screen.padding,
+                bottom = bottomPadding,
+            ),
     ) {
-        items(items = items, key = { it.id }, contentType = { it.type }) { item ->
+        itemsIndexed(
+            items = items,
+            key = { _, item -> item.id },
+            contentType = { _, item -> item.type },
+        ) { _, item ->
             ReorderableItem(state = reorderableState, key = item.id) {
                 val interactionSource = remember { MutableInteractionSource() }
+                val segmentStartIndex = checkNotNull(segmentStartIndices[item.id])
                 fun captureOrder() {
                     orderBeforeDrag = currentItems.map(RoutineItemWithExercises::id)
                 }
@@ -135,6 +155,11 @@ private fun Exercises(
                                 onDragStopped = { persistOrder() },
                             ),
                         onAction = onAction,
+                        position =
+                            LiftAppListItemPosition(
+                                index = segmentStartIndex,
+                                count = segmentCount,
+                            ),
                         modifier =
                             Modifier.longPressDraggableHandle(
                                 interactionSource = interactionSource,
@@ -146,7 +171,8 @@ private fun Exercises(
                         SupersetMembers(
                             item = item,
                             onAction = onAction,
-                            parentInteractionSource = interactionSource,
+                            segmentStartIndex = segmentStartIndex,
+                            segmentCount = segmentCount,
                         )
                     }
                 }
@@ -161,13 +187,15 @@ private fun RoutineItemRow(
     interactionSource: MutableInteractionSource,
     dragHandleModifier: Modifier,
     onAction: (Action) -> Unit,
+    position: LiftAppListItemPosition,
     modifier: Modifier = Modifier,
 ) {
     val isSuperset = item.isSuperset
     val exercise = item.exercises.first()
 
-    ListItem(
+    LiftAppListItem(
         modifier = modifier,
+        position = position,
         icon = { DragHandle(dragHandleModifier) },
         title = {
             Text(
@@ -200,6 +228,13 @@ private fun RoutineItemRow(
             )
             RemoveButton(onClick = { onAction(Action.RemoveItem(item.id)) })
         },
+        contentPadding =
+            PaddingValues(
+                start = 16.dp,
+                top = 10.dp,
+                end = 4.dp,
+                bottom = 10.dp,
+            ),
         interactionSource = interactionSource,
         onClick =
             if (isSuperset) {
@@ -214,19 +249,18 @@ private fun RoutineItemRow(
 private fun SupersetMembers(
     item: RoutineItemWithExercises,
     onAction: (Action) -> Unit,
-    parentInteractionSource: InteractionSource? = null,
+    segmentStartIndex: Int,
+    segmentCount: Int,
     modifier: Modifier = Modifier,
 ) {
     // Taking any more exercises out would leave too few of them for a superset.
     val isRemovable = item.exercises.size > RoutineItem.MIN_SUPERSET_SIZE
-    val isParentDragged = parentInteractionSource?.collectIsDraggedAsState()?.value == true
 
     ReorderableColumn(
         list = item.exercises,
         onSettle = { from, to -> onAction(Action.ReorderSupersetExercise(item.id, from, to)) },
-        modifier =
-            modifier.background(if (isParentDragged) colorScheme.background else Color.Transparent),
-    ) { _, exercise, _ ->
+        modifier = modifier,
+    ) { index, exercise, _ ->
         val interactionSource = remember { MutableInteractionSource() }
 
         ReorderableItem {
@@ -242,6 +276,11 @@ private fun SupersetMembers(
                 dragHandleModifier =
                     Modifier.draggableHandle(interactionSource = interactionSource),
                 onAction = onAction,
+                position =
+                    LiftAppListItemPosition(
+                        index = segmentStartIndex + index + 1,
+                        count = segmentCount,
+                    ),
                 modifier = Modifier.longPressDraggableHandle(interactionSource = interactionSource),
             )
         }
@@ -255,31 +294,32 @@ private fun SupersetMemberRow(
     interactionSource: MutableInteractionSource,
     dragHandleModifier: Modifier,
     onAction: (Action) -> Unit,
+    position: LiftAppListItemPosition,
     modifier: Modifier = Modifier,
 ) {
-    val screenPadding = LocalDimens.current.screen
-    // Starting the row where the title of the superset above it starts, past its drag handle,
-    // reads as the exercise belonging to that superset.
+    // Inset the whole row so its surface and interaction feedback communicate that the exercise
+    // belongs to the superset, while keeping its content in the same visual position as before.
     val indent = DragHandleSize + 16.dp
 
-    ListItem(
+    LiftAppListItem(
         title = { Text(exercise.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        position = position,
         description = { Text(exerciseDescription(exercise)) },
         icon = { DragHandle(dragHandleModifier) },
         actions = {
             GoalButton(onClick = { onAction(Action.NavigateToExerciseGoal(exercise.id)) })
             if (onRemove != null) RemoveButton(onClick = onRemove)
         },
-        paddingValues =
+        contentPadding =
             PaddingValues(
-                start = screenPadding.horizontalPadding + indent,
-                top = 16.dp,
-                end = screenPadding.horizontalPadding - 8.dp,
-                bottom = 16.dp,
+                start = 16.dp,
+                top = LocalDimens.current.screen.padding,
+                end = 4.dp,
+                bottom = LocalDimens.current.screen.padding,
             ),
         interactionSource = interactionSource,
         onClick = { onAction(Action.NavigateToExercise(exercise.id)) },
-        modifier = modifier,
+        modifier = modifier.padding(start = indent),
     )
 }
 

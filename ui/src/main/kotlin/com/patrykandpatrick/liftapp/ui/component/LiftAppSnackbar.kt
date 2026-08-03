@@ -28,7 +28,7 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 fun LiftAppSnackbarHost(
     hostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    containerColor: Color = colorScheme.onSurface,
+    containerColor: Color = colorScheme.foreground,
     contentColor: Color = colorScheme.surface,
     icon: ImageVector? = null,
 ) {
@@ -36,7 +36,7 @@ fun LiftAppSnackbarHost(
         hostState = hostState,
         modifier =
             modifier.padding(
-                horizontal = dimens.screen.horizontalPadding,
+                horizontal = dimens.screen.padding,
                 vertical = 16.dp,
             ),
     ) { snackbarData ->

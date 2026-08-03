@@ -191,7 +191,7 @@ private fun SegmentedButton(
                                 if (selected) {
                                     colorScheme.onPrimary
                                 } else {
-                                    colorScheme.onSurface
+                                    colorScheme.foreground
                                 }
                         ),
                 )
@@ -212,7 +212,7 @@ private fun SegmentedButton(
                 else -> icon
             }
 
-        val tint = if (selected) colorScheme.onPrimary else colorScheme.onSurface
+        val tint = if (selected) colorScheme.onPrimary else colorScheme.foreground
 
         if (imageVector != null) {
             Icon(

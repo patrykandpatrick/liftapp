@@ -34,7 +34,8 @@ fun LiftAppTabRowItem(
     ) {
         CompositionLocalProvider(
             LocalTextStyle provides MaterialTheme.typography.titleSmall,
-            LocalContentColor provides if (selected) colorScheme.primary else colorScheme.onSurface,
+            LocalContentColor provides
+                if (selected) colorScheme.primary else colorScheme.foreground,
         ) {
             content()
         }

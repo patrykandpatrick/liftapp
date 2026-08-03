@@ -67,8 +67,8 @@ private fun getVicoTheme(colorScheme: ColorScheme): VicoTheme =
             ),
         columnCartesianLayerColors = colorScheme.chartColors,
         lineCartesianLayerColors = colorScheme.chartColors,
-        lineColor = colorScheme.divider,
-        textColor = colorScheme.onSurface,
+        lineColor = colorScheme.outline,
+        textColor = colorScheme.foreground,
     )
 
 /**
@@ -92,7 +92,7 @@ private fun ColorScheme.toMaterialColorScheme(): MaterialColorScheme =
         // The tonal fill a checked card wears, which is also what Material tints a selected time
         // in the picker with.
         primaryContainer = primaryDisabled,
-        onPrimaryContainer = onSurface,
+        onPrimaryContainer = foreground,
         // The snackbar's action, read against `inverseSurface`: light on dark, and dark on light.
         inversePrimary = onPrimary,
         secondary = secondary,
@@ -100,22 +100,23 @@ private fun ColorScheme.toMaterialColorScheme(): MaterialColorScheme =
         // Material tints a selected date range with this. Keeping it on the primary tint stops the
         // pickers reaching for an accent the app does not have.
         secondaryContainer = primaryDisabled,
-        onSecondaryContainer = onSurface,
+        onSecondaryContainer = foreground,
         tertiary = secondary,
         onTertiary = onSecondary,
         tertiaryContainer = primaryDisabled,
-        onTertiaryContainer = onSurface,
+        onTertiaryContainer = foreground,
         background = background,
-        onBackground = onBackground,
-        surface = surface,
-        onSurface = onSurface,
-        surfaceVariant = surfaceVariant,
-        onSurfaceVariant = onSurfaceVariant,
+        onBackground = foreground,
+        surface = background,
+        onSurface = foreground,
+        surfaceVariant = surface,
+        onSurfaceVariant = foregroundVariant,
         // Nothing. Material tints a raised `Surface` with this, which gave the dialogs still on
         // `DialogContent` a blue cast that `LiftAppAlertDialog` — a flat `LiftAppCard` on
-        // `surface` — does not have. Transparent leaves an elevated surface exactly `surface`.
+        // `surface` — does not have. Transparent leaves an elevated Material container exactly
+        // `surface`.
         surfaceTint = Color.Transparent,
-        inverseSurface = onSurface,
+        inverseSurface = foreground,
         inverseOnSurface = surface,
         error = error,
         onError = onError,
@@ -124,16 +125,15 @@ private fun ColorScheme.toMaterialColorScheme(): MaterialColorScheme =
         // `errorContainer`, so the error color is what actually reads there.
         onErrorContainer = error,
         outline = outline,
-        // Material draws its dividers with this one.
-        outlineVariant = divider,
+        // Keep Material components on the app's single outline color too.
+        outlineVariant = outline,
         scrim = bottomSheetScrim,
-        // The palette has no neutral above `surfaceVariant`, and it does not need one: an unchecked
-        // switch track drawn in it comes out hollow inside an `outline` border, which is how the
-        // app's own checkbox and radio button already read.
-        surfaceBright = surfaceVariant,
+        // LiftApp deliberately has one neutral component plane rather than Material's five-step
+        // container ladder.
+        surfaceBright = surface,
         surfaceContainer = surface,
-        surfaceContainerHigh = surfaceVariant,
-        surfaceContainerHighest = surfaceVariant,
+        surfaceContainerHigh = surface,
+        surfaceContainerHighest = surface,
         surfaceContainerLow = surface,
         surfaceContainerLowest = background,
         surfaceDim = background,
@@ -141,14 +141,14 @@ private fun ColorScheme.toMaterialColorScheme(): MaterialColorScheme =
         // without it showing up as a stray purple.
         primaryFixed = primaryDisabled,
         primaryFixedDim = primaryDisabled,
-        onPrimaryFixed = onSurface,
-        onPrimaryFixedVariant = onSurfaceVariant,
+        onPrimaryFixed = foreground,
+        onPrimaryFixedVariant = foregroundVariant,
         secondaryFixed = primaryDisabled,
         secondaryFixedDim = primaryDisabled,
-        onSecondaryFixed = onSurface,
-        onSecondaryFixedVariant = onSurfaceVariant,
+        onSecondaryFixed = foreground,
+        onSecondaryFixedVariant = foregroundVariant,
         tertiaryFixed = primaryDisabled,
         tertiaryFixedDim = primaryDisabled,
-        onTertiaryFixed = onSurface,
-        onTertiaryFixedVariant = onSurfaceVariant,
+        onTertiaryFixed = foreground,
+        onTertiaryFixedVariant = foregroundVariant,
     )

@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +51,7 @@ fun LiftAppCard(
     contentPadding: PaddingValues = PaddingValues(16.dp, 16.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(4.dp),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    shape: Shape = MaterialTheme.shapes.medium,
+    shape: Shape = MaterialTheme.shapes.large,
     interactionSource: MutableInteractionSource? = null,
     role: Role? = null,
     minSize: DpSize = DpSize(0.dp, 24.dp),
@@ -115,39 +116,43 @@ object LiftAppCardDefaults {
         get() =
             ContainerColors(
                 backgroundColor = colorScheme.surface,
-                contentColor = colorScheme.onSurface,
+                contentColor = colorScheme.foreground,
                 interactiveBorderColors =
                     InteractiveBorderColors(
-                        color = colorScheme.outline,
-                        pressedColor = colorScheme.primary,
+                        color = Color.Transparent,
+                        pressedColor = colorScheme.outline,
                         hoverForegroundColor = colorScheme.primary,
+                        hoverBackgroundColor = colorScheme.outline,
                     ),
-                disabledBackgroundColor = Color.Transparent,
+                disabledBackgroundColor = colorScheme.surface,
                 disabledContentColor = colorScheme.onPrimaryDisabled,
             )
 
     val tonalCardColors: ContainerColors
         @Composable
-        get() =
-            ContainerColors(
-                backgroundColor = colorScheme.primaryDisabled,
-                contentColor = colorScheme.onSurface,
+        get() {
+            val backgroundColor = colorScheme.primaryDisabled.compositeOver(colorScheme.surface)
+            return ContainerColors(
+                backgroundColor = backgroundColor,
+                contentColor = colorScheme.foreground,
                 interactiveBorderColors =
                     InteractiveBorderColors(
                         color = colorScheme.primary,
-                        pressedColor = colorScheme.onPrimaryOutline,
-                        hoverForegroundColor = colorScheme.onPrimaryOutline,
+                        pressedColor = colorScheme.outline,
+                        hoverForegroundColor = colorScheme.primary,
+                        hoverBackgroundColor = colorScheme.outline,
                     ),
-                disabledBackgroundColor = Color.Transparent,
+                disabledBackgroundColor = backgroundColor,
                 disabledContentColor = colorScheme.onPrimaryDisabled,
             )
+        }
 
     val outlinedColors: ContainerColors
         @Composable
         get() =
             ContainerColors(
                 backgroundColor = Color.Transparent,
-                contentColor = colorScheme.onSurface,
+                contentColor = colorScheme.foreground,
                 interactiveBorderColors =
                     InteractiveBorderColors(
                         color = colorScheme.outline,
@@ -157,15 +162,6 @@ object LiftAppCardDefaults {
                 disabledBackgroundColor = Color.Transparent,
                 disabledContentColor = colorScheme.onPrimaryDisabled,
             )
-
-    val deselectedColors: ContainerColors
-        @Composable
-        get() = cardColors.run {
-            copy(
-                backgroundColor = Color.Transparent,
-                interactiveBorderColors = interactiveBorderColors.copy(color = Color.Transparent),
-            )
-        }
 }
 
 @Preview
@@ -182,8 +178,11 @@ private fun CardPreview() {
                             enabled = true,
                             colors =
                                 animateContainerColorsAsState(
-                                        if (selected) LiftAppCardDefaults.tonalCardColors
-                                        else LiftAppCardDefaults.cardColors
+                                        if (selected) {
+                                            LiftAppCardDefaults.tonalCardColors
+                                        } else {
+                                            LiftAppCardDefaults.cardColors
+                                        }
                                     )
                                     .value,
                         ) {

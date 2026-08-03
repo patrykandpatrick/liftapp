@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.date.displayDateInterval
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
@@ -38,13 +39,18 @@ fun DateIntervalController(
         Text(
             text = dateInterval.displayDateInterval(),
             style = MaterialTheme.typography.titleSmall,
-            color = colorScheme.onSurfaceVariant,
+            color = colorScheme.foregroundVariant,
         )
 
         LiftAppIconButton(onClick = incrementDateInterval, enabled = dateInterval.isIncrementable) {
             Icon(LiftAppIcons.ArrowForward, null)
         }
     }
+}
+
+object DateIntervalControllerDefaults {
+    /** The distance from the controller's touch-target bounds to its visible 24 dp icons. */
+    val visibleContentVerticalInset = 12.dp
 }
 
 @LightAndDarkThemePreview

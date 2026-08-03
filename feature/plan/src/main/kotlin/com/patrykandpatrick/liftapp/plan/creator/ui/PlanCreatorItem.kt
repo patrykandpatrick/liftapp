@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -46,8 +47,16 @@ internal fun PlanCreatorItem(
         onClick =
             if (item is ScreenState.Item.RoutineItem) {
                 { onClick(item) }
-            } else null,
+            } else {
+                null
+            },
         modifier = modifier,
+        contentPadding =
+            if (item is ScreenState.Item.PlaceholderItem) {
+                PaddingValues(vertical = 16.dp)
+            } else {
+                PaddingValues(16.dp)
+            },
     ) {
         AnimatedContent(item) { planItem ->
             when (planItem) {
@@ -100,7 +109,6 @@ private fun PlaceholderItemButton(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier.padding(end = 10.dp),
         ) {
             Icon(
                 imageVector = LiftAppIcons.Plus,

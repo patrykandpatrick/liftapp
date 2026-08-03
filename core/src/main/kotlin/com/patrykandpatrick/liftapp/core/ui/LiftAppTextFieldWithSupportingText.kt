@@ -1,7 +1,7 @@
 package com.patrykandpatrick.liftapp.core.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterExitState
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -134,6 +134,10 @@ fun SupportingText(
 ) {
     val (errorVisible, setErrorVisible) = remember { mutableStateOf(false) }
     val (cachedErrorText, setCachedErrorText) = remember { mutableStateOf(errorText) }
+    val (cachedSupportingText, setCachedSupportingText) =
+        remember {
+            mutableStateOf(supportingText)
+        }
 
     LaunchedEffect(key1 = errorText == null, key2 = value) {
         setErrorVisible(false)
@@ -144,6 +148,45 @@ fun SupportingText(
         setErrorVisible(errorText != null)
     }
 
+    LaunchedEffect(supportingText) {
+        if (supportingText != null) setCachedSupportingText(supportingText)
+    }
+
+    val errorVisibility = remember { MutableTransitionState(errorVisible) }
+    errorVisibility.targetState = errorVisible
+    val supportingTextVisibility = remember { MutableTransitionState(supportingText != null) }
+    supportingTextVisibility.targetState = supportingText != null
+
+    LaunchedEffect(errorVisibility.isIdle, errorVisibility.currentState, errorText) {
+        if (errorVisibility.isIdle && !errorVisibility.currentState && errorText == null) {
+            setCachedErrorText(null)
+        }
+    }
+    LaunchedEffect(
+        supportingTextVisibility.isIdle,
+        supportingTextVisibility.currentState,
+        supportingText,
+    ) {
+        if (
+            supportingTextVisibility.isIdle &&
+                !supportingTextVisibility.currentState &&
+                supportingText == null
+        ) {
+            setCachedSupportingText(null)
+        }
+    }
+
+    // Keep the composable around while removed text finishes its exit animation, but do not reserve
+    // the supporting-text padding when this field has never had anything to show.
+    if (
+        supportingText == null &&
+            cachedSupportingText == null &&
+            errorText == null &&
+            cachedErrorText == null
+    ) {
+        return
+    }
+
     CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodySmall) {
         Column(
             modifier =
@@ -152,20 +195,15 @@ fun SupportingText(
                     vertical = dimens.supportingText.verticalPadding,
                 )
         ) {
-            AnimatedVisibility(visible = errorVisible) {
-                LaunchedEffect(key1 = transition.currentState, key2 = errorText) {
-                    if (transition.currentState == EnterExitState.PostExit && errorText == null) {
-                        setCachedErrorText(null)
-                    }
-                }
+            AnimatedVisibility(visibleState = errorVisibility) {
                 if (cachedErrorText != null) {
                     Text(text = cachedErrorText, color = colorScheme.error)
                 }
             }
 
-            AnimatedVisibility(visible = supportingText != null) {
-                if (supportingText != null) {
-                    Text(text = supportingText, color = colorScheme.onSurfaceVariant)
+            AnimatedVisibility(visibleState = supportingTextVisibility) {
+                if (cachedSupportingText != null) {
+                    Text(text = cachedSupportingText, color = colorScheme.foregroundVariant)
                 }
             }
         }

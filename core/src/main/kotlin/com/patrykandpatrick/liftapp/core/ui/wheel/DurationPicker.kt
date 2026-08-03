@@ -95,7 +95,7 @@ fun DurationPicker(
                 Text(
                     text = stringResource(R.string.time_hours_medium),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = colorScheme.onSurfaceVariant,
+                    color = colorScheme.foregroundVariant,
                     modifier = Modifier.offset(y = (-1).dp),
                 )
             }
@@ -107,7 +107,7 @@ fun DurationPicker(
             Text(
                 text = stringResource(R.string.time_minutes_medium),
                 style = MaterialTheme.typography.bodyLarge,
-                color = colorScheme.onSurfaceVariant,
+                color = colorScheme.foregroundVariant,
                 modifier = Modifier.offset(y = (-1).dp),
             )
 
@@ -118,7 +118,7 @@ fun DurationPicker(
             Text(
                 text = stringResource(R.string.time_seconds_medium),
                 style = MaterialTheme.typography.bodyLarge,
-                color = colorScheme.onSurfaceVariant,
+                color = colorScheme.foregroundVariant,
                 modifier = Modifier.offset(y = (-1).dp),
             )
         }

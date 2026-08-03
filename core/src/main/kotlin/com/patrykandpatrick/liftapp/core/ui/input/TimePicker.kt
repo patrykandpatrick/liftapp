@@ -70,9 +70,9 @@ fun TimePicker(
                         )
                         .width(IntrinsicSize.Min)
                         .padding(all = LocalDimens.current.dialog.windowPadding),
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 tonalElevation = LocalDimens.current.dialog.tonalElevation,
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = MaterialTheme.shapes.large,
             ) {
                 TimePickerContent(
                     modifier = Modifier.padding(all = LocalDimens.current.dialog.contentPadding),

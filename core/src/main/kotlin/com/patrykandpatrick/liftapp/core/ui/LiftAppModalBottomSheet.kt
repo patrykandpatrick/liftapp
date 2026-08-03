@@ -8,9 +8,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.liftapp.ui.component.LiftAppModalBottomSheet
 import com.patrykandpatrick.liftapp.ui.icons.Cross
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
 fun LiftAppModalBottomSheetWithTopAppBar(
@@ -18,12 +20,14 @@ fun LiftAppModalBottomSheetWithTopAppBar(
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     title: @Composable (() -> Unit)? = null,
+    containerColor: Color = colorScheme.surface,
     content: @Composable ColumnScope.(dismiss: () -> Unit) -> Unit,
 ) {
     LiftAppModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         sheetState = sheetState,
+        containerColor = containerColor,
     ) { dismiss ->
         CompactTopAppBar(
             title = {

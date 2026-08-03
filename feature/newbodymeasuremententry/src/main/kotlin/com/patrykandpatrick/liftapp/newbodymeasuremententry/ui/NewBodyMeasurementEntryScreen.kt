@@ -99,8 +99,8 @@ private fun NewBodyMeasurementEntryScreen(
         loadableState.Unfold(
             modifier =
                 Modifier.padding(contentPadding)
-                    .padding(horizontal = dimens.screen.horizontalPadding)
-                    .padding(top = 16.dp)
+                    .padding(horizontal = dimens.screen.padding)
+                    .padding(top = dimens.screen.padding)
         ) { state ->
             Content(state, onAction)
         }

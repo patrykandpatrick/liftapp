@@ -135,7 +135,7 @@ private fun LiftAppBadgePreview() {
                         },
                     "No icon" to
                         {
-                            LiftAppBadge(label = "0", color = colorScheme.onSurfaceVariant)
+                            LiftAppBadge(label = "0", color = colorScheme.foregroundVariant)
                         },
                     "Compact" to
                         {

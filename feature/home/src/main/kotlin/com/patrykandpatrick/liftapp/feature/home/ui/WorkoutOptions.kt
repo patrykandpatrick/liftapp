@@ -2,21 +2,25 @@ package com.patrykandpatrick.liftapp.feature.home.ui
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.domain.workout.Workout
 import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialog
 import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialogDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 /**
  * What can be done with a workout that is already recorded, offered where one is long-pressed. The
@@ -29,22 +33,30 @@ internal fun WorkoutOptionsModal(
     onDeleteClick: (Workout) -> Unit,
 ) {
     if (workout != null) {
-        LiftAppModalBottomSheetWithTopAppBar(onDismissRequest = onDismissRequest) { dismiss ->
-            ListItem(
+        LiftAppModalBottomSheetWithTopAppBar(
+            onDismissRequest = onDismissRequest,
+            containerColor = colorScheme.background,
+        ) { dismiss ->
+            Spacer(Modifier.height(8.dp))
+
+            LiftAppListItem(
                 title = { Text(stringResource(R.string.action_delete)) },
                 icon = {
-                    Icon(
-                        imageVector = LiftAppIcons.Delete,
-                        contentDescription = stringResource(R.string.action_delete),
-                    )
+                    LiftAppListItemDefaults.Icon {
+                        Icon(
+                            imageVector = LiftAppIcons.Delete,
+                            contentDescription = stringResource(R.string.action_delete),
+                        )
+                    }
                 },
+                modifier = Modifier.padding(horizontal = dimens.screen.padding),
                 onClick = {
                     dismiss()
                     onDeleteClick(workout)
                 },
             )
 
-            Spacer(modifier = Modifier.height(dimens.screen.verticalPadding))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

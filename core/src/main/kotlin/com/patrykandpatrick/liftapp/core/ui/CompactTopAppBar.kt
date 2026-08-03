@@ -43,8 +43,8 @@ fun CompactTopAppBar(
     // M3 swaps the app bar's own background for `scrolledContainerColor` once content is scrolled
     // under it. The same signal drives the background behind the content slot and the divider, so
     // the bar takes on all of its chrome at once. Sticky composite headers can keep that chrome on
-    // so the header and its content read as one surface with a persistent lower edge. The divider
-    // keeps its space either way, so an ordinary bar does not change height as it appears.
+    // so the header and its content read as one visual surface with a persistent lower edge. The
+    // divider keeps its space either way, so an ordinary bar does not change height as it appears.
     val showChrome = alwaysShowChrome || AppBars.isContentScrolledUnder(scrollBehavior)
     val containerColor by
         animateColorAsState(

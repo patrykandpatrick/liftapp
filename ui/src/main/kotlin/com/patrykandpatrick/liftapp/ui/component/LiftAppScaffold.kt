@@ -19,7 +19,7 @@ fun LiftAppScaffold(
     floatingActionButton: @Composable () -> Unit = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     containerColor: Color = colorScheme.background,
-    contentColor: Color = colorScheme.onBackground,
+    contentColor: Color = colorScheme.foreground,
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     content: @Composable (PaddingValues) -> Unit,
 ) {

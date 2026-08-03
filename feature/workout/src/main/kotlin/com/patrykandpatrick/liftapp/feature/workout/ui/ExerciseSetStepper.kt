@@ -114,7 +114,7 @@ fun ExerciseSetStepper(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(end = dimens.screen.horizontalPadding),
+            modifier = Modifier.padding(end = dimens.screen.padding),
         ) {
             LiftAppIconButton(
                 onClick = onRemoveSet,

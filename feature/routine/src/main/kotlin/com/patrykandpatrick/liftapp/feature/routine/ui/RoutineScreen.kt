@@ -194,7 +194,7 @@ private fun RoutineScreen(
         // its own room for it.
         val contentBottomPadding =
             if (showWorkoutFab) {
-                fabHeight + ScaffoldFabBottomSpacing + dimens.screen.verticalPadding
+                fabHeight + ScaffoldFabBottomSpacing + 16.dp
             } else {
                 0.dp
             }

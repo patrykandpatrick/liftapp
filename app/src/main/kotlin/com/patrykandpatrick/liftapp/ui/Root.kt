@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
+import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.core.deeplink.DeepLink
 import com.patrykandpatrick.liftapp.core.format.LocalFormatter
@@ -175,7 +176,7 @@ fun Root(
                                 addSuperset()
                                 addRoutineList()
                                 addRoutineExerciseGoal()
-                                addSettings()
+                                addSettings(navController)
                                 addWorkout()
                             }
                         },
@@ -324,8 +325,20 @@ fun NavGraphBuilder.addBackup() {
     composable<BackupRestoreRouteData> { BackupRestoreScreen() }
 }
 
-fun NavGraphBuilder.addSettings() {
+fun NavGraphBuilder.addSettings(navController: NavController) {
     composable<Routes.Settings> { SettingsScreen() }
+    composable<Routes.OpenSourceLicenses> {
+        OpenSourceLicensesScreen(
+            onBackClick = { navController.popBackStack() },
+            onLicenseClick = { navController.navigate(it) },
+        )
+    }
+    composable<Routes.OpenSourceLicense> { backStackEntry ->
+        OpenSourceLicenseScreen(
+            license = backStackEntry.toRoute(),
+            onBackClick = { navController.popBackStack() },
+        )
+    }
 }
 
 fun NavGraphBuilder.addOneRepMax() {

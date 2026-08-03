@@ -45,6 +45,7 @@ constructor(
             is Action.SetFirstDayOfWeek -> setFirstDayOfWeek(action.firstDayOfWeek)
             is Action.SetTheme -> setTheme(action.theme)
             Action.AutomaticBackup -> navigateToAutomaticBackup()
+            Action.OpenSourceLicenses -> navigateToOpenSourceLicenses()
             Action.PopBackStack -> popBackStack()
         }
     }
@@ -75,6 +76,10 @@ constructor(
 
     private fun navigateToAutomaticBackup() {
         viewModelScope.launch { navigationCommander.navigateTo(Routes.Backup.Automatic) }
+    }
+
+    private fun navigateToOpenSourceLicenses() {
+        viewModelScope.launch { navigationCommander.navigateTo(Routes.OpenSourceLicenses) }
     }
 
     private companion object {

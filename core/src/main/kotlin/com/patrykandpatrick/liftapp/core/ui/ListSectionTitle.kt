@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.core.ui
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
@@ -26,18 +26,29 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 fun ListSectionTitle(
     title: String,
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues =
-        PaddingValues(
-            vertical = 16.dp,
-            horizontal = LocalDimens.current.screen.horizontalPadding,
-        ),
+    inset: ListSectionTitleDefaults.Inset = ListSectionTitleDefaults.Inset.ListItemContent,
+    spacing: ListSectionTitleDefaults.Spacing = ListSectionTitleDefaults.Spacing.Standard,
+    endPadding: Dp? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
+    val screenHorizontalPadding = LocalDimens.current.screen.padding
+    val startPadding =
+        when (inset) {
+            ListSectionTitleDefaults.Inset.ListItemContent ->
+                LiftAppListItemDefaults.sectionHeadingStartPadding
+            ListSectionTitleDefaults.Inset.Screen -> screenHorizontalPadding
+        }
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(paddingValues),
+        modifier =
+            modifier.padding(
+                start = startPadding,
+                top = spacing.top,
+                end = endPadding ?: screenHorizontalPadding,
+                bottom = spacing.bottom,
+            ),
     ) {
-        CompositionLocalProvider(LocalContentColor provides colorScheme.onBackground) {
+        CompositionLocalProvider(LocalContentColor provides colorScheme.foreground) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
@@ -61,16 +72,21 @@ fun ListSectionTitle(
 }
 
 object ListSectionTitleDefaults {
-    val betweenSectionsSpacing = 32.dp
-    val withinSectionSpacing = 12.dp
-    val bottomPadding = 4.dp
+    /** The two horizontal alignments used by section headings throughout the app. */
+    enum class Inset {
+        /** Aligns with list-item content, including the inset inside the screen margin. */
+        ListItemContent,
 
-    fun topPadding(isFirstSection: Boolean): Dp =
-        if (isFirstSection) {
-            0.dp
-        } else {
-            betweenSectionsSpacing - withinSectionSpacing
-        }
+        /** Aligns directly with the screen margin. */
+        Screen,
+    }
+
+    /** Complete vertical gaps owned by the heading rather than assembled by its neighbors. */
+    enum class Spacing(val top: Dp, val bottom: Dp) {
+        Standard(top = 16.dp, bottom = 16.dp),
+        AfterDivider(top = 20.dp, bottom = 16.dp),
+        Section(top = 32.dp, bottom = 16.dp),
+    }
 }
 
 @LightAndDarkThemePreview

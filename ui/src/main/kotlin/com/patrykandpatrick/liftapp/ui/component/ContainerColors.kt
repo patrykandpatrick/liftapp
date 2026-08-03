@@ -27,15 +27,33 @@ data class ContainerColors(
 
 fun lerp(start: ContainerColors, end: ContainerColors, fraction: Float): ContainerColors =
     ContainerColors(
-        backgroundColor = lerp(start.backgroundColor, end.backgroundColor, fraction),
-        contentColor = lerp(start.contentColor, end.contentColor, fraction),
+        backgroundColor = lerpVisibleColor(start.backgroundColor, end.backgroundColor, fraction),
+        contentColor = lerpVisibleColor(start.contentColor, end.contentColor, fraction),
         // Borders own their animation. Keeping their target discrete avoids continuously
         // retargeting that animation while the container colors interpolate.
         interactiveBorderColors = end.interactiveBorderColors,
         disabledBackgroundColor =
-            lerp(start.disabledBackgroundColor, end.disabledBackgroundColor, fraction),
-        disabledContentColor = lerp(start.disabledContentColor, end.disabledContentColor, fraction),
+            lerpVisibleColor(
+                start.disabledBackgroundColor,
+                end.disabledBackgroundColor,
+                fraction,
+            ),
+        disabledContentColor =
+            lerpVisibleColor(start.disabledContentColor, end.disabledContentColor, fraction),
     )
+
+/**
+ * Interpolates opacity without introducing transparent black into the visible transition.
+ *
+ * [Color.Transparent] has black RGB channels. Interpolating it directly with an opaque color
+ * therefore produces a dark flash before the intended color appears. Giving a transparent endpoint
+ * the other endpoint's RGB channels makes the transition a straightforward fade.
+ */
+private fun lerpVisibleColor(start: Color, end: Color, fraction: Float): Color {
+    val visibleStart = if (start.alpha == 0f) end.copy(alpha = 0f) else start
+    val visibleEnd = if (end.alpha == 0f) start.copy(alpha = 0f) else end
+    return lerp(visibleStart, visibleEnd, fraction)
+}
 
 @Composable
 fun animateContainerColorsAsState(

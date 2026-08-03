@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,8 +33,8 @@ import com.patrykandpatrick.liftapp.core.model.getDisplayName
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
+import com.patrykandpatrick.liftapp.core.ui.ListSectionTitleDefaults
 import com.patrykandpatrick.liftapp.core.ui.button.OnFocusChanged
 import com.patrykandpatrick.liftapp.core.ui.input.DateInput
 import com.patrykandpatrick.liftapp.core.ui.input.TimeInput
@@ -41,7 +42,8 @@ import com.patrykandpatrick.liftapp.feature.workout.model.Action
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.WorkoutPage
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.dimens.dimens
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -53,54 +55,52 @@ internal fun Summary(
     isRestTimerVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val dimens = LocalDimens.current
     LazyColumn(
         state = listState,
         contentPadding =
             PaddingValues(
-                top = dimens.screen.verticalPadding,
+                top = 8.dp,
                 bottom =
-                    dimens.screen.verticalPadding +
+                    dimens.screen.padding +
                         if (isRestTimerVisible) RestTimerContainerHeight else 0.dp,
             ),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
-        item(contentType = "name") {
-            Name(name = summary.name, onNameSelected = { onAction(Action.UpdateWorkoutName(it)) })
-        }
-
-        item(contentType = "date_time") {
-            StartDateTime(
-                startDate = summary.startDate,
-                startTime = summary.startTime,
-                is24H = summary.is24H,
-                onDateTimeSelected = { startDate, startTime ->
-                    onAction(Action.UpdateWorkoutStartDateTime(startDate, startTime))
-                },
-            )
-        }
-
-        item(contentType = "date_time") {
-            EndDateTime(
-                endDate = summary.endDate,
-                endTime = summary.endTime,
-                is24H = summary.is24H,
-                onDateTimeSelected = { endDate, endTime ->
-                    onAction(Action.UpdateWorkoutEndDateTime(endDate, endTime))
-                },
-            )
-        }
-
-        item(contentType = "notes") {
-            Notes(
-                notes = summary.notes,
-                onNotesSelected = { onAction(Action.UpdateWorkoutNotes(it)) },
-            )
+        item(contentType = "details") {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Name(
+                    name = summary.name,
+                    onNameSelected = { onAction(Action.UpdateWorkoutName(it)) },
+                )
+                StartDateTime(
+                    startDate = summary.startDate,
+                    startTime = summary.startTime,
+                    is24H = summary.is24H,
+                    onDateTimeSelected = { startDate, startTime ->
+                        onAction(Action.UpdateWorkoutStartDateTime(startDate, startTime))
+                    },
+                )
+                EndDateTime(
+                    endDate = summary.endDate,
+                    endTime = summary.endTime,
+                    is24H = summary.is24H,
+                    onDateTimeSelected = { endDate, endTime ->
+                        onAction(Action.UpdateWorkoutEndDateTime(endDate, endTime))
+                    },
+                )
+                Notes(
+                    notes = summary.notes,
+                    onNotesSelected = { onAction(Action.UpdateWorkoutNotes(it)) },
+                )
+            }
         }
 
         item(contentType = "section_title") {
-            ListSectionTitle(stringResource(R.string.workout_summary_exercises))
+            ListSectionTitle(
+                title = stringResource(R.string.workout_summary_exercises),
+                inset = ListSectionTitleDefaults.Inset.Screen,
+                spacing = ListSectionTitleDefaults.Spacing.Section,
+            )
         }
 
         itemsIndexed(
@@ -108,7 +108,10 @@ internal fun Summary(
             key = { _, it -> it.id },
             contentType = { _, _ -> "exercise" },
         ) { index, exercise ->
-            Exercise(index, exercise)
+            Exercise(
+                index = index,
+                exercise = exercise,
+            )
         }
     }
 }
@@ -224,28 +227,28 @@ private fun Exercise(
     exercise: EditableWorkout.Exercise,
     modifier: Modifier = Modifier,
 ) {
-    val dimens = LocalDimens.current
     val density = LocalDensity.current.density
     val titleHeight = remember { mutableIntStateOf(0) }
-    ListItem(
-        icon = {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier =
-                    Modifier.height((titleHeight.intValue / density).toInt().dp)
-                        .align(Alignment.Top),
-            ) {
-                Text(text = "${index + 1}", style = MaterialTheme.typography.titleSmall)
-            }
-        },
-        title = {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.Top,
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.height((titleHeight.intValue / density).toInt().dp),
+        ) {
+            Text(text = "${index + 1}", style = MaterialTheme.typography.titleSmall)
+        }
+
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = exercise.name.getDisplayName(),
                 style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
+                color = colorScheme.foreground,
                 modifier = Modifier.onGloballyPositioned { titleHeight.intValue = it.size.height },
             )
-        },
-        description = {
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(top = 12.dp),
@@ -261,15 +264,10 @@ private fun Exercise(
                                 )
                             ),
                         style = MaterialTheme.typography.bodyLarge,
+                        color = colorScheme.foregroundVariant,
                     )
                 }
             }
-        },
-        modifier = modifier,
-        paddingValues =
-            PaddingValues(
-                horizontal = 16.dp,
-                vertical = 8.dp,
-            ),
-    )
+        }
+    }
 }

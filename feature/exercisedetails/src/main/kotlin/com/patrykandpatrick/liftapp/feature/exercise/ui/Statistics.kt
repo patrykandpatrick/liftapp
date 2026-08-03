@@ -12,17 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -30,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.chart.DateIntervalController
+import com.patrykandpatrick.liftapp.core.chart.DateIntervalControllerDefaults
 import com.patrykandpatrick.liftapp.core.chart.OnModelChange
 import com.patrykandpatrick.liftapp.core.chart.bottom
 import com.patrykandpatrick.liftapp.core.chart.rememberCartesianMarker
@@ -46,7 +43,6 @@ import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatrick.liftapp.core.ui.DropdownMenu
-import com.patrykandpatrick.liftapp.core.ui.ListItemText
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitleDefaults
 import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseSetGroup
@@ -54,12 +50,12 @@ import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseStatistics
 import com.patrykandpatrick.liftapp.domain.format.Formatter
 import com.patrykandpatrick.liftapp.feature.exercise.model.Action
 import com.patrykandpatrick.liftapp.feature.exercise.model.ScreenState
-import com.patrykandpatrick.liftapp.ui.VerticalGrid
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
-import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChip
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChipRow
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFilterChipDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.ChevronDown
 import com.patrykandpatrick.liftapp.ui.icons.Dumbbell
@@ -95,8 +91,8 @@ fun Statistics(
     bottomContentPadding: Dp = 0.dp,
     onAction: (Action) -> Unit,
 ) {
-    val topContentPadding = dimens.screen.verticalPadding
-    val resolvedBottomContentPadding = bottomContentPadding + dimens.screen.verticalPadding
+    val topContentPadding = 16.dp
+    val resolvedBottomContentPadding = bottomContentPadding + dimens.screen.padding
 
     if (!state.hasExerciseHistory) {
         EmptyState(
@@ -106,9 +102,9 @@ fun Statistics(
                 modifier
                     .fillMaxSize()
                     .padding(
-                        start = dimens.screen.horizontalPadding,
+                        start = dimens.screen.padding,
                         top = topContentPadding,
-                        end = dimens.screen.horizontalPadding,
+                        end = dimens.screen.padding,
                         bottom = resolvedBottomContentPadding,
                     ),
         )
@@ -133,8 +129,10 @@ fun Statistics(
                     Modifier.weight(1f)
                         .fillMaxWidth()
                         .padding(
-                            horizontal = dimens.screen.horizontalPadding,
-                            vertical = dimens.screen.verticalPadding,
+                            start = dimens.screen.padding,
+                            top = 8.dp,
+                            end = dimens.screen.padding,
+                            bottom = 16.dp,
                         ),
             )
         }
@@ -148,29 +146,36 @@ fun Statistics(
                 top = topContentPadding,
                 bottom = resolvedBottomContentPadding,
             ),
-        verticalArrangement = Arrangement.spacedBy(ListSectionTitleDefaults.withinSectionSpacing),
     ) {
         item(key = "date_interval") { StatisticsControls(state, onAction) }
 
-        item(key = "chart") { Chart(state.cartesianChartModelProducer) }
+        item(key = "chart") {
+            Chart(
+                producer = state.cartesianChartModelProducer,
+                modifier =
+                    Modifier.padding(
+                        top = 16.dp - DateIntervalControllerDefaults.visibleContentVerticalInset
+                    ),
+            )
+        }
 
         state.exerciseStatistics?.let { statistics ->
             item(key = "statistics_title") {
                 ListSectionTitle(
                     title = stringResource(R.string.tab_stats),
                     modifier = Modifier.animateItem(),
-                    paddingValues = statisticsSectionTitlePadding(),
+                    inset = ListSectionTitleDefaults.Inset.ListItemContent,
+                    spacing = ListSectionTitleDefaults.Spacing.Section,
                 )
             }
             item(key = "statistics") {
-                ExerciseStatisticsGrid(
+                ExerciseStatisticsList(
                     statistics = statistics,
                     modifier =
                         Modifier.animateItem()
                             .padding(
-                                top = sectionContentInset,
-                                start = dimens.screen.horizontalPadding,
-                                end = dimens.screen.horizontalPadding,
+                                start = dimens.screen.padding,
+                                end = dimens.screen.padding,
                             ),
                 )
             }
@@ -180,13 +185,18 @@ fun Statistics(
             ListSectionTitle(
                 title = stringResource(R.string.generic_journal),
                 modifier = Modifier.animateItem(),
-                paddingValues = statisticsSectionTitlePadding(),
+                inset = ListSectionTitleDefaults.Inset.ListItemContent,
+                spacing = ListSectionTitleDefaults.Spacing.Section,
             )
         }
 
-        items(items = state.exerciseSetGroups, key = { it.workoutStartDate }) { exerciseSetGroup ->
+        itemsIndexed(
+            items = state.exerciseSetGroups,
+            key = { _, item -> item.workoutStartDate },
+        ) { index, exerciseSetGroup ->
             ExerciseSetGroupItem(
                 exerciseSetGroup = exerciseSetGroup,
+                position = LiftAppListItemPosition(index, state.exerciseSetGroups.size),
                 modifier = Modifier.animateItem(),
             )
         }
@@ -194,171 +204,135 @@ fun Statistics(
 }
 
 @Composable
-private fun statisticsSectionTitlePadding(): PaddingValues =
-    PaddingValues(
-        start = dimens.screen.horizontalPadding,
-        top = ListSectionTitleDefaults.topPadding(isFirstSection = false),
-        end = dimens.screen.horizontalPadding,
-        bottom = ListSectionTitleDefaults.bottomPadding,
-    )
-
-@Composable
-private fun ExerciseStatisticsGrid(
+private fun ExerciseStatisticsList(
     statistics: ExerciseStatistics,
     modifier: Modifier = Modifier,
 ) {
     val formatter = LocalFormatter.current
-
-    VerticalGrid(
-        cells = GridCells.Fixed(2),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-        modifier = modifier,
-    ) {
+    val items =
         when (statistics) {
-            is ExerciseStatistics.Weight -> {
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.Dumbbell,
-                    value = formatter.formatWeight(statistics.totalVolume, statistics.massUnit),
-                    label = stringResource(R.string.exercise_statistics_total_volume),
+            is ExerciseStatistics.Weight ->
+                listOf(
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.Dumbbell,
+                        value = formatter.formatWeight(statistics.totalVolume, statistics.massUnit),
+                        label = stringResource(R.string.exercise_statistics_total_volume),
+                    ),
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.Weight,
+                        value =
+                            formatter.formatWeight(statistics.maximumWeight, statistics.massUnit),
+                        label = stringResource(R.string.exercise_statistics_maximum_weight),
+                    ),
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.Feather,
+                        value =
+                            formatter.formatWeight(statistics.minimumWeight, statistics.massUnit),
+                        label = stringResource(R.string.exercise_statistics_minimum_weight),
+                    ),
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.Repeat,
+                        value =
+                            formatter.formatNumber(
+                                statistics.totalReps,
+                                format = Formatter.NumberFormat.Integer,
+                            ),
+                        label = stringResource(R.string.exercise_statistics_total_reps),
+                    ),
                 )
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.Weight,
-                    value = formatter.formatWeight(statistics.maximumWeight, statistics.massUnit),
-                    label = stringResource(R.string.exercise_statistics_maximum_weight),
-                )
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.Feather,
-                    value = formatter.formatWeight(statistics.minimumWeight, statistics.massUnit),
-                    label = stringResource(R.string.exercise_statistics_minimum_weight),
-                )
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.Repeat,
-                    value =
-                        formatter.formatNumber(
-                            statistics.totalReps,
-                            format = Formatter.NumberFormat.Integer,
-                        ),
-                    label = stringResource(R.string.exercise_statistics_total_reps),
-                )
-            }
 
-            is ExerciseStatistics.Reps -> {
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.Repeat,
-                    value =
-                        formatter.formatNumber(
-                            statistics.totalReps,
-                            format = Formatter.NumberFormat.Integer,
-                        ),
-                    label = stringResource(R.string.exercise_statistics_total_reps),
+            is ExerciseStatistics.Reps ->
+                listOf(
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.Repeat,
+                        value =
+                            formatter.formatNumber(
+                                statistics.totalReps,
+                                format = Formatter.NumberFormat.Integer,
+                            ),
+                        label = stringResource(R.string.exercise_statistics_total_reps),
+                    ),
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.TrendingUp,
+                        value =
+                            formatter.formatNumber(
+                                statistics.maximumReps,
+                                format = Formatter.NumberFormat.Integer,
+                            ),
+                        label = stringResource(R.string.exercise_statistics_maximum_reps),
+                    ),
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.TrendingDown,
+                        value =
+                            formatter.formatNumber(
+                                statistics.minimumReps,
+                                format = Formatter.NumberFormat.Integer,
+                            ),
+                        label = stringResource(R.string.exercise_statistics_minimum_reps),
+                    ),
                 )
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.TrendingUp,
-                    value =
-                        formatter.formatNumber(
-                            statistics.maximumReps,
-                            format = Formatter.NumberFormat.Integer,
-                        ),
-                    label = stringResource(R.string.exercise_statistics_maximum_reps),
-                )
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.TrendingDown,
-                    value =
-                        formatter.formatNumber(
-                            statistics.minimumReps,
-                            format = Formatter.NumberFormat.Integer,
-                        ),
-                    label = stringResource(R.string.exercise_statistics_minimum_reps),
-                )
-            }
 
-            is ExerciseStatistics.Time -> {
-                DurationStatisticsItems(
+            is ExerciseStatistics.Time ->
+                durationStatistics(
                     totalDuration = formatter.formatDurationWithUnits(statistics.totalDuration),
                     minimumDuration = formatter.formatDurationWithUnits(statistics.minimumDuration),
                     maximumDuration = formatter.formatDurationWithUnits(statistics.maximumDuration),
                 )
-            }
 
-            is ExerciseStatistics.Cardio -> {
-                DurationStatisticsItems(
+            is ExerciseStatistics.Cardio ->
+                durationStatistics(
                     totalDuration = formatter.formatDurationWithUnits(statistics.totalDuration),
                     minimumDuration = formatter.formatDurationWithUnits(statistics.minimumDuration),
                     maximumDuration = formatter.formatDurationWithUnits(statistics.maximumDuration),
-                )
-                ExerciseStatisticItem(
-                    icon = LiftAppIcons.Ruler,
-                    value =
-                        formatter.formatValue(
-                            statistics.totalDistance,
-                            statistics.distanceUnit,
-                        ),
-                    label = stringResource(R.string.exercise_statistics_total_distance),
-                )
-            }
+                ) +
+                    ExerciseStatistic(
+                        icon = LiftAppIcons.Ruler,
+                        value =
+                            formatter.formatValue(
+                                statistics.totalDistance,
+                                statistics.distanceUnit,
+                            ),
+                        label = stringResource(R.string.exercise_statistics_total_distance),
+                    )
+        }
+
+    Column(modifier = modifier) {
+        items.forEachIndexed { index, item ->
+            LiftAppListItem(
+                title = item.label,
+                imageVector = item.icon,
+                description = item.value,
+                position = LiftAppListItemPosition(index = index, count = items.size),
+            )
         }
     }
 }
 
+private data class ExerciseStatistic(val icon: ImageVector, val value: String, val label: String)
+
 @Composable
-private fun DurationStatisticsItems(
+private fun durationStatistics(
     totalDuration: String,
     minimumDuration: String,
     maximumDuration: String,
-) {
-    ExerciseStatisticItem(
-        icon = LiftAppIcons.Timer,
-        value = totalDuration,
-        label = stringResource(R.string.exercise_statistics_total_duration),
+) =
+    listOf(
+        ExerciseStatistic(
+            icon = LiftAppIcons.Timer,
+            value = totalDuration,
+            label = stringResource(R.string.exercise_statistics_total_duration),
+        ),
+        ExerciseStatistic(
+            icon = LiftAppIcons.TrendingDown,
+            value = minimumDuration,
+            label = stringResource(R.string.exercise_statistics_minimum_duration),
+        ),
+        ExerciseStatistic(
+            icon = LiftAppIcons.TrendingUp,
+            value = maximumDuration,
+            label = stringResource(R.string.exercise_statistics_maximum_duration),
+        ),
     )
-    ExerciseStatisticItem(
-        icon = LiftAppIcons.TrendingDown,
-        value = minimumDuration,
-        label = stringResource(R.string.exercise_statistics_minimum_duration),
-    )
-    ExerciseStatisticItem(
-        icon = LiftAppIcons.TrendingUp,
-        value = maximumDuration,
-        label = stringResource(R.string.exercise_statistics_maximum_duration),
-    )
-}
-
-@Composable
-private fun ExerciseStatisticItem(
-    icon: ImageVector,
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier,
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier =
-                Modifier.size(40.dp)
-                    .background(
-                        color = colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(12.dp),
-                    ),
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp),
-            )
-        }
-        ListItemText(
-            title = { Text(value) },
-            description = { Text(label) },
-            horizontalAlignment = Alignment.CenterHorizontally,
-        )
-    }
-}
 
 @Composable
 private fun StatisticsControls(
@@ -368,9 +342,12 @@ private fun StatisticsControls(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement =
+            Arrangement.spacedBy(
+                20.dp - DateIntervalControllerDefaults.visibleContentVerticalInset
+            ),
     ) {
-        LiftAppChipRow(modifier = Modifier.padding(horizontal = dimens.screen.horizontalPadding)) {
+        LiftAppChipRow(modifier = Modifier.padding(horizontal = dimens.screen.padding)) {
             DropdownMenu(
                 selectedItems = listOf(state.dateInterval),
                 items = state.dateIntervalOptions,
@@ -380,7 +357,6 @@ private fun StatisticsControls(
             ) { expanded, setExpanded ->
                 LiftAppChip(
                     onClick = { setExpanded(true) },
-                    colors = LiftAppButtonDefaults.outlinedButtonColors,
                     trailingIcon = {
                         LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.ChevronDown)
                     },
@@ -398,7 +374,6 @@ private fun StatisticsControls(
                 ) { expanded, setExpanded ->
                     LiftAppChip(
                         onClick = { setExpanded(true) },
-                        colors = LiftAppButtonDefaults.outlinedButtonColors,
                         trailingIcon = {
                             LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.ChevronDown)
                         },
@@ -420,7 +395,7 @@ private fun StatisticsControls(
 @Composable
 private fun Chart(producer: CartesianChartModelProducer, modifier: Modifier = Modifier) {
     CartesianChartHost(
-        modifier = modifier.padding(horizontal = dimens.screen.horizontalPadding),
+        modifier = modifier.padding(horizontal = dimens.screen.padding),
         chart =
             rememberCartesianChart(
                 rememberColumnCartesianLayer(
@@ -455,59 +430,62 @@ private fun Chart(producer: CartesianChartModelProducer, modifier: Modifier = Mo
 @Composable
 private fun ExerciseSetGroupItem(
     exerciseSetGroup: ExerciseSetGroup,
+    position: LiftAppListItemPosition,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier =
-            modifier.padding(
-                vertical = sectionContentInset,
-                horizontal = dimens.screen.horizontalPadding,
-            ),
-    ) {
-        Text(
-            text =
-                buildString {
-                    append(exerciseSetGroup.workoutName)
-                    append(" ${stringResource(R.string.point_separator)} ")
-                    append(
-                        exerciseSetGroup.workoutStartDate.format(
-                            Formatter.DateFormat.WeekdayDayMonth
-                        )
-                    )
-                },
-            style = MaterialTheme.typography.titleSmall,
-            color = colorScheme.onSurfaceVariant,
-        )
-
-        if (exerciseSetGroup.notes.isNotBlank()) {
-            JournalNote(notes = exerciseSetGroup.notes)
-        }
-
-        exerciseSetGroup.sets.forEachIndexed { setIndex, set ->
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text =
-                        LocalMarkupProcessor.current.toAnnotatedString(
-                            stringResource(
-                                R.string.workout_exercise_set_info,
-                                setIndex + 1,
-                                set.prettyString(),
+    LiftAppListItem(
+        position = position,
+        modifier = modifier.padding(horizontal = dimens.screen.padding),
+        contentPadding = PaddingValues(16.dp),
+        title = {
+            Text(
+                text =
+                    buildString {
+                        append(exerciseSetGroup.workoutName)
+                        append(" ${stringResource(R.string.point_separator)} ")
+                        append(
+                            exerciseSetGroup.workoutStartDate.format(
+                                Formatter.DateFormat.WeekdayDayMonth
                             )
-                        ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = colorScheme.onSurface,
-                )
+                        )
+                    },
+                style = MaterialTheme.typography.titleSmall,
+                color = colorScheme.foregroundVariant,
+            )
+        },
+        description = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(top = 8.dp),
+            ) {
+                if (exerciseSetGroup.notes.isNotBlank()) {
+                    JournalNote(notes = exerciseSetGroup.notes)
+                }
 
-                if (set.notes.isNotBlank()) {
-                    JournalNote(notes = set.notes)
+                exerciseSetGroup.sets.forEachIndexed { setIndex, set ->
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text =
+                                LocalMarkupProcessor.current.toAnnotatedString(
+                                    stringResource(
+                                        R.string.workout_exercise_set_info,
+                                        setIndex + 1,
+                                        set.prettyString(),
+                                    )
+                                ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = colorScheme.foreground,
+                        )
+
+                        if (set.notes.isNotBlank()) {
+                            JournalNote(notes = set.notes)
+                        }
+                    }
                 }
             }
-        }
-    }
+        },
+    )
 }
-
-private val sectionContentInset = 8.dp
 
 @Composable
 private fun JournalNote(notes: String, modifier: Modifier = Modifier) {
@@ -519,7 +497,7 @@ private fun JournalNote(notes: String, modifier: Modifier = Modifier) {
         Text(
             text = notes.trim(),
             style = MaterialTheme.typography.bodyMedium,
-            color = colorScheme.onSurface,
+            color = colorScheme.foreground,
             modifier = Modifier.weight(1f),
         )
     }

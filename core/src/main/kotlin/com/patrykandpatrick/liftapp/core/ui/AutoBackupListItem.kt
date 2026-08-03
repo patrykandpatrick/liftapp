@@ -3,25 +3,36 @@ package com.patrykandpatrick.liftapp.core.ui
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.ui.resource.prettyString
 import com.patrykandpatrick.liftapp.domain.backup.AutoBackupSettings
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.RefreshCcwDot
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 /** The shared entry point to automatic-backup settings. */
 @Composable
-fun AutoBackupListItem(settings: AutoBackupSettings?, onClick: () -> Unit) {
-    ListItem(
+fun AutoBackupListItem(
+    settings: AutoBackupSettings?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    position: LiftAppListItemPosition = LiftAppListItemPosition.Single,
+) {
+    LiftAppListItem(
         title = { Text(stringResource(R.string.backup_auto_enabled)) },
         description = settings?.let { value -> { AutoBackupSummary(value) } },
         icon = {
-            ListItemDefaults.Icon {
+            LiftAppListItemDefaults.Icon {
                 Icon(LiftAppIcons.RefreshCcwDot, contentDescription = null)
             }
         },
+        modifier = modifier,
+        position = position,
         onClick = onClick,
     )
 }

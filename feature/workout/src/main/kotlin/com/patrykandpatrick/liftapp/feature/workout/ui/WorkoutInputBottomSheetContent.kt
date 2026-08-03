@@ -14,7 +14,7 @@ import com.patrykandpatrick.liftapp.ui.dimens.dimens
 @Composable
 internal fun WorkoutInputBottomSheetContent(
     modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(16.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -24,9 +24,9 @@ internal fun WorkoutInputBottomSheetContent(
                 .then(modifier)
                 .imePadding()
                 .padding(
-                    start = dimens.screen.horizontalPadding,
+                    start = dimens.screen.padding,
                     top = 8.dp,
-                    end = dimens.screen.horizontalPadding,
+                    end = dimens.screen.padding,
                     bottom = 16.dp,
                 ),
         content = content,

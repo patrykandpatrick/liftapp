@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.dashboard.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -10,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -26,7 +25,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.patrykandpatrick.liftapp.core.R
@@ -121,14 +119,13 @@ private fun DashboardScreen(
                 // it — can, without unpicking a padding the list imposed on everything.
                 contentPadding =
                     paddingValues.increaseBy(
-                        top = dimens.screen.verticalPadding,
                         bottom =
-                            dimens.screen.verticalPadding +
+                            LocalDimens.current.screen.padding +
                                 if (state.workoutTarget != null) {
-                                    fabHeight + 16.dp
+                                    fabHeight + LocalDimens.current.screen.padding
                                 } else {
                                     0.dp
-                                },
+                                }
                     ),
             )
         }
@@ -144,13 +141,9 @@ private fun Content(
     var workoutWithOptions by remember { mutableStateOf<Workout?>(null) }
     var workoutToDelete by remember { mutableStateOf<Workout?>(null) }
 
-    // The list leaves the gap that belongs between neighbors within a section, and each section
-    // adds the rest of the wider gap above itself. Spacing the list by the wider gap instead would
-    // push a heading away from its own cards wherever the heading is a list item of its own.
-    val contentHorizontal = LocalDimens.current.screen.horizontalPadding
+    val contentHorizontal = LocalDimens.current.screen.padding
     LazyColumn(
         contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(ListSectionTitleDefaults.withinSectionSpacing),
         modifier = Modifier.fillMaxSize(),
     ) {
         val hasActiveWorkouts = state.activeWorkouts.isNotEmpty()
@@ -169,24 +162,32 @@ private fun Content(
                 )
             }
 
-            items(items = state.activeWorkouts, key = { "workout:${it.id}" }) { workout ->
+            itemsIndexed(
+                items = state.activeWorkouts,
+                key = { _, workout -> "workout:${workout.id}" },
+            ) { index, workout ->
                 WorkoutCard(
                     workout = workout,
                     onClick = { onAction(Action.GoToWorkout(workout.id)) },
-                    modifier = Modifier.animateItem().padding(horizontal = contentHorizontal),
+                    modifier =
+                        Modifier.animateItem()
+                            .padding(
+                                start = contentHorizontal,
+                                top = if (index == 0) 0.dp else 12.dp,
+                                end = contentHorizontal,
+                            ),
                 )
             }
         }
 
-        // No heading: the top bar already names the week these totals cover. The gap that a heading
-        // would have carried has to be asked for instead, or this section would sit as close to the
-        // one above it as a card sits to its neighbor.
+        // No heading: the top bar already names the week these totals cover, so this item owns the
+        // complete section gap itself.
         item(key = "statistics") {
             Statistics(
                 statistics = state.statistics,
                 modifier =
                     Modifier.padding(
-                        top = sectionTopPadding(isFirst = !hasActiveWorkouts),
+                        top = if (hasActiveWorkouts) 32.dp else 16.dp,
                         start = contentHorizontal,
                         end = contentHorizontal,
                     ),
@@ -200,7 +201,6 @@ private fun Content(
                 onClick = { onAction(Action.SelectDate(it)) },
                 modifier =
                     Modifier.padding(
-                        top = ListSectionTitleDefaults.withinSectionSpacing,
                         start = contentHorizontal,
                         end = contentHorizontal,
                     ),
@@ -211,7 +211,7 @@ private fun Content(
                 onAction = onAction,
                 modifier =
                     Modifier.padding(
-                        top = ListSectionTitleDefaults.withinSectionSpacing,
+                        top = 12.dp,
                         start = contentHorizontal,
                         end = contentHorizontal,
                     ),
@@ -224,7 +224,6 @@ private fun Content(
                 onAction = onAction,
                 modifier =
                     Modifier.padding(
-                        top = ListSectionTitleDefaults.withinSectionSpacing,
                         start = contentHorizontal,
                         end = contentHorizontal,
                     ),
@@ -255,12 +254,21 @@ private fun Content(
                 )
             }
 
-            items(items = state.pastWorkouts, key = { it.id }) { workout ->
+            itemsIndexed(
+                items = state.pastWorkouts,
+                key = { _, workout -> workout.id },
+            ) { index, workout ->
                 WorkoutCard(
                     workout = workout,
                     onClick = { onAction(Action.GoToWorkout(workout.id)) },
                     onLongClick = { workoutWithOptions = it },
-                    modifier = Modifier.animateItem().padding(horizontal = contentHorizontal),
+                    modifier =
+                        Modifier.animateItem()
+                            .padding(
+                                start = contentHorizontal,
+                                top = if (index == 0) 0.dp else 12.dp,
+                                end = contentHorizontal,
+                            ),
                 )
             }
         }
@@ -282,18 +290,6 @@ private fun Content(
     )
 }
 
-/**
- * What a section adds above itself so that the gap to the section before comes to
- * [ListSectionTitleDefaults.betweenSectionsSpacing], the list having already left
- * [ListSectionTitleDefaults.withinSectionSpacing]. The first section adds nothing: there is nothing
- * above it to be separated from, only the padding the list itself begins with.
- */
-private fun sectionTopPadding(isFirst: Boolean): Dp = ListSectionTitleDefaults.topPadding(isFirst)
-
-/**
- * The list already insets its content, so no horizontal padding is added here; that would set the
- * titles in further than the cards they head.
- */
 @Composable
 private fun ListSectionTitle(
     title: String,
@@ -301,25 +297,25 @@ private fun ListSectionTitle(
     isFirstSection: Boolean = false,
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
-    val contentHorizontal = LocalDimens.current.screen.horizontalPadding
-    // A button's own padding is invisible until it is pressed, so the inset gives way to it,
-    // leaving the label on the edge the cards below sit on. The vertical padding needs no such
-    // care: the heading alone sets the row's height.
+    val contentHorizontal = LocalDimens.current.screen.padding
     val buttonPadding = LiftAppButtonDefaults.plainContentPadding
     val layoutDirection = LocalLayoutDirection.current
     com.patrykandpatrick.liftapp.core.ui.ListSectionTitle(
         title = title,
-        paddingValues =
-            PaddingValues(
-                start = contentHorizontal,
-                end =
-                    if (trailingIcon == null) contentHorizontal
-                    else
-                        (contentHorizontal - buttonPadding.calculateEndPadding(layoutDirection))
-                            .coerceAtLeast(0.dp),
-                top = sectionTopPadding(isFirstSection),
-                bottom = ListSectionTitleDefaults.bottomPadding,
-            ),
+        inset = ListSectionTitleDefaults.Inset.Screen,
+        spacing =
+            if (isFirstSection) {
+                ListSectionTitleDefaults.Spacing.Standard
+            } else {
+                ListSectionTitleDefaults.Spacing.Section
+            },
+        endPadding =
+            if (trailingIcon == null) {
+                contentHorizontal
+            } else {
+                (contentHorizontal - buttonPadding.calculateEndPadding(layoutDirection))
+                    .coerceAtLeast(0.dp)
+            },
         modifier = modifier,
         trailingIcon = trailingIcon,
     )

@@ -39,8 +39,8 @@ import com.patrykandpatrick.liftapp.core.model.valueOrNull
 import com.patrykandpatrick.liftapp.core.text.updateValueBy
 import com.patrykandpatrick.liftapp.core.ui.BottomAppBar
 import com.patrykandpatrick.liftapp.core.ui.InputFieldLayout
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
+import com.patrykandpatrick.liftapp.core.ui.ListSectionTitleDefaults
 import com.patrykandpatrick.liftapp.core.ui.TopAppBar
 import com.patrykandpatrick.liftapp.core.ui.input.NumberInput
 import com.patrykandpatrick.liftapp.core.ui.wheel.DurationPicker
@@ -50,6 +50,8 @@ import com.patrykandpatrick.liftapp.feature.routine.model.getText
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppErrorSnackbarHost
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
@@ -112,14 +114,14 @@ private fun SupersetEditor(
 
     LazyColumn(
         modifier = modifier.fillMaxSize().background(colorScheme.background),
-        contentPadding = PaddingValues(vertical = dimens.screen.verticalPadding),
+        contentPadding = PaddingValues(vertical = dimens.screen.padding),
     ) {
         item(key = "description") {
             Text(
                 text = stringResource(R.string.superset_description),
                 style = MaterialTheme.typography.bodyMedium,
-                color = colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = dimens.screen.horizontalPadding),
+                color = colorScheme.foregroundVariant,
+                modifier = Modifier.padding(horizontal = dimens.screen.padding),
             )
         }
 
@@ -135,9 +137,9 @@ private fun SupersetEditor(
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus(true) }),
                 modifier =
                     Modifier.padding(
-                        start = dimens.screen.horizontalPadding,
-                        top = dimens.screen.verticalPadding,
-                        end = dimens.screen.horizontalPadding,
+                        start = dimens.screen.padding,
+                        top = 16.dp,
+                        end = dimens.screen.padding,
                     ),
             )
         }
@@ -148,8 +150,9 @@ private fun SupersetEditor(
                 label = { Text(stringResource(R.string.superset_rest_time)) },
                 modifier =
                     Modifier.padding(
-                        horizontal = dimens.screen.horizontalPadding,
-                        vertical = 16.dp,
+                        start = dimens.screen.padding,
+                        top = 16.dp,
+                        end = dimens.screen.padding,
                     ),
             ) {
                 DurationPicker(
@@ -161,9 +164,8 @@ private fun SupersetEditor(
         }
 
         item(key = "included_exercises_title") {
-            // The button's own padding is invisible until it is pressed, so the inset gives way
-            // to it, leaving the label and the underline where the eye expects them. Only the
-            // horizontal side needs it: the heading alone sets the row's height.
+            // The button's own padding is invisible until it is pressed, so subtract it from the
+            // row inset to place the visible button content 32 dp from the screen edge.
             val buttonPadding = LiftAppButtonDefaults.plainContentPadding
             val layoutDirection = LocalLayoutDirection.current
             val exerciseCount = state.includedExercises.size
@@ -174,15 +176,11 @@ private fun SupersetEditor(
                         exerciseCount,
                         exerciseCount,
                     ),
-                paddingValues =
-                    PaddingValues(
-                        start = dimens.screen.horizontalPadding,
-                        end =
-                            (dimens.screen.horizontalPadding -
-                                    buttonPadding.calculateEndPadding(layoutDirection))
-                                .coerceAtLeast(0.dp),
-                        top = 16.dp,
-                        bottom = 16.dp,
+                inset = ListSectionTitleDefaults.Inset.ListItemContent,
+                spacing = ListSectionTitleDefaults.Spacing.Section,
+                endPadding =
+                    (32.dp - buttonPadding.calculateEndPadding(layoutDirection)).coerceAtLeast(
+                        0.dp
                     ),
                 trailingIcon = {
                     PlainLiftAppButton(onClick = viewModel::pickExercises) {
@@ -196,7 +194,7 @@ private fun SupersetEditor(
             ReorderableColumn(
                 list = state.includedExercises,
                 onSettle = viewModel::reorderExercises,
-            ) { _, exercise, _ ->
+            ) { index, exercise, _ ->
                 val interactionSource = remember { MutableInteractionSource() }
 
                 ReorderableItem {
@@ -206,10 +204,13 @@ private fun SupersetEditor(
                             Modifier.draggableHandle(interactionSource = interactionSource),
                         onRemove = { viewModel.removeExercise(exercise) },
                         interactionSource = interactionSource,
+                        position = LiftAppListItemPosition(index, state.includedExercises.size),
                         modifier =
-                            Modifier.longPressDraggableHandle(
-                                interactionSource = interactionSource
-                            ),
+                            Modifier.longPressDraggableHandle(interactionSource = interactionSource)
+                                .padding(
+                                    start = dimens.screen.padding,
+                                    end = dimens.screen.padding,
+                                ),
                     )
                 }
             }
@@ -223,10 +224,12 @@ private fun ExerciseRow(
     dragHandleModifier: Modifier,
     onRemove: () -> Unit,
     interactionSource: MutableInteractionSource,
+    position: LiftAppListItemPosition,
     modifier: Modifier = Modifier,
 ) {
-    ListItem(
+    LiftAppListItem(
         title = { Text(exercise.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        position = position,
         description = { Text(exercise.muscles) },
         icon = {
             Icon(
@@ -244,6 +247,13 @@ private fun ExerciseRow(
                 )
             }
         },
+        contentPadding =
+            PaddingValues(
+                start = 16.dp,
+                top = 10.dp,
+                end = 8.dp,
+                bottom = 10.dp,
+            ),
         interactionSource = interactionSource,
         modifier = modifier,
     )

@@ -58,8 +58,11 @@ fun WorkoutCard(
         onClick = { onClick(workout) },
         onLongClick = onLongClick?.let { { it(workout) } },
         colors =
-            if (workout.isCompleted) LiftAppCardDefaults.cardColors
-            else LiftAppCardDefaults.tonalCardColors,
+            if (workout.isCompleted) {
+                LiftAppCardDefaults.cardColors
+            } else {
+                LiftAppCardDefaults.tonalCardColors
+            },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             WorkoutStatusWithDate(workout)
@@ -95,7 +98,7 @@ fun WorkoutCard(
                     }
                 },
             style = MaterialTheme.typography.bodySmall.copy(lineHeight = 20.sp),
-            color = colorScheme.onSurfaceVariant,
+            color = colorScheme.foregroundVariant,
             modifier = Modifier.padding(top = 0.dp),
         )
 
@@ -113,7 +116,7 @@ fun WorkoutCard(
                 style = MaterialTheme.typography.labelLarge,
             )
             SinHorizontalDivider(
-                color = colorScheme.onSurface,
+                color = colorScheme.primary,
                 sinHeight = 4.dp,
                 thickness = dimens.button.underlineWidth,
                 sinPeriodLength = 1.5.dp,
@@ -140,7 +143,7 @@ fun WorkoutStatusWithDate(workout: Workout) {
                     LiftAppIcons.CircleFading
                 },
             contentDescription = null,
-            tint = colorScheme.onSurfaceVariant,
+            tint = colorScheme.foregroundVariant,
         )
 
         LiftAppText(
@@ -158,7 +161,7 @@ fun WorkoutStatusWithDate(workout: Workout) {
                         )
                 ),
             style = MaterialTheme.typography.labelSmall,
-            color = colorScheme.onSurfaceVariant,
+            color = colorScheme.foregroundVariant,
         )
     }
 }

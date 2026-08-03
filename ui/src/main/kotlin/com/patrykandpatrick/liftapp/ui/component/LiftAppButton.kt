@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Face
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,16 +73,16 @@ object LiftAppButtonDefaults {
         @Composable
         get() =
             ContainerColors(
-                backgroundColor = colorScheme.surface,
-                contentColor = colorScheme.onSurface,
+                backgroundColor = Color.Transparent,
+                contentColor = colorScheme.foreground,
                 interactiveBorderColors =
                     InteractiveBorderColors(
                         color = colorScheme.outline,
                         pressedColor = colorScheme.primary,
-                        hoverForegroundColor = colorScheme.onSurface,
+                        hoverForegroundColor = colorScheme.foreground,
                     ),
                 disabledBackgroundColor = Color.Transparent,
-                disabledContentColor = colorScheme.onSurface.copy(Alpha.disabled),
+                disabledContentColor = colorScheme.foreground.copy(Alpha.disabled),
             )
 
     val noBackgroundColors: ContainerColors
@@ -91,13 +90,13 @@ object LiftAppButtonDefaults {
         get() =
             ContainerColors(
                 backgroundColor = Color.Transparent,
-                contentColor = colorScheme.onSurface,
+                contentColor = colorScheme.foreground,
                 interactiveBorderColors =
                     InteractiveBorderColors(
-                        color = Color.Transparent,
+                        color = colorScheme.primary.copy(alpha = 0f),
                         pressedColor = colorScheme.primary,
                         hoverForegroundColor = colorScheme.primary,
-                        hoverBackgroundColor = colorScheme.outline,
+                        hoverBackgroundColor = colorScheme.primary,
                     ),
                 disabledBackgroundColor = Color.Transparent,
                 disabledContentColor = colorScheme.onPrimaryDisabled,
@@ -177,7 +176,7 @@ fun PlainLiftAppButton(
                 )
                 if (enabled && showDivider) {
                     SinHorizontalDivider(
-                        color = LocalContentColor.current,
+                        color = colorScheme.primary,
                         sinHeight = 4.dp,
                         thickness = dimens.button.underlineWidth,
                         sinPeriodLength = 1.5.dp,

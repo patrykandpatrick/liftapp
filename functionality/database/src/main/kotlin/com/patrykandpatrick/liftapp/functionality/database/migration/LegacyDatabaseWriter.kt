@@ -125,8 +125,11 @@ class LegacyDatabaseWriter(private val json: Json) {
                 .mapNotNull { record ->
                     record.sets.bodyWeight()?.let { value ->
                         val unit =
-                            if (record.sets.unit.equals("lb", true)) MassUnit.Pounds
-                            else MassUnit.Kilograms
+                            if (record.sets.unit.equals("lb", true)) {
+                                MassUnit.Pounds
+                            } else {
+                                MassUnit.Kilograms
+                            }
                         BodyMeasurementValue.SingleValue(value, unit)
                     }
                 }
@@ -170,8 +173,11 @@ class LegacyDatabaseWriter(private val json: Json) {
                     index,
                     type.name,
                     if (type == RoutineItemType.Superset) goal?.sets ?: 3 else null,
-                    if (type == RoutineItemType.Superset) (goal?.restSeconds ?: 120) * 1_000L
-                    else null,
+                    if (type == RoutineItemType.Superset) {
+                        (goal?.restSeconds ?: 120) * 1_000L
+                    } else {
+                        null
+                    },
                 )
             ids.forEachIndexed { exerciseIndex, exerciseID ->
                 val record = modelRecords.firstOrNull { it.exerciseID == exerciseID }
@@ -208,8 +214,11 @@ class LegacyDatabaseWriter(private val json: Json) {
                     if (record.unit.equals("lb", true)) MassUnit.Pounds else MassUnit.Kilograms
                 BodyMeasurementType.Percentage -> PercentageUnit
                 else ->
-                    if (record.unit.equals("in", true)) ShortDistanceUnit.Inch
-                    else ShortDistanceUnit.Centimeter
+                    if (record.unit.equals("in", true)) {
+                        ShortDistanceUnit.Inch
+                    } else {
+                        ShortDistanceUnit.Centimeter
+                    }
             }
         val value =
             if (type == BodyMeasurementType.LengthTwoSides) {

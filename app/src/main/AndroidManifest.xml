@@ -16,13 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LiftApp"
         tools:targetApi="31">
-        <!-- The v2 activity is packaged in the licenses AAR, but lint does not index it. -->
-        <activity
-            android:name="com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity"
-            android:theme="@style/Theme.LiftApp.OssLicenses"
-            tools:ignore="MissingClass"
-            tools:replace="android:theme" />
-
         <activity
             android:name="com.patrykandpatrick.liftapp.ui.MainActivity"
             android:exported="true"

@@ -93,8 +93,11 @@ fun LiftAppFilterChip(
                     .clip(shape)
                     .background(
                         color =
-                            if (enabled) containerColors.backgroundColor
-                            else containerColors.disabledBackgroundColor,
+                            if (enabled) {
+                                containerColors.backgroundColor
+                            } else {
+                                containerColors.disabledBackgroundColor
+                            },
                         shape = shape,
                     )
                     .padding(contentPadding)

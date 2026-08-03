@@ -51,7 +51,7 @@ private fun PlanScreen(
                 title = {
                     CompactTopAppBarDefaults.Title(stringResource(R.string.route_active_plan_full))
                 },
-                // The sticky cycle header continues this surface and supplies the lower edge.
+                // The sticky cycle header directly below supplies the persistent lower edge.
                 alwaysShowChrome = hasStickyCycleHeader,
                 divider = !hasStickyCycleHeader,
                 actions = {

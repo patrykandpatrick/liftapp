@@ -34,7 +34,6 @@ import com.patrykandpatrick.liftapp.core.model.valueOrNull
 import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.core.ui.TopAppBarWithTabs
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
@@ -52,6 +51,9 @@ import com.patrykandpatrick.liftapp.feature.exercise.model.exerciseTabItems
 import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialog
 import com.patrykandpatrick.liftapp.ui.component.LiftAppAlertDialogDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -60,6 +62,7 @@ import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.MoreVertical
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
 import java.time.DayOfWeek
@@ -171,36 +174,49 @@ private fun OptionsModal(
     onAction: (Action) -> Unit,
 ) {
     if (isVisible) {
-        LiftAppModalBottomSheetWithTopAppBar(onDismissRequest = onDismissRequest) { dismiss ->
-            ListItem(
+        LiftAppModalBottomSheetWithTopAppBar(
+            onDismissRequest = onDismissRequest,
+            containerColor = colorScheme.background,
+        ) { dismiss ->
+            Spacer(Modifier.height(8.dp))
+
+            LiftAppListItem(
                 title = { Text(stringResource(R.string.action_edit)) },
                 icon = {
-                    Icon(
-                        imageVector = LiftAppIcons.Edit,
-                        contentDescription = stringResource(id = R.string.action_edit),
-                    )
+                    LiftAppListItemDefaults.Icon {
+                        Icon(
+                            imageVector = LiftAppIcons.Edit,
+                            contentDescription = stringResource(id = R.string.action_edit),
+                        )
+                    }
                 },
+                position = LiftAppListItemPosition(index = 0, count = 2),
+                modifier = Modifier.padding(horizontal = dimens.screen.padding),
                 onClick = {
                     dismiss()
                     onAction(Action.Edit)
                 },
             )
 
-            ListItem(
+            LiftAppListItem(
                 title = { Text(stringResource(R.string.action_delete)) },
                 icon = {
-                    Icon(
-                        imageVector = LiftAppIcons.Delete,
-                        contentDescription = stringResource(id = R.string.action_delete),
-                    )
+                    LiftAppListItemDefaults.Icon {
+                        Icon(
+                            imageVector = LiftAppIcons.Delete,
+                            contentDescription = stringResource(id = R.string.action_delete),
+                        )
+                    }
                 },
+                position = LiftAppListItemPosition(index = 1, count = 2),
+                modifier = Modifier.padding(horizontal = dimens.screen.padding),
                 onClick = {
                     dismiss()
                     onAction(Action.ShowDeleteDialog)
                 },
             )
 
-            Spacer(modifier = Modifier.height(dimens.screen.verticalPadding))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

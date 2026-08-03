@@ -63,11 +63,13 @@ private constructor(
             exercises.distinctBy { it.id }.forEach { writer.restoreExercise(db, it) }
 
             val models =
-                if (version == 1) emptyMap()
-                else
+                if (version == 1) {
+                    emptyMap()
+                } else {
                     rows(LegacyKind.ExerciseModels, routinesWanted, workoutsWanted)
                         .map(::model)
                         .associateBy { it.id }
+                }
             // Version 1 predates exercise models: the ID lists hold exercise IDs directly.
             val exerciseIDs = { modelID: Long ->
                 if (version == 1) listOf(modelID) else models[modelID]?.exerciseIDs.orEmpty()

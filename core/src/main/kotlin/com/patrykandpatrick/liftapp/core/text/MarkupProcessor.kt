@@ -130,7 +130,7 @@ fun rememberDefaultMarkupConfig(): MarkupProcessor.Config {
 
             MarkupType.Color.Primary using SpanStyle(color = colors.primary)
             MarkupType.Color.Secondary using SpanStyle(color = colors.secondary)
-            MarkupType.Color.SurfaceVariant using SpanStyle(color = colors.onSurfaceVariant)
+            MarkupType.Color.SurfaceVariant using SpanStyle(color = colors.foregroundVariant)
             MarkupType.Color.Green using SpanStyle(color = colors.green)
             MarkupType.Color.Yellow using SpanStyle(color = colors.yellow)
         }

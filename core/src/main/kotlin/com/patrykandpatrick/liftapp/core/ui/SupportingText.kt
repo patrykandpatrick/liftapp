@@ -21,7 +21,7 @@ fun ColumnScope.SupportingText(
     visible: Boolean = true,
     isError: Boolean = false,
 ) {
-    val contentColor = if (isError) colorScheme.error else colorScheme.onSurfaceVariant
+    val contentColor = if (isError) colorScheme.error else colorScheme.foregroundVariant
 
     AnimatedVisibility(visible = visible) {
         CompositionLocalProvider(

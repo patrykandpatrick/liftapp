@@ -68,8 +68,16 @@ internal fun DayOfWeek(
         onClick = onClick,
         colors =
             animateContainerColorsAsState(
-                    if (selected) LiftAppCardDefaults.tonalCardColors
-                    else LiftAppCardDefaults.outlinedColors
+                    if (selected) {
+                        LiftAppCardDefaults.tonalCardColors
+                    } else {
+                        LiftAppCardDefaults.outlinedColors.run {
+                            copy(
+                                interactiveBorderColors =
+                                    interactiveBorderColors.copy(color = colorScheme.outline)
+                            )
+                        }
+                    }
                 )
                 .value,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,7 +93,7 @@ internal fun DayOfWeek(
                     LocalConfiguration.current.locales[0],
                 ),
             textAlign = TextAlign.Center,
-            color = colorScheme.onSurfaceVariant,
+            color = colorScheme.foregroundVariant,
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(top = 4.dp),
         )
@@ -99,7 +107,7 @@ internal fun DayOfWeek(
             SinHorizontalDivider(
                 sinHeight = 4.dp,
                 sinPeriodLength = 1.5.dp,
-                color = colorScheme.onSurfaceVariant,
+                color = colorScheme.foregroundVariant,
                 thickness = 1.5.dp,
                 modifier = Modifier.graphicsLayer { alpha = if (isToday) 1f else 0f },
             )
@@ -115,7 +123,7 @@ private fun DaysOfWeekPreview() {
             DaysOfWeek(
                 dateItems = DashboardViewModel.getWeekDays(LocalDate.now(), DayOfWeek.MONDAY),
                 onClick = {},
-                modifier = Modifier.padding(horizontal = dimens.screen.horizontalPadding),
+                modifier = Modifier.padding(horizontal = dimens.screen.padding),
             )
         }
     }

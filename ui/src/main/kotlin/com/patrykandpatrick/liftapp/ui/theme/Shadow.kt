@@ -7,6 +7,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
+fun Modifier.floatingSurfaceShadow(shape: Shape): Modifier =
+    this.dropShadow(shape) {
+            radius = 8.dp.toPx()
+            spread = 1.dp.toPx()
+            color = Color.Black.copy(alpha = .06f)
+        }
+        .dropShadow(shape) {
+            radius = 1.dp.toPx()
+            spread = 1.dp.toPx()
+            color = Color.Black.copy(alpha = .06f)
+            offset = Offset(0f, 1.dp.toPx())
+        }
+
 fun Modifier.bottomSheetShadow(shape: Shape = BottomSheetShape): Modifier =
     this.dropShadow(shape) {
             radius = 1.dp.toPx()

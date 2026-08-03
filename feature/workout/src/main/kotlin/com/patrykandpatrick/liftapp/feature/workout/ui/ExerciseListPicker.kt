@@ -1,19 +1,27 @@
 package com.patrykandpatrick.liftapp.feature.workout.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.pluralStringResource
@@ -35,12 +44,13 @@ import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.model.getDisplayName
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
-import com.patrykandpatrick.liftapp.core.ui.ListItem
-import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults
 import com.patrykandpatrick.liftapp.domain.extension.moved
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.appendCompletedIcon
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
@@ -50,11 +60,13 @@ import com.patrykandpatrick.liftapp.ui.icons.FinishFlag
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Open
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-internal val WorkoutPickerPeekHeight = 80.dp
+internal val WorkoutPickerPeekHeight = 72.dp
+private val WorkoutPickerListItemHeight = 80.dp
 private const val FadeThroughProgress = .5f
 
 internal fun workoutPickerExpandedAlpha(revealOffset: Float) =
@@ -135,7 +147,6 @@ private fun ReorderableExerciseList(
     val selectedItemIndex =
         items.indexOfFirst { item -> item.pageIndex == selectedPage }.takeIf { it >= 0 }
             ?: items.size
-    val listTopPadding = 8.dp
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = selectedItemIndex)
     val currentOnListScrolledChange = rememberUpdatedState(onListScrolledChange)
     LaunchedEffect(lazyListState) {
@@ -163,12 +174,12 @@ private fun ReorderableExerciseList(
         state = lazyListState,
         contentPadding =
             PaddingValues(
-                top = listTopPadding,
-                bottom = bottomContentPadding + 8.dp,
+                top = dimens.screen.padding,
+                bottom = bottomContentPadding + dimens.screen.padding,
             ),
         modifier = modifier.fillMaxSize(),
     ) {
-        items(items = orderedItems, key = WorkoutItemData::id) { item ->
+        itemsIndexed(items = orderedItems, key = { _, item -> item.id }) { index, item ->
             ReorderableItem(state = reorderableState, key = item.id) {
                 val interactionSource = remember { MutableInteractionSource() }
                 fun captureOrder() {
@@ -193,6 +204,9 @@ private fun ReorderableExerciseList(
                     WorkoutItem(
                         item = item,
                         isSelected = item.pageIndex == selectedPage,
+                        nextItemSelected =
+                            orderedItems.getOrNull(index + 1)?.pageIndex == selectedPage ||
+                                (index == orderedItems.lastIndex && selectedPage == items.size),
                         interactionSource = interactionSource,
                         dragHandleModifier =
                             Modifier.draggableHandle(
@@ -202,7 +216,12 @@ private fun ReorderableExerciseList(
                             ),
                         onRemove = if (canRemoveItem) ({ removeItem(item.id) }) else null,
                         selectPage = selectPage,
-                        modifier = Modifier,
+                        position = LiftAppListItemPosition(index, orderedItems.size + 1),
+                        modifier =
+                            Modifier.padding(
+                                start = dimens.screen.padding,
+                                end = dimens.screen.padding,
+                            ),
                     )
                 }
             }
@@ -212,7 +231,8 @@ private fun ReorderableExerciseList(
             SummaryItem(
                 isSelected = selectedPage == items.size,
                 onClick = { selectPage(items.size) },
-                modifier = Modifier,
+                position = LiftAppListItemPosition(orderedItems.size, orderedItems.size + 1),
+                modifier = Modifier.padding(horizontal = dimens.screen.padding),
             )
         }
     }
@@ -227,7 +247,29 @@ private fun CollapsedWorkoutItem(
 ) {
     val item = items.firstOrNull { it.pageIndex == selectedPage }
     if (item == null) {
-        SummaryItem(isSelected = false, onClick = {}, modifier = modifier)
+        Row(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .height(WorkoutPickerPeekHeight)
+                    .padding(
+                        start = dimens.screen.padding,
+                        top = 8.dp,
+                        end = dimens.screen.padding,
+                        bottom = 16.dp,
+                    ),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            LiftAppListItemDefaults.Icon {
+                Icon(imageVector = LiftAppIcons.FinishFlag, contentDescription = null)
+            }
+            LiftAppText(
+                text = stringResource(R.string.workout_summary_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = colorScheme.foreground,
+            )
+        }
     } else {
         CurrentWorkoutItem(item, openExercise, modifier)
     }
@@ -257,14 +299,17 @@ data class ExerciseItemData(
 private fun WorkoutItem(
     item: WorkoutItemData,
     isSelected: Boolean,
+    nextItemSelected: Boolean,
     interactionSource: MutableInteractionSource,
     dragHandleModifier: Modifier?,
     onRemove: (() -> Unit)?,
     selectPage: (Int) -> Unit,
+    position: LiftAppListItemPosition,
     modifier: Modifier = Modifier,
 ) {
-    ListItem(
-        icon = { ListItemDefaults.LeadingText(text = (item.pageIndex + 1).toString()) },
+    LiftAppListItem(
+        icon = { LiftAppListItemDefaults.LeadingText(text = (item.pageIndex + 1).toString()) },
+        position = position,
         title = { WorkoutItemTitle(item) },
         description = { WorkoutItemDescription(item) },
         actions = {
@@ -286,17 +331,18 @@ private fun WorkoutItem(
                 )
             }
         },
-        paddingValues =
+        contentPadding =
             PaddingValues(
-                start = dimens.screen.horizontalPadding,
+                start = dimens.screen.padding,
                 top = 16.dp,
                 end = 20.dp,
                 bottom = 16.dp,
             ),
-        checked = isSelected,
+        selected = isSelected,
+        nextItemSelected = nextItemSelected,
         interactionSource = interactionSource,
         onClick = { selectPage(item.pageIndex) },
-        modifier = modifier.height(WorkoutPickerPeekHeight),
+        modifier = modifier.height(WorkoutPickerListItemHeight),
     )
 }
 
@@ -306,23 +352,45 @@ private fun CurrentWorkoutItem(
     openExercise: (ExerciseItemData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ListItem(
-        icon = { ListItemDefaults.LeadingText(text = (item.pageIndex + 1).toString()) },
-        title = { WorkoutItemTitle(item) },
-        description = { WorkoutItemDescription(item) },
-        actions = {
-            if (!item.isSuperset) {
-                LiftAppIconButton(onClick = { openExercise(item.exercises.single()) }) {
-                    Icon(
-                        imageVector = LiftAppIcons.Open,
-                        contentDescription = stringResource(R.string.action_info),
-                    )
-                }
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(WorkoutPickerPeekHeight)
+                // The trailing button has a 48 dp touch target around its 24 dp icon. Its 4 dp
+                // layout inset therefore places the visible icon 16 dp from the screen edge.
+                .padding(start = 16.dp, top = 8.dp, end = 4.dp, bottom = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        LiftAppListItemDefaults.LeadingText(text = (item.pageIndex + 1).toString())
+        Column(modifier = Modifier.weight(1f)) {
+            CompositionLocalProvider(
+                LocalContentColor provides colorScheme.foreground,
+                LocalTextStyle provides MaterialTheme.typography.titleMedium,
+            ) {
+                WorkoutItemTitle(item)
             }
-        },
-        paddingValues = PaddingValues(start = 20.dp, top = 16.dp, end = 8.dp, bottom = 16.dp),
-        modifier = modifier.height(WorkoutPickerPeekHeight),
-    )
+            CompositionLocalProvider(
+                LocalContentColor provides colorScheme.foregroundVariant,
+                LocalTextStyle provides MaterialTheme.typography.bodyMedium,
+            ) {
+                WorkoutItemDescription(item)
+            }
+        }
+        if (!item.isSuperset) {
+            LiftAppIconButton(
+                onClick = { openExercise(item.exercises.single()) },
+                color = colorScheme.foreground,
+            ) {
+                Icon(
+                    imageVector = LiftAppIcons.Open,
+                    contentDescription = stringResource(R.string.action_info),
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -364,13 +432,19 @@ private fun WorkoutItemDescription(item: WorkoutItemData) {
 }
 
 @Composable
-private fun SummaryItem(isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    ListItem(
+private fun SummaryItem(
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    position: LiftAppListItemPosition = LiftAppListItemPosition.Single,
+) {
+    LiftAppListItem(
         imageVector = LiftAppIcons.FinishFlag,
         title = stringResource(R.string.workout_summary_title),
-        checked = isSelected,
+        selected = isSelected,
+        position = position,
         onClick = onClick,
-        modifier = modifier.height(WorkoutPickerPeekHeight),
+        modifier = modifier.height(WorkoutPickerListItemHeight),
     )
 }
 

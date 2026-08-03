@@ -59,8 +59,11 @@ constructor(
         val channelId =
             if (timerState.isFinished) TIMER_FINISHED_CHANNEL_ID else TIMER_RUNNING_CHANNEL_ID
         val contentTextRes =
-            if (timerState.isFinished) R.string.rest_timer_finished_notification_body
-            else R.string.rest_timer_notification_body
+            if (timerState.isFinished) {
+                R.string.rest_timer_finished_notification_body
+            } else {
+                R.string.rest_timer_notification_body
+            }
         return NotificationCompat.Builder(context, channelId)
             .setContentText(context.getString(contentTextRes))
             .setContentTitle(remainingTime.formattedRemainingTime)
@@ -78,8 +81,11 @@ constructor(
         addAction(
             -1,
             context.getString(
-                if (timerIsFinished) R.string.rest_timer_action_dismiss
-                else R.string.rest_timer_action_cancel
+                if (timerIsFinished) {
+                    R.string.rest_timer_action_dismiss
+                } else {
+                    R.string.rest_timer_action_cancel
+                }
             ),
             getPendingIntent(RestTimerService.ACTION_CANCEL_TIMER),
         )
@@ -87,8 +93,11 @@ constructor(
             addAction(
                 -1,
                 context.getString(
-                    if (timerIsPaused) R.string.rest_timer_action_resume
-                    else R.string.rest_timer_action_pause
+                    if (timerIsPaused) {
+                        R.string.rest_timer_action_resume
+                    } else {
+                        R.string.rest_timer_action_pause
+                    }
                 ),
                 getPendingIntent(RestTimerService.ACTION_TOGGLE_TIMER),
             )

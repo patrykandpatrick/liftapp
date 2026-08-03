@@ -102,7 +102,7 @@ fun ColumnScope.StepperItemLabel(
 
         Text(
             text = text,
-            color = colorScheme.onSurface.copy(Alpha.get(enabled = enabled)),
+            color = colorScheme.foreground.copy(Alpha.get(enabled = enabled)),
             style = MaterialTheme.typography.labelLarge,
         )
     }

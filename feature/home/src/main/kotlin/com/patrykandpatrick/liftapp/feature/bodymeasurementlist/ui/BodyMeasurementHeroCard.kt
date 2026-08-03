@@ -110,7 +110,7 @@ internal fun BodyMeasurementHeroCard(
                     LiftAppText(
                         text = secondary,
                         style = Typography.headlineMediumMono,
-                        color = colorScheme.onSurfaceVariant,
+                        color = colorScheme.foregroundVariant,
                         modifier = Modifier.padding(start = 2.dp),
                     )
                 }
@@ -118,7 +118,7 @@ internal fun BodyMeasurementHeroCard(
                 LiftAppText(
                     text = item.value.unit,
                     style = typography.titleSmall,
-                    color = colorScheme.onSurfaceVariant,
+                    color = colorScheme.foregroundVariant,
                     modifier = Modifier.padding(bottom = 3.dp),
                 )
 
@@ -132,7 +132,7 @@ internal fun BodyMeasurementHeroCard(
             LiftAppText(
                 text = stringResource(R.string.body_measurement_never_logged),
                 style = typography.bodyMedium,
-                color = colorScheme.onSurfaceVariant,
+                color = colorScheme.foregroundVariant,
             )
         }
 
@@ -140,6 +140,7 @@ internal fun BodyMeasurementHeroCard(
             Sparkline(
                 modelProducer = trend,
                 color = BodyMeasurementChartColors.leading,
+                pointInnerColor = colorScheme.surface,
                 showLatestPoint = true,
                 modifier = Modifier.fillMaxWidth().height(56.dp),
             )

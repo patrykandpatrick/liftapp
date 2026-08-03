@@ -15,8 +15,9 @@ import com.patrykandpatrick.liftapp.functionality.musclebitmap.model.NameInfoEnc
 import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 private const val TARGET_SUBDIRECTORY = "muscle_images"
 
@@ -43,7 +44,6 @@ constructor(
             val targetDir = File(filesDir, TARGET_SUBDIRECTORY)
 
             if (targetDir.exists().not()) {
-                Timber.d("Created targetDir")
                 targetDir.mkdirs()
             }
 
@@ -57,31 +57,38 @@ constructor(
 
             val targetFile = File(targetDir, imageName)
 
-            Timber.d("targetFile=${targetFile.path}")
-
-            if (targetFile.exists().not()) {
-                val bitmap =
-                    withContext(defaultDispatcher) {
-                        Timber.d("Generating bitmap")
-                        muscleImageGeneratorImpl
-                            .generateBitmap(
+            imageGenerationMutex.withLock {
+                if (!targetFile.isFile || targetFile.length() == 0L) {
+                    val bitmap =
+                        withContext(defaultDispatcher) {
+                            muscleImageGeneratorImpl.generateBitmap(
                                 config = configProvider.get(isDark),
                                 primaryMuscles = primaryMuscles,
                                 secondaryMuscles = secondaryMuscles,
                                 tertiaryMuscles = tertiaryMuscles,
                             )
-                            .also { Timber.d("Bitmap generated") }
-                    }
+                        }
 
-                val outputStream = targetFile.outputStream()
-                Timber.d("Writing bitmap to file")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    bitmap.compress(WEBP_LOSSY, QUALITY, outputStream)
-                } else {
-                    bitmap.compress(WEBP, QUALITY, outputStream)
+                    val temporaryFile = File.createTempFile("$imageName.", ".tmp", targetDir)
+                    try {
+                        val compressed =
+                            temporaryFile.outputStream().use { outputStream ->
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                    bitmap.compress(WEBP_LOSSY, QUALITY, outputStream)
+                                } else {
+                                    bitmap.compress(WEBP, QUALITY, outputStream)
+                                }
+                            }
+                        check(compressed) { "Failed to compress muscle bitmap." }
+
+                        if (targetFile.exists()) check(targetFile.delete())
+                        check(temporaryFile.renameTo(targetFile)) {
+                            "Failed to move muscle bitmap into the image cache."
+                        }
+                    } finally {
+                        temporaryFile.delete()
+                    }
                 }
-                Timber.d("Bitmap saved")
-                outputStream.close()
             }
 
             targetFile.path
@@ -99,4 +106,19 @@ constructor(
             tertiaryMuscles = tertiaryMuscles,
             isDark = isDark,
         )
+
+    override suspend fun invalidateMuscleImage(path: String) {
+        withContext(ioDispatcher) {
+            imageGenerationMutex.withLock {
+                val file = File(path)
+                check(file.delete() || !file.exists()) {
+                    "Failed to delete invalid muscle bitmap."
+                }
+            }
+        }
+    }
+
+    private companion object {
+        val imageGenerationMutex = Mutex()
+    }
 }

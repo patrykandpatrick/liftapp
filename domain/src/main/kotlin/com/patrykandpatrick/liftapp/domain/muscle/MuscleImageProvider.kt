@@ -17,6 +17,8 @@ interface MuscleImageProvider {
             isDark = isDark,
         )
 
+    suspend fun invalidateMuscleImage(path: String)
+
     fun getMuscleImageName(
         primaryMuscles: List<Muscle>,
         secondaryMuscles: List<Muscle>,

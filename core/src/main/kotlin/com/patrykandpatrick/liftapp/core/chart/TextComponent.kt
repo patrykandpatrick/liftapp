@@ -32,7 +32,8 @@ fun rememberTextComponent(
     return rememberTextComponent(
         style =
             TextStyle(
-                color = if (textStyle.color.isSpecified) textStyle.color else colorScheme.onSurface,
+                color =
+                    if (textStyle.color.isSpecified) textStyle.color else colorScheme.foreground,
                 fontFamily = FontFamily(resolvedTypeface as? Typeface ?: Typeface.DEFAULT),
                 fontSize = textStyle.fontSize,
                 textAlign = textAlign,

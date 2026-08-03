@@ -16,9 +16,9 @@ import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 @Composable
 fun DialogContent(title: String, actions: @Composable () -> Unit, content: @Composable () -> Unit) {
     Surface(
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = LocalDimens.current.dialog.tonalElevation,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large,
     ) {
         Column {
             Text(

@@ -3,35 +3,4 @@
 
     <style name="Theme.LiftApp" parent="Theme.AppCompat.DayNight" />
 
-    <!--
-    The licenses screen is supplied by Play Services and uses Android views rather than the app's
-    Compose theme. Map the equivalent theme roles here so it does not fall back to AppCompat's
-    purple action bar and default window background.
-    -->
-    <style name="Theme.LiftApp.OssLicenses" parent="Theme.LiftApp.OssLicenses.Base" />
-
-    <style name="Theme.LiftApp.OssLicenses.Base" parent="Theme.LiftApp">
-        <item name="colorPrimary">@color/liftapp_primary</item>
-        <item name="colorPrimaryDark">@color/liftapp_primary</item>
-        <item name="colorAccent">@color/liftapp_primary</item>
-        <item name="android:colorBackground">@color/liftapp_background</item>
-        <item name="android:windowBackground">@color/liftapp_background</item>
-        <item name="android:textColorPrimary">@color/liftapp_on_background</item>
-        <item name="android:textColorSecondary">@color/liftapp_on_surface_variant</item>
-        <item name="android:navigationBarColor">@color/liftapp_background</item>
-        <item name="android:statusBarColor">@color/liftapp_primary</item>
-        <item name="android:windowLightStatusBar">@bool/liftapp_use_dark_header_icons</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.LiftApp.OssLicenses.ActionBar</item>
-    </style>
-
-    <style
-        name="ThemeOverlay.LiftApp.OssLicenses.ActionBar"
-        parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:textColorPrimary">@color/liftapp_on_primary</item>
-        <item name="colorControlNormal">@color/liftapp_on_primary</item>
-    </style>
-
-    <bool name="liftapp_use_dark_header_icons">false</bool>
-    <bool name="liftapp_use_dark_system_bar_icons">true</bool>
-
 </resources>

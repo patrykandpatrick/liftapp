@@ -15,7 +15,7 @@ fun LiftAppBackground(
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
     color: Color = colorScheme.background,
-    contentColor: Color = colorScheme.onBackground,
+    contentColor: Color = colorScheme.foreground,
     content: @Composable () -> Unit,
 ) {
     Surface(

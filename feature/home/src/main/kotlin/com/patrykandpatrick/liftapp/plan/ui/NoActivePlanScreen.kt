@@ -34,8 +34,10 @@ internal fun NoActivePlanScreen(hasPlans: Boolean, onAction: (Action) -> Unit) {
         modifier =
             Modifier.fillMaxSize()
                 .padding(
-                    horizontal = dimens.screen.horizontalPadding,
-                    vertical = dimens.screen.verticalPadding,
+                    start = dimens.screen.padding,
+                    top = dimens.screen.padding,
+                    end = dimens.screen.padding,
+                    bottom = dimens.screen.padding,
                 ),
     ) {
         if (hasPlans) ChooseExistingButton(onAction)
@@ -106,9 +108,9 @@ private fun EditBottomSheetContent(
             modifier
                 .fillMaxWidth()
                 .padding(
-                    start = dimens.screen.horizontalPadding,
+                    start = dimens.screen.padding,
                     top = 8.dp,
-                    end = dimens.screen.horizontalPadding,
+                    end = dimens.screen.padding,
                     bottom = 16.dp,
                 ),
     ) {

@@ -61,12 +61,17 @@ fun Sparkline(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
     color: Color = colorScheme.primary,
+    pointInnerColor: Color = colorScheme.background,
     strokeWidth: Dp = SparklineDefaults.strokeWidth,
     showLatestPoint: Boolean = false,
 ) {
     // Built unconditionally so that turning the point off does not change what the composition
     // holds; it is a shape component, and an unused one costs nothing to keep.
-    val pointComponent = rememberLineCartesianLayerPointComponent(strokeColor = color)
+    val pointComponent =
+        rememberLineCartesianLayerPointComponent(
+            strokeColor = color,
+            innerColor = pointInnerColor,
+        )
     val pointProvider =
         remember(pointComponent, showLatestPoint) {
             if (showLatestPoint) {

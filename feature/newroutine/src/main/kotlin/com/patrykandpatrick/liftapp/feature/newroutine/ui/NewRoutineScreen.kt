@@ -27,7 +27,6 @@ import com.patrykandpatrick.liftapp.feature.newroutine.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.PlainLiftAppButton
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
-import com.patrykandpatrick.liftapp.ui.dimens.dimens
 
 @Composable
 fun NewRoutineScreen(modifier: Modifier = Modifier) {
@@ -59,8 +58,11 @@ private fun RoutineNameScreen(
                 title = {
                     Text(
                         stringResource(
-                            if (state.isEdit) R.string.title_rename_routine
-                            else R.string.title_new_routine
+                            if (state.isEdit) {
+                                R.string.title_rename_routine
+                            } else {
+                                R.string.title_new_routine
+                            }
                         )
                     )
                 },
@@ -86,7 +88,7 @@ private fun RoutineNameScreen(
             modifier =
                 Modifier.padding(paddingValues)
                     .fillMaxSize()
-                    .padding(top = dimens.screen.verticalPadding)
+                    .padding(top = LocalDimens.current.screen.padding)
         ) {
             LiftAppTextFieldWithSupportingText(
                 textFieldState = state.name,
@@ -96,7 +98,7 @@ private fun RoutineNameScreen(
                 maxLines = 3,
                 modifier =
                     Modifier.fillMaxWidth()
-                        .padding(horizontal = LocalDimens.current.screen.horizontalPadding),
+                        .padding(horizontal = LocalDimens.current.screen.padding),
             )
         }
     }

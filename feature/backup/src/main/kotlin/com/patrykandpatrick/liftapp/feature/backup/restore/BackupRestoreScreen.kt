@@ -1,6 +1,5 @@
 package com.patrykandpatrick.liftapp.feature.backup.restore
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.core.R
@@ -28,6 +26,7 @@ import com.patrykandpatrick.liftapp.feature.backup.restore.model.BackupRestoreSt
 import com.patrykandpatrick.liftapp.feature.backup.ui.DataTypeItem
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppErrorSnackbarHost
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.Archive
@@ -94,20 +93,23 @@ private fun BackupRestoreScreen(
 
 @Composable
 private fun Configuring(state: BackupRestoreState.Configuring, onAction: (Action) -> Unit) {
+    val availableTypes = BackupDataType.entries.filter { it in state.available }
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier.verticalScroll(rememberScrollState())
+                .padding(vertical = LocalDimens.current.screen.padding)
     ) {
-        BackupDataType.entries
-            .filter { it in state.available }
-            .forEach { type ->
-                DataTypeItem(
-                    type = type,
-                    checked = type in state.selected,
-                    required = type in state.required,
-                    onCheckedChange = { onAction(Action.Toggle(type)) },
-                )
-            }
+        availableTypes.forEachIndexed { index, type ->
+            DataTypeItem(
+                type = type,
+                checked = type in state.selected,
+                nextItemSelected = availableTypes.getOrNull(index + 1) in state.selected,
+                required = type in state.required,
+                onCheckedChange = { onAction(Action.Toggle(type)) },
+                position = LiftAppListItemPosition(index, availableTypes.size),
+                modifier = Modifier.padding(horizontal = LocalDimens.current.screen.padding),
+            )
+        }
     }
 }
 
@@ -116,7 +118,7 @@ private fun Progress(message: String?) {
     EmptyState(
         icon = LiftAppIcons.Archive,
         message = message.orEmpty(),
-        modifier = Modifier.fillMaxSize().padding(LocalDimens.current.screen.horizontalPadding),
+        modifier = Modifier.fillMaxSize().padding(LocalDimens.current.screen.padding),
         actions = { CircularProgressIndicator() },
     )
 }

@@ -48,7 +48,7 @@ fun Error(
     onCloseClick: () -> Unit,
     message: String? = null,
 ) {
-    CompositionLocalProvider(LocalContentColor provides colorScheme.onSurface) {
+    CompositionLocalProvider(LocalContentColor provides colorScheme.foreground) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

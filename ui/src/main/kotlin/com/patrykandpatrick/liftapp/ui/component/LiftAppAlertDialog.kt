@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,7 +28,6 @@ import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
-import com.patrykandpatrick.liftapp.ui.theme.AlertDialogShape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
@@ -46,31 +44,25 @@ fun LiftAppAlertDialog(
 ) {
     val buttonPadding = LiftAppButtonDefaults.plainContentPadding
     val layoutDirection = LocalLayoutDirection.current
-    val cardColors = LiftAppCardDefaults.cardColors
-
     Dialog(onDismissRequest = onDismissRequest, properties = properties) {
         LiftAppCard(
             modifier = modifier.defaultMinSize(minWidth = dimens.dialog.minWidth),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(dimens.dialog.contentPadding),
-            colors =
-                cardColors.copy(
-                    interactiveBorderColors =
-                        cardColors.interactiveBorderColors.copy(color = Color.Transparent)
-                ),
-            shape = AlertDialogShape,
+            shape = MaterialTheme.shapes.large,
         ) {
             Box(modifier = Modifier.align(Alignment.CenterHorizontally)) { icon?.invoke() }
 
             Box(
+                contentAlignment = if (icon != null) Alignment.Center else Alignment.CenterStart,
                 modifier =
                     Modifier.align(
                             if (icon != null) Alignment.CenterHorizontally else Alignment.Start
                         )
-                        .then(if (icon != null) Modifier.fillMaxWidth() else Modifier)
+                        .then(if (icon != null) Modifier.fillMaxWidth() else Modifier),
             ) {
                 CompositionLocalProvider(
-                    LocalContentColor provides colorScheme.onSurface,
+                    LocalContentColor provides colorScheme.foreground,
                     LocalTextStyle provides
                         MaterialTheme.typography.headlineSmall.copy(
                             textAlign = if (icon != null) TextAlign.Center else TextAlign.Start

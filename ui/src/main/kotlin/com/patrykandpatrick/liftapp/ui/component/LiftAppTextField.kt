@@ -136,8 +136,8 @@ object LiftAppTextFieldDefaults {
     @Composable
     fun colors(
         focused: Color = colorScheme.primary,
-        text: Color = colorScheme.onSurface,
-        secondaryTexts: Color = colorScheme.onSurfaceVariant,
+        text: Color = colorScheme.foreground,
+        secondaryTexts: Color = colorScheme.foregroundVariant,
         error: Color = colorScheme.error,
     ): TextFieldColors =
         OutlinedTextFieldDefaults.colors(
@@ -149,11 +149,11 @@ object LiftAppTextFieldDefaults {
             unfocusedLeadingIconColor = secondaryTexts,
             unfocusedTrailingIconColor = secondaryTexts,
             unfocusedBorderColor = colorScheme.outline,
-            unfocusedLabelColor = colorScheme.onSurfaceVariant,
-            unfocusedPrefixColor = colorScheme.onSurfaceVariant,
-            unfocusedSuffixColor = colorScheme.onSurfaceVariant,
-            unfocusedPlaceholderColor = colorScheme.onSurfaceVariant,
-            unfocusedSupportingTextColor = colorScheme.onSurface,
+            unfocusedLabelColor = colorScheme.foregroundVariant,
+            unfocusedPrefixColor = colorScheme.foregroundVariant,
+            unfocusedSuffixColor = colorScheme.foregroundVariant,
+            unfocusedPlaceholderColor = colorScheme.foregroundVariant,
+            unfocusedSupportingTextColor = colorScheme.foreground,
             errorLabelColor = error,
             errorBorderColor = error,
             errorCursorColor = error,

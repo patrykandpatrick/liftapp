@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.bodymeasurementlist.ui
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -65,16 +64,12 @@ private fun BodyMeasurementListScreen(
         },
         contentWindowInsets = WindowInsets.statusBars,
     ) { paddingValues ->
-        // The list leaves the gap that belongs between neighbors within a section, and each section
-        // adds the rest of the wider gap above itself — the scheme the rest of the app follows.
-        //
-        // Only the vertical inset is the list's. Each element insets itself horizontally, so that
-        // the list scrolls and overscrolls the full width it was given rather than within a margin,
-        // and so that an element wanting to reach the edge can.
         LazyColumn(
-            contentPadding = paddingValues.increaseBy(vertical = dimens.screen.verticalPadding),
-            verticalArrangement =
-                Arrangement.spacedBy(ListSectionTitleDefaults.withinSectionSpacing),
+            contentPadding =
+                paddingValues.increaseBy(
+                    top = dimens.screen.padding,
+                    bottom = dimens.screen.padding,
+                )
         ) {
             state.featured?.let { featured ->
                 item(key = featured.id) {
@@ -83,8 +78,7 @@ private fun BodyMeasurementListScreen(
                         onClick = { onAction(Action.OpenDetails(featured.id)) },
                         onAddEntryClick = { onAction(Action.AddEntry(featured.id)) },
                         modifier =
-                            Modifier.fillMaxWidth()
-                                .padding(horizontal = dimens.screen.horizontalPadding),
+                            Modifier.fillMaxWidth().padding(horizontal = dimens.screen.padding),
                     )
                 }
             }
@@ -125,16 +119,15 @@ private fun LazyListScope.tileSection(
     if (items.isEmpty()) return
 
     item(key = "$key-title") {
-        // The same inset the tiles below take, so the heading sits on the edge they sit on.
         ListSectionTitle(
             title = title,
-            paddingValues =
-                PaddingValues(
-                    start = dimens.screen.horizontalPadding,
-                    top = ListSectionTitleDefaults.topPadding(isFirstSection),
-                    end = dimens.screen.horizontalPadding,
-                    bottom = ListSectionTitleDefaults.bottomPadding,
-                ),
+            inset = ListSectionTitleDefaults.Inset.Screen,
+            spacing =
+                if (isFirstSection) {
+                    ListSectionTitleDefaults.Spacing.Standard
+                } else {
+                    ListSectionTitleDefaults.Spacing.Section
+                },
         )
     }
 
@@ -142,7 +135,7 @@ private fun LazyListScope.tileSection(
         VerticalGrid(
             horizontalArrangement = Arrangement.spacedBy(TileSpacing),
             verticalArrangement = Arrangement.spacedBy(TileSpacing),
-            modifier = Modifier.padding(horizontal = dimens.screen.horizontalPadding),
+            modifier = Modifier.padding(horizontal = dimens.screen.padding),
         ) {
             items.forEach { item ->
                 BodyMeasurementTile(

@@ -46,7 +46,7 @@ internal val BodyMeasurementValueDisplay.Direction.color: Color
         when (this) {
             BodyMeasurementValueDisplay.Direction.Up -> colorScheme.green
             BodyMeasurementValueDisplay.Direction.Down -> colorScheme.red
-            BodyMeasurementValueDisplay.Direction.Unchanged -> colorScheme.onSurfaceVariant
+            BodyMeasurementValueDisplay.Direction.Unchanged -> colorScheme.foregroundVariant
         }
 
 internal val BodyMeasurementValueDisplay.Direction.icon: ImageVector?

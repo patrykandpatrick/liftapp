@@ -2,7 +2,6 @@ package com.patrykandpatrick.liftapp.feature.backup.export
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,13 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.logging.CollectSnackbarMessages
 import com.patrykandpatrick.liftapp.core.ui.BottomAppBar
-import com.patrykandpatrick.liftapp.core.ui.ListItemDefaults
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
 import com.patrykandpatrick.liftapp.core.ui.TopAppBar
 import com.patrykandpatrick.liftapp.domain.backup.BackupDataType
@@ -34,6 +31,7 @@ import com.patrykandpatrick.liftapp.feature.backup.ui.DataTypeItem
 import com.patrykandpatrick.liftapp.feature.backup.ui.DestinationItem
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppErrorSnackbarHost
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.Archive
@@ -105,25 +103,28 @@ private fun Configuring(state: BackupExportState.Configuring, onAction: (Action)
         }
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier.verticalScroll(rememberScrollState())
+                .padding(vertical = LocalDimens.current.screen.padding)
     ) {
         DestinationItem(
             name = state.destinationName,
-            // The data rows below are checkable and inset themselves; match them so the text lines
-            // up down the screen.
-            horizontalVisualInset = ListItemDefaults.horizontalVisualInset,
             onClick = { pickFolder.launch(null) },
+            modifier = Modifier.padding(horizontal = LocalDimens.current.screen.padding),
         )
 
         ListSectionTitle(title = stringResource(R.string.backup_section_data))
 
-        BackupDataType.entries.forEach { type ->
+        BackupDataType.entries.forEachIndexed { index, type ->
             DataTypeItem(
                 type = type,
                 checked = type in state.selected,
+                nextItemSelected = BackupDataType.entries.getOrNull(index + 1) in state.selected,
                 required = type in state.required,
                 onCheckedChange = { onAction(Action.Toggle(type)) },
+                position =
+                    LiftAppListItemPosition(index = index, count = BackupDataType.entries.size),
+                modifier = Modifier.padding(horizontal = LocalDimens.current.screen.padding),
             )
         }
     }
@@ -134,7 +135,7 @@ private fun Progress(message: String) {
     EmptyState(
         icon = LiftAppIcons.Archive,
         message = message,
-        modifier = Modifier.fillMaxSize().padding(LocalDimens.current.screen.horizontalPadding),
+        modifier = Modifier.fillMaxSize().padding(LocalDimens.current.screen.padding),
         actions = { CircularProgressIndicator() },
     )
 }

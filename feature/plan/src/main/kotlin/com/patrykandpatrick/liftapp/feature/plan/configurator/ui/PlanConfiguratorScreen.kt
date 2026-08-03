@@ -85,7 +85,7 @@ private fun Content(state: ScreenState, modifier: Modifier = Modifier) {
             modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = LocalDimens.current.screen.horizontalPadding),
+                .padding(horizontal = LocalDimens.current.screen.padding),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

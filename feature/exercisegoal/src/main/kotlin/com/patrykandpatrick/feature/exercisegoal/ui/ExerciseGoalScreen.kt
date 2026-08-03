@@ -137,8 +137,10 @@ fun ExerciseGoalScreen(
             state = lazyGridState,
             contentPadding =
                 PaddingValues(
-                    horizontal = dimens.screen.horizontalPadding,
-                    vertical = dimens.screen.verticalPadding,
+                    start = dimens.screen.padding,
+                    top = dimens.screen.padding,
+                    end = dimens.screen.padding,
+                    bottom = dimens.screen.padding,
                 ),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -257,8 +259,8 @@ private fun LazyGridScope.content(
     goalInput.restTime?.also { input ->
         item(key = "divider", span = { GridItemSpan(maxLineSpan) }) {
             SinHorizontalDivider(
-                horizontalExtent = LocalDimens.current.screen.horizontalPadding,
-                modifier = itemModifier,
+                horizontalExtent = LocalDimens.current.screen.padding,
+                modifier = itemModifier.padding(vertical = 4.dp),
             )
         }
 

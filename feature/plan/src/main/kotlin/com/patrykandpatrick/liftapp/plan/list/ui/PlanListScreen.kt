@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,14 +30,13 @@ import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatrick.liftapp.core.ui.BottomAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.plan.list.model.Action
 import com.patrykandpatrick.liftapp.plan.list.model.ScreenState
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
-import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
-import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppRadioButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppRadioButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
@@ -65,7 +63,7 @@ private fun PlanListScreen(
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val dimens = LocalDimens.current
     val fabHeight = 24.dp + dimens.fab.verticalPadding * 2
-    val bottomContentPadding = fabHeight + 16.dp + dimens.screen.verticalPadding
+    val bottomContentPadding = fabHeight + dimens.screen.padding * 2
 
     screenState.Unfold { state ->
         LiftAppScaffold(
@@ -98,40 +96,31 @@ private fun PlanListScreen(
                         Modifier.fillMaxSize()
                             .padding(paddingValues)
                             .padding(
-                                horizontal = dimens.screen.horizontalPadding,
-                                vertical = dimens.screen.verticalPadding,
+                                start = dimens.screen.padding,
+                                top = dimens.screen.padding,
+                                end = dimens.screen.padding,
+                                bottom = dimens.screen.padding,
                             ),
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier.padding(paddingValues),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding =
                         PaddingValues(
-                            start = dimens.screen.horizontalPadding,
-                            top = 10.dp,
-                            end = dimens.screen.horizontalPadding,
+                            start = dimens.screen.padding,
+                            top = dimens.screen.padding,
+                            end = dimens.screen.padding,
                             bottom = bottomContentPadding,
                         ),
                 ) {
-                    items(items = state, key = { it.id }) { plan ->
-                        LiftAppCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(0.dp),
-                            onClick = { onAction(Action.OnPlanClick(plan.id)) },
-                            colors =
-                                if (plan.isChecked) {
-                                    LiftAppCardDefaults.tonalCardColors
-                                } else {
-                                    LiftAppCardDefaults.cardColors
-                                },
-                        ) {
-                            PlanItem(
-                                plan = plan,
-                                isPickingTrainingPlan = state.isPickingTrainingPlan,
-                                onAction = onAction,
-                            )
-                        }
+                    itemsIndexed(items = state, key = { _, plan -> plan.id }) { index, plan ->
+                        PlanItem(
+                            plan = plan,
+                            isPickingTrainingPlan = state.isPickingTrainingPlan,
+                            position = LiftAppListItemPosition(index, state.plans.size),
+                            nextItemSelected = state.plans.getOrNull(index + 1)?.isChecked == true,
+                            onAction = onAction,
+                        )
                     }
                 }
             }
@@ -166,20 +155,24 @@ private fun Toolbar(
 private fun PlanItem(
     plan: ScreenState.PlanItem,
     isPickingTrainingPlan: Boolean,
+    position: LiftAppListItemPosition,
+    nextItemSelected: Boolean,
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ListItem(
+    LiftAppListItem(
         icon =
             if (isPickingTrainingPlan) {
                 {
                     LiftAppRadioButton(
                         selected = plan.isChecked,
-                        onCheck = { onAction(Action.OnPlanClick(plan.id)) },
+                        onCheck = null,
                         colors = LiftAppRadioButtonDefaults.onSurfaceColors,
                     )
                 }
-            } else null,
+            } else {
+                null
+            },
         title = { Text(plan.name ?: stringResource(R.string.training_plan_name_placeholder)) },
         description = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -187,7 +180,7 @@ private fun PlanItem(
                 Text(
                     text = stringResource(R.string.training_plan_cycle_length, plan.cycleLength),
                     style = MaterialTheme.typography.labelSmall,
-                    color = colorScheme.onSurface,
+                    color = colorScheme.foreground,
                     modifier =
                         Modifier.background(
                                 color = colorScheme.primaryDisabled,
@@ -202,6 +195,11 @@ private fun PlanItem(
                 )
             }
         },
+        position = position,
+        contentPadding = PaddingValues(16.dp),
+        selected = plan.isChecked.takeIf { isPickingTrainingPlan },
+        nextItemSelected = isPickingTrainingPlan && nextItemSelected,
+        onClick = { onAction(Action.OnPlanClick(plan.id)) },
         modifier = modifier,
     )
 }

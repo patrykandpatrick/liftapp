@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,11 +26,12 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.exercise.prettyString
 import com.patrykandpatrick.liftapp.core.model.getDisplayName
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.feature.workout.model.prettyString
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.Edit
@@ -40,6 +42,8 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlinx.coroutines.delay
 
 private const val AUTOMATIC_SELECTION_PRESS_DURATION_MILLIS = 120L
+private val setItemContentPadding =
+    PaddingValues(start = 16.dp, top = 10.dp, end = 4.dp, bottom = 10.dp)
 
 @Composable
 internal fun SetItem(
@@ -47,14 +51,16 @@ internal fun SetItem(
     set: EditableExerciseSet<*>,
     index: Int,
     onSelectSet: (Int) -> Unit,
+    position: LiftAppListItemPosition,
     isSelected: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val previousWorkoutSet = exercise.previousWorkoutSets.getOrNull(index)
     val interactionSource = rememberAutomaticSelectionInteractionSource(isSelected)
 
-    ListItem(
+    LiftAppListItem(
         modifier = modifier,
+        position = position,
         icon = { SetIndexIcon(setIndex = index, isCompleted = set.isCompleted) },
         title = {
             SetTitle(
@@ -76,11 +82,14 @@ internal fun SetItem(
                     Icon(
                         imageVector = LiftAppIcons.Edit,
                         contentDescription = stringResource(R.string.action_edit),
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
         },
-        checked = isSelected,
+        contentPadding = setItemContentPadding,
+        selected = isSelected,
+        onClick = { onSelectSet(index) },
         interactionSource = interactionSource,
     )
 }
@@ -93,13 +102,15 @@ internal fun SupersetSetItem(
     exerciseIndex: Int,
     isSelected: Boolean,
     onSelect: () -> Unit,
+    position: LiftAppListItemPosition,
     modifier: Modifier = Modifier,
 ) {
     val previousWorkoutSet = exercise.previousWorkoutSets.getOrNull(setIndex)
     val interactionSource = rememberAutomaticSelectionInteractionSource(isSelected)
 
-    ListItem(
+    LiftAppListItem(
         modifier = modifier,
+        position = position,
         icon = {
             SetIndexIcon(
                 setIndex = setIndex,
@@ -130,11 +141,14 @@ internal fun SupersetSetItem(
                     Icon(
                         imageVector = LiftAppIcons.Edit,
                         contentDescription = stringResource(R.string.action_edit),
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
         },
-        checked = isSelected,
+        contentPadding = setItemContentPadding,
+        selected = isSelected,
+        onClick = onSelect,
         interactionSource = interactionSource,
     )
 }

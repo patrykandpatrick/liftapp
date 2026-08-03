@@ -76,18 +76,18 @@ fun NumberInput(
                     Icon(
                         imageVector = LiftAppIcons.CircleMinus,
                         contentDescription = stringResource(id = R.string.action_decrease),
-                        tint = colorScheme.onSurfaceVariant,
+                        tint = colorScheme.foregroundVariant,
                     )
                 }
 
-                VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                VerticalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
                 if (prefix != null) {
                     Text(
                         modifier =
                             Modifier.align(Alignment.CenterVertically).padding(start = 16.dp),
                         text = prefix,
-                        color = colorScheme.onSurfaceVariant,
+                        color = colorScheme.foregroundVariant,
                     )
                 }
             }
@@ -98,11 +98,11 @@ fun NumberInput(
                     Text(
                         modifier = Modifier.align(Alignment.CenterVertically).padding(end = 16.dp),
                         text = suffix,
-                        color = colorScheme.onSurfaceVariant,
+                        color = colorScheme.foregroundVariant,
                     )
                 }
 
-                VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                VerticalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
@@ -116,7 +116,7 @@ fun NumberInput(
                     Icon(
                         imageVector = LiftAppIcons.CirclePlus,
                         contentDescription = stringResource(id = R.string.action_increase),
-                        tint = colorScheme.onSurfaceVariant,
+                        tint = colorScheme.foregroundVariant,
                     )
                 }
             }

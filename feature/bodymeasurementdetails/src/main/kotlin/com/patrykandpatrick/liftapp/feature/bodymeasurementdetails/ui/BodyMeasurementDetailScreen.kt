@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -61,19 +61,21 @@ import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatrick.liftapp.core.ui.DropdownMenu
 import com.patrykandpatrick.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
-import com.patrykandpatrick.liftapp.core.ui.ListItem
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitle
+import com.patrykandpatrick.liftapp.core.ui.ListSectionTitleDefaults
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.format.Formatter
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.model.Action
 import com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.model.ScreenState
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
-import com.patrykandpatrick.liftapp.ui.component.LiftAppButtonDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppChip
 import com.patrykandpatrick.liftapp.ui.component.LiftAppDestructiveActionDialog
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFilterChipDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
+import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.ChevronDown
@@ -82,6 +84,7 @@ import com.patrykandpatrick.liftapp.ui.icons.Edit
 import com.patrykandpatrick.liftapp.ui.icons.History
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.vico.compose.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.Zoom
@@ -116,8 +119,8 @@ private fun BodyMeasurementDetailScreen(
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val fabHeight = 24.dp + dimens.fab.verticalPadding * 2
     var entryIDToDelete by rememberSaveable { mutableStateOf<Long?>(null) }
-    // The scaffold leaves 16 dp below the FAB; use the standard screen padding above it.
-    val scrollableContentBottomPadding = fabHeight + 16.dp + dimens.screen.verticalPadding
+    // The scaffold leaves 16 dp below the FAB; mirror that gap above it.
+    val scrollableContentBottomPadding = fabHeight + dimens.screen.padding * 2
 
     LiftAppScaffold(
         modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
@@ -192,12 +195,12 @@ private fun CompactContent(
         return
     }
 
-    val horizontalPadding = dimens.screen.horizontalPadding
+    val horizontalPadding = dimens.screen.padding
     LazyColumn(
         modifier = modifier,
         contentPadding =
             PaddingValues(
-                top = dimens.screen.verticalPadding,
+                top = dimens.screen.padding,
                 bottom = bottomPadding,
             ) + WindowInsets.navigationBars.toPaddingValues(),
     ) {
@@ -212,14 +215,14 @@ private fun CompactContent(
             Chart(
                 state.modelProducer,
                 state.valueUnit,
-                Modifier.padding(horizontal = dimens.screen.horizontalPadding),
+                Modifier.padding(horizontal = dimens.screen.padding),
             )
         }
         journalItems(
             entries = state.entries,
             onAction = onAction,
             onDeleteRequest = onDeleteRequest,
-            paddingValues = PaddingValues(horizontalPadding, 12.dp),
+            horizontalPadding = horizontalPadding,
         )
     }
 }
@@ -238,13 +241,11 @@ private fun LargeContent(
     }
 
     Row(
-        modifier = modifier.fillMaxSize().padding(horizontal = dimens.screen.horizontalPadding),
+        modifier = modifier.fillMaxSize().padding(horizontal = dimens.screen.padding),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Column(
-            Modifier.weight(1f)
-                .padding(vertical = dimens.screen.verticalPadding)
-                .navigationBarsPadding()
+            Modifier.weight(1f).padding(vertical = dimens.screen.padding).navigationBarsPadding()
         ) {
             ChartControls(state, onAction)
             Chart(state.modelProducer, state.valueUnit, modifier = Modifier.fillMaxSize())
@@ -254,7 +255,7 @@ private fun LargeContent(
             modifier = Modifier.weight(1f),
             contentPadding =
                 PaddingValues(
-                    top = dimens.screen.verticalPadding,
+                    top = dimens.screen.padding,
                     bottom = bottomPadding,
                 ) + WindowInsets.navigationBars.toPaddingValues(),
         ) {
@@ -262,7 +263,7 @@ private fun LargeContent(
                 entries = state.entries,
                 onAction = onAction,
                 onDeleteRequest = onDeleteRequest,
-                paddingValues = PaddingValues(vertical = 12.dp),
+                horizontalPadding = 0.dp,
             )
         }
     }
@@ -274,15 +275,13 @@ private fun EmptyMeasurementContent(
     onAction: (Action) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxSize().padding(vertical = dimens.screen.verticalPadding)) {
+    Column(modifier = modifier.fillMaxSize().padding(vertical = dimens.screen.padding)) {
         ChartControls(state, onAction, alignToScreenEdges = true)
         EmptyState(
             icon = LiftAppIcons.History,
             message = stringResource(R.string.state_no_measurements),
             modifier =
-                Modifier.weight(1f)
-                    .fillMaxWidth()
-                    .padding(horizontal = dimens.screen.horizontalPadding),
+                Modifier.weight(1f).fillMaxWidth().padding(horizontal = dimens.screen.padding),
         )
     }
 }
@@ -291,24 +290,29 @@ private fun LazyListScope.journalItems(
     entries: List<ScreenState.Entry>,
     onAction: (Action) -> Unit,
     onDeleteRequest: (Long) -> Unit,
-    paddingValues: PaddingValues,
+    horizontalPadding: Dp,
 ) {
     if (entries.isNotEmpty()) {
         item {
             ListSectionTitle(
                 title = stringResource(id = R.string.generic_journal),
-                modifier = Modifier.padding(top = 16.dp),
+                spacing = ListSectionTitleDefaults.Spacing.Section,
             )
         }
     }
 
-    items(items = entries, key = { it.id }) { entry ->
+    itemsIndexed(items = entries, key = { _, entry -> entry.id }) { index, entry ->
         val (modalVisible, setModalVisible) = remember { mutableStateOf(false) }
-        ListItem(
+        LiftAppListItem(
             title = { Text(parseMarkup(entry.value)) },
-            modifier = Modifier.animateItem(),
+            modifier =
+                Modifier.animateItem()
+                    .padding(
+                        start = horizontalPadding,
+                        end = horizontalPadding,
+                    ),
             description = { Text(entry.date.format(Formatter.DateFormat.WeekdayDayMonth)) },
-            paddingValues = paddingValues,
+            position = LiftAppListItemPosition(index, entries.size),
             onClick = { setModalVisible(true) },
         )
 
@@ -329,26 +333,42 @@ private fun OptionsBottomSheet(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LiftAppModalBottomSheetWithTopAppBar(onDismissRequest, modifier) { dismiss ->
-        ListItem(
+    LiftAppModalBottomSheetWithTopAppBar(
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        containerColor = colorScheme.background,
+    ) { dismiss ->
+        Spacer(Modifier.height(8.dp))
+
+        LiftAppListItem(
             title = { Text(stringResource(id = R.string.action_edit)) },
-            icon = { Icon(imageVector = LiftAppIcons.Edit, contentDescription = null) },
+            icon = {
+                LiftAppListItemDefaults.Icon {
+                    Icon(imageVector = LiftAppIcons.Edit, contentDescription = null)
+                }
+            },
+            position = LiftAppListItemPosition(index = 0, count = 2),
+            modifier = Modifier.padding(horizontal = dimens.screen.padding),
             onClick = {
                 onEdit()
                 dismiss()
             },
         )
 
-        ListItem(
+        LiftAppListItem(
             title = { Text(text = stringResource(id = R.string.action_delete)) },
-            icon = { Icon(LiftAppIcons.Delete, null) },
+            icon = {
+                LiftAppListItemDefaults.Icon { Icon(LiftAppIcons.Delete, null) }
+            },
+            position = LiftAppListItemPosition(index = 1, count = 2),
+            modifier = Modifier.padding(horizontal = dimens.screen.padding),
             onClick = {
                 onDelete()
                 dismiss()
             },
         )
 
-        Spacer(modifier = Modifier.height(dimens.screen.verticalPadding))
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -366,7 +386,7 @@ private fun ChartControls(
         Box(
             modifier =
                 if (alignToScreenEdges) {
-                    Modifier.padding(horizontal = dimens.screen.horizontalPadding)
+                    Modifier.padding(horizontal = dimens.screen.padding)
                 } else {
                     Modifier
                 }
@@ -380,7 +400,6 @@ private fun ChartControls(
             ) { expanded, setExpanded ->
                 LiftAppChip(
                     onClick = { setExpanded(true) },
-                    colors = LiftAppButtonDefaults.outlinedButtonColors,
                     trailingIcon = {
                         LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.ChevronDown)
                     },

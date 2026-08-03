@@ -12,7 +12,7 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 fun LiftAppHorizontalDivider(
     modifier: Modifier = Modifier,
     thickness: Dp = dimens.divider.thickness,
-    color: Color = colorScheme.divider,
+    color: Color = colorScheme.outline,
 ) {
     HorizontalDivider(modifier, thickness, color)
 }

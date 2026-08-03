@@ -27,6 +27,8 @@ class NameInfoCoder @Inject constructor(private val json: Json, private val dige
 
         val jsonBytes = json.encodeToString(info).toByteArray(Charsets.ISO_8859_1)
 
-        return digest.digest(jsonBytes).joinToString("") { String.format(BYTES_FORMAT, it) }
+        return synchronized(digest) {
+            digest.digest(jsonBytes).joinToString("") { String.format(BYTES_FORMAT, it) }
+        }
     }
 }

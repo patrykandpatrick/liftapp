@@ -115,13 +115,13 @@ fun InfoCard(
             Icon(
                 imageVector = LiftAppIcons.Info,
                 contentDescription = null,
-                tint = colorScheme.onSurface,
+                tint = colorScheme.foreground,
             )
 
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyMedium,
-                color = colorScheme.onSurfaceVariant,
+                color = colorScheme.foreground,
                 modifier = Modifier.align(Alignment.CenterVertically),
             )
         }

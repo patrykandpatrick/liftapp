@@ -20,5 +20,7 @@ sealed interface Action {
 
     data object AutomaticBackup : Action
 
+    data object OpenSourceLicenses : Action
+
     data object PopBackStack : Action
 }

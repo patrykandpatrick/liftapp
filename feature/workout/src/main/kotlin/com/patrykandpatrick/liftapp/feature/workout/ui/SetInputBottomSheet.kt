@@ -48,7 +48,7 @@ internal fun SetInputBottomSheet(
                     } else {
                         stringResource(R.string.workout_set_input_title, setIndex + 1)
                     },
-                color = colorScheme.onSurface,
+                color = colorScheme.foreground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,

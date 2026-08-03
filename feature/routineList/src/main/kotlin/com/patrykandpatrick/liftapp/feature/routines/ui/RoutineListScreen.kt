@@ -38,7 +38,6 @@ import com.patrykandpatrick.liftapp.feature.routines.model.Action
 import com.patrykandpatrick.liftapp.feature.routines.model.RoutineItem
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
-import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
@@ -49,7 +48,6 @@ import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.icons.Routine
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyStaggeredGridState
 
@@ -73,8 +71,8 @@ private fun RoutineListScreen(
     val dimens = LocalDimens.current
     val cardGutter = 8.dp
     val fabHeight = 24.dp + dimens.fab.verticalPadding * 2
-    // The scaffold leaves 16 dp below the FAB; use the standard screen padding above it.
-    val bottomContentPadding = fabHeight + 16.dp + dimens.screen.verticalPadding
+    // The scaffold leaves 16 dp below the FAB; mirror that gap above it.
+    val bottomContentPadding = fabHeight + dimens.screen.padding * 2
 
     LiftAppScaffold(
         modifier =
@@ -128,8 +126,10 @@ private fun RoutineListScreen(
                         Modifier.fillMaxSize()
                             .padding(internalPadding)
                             .padding(
-                                horizontal = dimens.screen.horizontalPadding,
-                                vertical = dimens.screen.verticalPadding,
+                                start = dimens.screen.padding,
+                                top = dimens.screen.padding,
+                                end = dimens.screen.padding,
+                                bottom = dimens.screen.padding,
                             ),
                 )
             } else {
@@ -147,9 +147,9 @@ private fun RoutineListScreen(
                     columns = StaggeredGridCells.Adaptive(minSize = dimens.routine.minCardWidth),
                     contentPadding =
                         internalPadding.increaseBy(
-                            start = dimens.screen.horizontalPadding - cardGutter,
+                            start = dimens.screen.padding - cardGutter,
                             top = cardGutter,
-                            end = dimens.screen.horizontalPadding - cardGutter,
+                            end = dimens.screen.padding - cardGutter,
                             bottom = bottomContentPadding,
                         ),
                     verticalItemSpacing = cardGutter,
@@ -160,9 +160,8 @@ private fun RoutineListScreen(
                             state = reorderableState,
                             key = routine.id,
                             enabled = !state.isPickingRoutine,
-                        ) { isDragging ->
+                        ) {
                             val interactionSource = remember { MutableInteractionSource() }
-                            val cardColors = LiftAppCardDefaults.cardColors
                             LiftAppCard(
                                 modifier =
                                     Modifier.fillMaxWidth()
@@ -180,12 +179,6 @@ private fun RoutineListScreen(
                                             },
                                         ),
                                 onClick = { onAction(Action.RoutineClicked(routine.id)) },
-                                colors =
-                                    if (isDragging) {
-                                        cardColors.copy(backgroundColor = colorScheme.background)
-                                    } else {
-                                        cardColors
-                                    },
                                 interactionSource = interactionSource,
                             ) {
                                 RoutineCard(

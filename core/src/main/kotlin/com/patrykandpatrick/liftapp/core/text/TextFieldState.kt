@@ -85,8 +85,11 @@ abstract class TextFieldState<T : Any>(
 
     fun updateErrorMessages(value: T? = null) {
         _errorMessage.value =
-            if (enabled(this)) getValidationResult(value).errorMessages()?.first()?.toString()
-            else null
+            if (enabled(this)) {
+                getValidationResult(value).errorMessages()?.first()?.toString()
+            } else {
+                null
+            }
     }
 
     fun <T> getCondition(validatorClass: Class<T>): T? =
