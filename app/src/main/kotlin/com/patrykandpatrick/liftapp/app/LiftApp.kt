@@ -15,7 +15,7 @@ class LiftApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Timber.plant(*loggingTrees)
+        loggingTrees.forEach(Timber::plant)
         launcherShortcuts.keepUpToDate()
     }
 }

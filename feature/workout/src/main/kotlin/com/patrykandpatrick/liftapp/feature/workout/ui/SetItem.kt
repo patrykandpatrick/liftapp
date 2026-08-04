@@ -73,9 +73,7 @@ internal fun SetItem(
                 hasNotes = set.notesInput.value.isNotBlank(),
             )
         },
-        description = {
-            HistoryChip(previousWorkoutSet.prettyString())
-        },
+        description = { HistoryChip(previousWorkoutSet.prettyString()) },
         actions = {
             if (set.isCompleted) {
                 LiftAppIconButton(onClick = { onSelectSet(index) }) {

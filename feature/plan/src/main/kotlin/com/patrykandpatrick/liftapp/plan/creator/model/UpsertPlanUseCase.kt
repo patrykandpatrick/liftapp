@@ -10,8 +10,8 @@ class UpsertPlanUseCase @Inject constructor(private val upsertPlanContract: Upse
         upsertPlanContract.upsertPlan(toPlan(state))
     }
 
-    private fun toPlan(state: ScreenState): Plan {
-        return Plan(
+    private fun toPlan(state: ScreenState): Plan =
+        Plan(
             id = state.id,
             name = state.name.value,
             description = state.description.value,
@@ -24,5 +24,4 @@ class UpsertPlanUseCase @Inject constructor(private val upsertPlanContract: Upse
                     }
                 },
         )
-    }
 }

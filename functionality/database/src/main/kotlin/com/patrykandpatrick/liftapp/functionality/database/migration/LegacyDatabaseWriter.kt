@@ -213,7 +213,8 @@ class LegacyDatabaseWriter(private val json: Json) {
                 BodyMeasurementType.Weight ->
                     if (record.unit.equals("lb", true)) MassUnit.Pounds else MassUnit.Kilograms
                 BodyMeasurementType.Percentage -> PercentageUnit
-                else ->
+                BodyMeasurementType.Length,
+                BodyMeasurementType.LengthTwoSides ->
                     if (record.unit.equals("in", true)) {
                         ShortDistanceUnit.Inch
                     } else {
@@ -430,18 +431,18 @@ private fun bodyName(oldID: Long): String =
         else -> "Calf circumference"
     }
 
-internal fun insert(db: SupportSQLiteDatabase, sql: String, vararg values: Any?): Long {
-    val statement = db.compileStatement(sql)
-    values.forEachIndexed { index, value ->
-        val position = index + 1
-        when (value) {
-            null -> statement.bindNull(position)
-            is String -> statement.bindString(position, value)
-            is Long -> statement.bindLong(position, value)
-            is Int -> statement.bindLong(position, value.toLong())
-            is Double -> statement.bindDouble(position, value)
-            else -> error("Unsupported SQLite value ${value::class}.")
+internal fun insert(db: SupportSQLiteDatabase, sql: String, vararg values: Any?): Long =
+    db.compileStatement(sql).use { statement ->
+        values.forEachIndexed { index, value ->
+            val position = index + 1
+            when (value) {
+                null -> statement.bindNull(position)
+                is String -> statement.bindString(position, value)
+                is Long -> statement.bindLong(position, value)
+                is Int -> statement.bindLong(position, value.toLong())
+                is Double -> statement.bindDouble(position, value)
+                else -> error("Unsupported SQLite value ${value::class}.")
+            }
         }
+        statement.executeInsert()
     }
-    return statement.executeInsert()
-}

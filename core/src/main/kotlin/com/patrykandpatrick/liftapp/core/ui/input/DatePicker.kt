@@ -116,12 +116,13 @@ private fun DatePickerContent(
             placeholder = { Text(text = stringResource(id = R.string.picker_date_example)) },
             errorText =
                 if (state.hasError) {
-                    stringResource(
+                    AnnotatedString(
+                        stringResource(
                             id = R.string.picker_date_input_error,
                             stringResource(id = R.string.picker_date_example),
                             state.sampleDate,
                         )
-                        .let(::AnnotatedString)
+                    )
                 } else {
                     null
                 },
@@ -156,7 +157,7 @@ class DatePickerState(
 
     private val exampleDateFormat = SimpleDateFormat(exampleDatePattern, Locale.getDefault())
 
-    private var _hasError = mutableStateOf(false)
+    private val _hasError = mutableStateOf(false)
 
     private var delayJob: Job? = null
 

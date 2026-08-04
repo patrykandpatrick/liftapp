@@ -13,7 +13,7 @@ class UnitConverterTest {
 
     private val preferenceRepository = TestPreferenceRepository()
 
-    private var converter: UnitConverter =
+    private val converter: UnitConverter =
         UnitConverter(
             formatter = Formatter(TestStringProvider, preferenceRepository),
             stringProvider = TestStringProvider,
@@ -76,29 +76,33 @@ class UnitConverterTest {
         }
     }
 
-    private fun Double.convert(from: MassUnit, to: MassUnit) = runBlocking {
-        preferenceRepository.massUnit.set(to)
+    private fun Double.convert(from: MassUnit, to: MassUnit) {
+        runBlocking {
+            preferenceRepository.massUnit.set(to)
 
-        assertEquals(
-            expected =
-                when (to) {
-                    MassUnit.Kilograms -> from.toKilograms(this@convert)
-                    MassUnit.Pounds -> from.toPounds(this@convert)
-                },
-            actual = converter.convertToPreferredUnit(from = from, value = this@convert),
-        )
+            assertEquals(
+                expected =
+                    when (to) {
+                        MassUnit.Kilograms -> from.toKilograms(this@convert)
+                        MassUnit.Pounds -> from.toPounds(this@convert)
+                    },
+                actual = converter.convertToPreferredUnit(from = from, value = this@convert),
+            )
+        }
     }
 
-    private fun Double.convert(from: LongDistanceUnit, to: LongDistanceUnit) = runBlocking {
-        preferenceRepository.longDistanceUnit.set(to)
+    private fun Double.convert(from: LongDistanceUnit, to: LongDistanceUnit) {
+        runBlocking {
+            preferenceRepository.longDistanceUnit.set(to)
 
-        assertEquals(
-            expected =
-                when (to) {
-                    LongDistanceUnit.Kilometer -> from.toKilometers(this@convert)
-                    LongDistanceUnit.Mile -> from.toMiles(this@convert)
-                },
-            actual = converter.convertToPreferredUnit(from = from, value = this@convert),
-        )
+            assertEquals(
+                expected =
+                    when (to) {
+                        LongDistanceUnit.Kilometer -> from.toKilometers(this@convert)
+                        LongDistanceUnit.Mile -> from.toMiles(this@convert)
+                    },
+                actual = converter.convertToPreferredUnit(from = from, value = this@convert),
+            )
+        }
     }
 }

@@ -67,7 +67,7 @@ constructor(
             .flowOn(dispatcher)
             .toLoadableStateFlow(viewModelScope)
 
-    fun handleAction(action: Action) =
+    fun handleAction(action: Action) {
         when (action) {
             is Action.SetGroupBy -> setGroupBy(action.groupBy)
             is Action.SetExerciseChecked -> setExerciseChecked(action.exerciseId, action.checked)
@@ -76,6 +76,7 @@ constructor(
             Action.GoToNewExercise -> goToNewExercise()
             Action.PopBackStack -> popBackStack()
         }
+    }
 
     private fun setGroupBy(groupBy: GroupBy) {
         this.groupBy.value = groupBy
@@ -97,7 +98,7 @@ constructor(
         checkedExerciseIds: Set<Long>
     ): List<ExercisesItem> = map { exerciseItem ->
         if (exerciseItem is ExercisesItem.Exercise) {
-            val enabled = routeData.disabledExerciseIDs?.contains(exerciseItem.id)?.not() ?: true
+            val enabled = routeData.disabledExerciseIDs?.contains(exerciseItem.id) != true
             exerciseItem.copy(
                 checked = enabled && checkedExerciseIds.contains(exerciseItem.id),
                 enabled = enabled,

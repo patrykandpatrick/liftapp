@@ -114,9 +114,7 @@ private constructor(
 
         if (BackupDataType.BodyMeasurements in types) {
             val bodyRecords = rows(LegacyKind.BodyRecords, false, false)
-            bodyRecords.map(::bodyRecord).forEach {
-                writer.restoreBodyRecord(db, it)
-            }
+            bodyRecords.map(::bodyRecord).forEach { writer.restoreBodyRecord(db, it) }
             restored = restored || bodyRecords.isNotEmpty()
         }
         return restored
@@ -134,9 +132,9 @@ private constructor(
             .asSequence()
             .filter { (file, _) ->
                 file.kind == kind &&
-                    ((includeRoutines && file.parent == LegacyParent.Routines) ||
-                        (includeWorkouts && file.parent == LegacyParent.Workouts) ||
-                        (kind == LegacyKind.BodyRecords && file.parent == LegacyParent.Body))
+                    (includeRoutines && file.parent == LegacyParent.Routines ||
+                        includeWorkouts && file.parent == LegacyParent.Workouts ||
+                        kind == LegacyKind.BodyRecords && file.parent == LegacyParent.Body)
             }
             .flatMap { (_, text) -> LegacyCsv.read(text.reader()).drop(1) }
             .filter { it.isNotEmpty() }
@@ -168,7 +166,7 @@ private constructor(
                 .getOrElse {
                     return null
                 }
-            if (version !in 1..2 || (files.isEmpty() && preferencesXml == null)) return null
+            if (version !in 1..2 || files.isEmpty() && preferencesXml == null) return null
             if (files.any { (file, text) -> !file.hasExpectedHeader(text) }) return null
             return LegacyBackup(version, files, preferencesXml).takeIf { it.contents.isNotEmpty() }
         }

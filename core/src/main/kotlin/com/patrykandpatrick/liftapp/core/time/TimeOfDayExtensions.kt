@@ -10,7 +10,10 @@ val TimeOfDay.text: String
     @Composable
     @ReadOnlyComposable
     get() =
-        when (this) {
-            TimeOfDay.AM -> R.string.picker_time_am
-            TimeOfDay.PM -> R.string.picker_time_pm
-        }.let { stringResource(id = it) }
+        stringResource(
+            id =
+                when (this) {
+                    TimeOfDay.AM -> R.string.picker_time_am
+                    TimeOfDay.PM -> R.string.picker_time_pm
+                }
+        )

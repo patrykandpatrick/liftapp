@@ -172,7 +172,6 @@ private fun BulletSeparator(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CompletedIcon(modifier: Modifier = Modifier) {
-    val backgroundColor = colorScheme.secondary
     Icon(
         imageVector = LiftAppIcons.BadgeCheck,
         contentDescription = null,

@@ -60,7 +60,7 @@ fun InfoCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .drawBehind() {
+                .drawBehind {
                     drawOutline(
                         outline = shape.createOutline(size, layoutDirection, this),
                         brush =

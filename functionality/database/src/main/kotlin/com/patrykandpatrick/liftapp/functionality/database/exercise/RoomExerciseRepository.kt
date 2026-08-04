@@ -69,11 +69,13 @@ constructor(
     override suspend fun insert(exercises: List<Exercise.Insert>): List<Long> =
         withContext(dispatcher) { exerciseDao.insert(exercises.toEntity()) }
 
-    override suspend fun update(exercise: Exercise.Update) =
+    override suspend fun update(exercise: Exercise.Update) {
         withContext(dispatcher) { exerciseDao.update(exercise.toEntity()) }
+    }
 
-    override suspend fun delete(exerciseId: Long) =
+    override suspend fun delete(exerciseId: Long) {
         withContext(dispatcher) { exerciseDao.delete(exerciseId) }
+    }
 
     override fun getExerciseSets(
         exerciseID: Long,

@@ -13,7 +13,7 @@ import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 
 val LiftAppIcons.StepConnector: ImageVector
     get() =
-        _StepConnector
+        stepConnector
             ?: ImageVector.Builder(
                     name = "StepConnector",
                     defaultWidth = 24.dp,
@@ -29,9 +29,9 @@ val LiftAppIcons.StepConnector: ImageVector
                     }
                 }
                 .build()
-                .also { _StepConnector = it }
+                .also { stepConnector = it }
 
-private var _StepConnector: ImageVector? = null
+private var stepConnector: ImageVector? = null
 
 @LightAndDarkThemePreview
 @Composable

@@ -111,9 +111,7 @@ constructor(
         withContext(ioDispatcher) {
             imageGenerationMutex.withLock {
                 val file = File(path)
-                check(file.delete() || !file.exists()) {
-                    "Failed to delete invalid muscle bitmap."
-                }
+                check(file.delete() || !file.exists()) { "Failed to delete invalid muscle bitmap." }
             }
         }
     }

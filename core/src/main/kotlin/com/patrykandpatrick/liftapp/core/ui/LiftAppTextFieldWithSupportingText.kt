@@ -135,9 +135,7 @@ fun SupportingText(
     val (errorVisible, setErrorVisible) = remember { mutableStateOf(false) }
     val (cachedErrorText, setCachedErrorText) = remember { mutableStateOf(errorText) }
     val (cachedSupportingText, setCachedSupportingText) =
-        remember {
-            mutableStateOf(supportingText)
-        }
+        remember { mutableStateOf(supportingText) }
 
     LaunchedEffect(key1 = errorText == null, key2 = value) {
         setErrorVisible(false)

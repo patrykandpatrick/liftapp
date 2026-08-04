@@ -400,7 +400,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Shoulders),
                 secondaryMuscles = listOf(Muscle.Traps),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -408,8 +408,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.TricepBarbellPushdown),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Triceps),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -417,8 +417,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.TricepCablePushdown),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Triceps),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -427,7 +427,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Time,
                 mainMuscles = listOf(Muscle.Shoulders),
                 secondaryMuscles = listOf(Muscle.Traps),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -452,8 +452,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.DumbbellConcentrationCurl),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Biceps),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -461,8 +461,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.PreacherCurls),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Biceps),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -470,8 +470,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.SeatedTricepPress),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Triceps),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -479,8 +479,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.ZCurls),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Biceps),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -516,7 +516,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Glutes),
                 secondaryMuscles = listOf(Muscle.Hamstrings),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -524,8 +524,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.GoodMornings),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Hamstrings),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -534,7 +534,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Reps,
                 mainMuscles = listOf(Muscle.Hamstrings, Muscle.Quadriceps, Muscle.Calves),
                 secondaryMuscles = listOf(Muscle.Abs, Muscle.LowerBack),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -552,7 +552,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Quadriceps),
                 secondaryMuscles = listOf(Muscle.Glutes),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -570,7 +570,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Quadriceps),
                 secondaryMuscles = listOf(Muscle.Glutes),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -597,7 +597,7 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.CableWoodChoppers),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Abs),
-                secondaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
                 tertiaryMuscles = listOf(Muscle.Shoulders, Muscle.Forearms),
             )
             .also(::add)
@@ -606,8 +606,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.CrunchesWithLegsUp),
                 exerciseType = ExerciseType.Reps,
                 mainMuscles = listOf(Muscle.Abs),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -615,8 +615,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.FlutterKicks),
                 exerciseType = ExerciseType.Reps,
                 mainMuscles = listOf(Muscle.Abs),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -624,8 +624,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.NegativeCrunches),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Abs),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -633,8 +633,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.SideCrunch),
                 exerciseType = ExerciseType.Reps,
                 mainMuscles = listOf(Muscle.Abs),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -642,8 +642,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.SidePlank),
                 exerciseType = ExerciseType.Time,
                 mainMuscles = listOf(Muscle.Abs),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -670,7 +670,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Chest),
                 secondaryMuscles = listOf(Muscle.Shoulders),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -679,7 +679,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Chest),
                 secondaryMuscles = listOf(Muscle.Shoulders),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -688,7 +688,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Chest),
                 secondaryMuscles = listOf(Muscle.Shoulders),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -697,7 +697,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Chest),
                 secondaryMuscles = listOf(Muscle.Shoulders),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -706,7 +706,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Reps,
                 mainMuscles = listOf(Muscle.Chest),
                 secondaryMuscles = listOf(Muscle.Shoulders, Muscle.Triceps),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -714,8 +714,8 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.HyperExtension),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.LowerBack),
-                secondaryMuscles = listOf(),
-                tertiaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -797,7 +797,7 @@ object DefaultExercises {
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Shoulders),
                 secondaryMuscles = listOf(Muscle.Traps),
-                tertiaryMuscles = listOf(),
+                tertiaryMuscles = emptyList(),
             )
             .also(::add)
 
@@ -805,7 +805,7 @@ object DefaultExercises {
                 name = Name.Resource(ExerciseStringResource.Shrugs),
                 exerciseType = ExerciseType.Weight,
                 mainMuscles = listOf(Muscle.Shoulders),
-                secondaryMuscles = listOf(),
+                secondaryMuscles = emptyList(),
                 tertiaryMuscles = listOf(Muscle.Forearms),
             )
             .also(::add)

@@ -23,6 +23,7 @@ internal enum class ArchiveStep {
  * end-of-input the first time the entry beneath it runs out, and would then report every later
  * entry as empty.
  */
+@Suppress("MissingUseCall") // Closing an entry reader would also close the archive being walked.
 internal inline fun ZipInputStream.forEachEntry(
     onEntry: (name: String, reader: BufferedReader) -> ArchiveStep
 ) {
@@ -40,7 +41,8 @@ internal inline fun readArchive(
     stream: InputStream,
     onEntry: (name: String, reader: BufferedReader) -> ArchiveStep,
 ) {
-    ZipInputStream(stream.buffered()).use { it.forEachEntry(onEntry) }
+    // ZipInputStream owns and closes the buffered stream.
+    @Suppress("MissingUseCall") ZipInputStream(stream.buffered()).use { it.forEachEntry(onEntry) }
 }
 
 /**
@@ -49,8 +51,10 @@ internal inline fun readArchive(
  */
 internal class BackupArchiveWriter(stream: OutputStream) : AutoCloseable {
 
-    private val zip = ZipOutputStream(stream.buffered())
+    // ZipOutputStream owns and closes the buffered stream.
+    @Suppress("MissingUseCall") private val zip = ZipOutputStream(stream.buffered())
 
+    @Suppress("MissingUseCall") // Closing the entry writer would also close the archive.
     fun entry(name: String, write: (Writer) -> Unit) {
         zip.putNextEntry(ZipEntry(name))
         val writer = OutputStreamWriter(zip, Charsets.UTF_8)

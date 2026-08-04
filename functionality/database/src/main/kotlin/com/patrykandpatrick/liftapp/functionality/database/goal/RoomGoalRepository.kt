@@ -27,6 +27,7 @@ constructor(
     }
         .flowOn(dispatcher)
 
-    override suspend fun saveGoal(routineID: Long, exerciseID: Long, goal: Goal) =
+    override suspend fun saveGoal(routineID: Long, exerciseID: Long, goal: Goal) {
         withContext(dispatcher) { goalDao.saveGoal(goal.toEntity(routineID, exerciseID)) }
+    }
 }

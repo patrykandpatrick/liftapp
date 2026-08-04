@@ -279,12 +279,13 @@ class TimePickerState(
     }
 
     private fun getDisplayHour(hour: Int): String =
-        if (is24h.not() && hour > 12) {
+        decimalFormat.format(
+            if (is24h.not() && hour > 12) {
                 hour - 12
             } else {
                 hour
             }
-            .let(decimalFormat::format)
+        )
 }
 
 @Composable

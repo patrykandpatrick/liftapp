@@ -305,7 +305,7 @@ object AppBars {
     internal fun isContentScrolledUnder(scrollBehavior: TopAppBarScrollBehavior?): Boolean {
         val scrolledUnder =
             remember(scrollBehavior) {
-                derivedStateOf { (scrollBehavior?.state?.overlappedFraction ?: 0f) > 0.01f }
+                derivedStateOf { scrollBehavior?.state?.overlappedFraction ?: 0f > 0.01f }
             }
         return scrolledUnder.value
     }

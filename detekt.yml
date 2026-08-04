@@ -1,0 +1,258 @@
+config:
+  validation: true
+
+comments:
+  active: false
+
+complexity:
+  active: false
+
+naming:
+  FunctionNameMaxLength:
+    active: false
+  FunctionNameMinLength:
+    active: false
+  VariableMaxLength:
+    active: false
+  VariableMinLength:
+    active: false
+
+potential-bugs:
+  ImplicitUnitReturnType:
+    ignoreAnnotated: ['Test']
+  MissingUseCall:
+    ignoreClass:
+      - java.io.ByteArrayInputStream
+      - java.io.ByteArrayOutputStream
+      - java.io.StringReader
+      - java.io.StringWriter
+      - androidx.sqlite.db.SupportSQLiteDatabase
+  PropertyUsedBeforeDeclaration:
+    active: false
+
+style:
+  BracesOnIfStatements:
+    active: false
+  BracesOnWhenStatements:
+    active: false
+  CascadingCallWrapping:
+    active: false
+  ClassOrdering:
+    active: false
+  DestructuringDeclarationWithTooManyEntries:
+    active: false
+  EqualsOnSignatureLine:
+    active: false
+  LoopWithTooManyJumpStatements:
+    active: false
+  MagicNumber:
+    active: false
+  MaxChainedCallsOnSameLine:
+    active: false
+  MaxLineLength:
+    active: false
+  ModifierOrder:
+    active: false
+  MultilineLambdaItParameter:
+    active: false
+  MultilineRawStringIndentation:
+    active: false
+  NewLineAtEndOfFile:
+    active: false
+  NoTabs:
+    active: false
+  ReturnCount:
+    active: false
+  SpacingAfterPackageAndImports:
+    active: false
+  ThrowsCount:
+    active: false
+  TrailingWhitespace:
+    active: false
+  UnusedImport:
+    active: false
+  UnusedPrivateFunction:
+    allowedNames: 'readResolve|.*Preview.*'
+
+ktlint:
+  autoCorrect: false
+  AnnotationOnSeparateLine:
+    active: false
+  AnnotationSpacing:
+    active: false
+  ArgumentListWrapping:
+    active: false
+  BinaryExpressionWrapping:
+    active: false
+  BlankLineBeforeDeclaration:
+    active: false
+  BlankLineBetweenWhenConditions:
+    active: false
+  BlockCommentInitialStarAlignment:
+    active: false
+  ChainMethodContinuation:
+    active: false
+  ChainWrapping:
+    active: false
+  ClassName:
+    active: false
+  ClassSignature:
+    active: false
+  CommentSpacing:
+    active: false
+  CommentWrapping:
+    active: false
+  ConditionWrapping:
+    active: false
+  ContextReceiverListWrapping:
+    active: false
+  ContextReceiverMapping:
+    active: false
+  EnumEntryNameCase:
+    active: false
+  EnumWrapping:
+    active: false
+  ExpressionOperandWrapping:
+    active: false
+  Filename:
+    active: false
+  FinalNewline:
+    active: false
+  FunKeywordSpacing:
+    active: false
+  FunctionLiteral:
+    active: false
+  FunctionName:
+    active: false
+  FunctionReturnTypeSpacing:
+    active: false
+  FunctionSignature:
+    active: false
+  FunctionStartOfBodySpacing:
+    active: false
+  FunctionTypeModifierSpacing:
+    active: false
+  FunctionTypeReferenceSpacing:
+    active: false
+  IfElseBracing:
+    active: false
+  IfElseWrapping:
+    active: false
+  ImportOrdering:
+    active: false
+  Indentation:
+    active: false
+  Kdoc:
+    active: false
+  KdocWrapping:
+    active: false
+  MaximumLineLength:
+    active: false
+  MixedConditionOperators:
+    active: false
+  ModifierListSpacing:
+    active: false
+  ModifierOrdering:
+    active: false
+  MultiLineIfElse:
+    active: false
+  MultilineExpressionWrapping:
+    active: false
+  MultilineLoop:
+    active: false
+  NoBlankLineBeforeRbrace:
+    active: false
+  NoBlankLineInList:
+    active: false
+  NoBlankLinesInChainedMethodCalls:
+    active: false
+  NoConsecutiveBlankLines:
+    active: false
+  NoConsecutiveComments:
+    active: false
+  NoEmptyClassBody:
+    active: false
+  NoEmptyFirstLineInClassBody:
+    active: false
+  NoEmptyFirstLineInMethodBlock:
+    active: false
+  NoLineBreakAfterElse:
+    active: false
+  NoLineBreakBeforeAssignment:
+    active: false
+  NoMultipleSpaces:
+    active: false
+  NoSemicolons:
+    active: false
+  NoSingleLineBlockComment:
+    active: false
+  NoTrailingSpaces:
+    active: false
+  NoUnusedImports:
+    active: false
+  NoWildcardImports:
+    active: false
+  NullableTypeSpacing:
+    active: false
+  PackageName:
+    active: false
+  ParameterListSpacing:
+    active: false
+  ParameterListWrapping:
+    active: false
+  ParameterWrapping:
+    active: false
+  PropertyName:
+    active: false
+  PropertyWrapping:
+    active: false
+  SpacingAroundAngleBrackets:
+    active: false
+  SpacingAroundColon:
+    active: false
+  SpacingAroundComma:
+    active: false
+  SpacingAroundCurly:
+    active: false
+  SpacingAroundDot:
+    active: false
+  SpacingAroundDoubleColon:
+    active: false
+  SpacingAroundKeyword:
+    active: false
+  SpacingAroundOperators:
+    active: false
+  SpacingAroundParens:
+    active: false
+  SpacingAroundRangeOperator:
+    active: false
+  SpacingAroundSquareBrackets:
+    active: false
+  SpacingAroundUnaryOperator:
+    active: false
+  SpacingBetweenDeclarationsWithAnnotations:
+    active: false
+  SpacingBetweenDeclarationsWithComments:
+    active: false
+  SpacingBetweenFunctionNameAndOpeningParenthesis:
+    active: false
+  StatementWrapping:
+    active: false
+  StringTemplateIndent:
+    active: false
+  ThenSpacing:
+    active: false
+  TrailingCommaOnCallSite:
+    active: false
+  TrailingCommaOnDeclarationSite:
+    active: false
+  TryCatchFinallySpacing:
+    active: false
+  TypeArgumentListSpacing:
+    active: false
+  TypeParameterListSpacing:
+    active: false
+  WhenEntryBracing:
+    active: false
+  Wrapping:
+    active: false

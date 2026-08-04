@@ -9,17 +9,18 @@ import com.patrykandpatrick.liftapp.domain.exception.PlanNotFoundException
 import com.patrykandpatrick.liftapp.domain.exception.RoutineNotFoundException
 
 @Composable
-fun Throwable.getUIMessage(): String? {
-    return when (this) {
+fun Throwable.getUIMessage(): String? =
+    when (this) {
         is LiftAppException -> this.getUIMessage()
         is DisplayableException -> message
         else -> null
     }
-}
 
 @Composable
 private fun LiftAppException.getUIMessage(): String =
-    when (this) {
-        is RoutineNotFoundException -> R.string.error_routine_not_found
-        is PlanNotFoundException -> R.string.error_plan_not_found
-    }.let { stringResource(it) }
+    stringResource(
+        when (this) {
+            is RoutineNotFoundException -> R.string.error_routine_not_found
+            is PlanNotFoundException -> R.string.error_plan_not_found
+        }
+    )

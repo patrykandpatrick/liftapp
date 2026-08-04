@@ -42,7 +42,11 @@ val Muscle.rearDrawableRes: Int
             Muscle.Traps -> R.drawable.body_traps
             Muscle.Shoulders -> R.drawable.body_shoulders_back
             Muscle.Triceps -> R.drawable.body_triceps
-            else -> error("${this.name} is not a rear muscle.")
+            Muscle.Abductors,
+            Muscle.Abs,
+            Muscle.Biceps,
+            Muscle.Chest,
+            Muscle.Quadriceps -> error("${this.name} is not a rear muscle.")
         }
 
 val Muscle.frontDrawableRes: Int
@@ -56,5 +60,11 @@ val Muscle.frontDrawableRes: Int
             Muscle.Forearms -> R.drawable.body_forearms
             Muscle.Quadriceps -> R.drawable.body_quads
             Muscle.Shoulders -> R.drawable.body_shoulders
-            else -> error("${this.name} is not a front muscle.")
+            Muscle.Calves,
+            Muscle.Glutes,
+            Muscle.Hamstrings,
+            Muscle.Lats,
+            Muscle.LowerBack,
+            Muscle.Traps,
+            Muscle.Triceps -> error("${this.name} is not a front muscle.")
         }

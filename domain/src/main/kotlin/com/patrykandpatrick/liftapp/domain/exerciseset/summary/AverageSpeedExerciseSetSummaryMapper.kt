@@ -30,7 +30,10 @@ constructor(private val unitConverter: UnitConverter) : ExerciseSetSummaryMapper
                                     1.hours.inWholeMilliseconds.toDouble())
                         }
 
-                        else -> return@forEachIndexed
+                        is ExerciseSet.Calisthenics,
+                        is ExerciseSet.Reps,
+                        is ExerciseSet.Time,
+                        is ExerciseSet.Weight -> return@forEachIndexed
                     }
             }
         }

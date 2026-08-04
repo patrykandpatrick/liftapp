@@ -68,20 +68,17 @@ constructor(
             }
 
     private suspend fun getChange(unit: ValueUnit, value: Double, changeMarkupColor: MarkupType) =
-        buildString {
-            append("(")
-            if (value > 0) {
-                append("+")
-            }
-            append(unitConverter.convertToPreferredUnitAndFormat(unit, value))
-            append(")")
-        }
-        .let { text ->
-            MarkupType.wrap(
-                text,
-                changeMarkupColor,
-                MarkupType.Size.Medium,
-                MarkupType.Style.Bold,
-            )
-        }
+        MarkupType.wrap(
+            buildString {
+                append("(")
+                if (value > 0) {
+                    append("+")
+                }
+                append(unitConverter.convertToPreferredUnitAndFormat(unit, value))
+                append(")")
+            },
+            changeMarkupColor,
+            MarkupType.Size.Medium,
+            MarkupType.Style.Bold,
+        )
 }

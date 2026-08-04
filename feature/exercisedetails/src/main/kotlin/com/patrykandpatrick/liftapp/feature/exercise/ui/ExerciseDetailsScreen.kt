@@ -279,23 +279,23 @@ internal fun getScreenStateForPreview(): ScreenState {
             columnModel {
                 series(
                     x = x,
-                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                    y = x.mapIndexed { index, _ -> 45.0 + index * Random.nextDouble(-.2, .35) },
                 )
                 series(
                     x = x,
-                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                    y = x.mapIndexed { index, _ -> 45.0 + index * Random.nextDouble(-.2, .35) },
                 )
                 series(
                     x = x,
-                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                    y = x.mapIndexed { index, _ -> 45.0 + index * Random.nextDouble(-.2, .35) },
                 )
                 series(
                     x = x,
-                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                    y = x.mapIndexed { index, _ -> 45.0 + index * Random.nextDouble(-.2, .35) },
                 )
                 series(
                     x = x,
-                    y = x.mapIndexed { index, _ -> 45.0 + (index * Random.nextDouble(-.2, .35)) },
+                    y = x.mapIndexed { index, _ -> 45.0 + index * Random.nextDouble(-.2, .35) },
                 )
             }
         }

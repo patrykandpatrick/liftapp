@@ -13,6 +13,9 @@ constructor(private val unitConverter: UnitConverter) : SetSplitExerciseSetSumma
         when (set) {
             is ExerciseSet.Cardio ->
                 unitConverter.convertToPreferredUnit(EnergyUnit.KiloCalorie, set.kcal)
-            else -> null
+            is ExerciseSet.Calisthenics,
+            is ExerciseSet.Reps,
+            is ExerciseSet.Time,
+            is ExerciseSet.Weight -> null
         }
 }

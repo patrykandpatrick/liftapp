@@ -121,7 +121,13 @@ internal val Muscle.isFrontMuscle: Boolean
             Muscle.Quadriceps,
             Muscle.Shoulders -> true
 
-            else -> false
+            Muscle.Calves,
+            Muscle.Glutes,
+            Muscle.Hamstrings,
+            Muscle.Lats,
+            Muscle.LowerBack,
+            Muscle.Traps,
+            Muscle.Triceps -> false
         }
 
 internal val Muscle.isRearMuscle: Boolean
@@ -138,5 +144,9 @@ internal val Muscle.isRearMuscle: Boolean
             Muscle.Shoulders,
             Muscle.Triceps -> true
 
-            else -> false
+            Muscle.Abductors,
+            Muscle.Abs,
+            Muscle.Biceps,
+            Muscle.Chest,
+            Muscle.Quadriceps -> false
         }

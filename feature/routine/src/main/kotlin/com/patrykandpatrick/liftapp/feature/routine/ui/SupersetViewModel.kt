@@ -213,8 +213,8 @@ constructor(
         forEach { item ->
             val isReplaced =
                 item === edited ||
-                    (item.type == RoutineItemType.Exercise &&
-                        item.exerciseIDs.single() in includedExerciseIDs)
+                    item.type == RoutineItemType.Exercise &&
+                        item.exerciseIDs.single() in includedExerciseIDs
             when {
                 !isReplaced -> items.add(item)
                 isSupersetPlaced -> Unit

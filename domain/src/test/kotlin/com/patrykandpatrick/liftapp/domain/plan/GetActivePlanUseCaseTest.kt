@@ -20,9 +20,7 @@ class GetActivePlanUseCaseTest {
         val useCase =
             GetActivePlanUseCase(
                 getPlanUseCase =
-                    GetPlanUseCase {
-                        flow { throw PlanNotFoundException(activePlan.planID) }
-                    },
+                    GetPlanUseCase { flow { throw PlanNotFoundException(activePlan.planID) } },
                 activePlan = preferences.activePlan,
             )
 

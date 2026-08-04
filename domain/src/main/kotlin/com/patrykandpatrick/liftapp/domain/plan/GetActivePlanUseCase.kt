@@ -34,9 +34,7 @@ constructor(
                                 // exactly like having no active plan, and repair it for subsequent
                                 // collectors.
                                 activePlan.update { currentPlan ->
-                                    currentPlan?.takeUnless {
-                                        it.planID == selectedPlan.planID
-                                    }
+                                    currentPlan?.takeUnless { it.planID == selectedPlan.planID }
                                 }
                                 emit(null)
                             } else {

@@ -219,7 +219,7 @@ class RestTimerServiceController(private val context: Context) {
     private val serviceConnection =
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                val binder = service as RestTimerService.RestTimerBinder
+                val binder = service as? RestTimerService.RestTimerBinder ?: return
                 _restTimerService.value = binder.service
             }
 

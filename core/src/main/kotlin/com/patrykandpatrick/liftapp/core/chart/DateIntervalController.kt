@@ -32,9 +32,7 @@ fun DateIntervalController(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(),
     ) {
-        LiftAppIconButton(onClick = decrementDateInterval) {
-            Icon(LiftAppIcons.ArrowBack, null)
-        }
+        LiftAppIconButton(onClick = decrementDateInterval) { Icon(LiftAppIcons.ArrowBack, null) }
 
         Text(
             text = dateInterval.displayDateInterval(),

@@ -58,10 +58,25 @@ Tests:
 ./gradlew testDebug
 ```
 
-Formatting is [ktfmt](https://github.com/facebook/ktfmt) in `--kotlinlang-style`, checked in CI:
+Formatting is [ktfmt](https://github.com/facebook/ktfmt) in Kotlin language style, checked in CI:
 
 ```bash
-java -jar ktfmt.jar --kotlinlang-style .
+./gradlew ktfmtFormat
+./gradlew -p build-logic :convention:ktfmtFormat
+```
+
+Linting uses the [Detekt Gradle plugin](https://detekt.dev/) with its ktlint ruleset and does not
+auto-correct or format code:
+
+```bash
+./gradlew detektCheck
+./gradlew -p build-logic :convention:detektMain :convention:detektTest
+```
+
+Install the formatting and linting pre-commit hooks with:
+
+```bash
+lefthook install
 ```
 
 ## Releases

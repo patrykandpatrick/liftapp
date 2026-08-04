@@ -183,9 +183,7 @@ fun WorkoutScreen(
     val manualTimerDuration = workout?.restTimerDuration(selectedPage)
     val backdropBackground = getLiftAppColorScheme(isDarkTheme = true).background
 
-    LaunchedEffect(isBackdropClosed) {
-        if (isBackdropClosed) backdropListScrolled = false
-    }
+    LaunchedEffect(isBackdropClosed) { if (isBackdropClosed) backdropListScrolled = false }
 
     fun requestClose() {
         if (workout?.endDate == null) {
@@ -907,12 +905,8 @@ private fun Page(
 }
 
 private fun EditableWorkout.activeIncompleteItem(item: EditableWorkout.Item) =
-    selectedExerciseAndSet?.takeIf {
-        it.exercise.workoutItemID == item.id && !it.isCompleted
-    }
-        ?: iterator.firstOrNull {
-            it.exercise.workoutItemID == item.id && !it.isCompleted
-        }
+    selectedExerciseAndSet?.takeIf { it.exercise.workoutItemID == item.id && !it.isCompleted }
+        ?: iterator.firstOrNull { it.exercise.workoutItemID == item.id && !it.isCompleted }
 
 private fun EditableWorkout.restTimerDuration(pageIndex: Int) =
     ((pages.getOrNull(pageIndex) as? WorkoutPage.Exercise)?.let { activeIncompleteItem(it.item) }

@@ -53,17 +53,16 @@ constructor(
         }
     }
 
-    private fun toPlanEntity(plan: Plan): PlanEntity {
-        return PlanEntity(
+    private fun toPlanEntity(plan: Plan): PlanEntity =
+        PlanEntity(
             id = plan.id,
             name = plan.name.orEmpty(),
             description = plan.description,
             itemCount = plan.items.size,
         )
-    }
 
-    private fun toPlanItems(plan: Plan): List<PlanItemEntity> {
-        return plan.items.mapIndexedNotNull { index, item ->
+    private fun toPlanItems(plan: Plan): List<PlanItemEntity> =
+        plan.items.mapIndexedNotNull { index, item ->
             when (item) {
                 is Plan.Item.Routine ->
                     PlanItemEntity(
@@ -71,10 +70,9 @@ constructor(
                         orderIndex = index,
                         routineId = item.routine.id,
                     )
-                else -> null
+                is Plan.Item.Rest -> null
             }
         }
-    }
 
     override suspend fun addPlanItemsSchedule(plan: Plan, startDate: LocalDate, cycleCount: Int) {
         var currentDate = startDate

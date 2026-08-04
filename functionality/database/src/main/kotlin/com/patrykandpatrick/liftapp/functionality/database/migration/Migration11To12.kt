@@ -112,9 +112,9 @@ class Migration11To12(
             Instant.ofEpochMilli(lastCompleted.endTime).atZone(ZoneId.systemDefault()).toLocalDate()
         val elapsedDays = ChronoUnit.DAYS.between(lastDate, startDate()).coerceAtLeast(0)
         var position = anchor
-        for (day in 0 until elapsedDays) {
+        repeat(elapsedDays.toInt()) {
             position++
-            if (items[position % items.size] != null) break
+            if (items[position % items.size] != null) return position % items.size
         }
         return position % items.size
     }

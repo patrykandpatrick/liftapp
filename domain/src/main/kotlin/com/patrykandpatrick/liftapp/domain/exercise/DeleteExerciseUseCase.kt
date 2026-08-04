@@ -13,6 +13,7 @@ constructor(
     @IODispatcher private val dispatcher: CoroutineDispatcher,
 ) {
 
-    suspend operator fun invoke(exerciseId: Long) =
+    suspend operator fun invoke(exerciseId: Long) {
         withContext(dispatcher + NonCancellable) { repository.delete(exerciseId) }
+    }
 }

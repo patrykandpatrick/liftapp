@@ -22,7 +22,6 @@ import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatrick.liftapp.core.ui.button.OnClick
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import java.time.LocalTime
 
 @Composable
@@ -54,8 +53,6 @@ fun TimeInput(
     }
 
     if (showTimePicker) {
-        val dimens = LocalDimens.current
-
         DatePickerDialog(
             onDismissRequest = { setShowTimePicker(false) },
             confirmButton = {

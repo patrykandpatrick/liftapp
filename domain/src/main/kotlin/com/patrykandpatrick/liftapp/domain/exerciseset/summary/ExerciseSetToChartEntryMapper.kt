@@ -19,11 +19,10 @@ constructor(
     suspend operator fun invoke(
         type: ExerciseSummaryType,
         input: List<ExerciseSetGroup>,
-    ): List<Pair<List<Double>, List<Double>>> {
-        return if (input.isEmpty()) {
+    ): List<Pair<List<Double>, List<Double>>> =
+        if (input.isEmpty()) {
             emptyList()
         } else {
-            mappers[type]?.invoke(input) ?: emptyList()
+            mappers[type]?.invoke(input).orEmpty()
         }
-    }
 }

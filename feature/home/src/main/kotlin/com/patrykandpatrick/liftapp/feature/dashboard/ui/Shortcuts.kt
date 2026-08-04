@@ -83,9 +83,7 @@ private fun Item(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            LiftAppListItemDefaults.IconCircle {
-                Icon(icon, contentDescription = null)
-            }
+            LiftAppListItemDefaults.IconCircle { Icon(icon, contentDescription = null) }
             LiftAppText(
                 text = text,
                 style = MaterialTheme.typography.titleSmall,

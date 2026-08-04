@@ -34,7 +34,8 @@ fun <T : Any> Loadable<T>.Unfold(
 fun <T : Any> Loadable<T>.valueOrNull(): T? =
     when (this) {
         is Loadable.Success -> data
-        else -> null
+        is Loadable.Error,
+        is Loadable.Loading -> null
     }
 
 fun <T : Any> Flow<T>.toLoadableStateFlow(

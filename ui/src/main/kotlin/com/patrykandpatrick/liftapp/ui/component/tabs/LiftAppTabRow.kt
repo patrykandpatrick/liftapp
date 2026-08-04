@@ -54,7 +54,7 @@ fun LiftAppTabRow(
             subcompose(slotId = "indicator") { indicator(indicatorScope) }
                 .map { it.measure(indicatorConstraints) }
 
-        height += (indicatorPlaceable.maxOfOrNull { it.height } ?: 0)
+        height += indicatorPlaceable.maxOfOrNull { it.height } ?: 0
 
         layout(constraints.maxWidth, height) {
             subcompose(slotId = 1, content = tabs).forEachIndexed { index, measurable ->

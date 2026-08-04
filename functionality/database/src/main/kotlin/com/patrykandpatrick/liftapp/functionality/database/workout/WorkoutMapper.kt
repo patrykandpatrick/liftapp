@@ -129,7 +129,7 @@ internal fun WorkoutWithWorkoutExerciseDto.toWorkoutExerciseDtoOrNull(): Workout
         exercise = exercise,
         goal = goal,
         exerciseOrder = exerciseOrder,
-        notes = notes ?: "",
+        notes = notes.orEmpty(),
         currentExerciseSet = currentExerciseSet,
         lastExerciseSet = lastExerciseSet,
     )

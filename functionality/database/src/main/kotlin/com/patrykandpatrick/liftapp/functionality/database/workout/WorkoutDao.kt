@@ -368,9 +368,7 @@ interface WorkoutDao {
             hasEndDate: Boolean,
             limit: Int? = null,
             offset: Int = 0,
-        ): RoomRawQuery {
-            return RoomRawQuery(getWorkoutsSql(hasEndDate, limit, offset))
-        }
+        ): RoomRawQuery = RoomRawQuery(getWorkoutsSql(hasEndDate, limit, offset))
 
         internal fun getWorkoutsSql(
             hasEndDate: Boolean,

@@ -63,17 +63,19 @@ sealed interface Action {
 
 @Composable
 fun Action.Button.getText(): String =
-    when (this) {
-        is Action.NextPage -> {
-            if (isLastExercise) {
-                R.string.workout_action_summary
-            } else {
-                R.string.workout_action_next_exercise
+    stringResource(
+        when (this) {
+            is Action.NextPage -> {
+                if (isLastExercise) {
+                    R.string.workout_action_summary
+                } else {
+                    R.string.workout_action_next_exercise
+                }
             }
+            is Action.PreviousPage -> R.string.workout_action_previous_exercise
+            is Action.FinishWorkout -> R.string.workout_summary_action_finish_workout
         }
-        is Action.PreviousPage -> R.string.workout_action_previous_exercise
-        is Action.FinishWorkout -> R.string.workout_summary_action_finish_workout
-    }.let { stringResource(it) }
+    )
 
 fun Action.Button.getImageVector() =
     when (this) {

@@ -28,7 +28,7 @@ abstract class TextFieldState<T : Any>(
     var textFieldValue by mutableStateOf(TextFieldValue(initialText))
         protected set
 
-    protected val _errorMessage = mutableStateOf<String?>(null)
+    private val _errorMessage = mutableStateOf<String?>(null)
 
     override val value: T
         get() = toValue(text) ?: defaultValue

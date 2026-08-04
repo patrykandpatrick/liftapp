@@ -82,7 +82,16 @@ internal enum class BackupTable(val tableName: String, val type: BackupDataType)
                 ExerciseWithRoutineItem,
                 Superset -> "${routineItemColumn()} IN ($ROUTINE_ITEM_IDS)"
                 Exercise -> "exercise_id IN ($ROUTINE_EXERCISE_IDS)"
-                else -> null
+                Plan,
+                PlanItem,
+                PlanItemSchedule,
+                Workout,
+                WorkoutItem,
+                ExerciseWithWorkoutItem,
+                WorkoutGoal,
+                ExerciseSet,
+                BodyMeasurement,
+                BodyMeasurementEntry -> null
             }
 
     val routineArgumentCount: Int
@@ -92,14 +101,40 @@ internal enum class BackupTable(val tableName: String, val type: BackupDataType)
         when (this) {
             RoutineItem -> "routine_item_routine_id"
             Goal -> "goal_routine_id"
-            else -> error("$this is not scoped by routine.")
+            Exercise,
+            Routine,
+            ExerciseWithRoutineItem,
+            Superset,
+            Plan,
+            PlanItem,
+            PlanItemSchedule,
+            Workout,
+            WorkoutItem,
+            ExerciseWithWorkoutItem,
+            WorkoutGoal,
+            ExerciseSet,
+            BodyMeasurement,
+            BodyMeasurementEntry -> error("$this is not scoped by routine.")
         }
 
     private fun routineItemColumn(): String =
         when (this) {
             ExerciseWithRoutineItem -> "routine_item_id"
             Superset -> "superset_routine_item_id"
-            else -> error("$this is not scoped by routine item.")
+            Exercise,
+            Routine,
+            RoutineItem,
+            Goal,
+            Plan,
+            PlanItem,
+            PlanItemSchedule,
+            Workout,
+            WorkoutItem,
+            ExerciseWithWorkoutItem,
+            WorkoutGoal,
+            ExerciseSet,
+            BodyMeasurement,
+            BodyMeasurementEntry -> error("$this is not scoped by routine item.")
         }
 
     companion object {

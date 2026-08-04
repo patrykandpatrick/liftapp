@@ -1,0 +1,7 @@
+pre-commit:
+  jobs:
+    - name: ktfmt
+      run: ./gradlew ktfmtFormat && ./gradlew -p build-logic :convention:ktfmtFormat
+      stage_fixed: true
+    - name: detekt
+      run: ./gradlew detektCheck && ./gradlew -p build-logic :convention:detektMain :convention:detektTest

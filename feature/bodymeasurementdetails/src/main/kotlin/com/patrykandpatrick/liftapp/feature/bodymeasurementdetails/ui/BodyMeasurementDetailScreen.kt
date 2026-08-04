@@ -357,9 +357,7 @@ private fun OptionsBottomSheet(
 
         LiftAppListItem(
             title = { Text(text = stringResource(id = R.string.action_delete)) },
-            icon = {
-                LiftAppListItemDefaults.Icon { Icon(LiftAppIcons.Delete, null) }
-            },
+            icon = { LiftAppListItemDefaults.Icon { Icon(LiftAppIcons.Delete, null) } },
             position = LiftAppListItemPosition(index = 1, count = 2),
             modifier = Modifier.padding(horizontal = dimens.screen.padding),
             onClick = {

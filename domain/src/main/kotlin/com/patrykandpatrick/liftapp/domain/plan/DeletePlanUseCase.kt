@@ -19,9 +19,7 @@ constructor(
     suspend operator fun invoke(id: Long) {
         withContext(NonCancellable) {
             deletePlanContract.deletePlan(id)
-            activePlan.update { selectedPlan ->
-                selectedPlan?.takeUnless { it.planID == id }
-            }
+            activePlan.update { selectedPlan -> selectedPlan?.takeUnless { it.planID == id } }
         }
     }
 }

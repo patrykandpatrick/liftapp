@@ -25,23 +25,23 @@ data class MuscleModel(val muscle: Muscle, val type: Type, val nameRes: Int) : P
             secondaryMuscles: Collection<Muscle>,
             tertiaryMuscles: Collection<Muscle>,
         ): List<MuscleModel> = buildList {
-            primaryMuscles
-                .map { muscle ->
+            addAll(
+                primaryMuscles.map { muscle ->
                     MuscleModel(muscle = muscle, type = Type.Primary, nameRes = muscle.stringRes)
                 }
-                .let(::addAll)
+            )
 
-            secondaryMuscles
-                .map { muscle ->
+            addAll(
+                secondaryMuscles.map { muscle ->
                     MuscleModel(muscle = muscle, type = Type.Secondary, nameRes = muscle.stringRes)
                 }
-                .let(::addAll)
+            )
 
-            tertiaryMuscles
-                .map { muscle ->
+            addAll(
+                tertiaryMuscles.map { muscle ->
                     MuscleModel(muscle = muscle, type = Type.Tertiary, nameRes = muscle.stringRes)
                 }
-                .let(::addAll)
+            )
         }
     }
 }

@@ -18,8 +18,8 @@ import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 @Composable
 fun rememberCartesianMarker(
     valueFormatter: DefaultCartesianMarker.ValueFormatter
-): CartesianMarker {
-    return rememberDefaultCartesianMarker(
+): CartesianMarker =
+    rememberDefaultCartesianMarker(
         label =
             rememberTextComponent(
                 MaterialTheme.typography.titleSmall,
@@ -37,7 +37,6 @@ fun rememberCartesianMarker(
         labelPosition = DefaultCartesianMarker.LabelPosition.AroundPoint,
         valueFormatter = valueFormatter,
     )
-}
 
 @Composable
 fun rememberCartesianMarkerValueFormatter(unit: String): DefaultCartesianMarker.ValueFormatter =

@@ -32,7 +32,7 @@ class SupersetSavedState @Inject constructor(private val savedStateHandle: Saved
     }
 
     private fun updateExerciseIDs(transform: (List<Long>) -> List<Long>) {
-        savedStateHandle.update<List<Long>>(EXERCISE_IDS) { transform(it ?: emptyList()) }
+        savedStateHandle.update<List<Long>>(EXERCISE_IDS) { transform(it.orEmpty()) }
     }
 
     private companion object {

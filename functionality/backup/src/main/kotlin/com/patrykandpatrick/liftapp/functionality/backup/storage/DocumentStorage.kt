@@ -52,11 +52,13 @@ class DocumentStorage @Inject constructor(private val application: Application) 
         return contentResolver.persistedUriPermissions.any { it.uri == uri && it.isReadPermission }
     }
 
+    @Suppress("MissingUseCall") // The caller owns and closes the returned stream.
     fun openInput(location: BackupLocation): InputStream =
         requireNotNull(contentResolver.openInputStream(location.toUri())) {
             "Nothing to read at ${location.value}."
         }
 
+    @Suppress("MissingUseCall") // The caller owns and closes the returned stream.
     fun openOutput(location: BackupLocation): OutputStream =
         requireNotNull(contentResolver.openOutputStream(location.toUri(), "wt")) {
             "Nothing to write to at ${location.value}."
@@ -115,11 +117,13 @@ class DocumentStorage @Inject constructor(private val application: Application) 
     /** The backup files in [directories], newest first. Directories gone missing are skipped. */
     fun listBackups(directories: List<BackupLocation>): List<BackupFile> =
         directories
+            .asSequence()
             .mapNotNull { directoryDocument(it) }
             .flatMap { directory -> directory.listFiles().asIterable() }
             .filter { it.isFile && it.name?.endsWith(BackupFormat.EXTENSION) == true }
             .map { it.toBackupFile() }
             .sortedByDescending { it.lastModified }
+            .toList()
 
     private fun DocumentFile.toBackupFile() =
         BackupFile(

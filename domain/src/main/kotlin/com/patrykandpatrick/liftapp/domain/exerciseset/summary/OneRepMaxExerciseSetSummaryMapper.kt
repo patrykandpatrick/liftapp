@@ -40,7 +40,9 @@ constructor(private val unitConverter: UnitConverter) : ExerciseSetSummaryMapper
                                 reps = set.reps,
                             )
 
-                        else -> 0.0
+                        is ExerciseSet.Cardio,
+                        is ExerciseSet.Reps,
+                        is ExerciseSet.Time -> 0.0
                     }
                 }
             y += listOf(oneRm)

@@ -34,10 +34,9 @@ fun Path.addSinLine(
     }
 }
 
-private fun getAdjustedSinPeriodLength(totalWidth: Int, target: Int): Float {
-    return if (totalWidth % target == 0) {
+private fun getAdjustedSinPeriodLength(totalWidth: Int, target: Int): Float =
+    if (totalWidth % target == 0) {
         target.toFloat()
     } else {
         totalWidth * (target / (ceil(totalWidth / target.toDouble()) * target).toFloat())
     }
-}

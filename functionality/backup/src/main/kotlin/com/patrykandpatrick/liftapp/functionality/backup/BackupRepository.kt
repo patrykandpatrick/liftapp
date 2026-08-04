@@ -152,6 +152,7 @@ constructor(
         }
     }
 
+    @Suppress("MissingUseCall") // BackupArchiveWriter takes ownership of the output stream.
     private suspend fun write(
         location: BackupLocation,
         contents: Set<BackupDataType>,
@@ -214,6 +215,7 @@ constructor(
      * the file asked for, if any. Preferences are applied by the caller: DataStore is not part of
      * the database transaction, and editing it here would suspend inside one.
      */
+    @Suppress("MissingUseCall") // readArchive takes ownership of the input stream.
     private fun restoreTables(
         location: BackupLocation,
         types: Set<BackupDataType>,
@@ -300,9 +302,11 @@ constructor(
         return manifest.contents.toSet()
     }
 
+    @Suppress("MissingUseCall") // LegacyBackup.read takes ownership of the input stream.
     private fun readLegacyBackup(location: BackupLocation): LegacyBackup? =
         LegacyBackup.read(storage.openInput(location))
 
+    @Suppress("MissingUseCall") // readArchive takes ownership of the input stream.
     private fun readManifest(location: BackupLocation): BackupManifest? {
         var manifest: BackupManifest? = null
         runCatching {

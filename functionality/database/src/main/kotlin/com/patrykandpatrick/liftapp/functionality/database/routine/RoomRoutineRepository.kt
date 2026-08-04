@@ -42,8 +42,8 @@ constructor(
     override fun getRoutinesWithExerciseNames(): Flow<List<RoutineWithExerciseNames>> =
         routineDao.getRoutinesWithExerciseNames().map(routineMapper::toDomain).flowOn(dispatcher)
 
-    override fun getRoutineWithItems(routineID: Long): Flow<RoutineWithItems?> {
-        return getRoutineWithExercises(routineID)
+    override fun getRoutineWithItems(routineID: Long): Flow<RoutineWithItems?> =
+        getRoutineWithExercises(routineID)
             .map { routine ->
                 routine?.let {
                     RoutineWithItems(
@@ -62,7 +62,6 @@ constructor(
                 }
             }
             .flowOn(dispatcher)
-    }
 
     override fun getRoutineWithExercises(routineId: Long): Flow<RoutineWithExercises?> =
         combine(routineDao.getRoutine(routineId), routineDao.getRoutineItems(routineId)) {

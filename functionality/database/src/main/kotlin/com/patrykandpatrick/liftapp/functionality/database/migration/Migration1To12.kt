@@ -10,7 +10,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * from below 6, so those installs could not update in either app.)
  */
 object Migration1To12 : Migration(1, 12) {
-    override fun migrate(db: SupportSQLiteDatabase) = db.createPlanItemScheduleIndexes()
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.createPlanItemScheduleIndexes()
+    }
 }
 
 internal fun SupportSQLiteDatabase.createPlanItemScheduleIndexes() {

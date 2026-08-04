@@ -5,6 +5,7 @@ composeBom = "2026.06.01"
 composeNavigation = "2.9.8"
 coroutines = "1.11.0"
 datastore = "1.2.1"
+detekt = "2.0.0-alpha.5"
 documentfile = "1.1.0"
 hilt = "2.60.1"
 hiltNavigation = "1.4.0"
@@ -28,6 +29,7 @@ vico = "3.2.3"
 
 androidPlugin = "9.3.1"
 kspPlugin = "2.3.10"
+ktfmtPlugin = "0.26.0"
 ossLicensesPlugin = "0.13.0"
 
 [libraries]
@@ -49,6 +51,7 @@ compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:ada
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 compose-navigation-material = { module = "androidx.compose.material:material-navigation" }
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+detekt-rules-ktlint-wrapper = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
@@ -95,4 +98,6 @@ kotlinXSerialization = { id = "kotlinx-serialization" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
 library = { id = "com.android.library", version.ref = "androidPlugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
+ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmtPlugin" }
 oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ossLicensesPlugin" }

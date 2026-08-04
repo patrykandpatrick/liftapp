@@ -31,7 +31,7 @@ constructor(
     override val messages = events.asSharedFlow()
 
     override fun isLoggable(tag: String?, priority: Int): Boolean =
-        (isDebug && priority >= Log.INFO) || tag == Constants.Logging.DISPLAYABLE_ERROR
+        isDebug && priority >= Log.INFO || tag == Constants.Logging.DISPLAYABLE_ERROR
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         scope.launch {

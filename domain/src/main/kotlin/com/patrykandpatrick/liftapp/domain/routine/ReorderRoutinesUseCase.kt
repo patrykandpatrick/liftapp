@@ -6,5 +6,6 @@ fun interface ReorderRoutinesUseCase {
 }
 
 /** Stores the routines in the order in which their IDs appear. */
-suspend operator fun ReorderRoutinesUseCase.invoke(routineIDs: List<Long>) =
+suspend operator fun ReorderRoutinesUseCase.invoke(routineIDs: List<Long>) {
     reorderRoutineIDs(routineIDs)
+}

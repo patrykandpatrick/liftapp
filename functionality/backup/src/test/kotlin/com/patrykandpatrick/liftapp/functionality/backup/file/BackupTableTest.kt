@@ -40,7 +40,7 @@ class BackupTableTest {
                 val last = BackupTable.entries.indexOfLast { it.type == dependency }
                 assertTrue(
                     last < index,
-                    "${table.tableName} is written before ${dependency}, which it references.",
+                    "${table.tableName} is written before $dependency, which it references.",
                 )
             }
         }

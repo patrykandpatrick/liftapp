@@ -4,13 +4,10 @@ import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurement
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementEntry
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementWithHistory
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementWithLatestEntry
-import com.patrykandpatrick.liftapp.domain.format.Formatter
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import javax.inject.Inject
 
-class BodyMeasurementMapper
-@Inject
-constructor(private val formatter: Formatter, private val stringProvider: StringProvider) {
+class BodyMeasurementMapper @Inject constructor(private val stringProvider: StringProvider) {
 
     fun toDomain(bodyMeasurement: BodyMeasurementEntity): BodyMeasurement =
         BodyMeasurement(

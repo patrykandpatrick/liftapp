@@ -97,7 +97,7 @@ constructor(
     private fun BodyMeasurementWithHistory.progressOf(value: BodyMeasurementValue): Float? {
         if (type != BodyMeasurementType.Percentage) return null
         val range = type.getValueRange(value.unit)
-        val single = (value as? BodyMeasurementValue.SingleValue) ?: return null
+        val single = value as? BodyMeasurementValue.SingleValue ?: return null
         val span = range.endInclusive - range.start
         return if (span > 0) ((single.value - range.start) / span).toFloat() else null
     }

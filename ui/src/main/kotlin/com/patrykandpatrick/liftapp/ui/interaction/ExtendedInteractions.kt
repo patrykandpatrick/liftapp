@@ -49,9 +49,9 @@ fun Modifier.extendedInteractions(
                                 when {
                                     lastPressInteraction != null &&
                                         (isOutOfBounds || change.isConsumed) -> {
-                                        interactionSource.tryEmit(
-                                            PressInteraction.Cancel(lastPressInteraction!!)
-                                        )
+                                        lastPressInteraction?.let {
+                                            interactionSource.tryEmit(PressInteraction.Cancel(it))
+                                        }
                                         lastPressInteraction = null
                                     }
                                     !change.pressed && isOutOfBounds -> {

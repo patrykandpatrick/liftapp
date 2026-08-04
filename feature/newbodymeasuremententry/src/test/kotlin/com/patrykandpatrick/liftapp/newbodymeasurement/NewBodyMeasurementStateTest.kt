@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
@@ -76,8 +75,6 @@ class NewBodyMeasurementStateTest {
             value = BodyMeasurementValue.SingleValue(75.0, MassUnit.Kilograms),
             localDateTime = LocalDateTime.now(),
         )
-
-    private val coroutineScope = CoroutineScope(UnconfinedTestDispatcher(testScheduler))
 
     private fun getSut(
         bodyMeasurementWithLatestEntry: BodyMeasurementWithLatestEntry = weightMeasurement,

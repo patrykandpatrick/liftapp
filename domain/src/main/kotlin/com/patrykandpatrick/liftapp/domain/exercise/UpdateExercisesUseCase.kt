@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 
 class UpdateExercisesUseCase @Inject constructor(private val repository: ExerciseRepository) {
 
-    suspend operator fun invoke(exercise: Exercise.Update) =
+    suspend operator fun invoke(exercise: Exercise.Update) {
         withContext(NonCancellable) { repository.update(exercise) }
+    }
 }

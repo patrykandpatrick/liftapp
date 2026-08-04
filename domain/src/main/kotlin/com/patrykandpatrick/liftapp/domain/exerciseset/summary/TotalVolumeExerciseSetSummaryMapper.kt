@@ -16,6 +16,8 @@ constructor(private val unitConverter: UnitConverter) : SetSplitExerciseSetSumma
             is ExerciseSet.Weight ->
                 unitConverter.convertToPreferredUnit(set.weightUnit, set.weight) * set.reps
 
-            else -> null
+            is ExerciseSet.Cardio,
+            is ExerciseSet.Reps,
+            is ExerciseSet.Time -> null
         }
 }

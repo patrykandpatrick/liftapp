@@ -12,7 +12,7 @@ class MuscleBitmapConfigProvider @Inject constructor(private val context: Contex
             Configuration(context.resources.configuration).apply {
                 val nightMode =
                     if (isDark) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
-                uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or nightMode
+                uiMode = uiMode and Configuration.UI_MODE_NIGHT_MASK.inv() or nightMode
             }
         val themedContext = context.createConfigurationContext(configuration)
 

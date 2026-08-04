@@ -206,7 +206,7 @@ private fun ReorderableExerciseList(
                         isSelected = item.pageIndex == selectedPage,
                         nextItemSelected =
                             orderedItems.getOrNull(index + 1)?.pageIndex == selectedPage ||
-                                (index == orderedItems.lastIndex && selectedPage == items.size),
+                                index == orderedItems.lastIndex && selectedPage == items.size,
                         interactionSource = interactionSource,
                         dragHandleModifier =
                             Modifier.draggableHandle(
@@ -214,7 +214,7 @@ private fun ReorderableExerciseList(
                                 onDragStarted = { captureOrder() },
                                 onDragStopped = { persistOrder() },
                             ),
-                        onRemove = if (canRemoveItem) ({ removeItem(item.id) }) else null,
+                        onRemove = { removeItem(item.id) }.takeIf { canRemoveItem },
                         selectPage = selectPage,
                         position = LiftAppListItemPosition(index, orderedItems.size + 1),
                         modifier =

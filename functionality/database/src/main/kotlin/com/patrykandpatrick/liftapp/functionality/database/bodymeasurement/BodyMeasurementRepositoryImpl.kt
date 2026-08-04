@@ -82,12 +82,13 @@ constructor(
             .map { entry -> entry?.let { bodyMeasurementMapper.toDomain(it) } }
             .flowOn(dispatcher)
 
-    override suspend fun insertBodyMeasurement(bodyMeasurement: BodyMeasurement.Insert) =
+    override suspend fun insertBodyMeasurement(bodyMeasurement: BodyMeasurement.Insert) {
         withContext(dispatcher) {
             dao.insertBodyMeasurement(
                 BodyMeasurementEntity(name = bodyMeasurement.name, type = bodyMeasurement.type)
             )
         }
+    }
 
     override suspend fun insertBodyMeasurements(bodyMeasurements: List<BodyMeasurement.Insert>) {
         bodyMeasurements.forEach { bodyMeasurement -> insertBodyMeasurement(bodyMeasurement) }
@@ -98,7 +99,7 @@ constructor(
         value: BodyMeasurementValue,
         time: LocalDateTime,
         entryID: Long,
-    ) =
+    ) {
         withContext(dispatcher) {
             dao.insertBodyMeasurementEntry(
                 BodyMeasurementEntryEntity(
@@ -109,6 +110,7 @@ constructor(
                 )
             )
         }
+    }
 
     override suspend fun deleteBodyMeasurementEntry(id: Long) {
         withContext(dispatcher) { dao.deleteBodyMeasurementEntry(id) }

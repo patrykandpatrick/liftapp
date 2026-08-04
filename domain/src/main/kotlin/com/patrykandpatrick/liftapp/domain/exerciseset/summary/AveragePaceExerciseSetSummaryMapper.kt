@@ -15,6 +15,9 @@ constructor(private val unitConverter: UnitConverter) : SetSplitExerciseSetSumma
                 set.duration.inWholeMilliseconds / distance
             }
 
-            else -> null
+            is ExerciseSet.Calisthenics,
+            is ExerciseSet.Reps,
+            is ExerciseSet.Time,
+            is ExerciseSet.Weight -> null
         }
 }

@@ -204,9 +204,7 @@ constructor(
                     setCount = setCount,
                 )
             } else {
-                exercises.forEach { exercise ->
-                    upsertGoalSets(workoutID, exercise, setCount)
-                }
+                exercises.forEach { exercise -> upsertGoalSets(workoutID, exercise, setCount) }
             }
         }
     }

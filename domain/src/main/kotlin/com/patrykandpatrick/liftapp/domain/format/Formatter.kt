@@ -36,13 +36,9 @@ class Formatter(private val stringProvider: StringProvider, private val is24H: S
 
     private val decimalSymbols = DecimalFormatSymbols(Locale.getDefault())
 
-    private val decimalOutputFormat = DecimalFormat("#,###.##", decimalSymbols)
-
     private val decimalInputFormat = DecimalFormat(DECIMAL_PATTERN, decimalSymbols)
 
     private val integerOutputFormat = DecimalFormat(INTEGER_PATTERN, decimalSymbols)
-
-    private val percentFormat = DecimalFormat("#%")
 
     private val decimalNumberRegex = """-?\d+${decimalSymbols.decimalSeparator}?\d*""".toRegex()
 

@@ -10,6 +10,7 @@ class TotalRepsExerciseSetSummaryMapper @Inject constructor() : SetSplitExercise
             is ExerciseSet.Calisthenics -> set.reps.toDouble()
             is ExerciseSet.Weight -> set.reps.toDouble()
             is ExerciseSet.Reps -> set.reps.toDouble()
-            else -> null
+            is ExerciseSet.Cardio,
+            is ExerciseSet.Time -> null
         }
 }

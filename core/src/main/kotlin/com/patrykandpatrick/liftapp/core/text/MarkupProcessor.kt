@@ -92,7 +92,8 @@ class MarkupProcessor(private val config: Config) {
         companion object {
             fun create(textWithMarkup: String, strippedText: String): IndexLookup {
                 var transformedIndex = 0
-                return buildMap {
+                return IndexLookup(
+                    buildMap {
                         textWithMarkup.forEachIndexed { index, char ->
                             put(index, transformedIndex)
                             if (strippedText.getOrNull(transformedIndex) == char) {
@@ -100,7 +101,7 @@ class MarkupProcessor(private val config: Config) {
                             }
                         }
                     }
-                    .let(::IndexLookup)
+                )
             }
         }
     }

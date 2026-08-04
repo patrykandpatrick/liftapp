@@ -176,9 +176,7 @@ private fun ListContent(
     val segmentPositions =
         remember(state.exercises) { state.exercises.getExerciseSegmentPositions() }
     val firstSectionHeaderIndex =
-        remember(state.exercises) {
-            state.exercises.indexOfFirst { it is ExercisesItem.Header }
-        }
+        remember(state.exercises) { state.exercises.indexOfFirst { it is ExercisesItem.Header } }
     Box(modifier = modifier.imePadding()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -363,9 +361,7 @@ private fun TopBar(
                             .fractionalTopPadding(
                                 maxPaddingPx =
                                     with(LocalDensity.current) { horizontalPadding.toPx() },
-                                fraction = {
-                                    topAppBarScrollBehavior.state.collapsedFraction
-                                },
+                                fraction = { topAppBarScrollBehavior.state.collapsedFraction },
                             ),
                 )
             },
@@ -557,9 +553,7 @@ private fun Controls(groupBy: GroupBy, onGroupBySelection: (GroupBy) -> Unit) {
                 LiftAppFilterChip(
                     selected = selected,
                     onClick = { onGroupBySelection(it) },
-                    leadingIcon = {
-                        LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.Check)
-                    },
+                    leadingIcon = { LiftAppFilterChipDefaults.Icon(vector = LiftAppIcons.Check) },
                     leadingIconVisible = selected,
                     label = {
                         Text(

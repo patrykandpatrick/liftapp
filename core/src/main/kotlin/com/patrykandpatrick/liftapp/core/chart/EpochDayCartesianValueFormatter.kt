@@ -26,8 +26,8 @@ private class EpochDayCartesianValueFormatter(
         val localDate = LocalDate.ofEpochDay(value.toLong())
         val dateInterval = context.model.extraStore.getOrNull(ExtraStoreKey.DateInterval)
         val isRangeWithinTwoMonths =
-            dateInterval?.run { ChronoUnit.MONTHS.between(periodStartTime, periodEndTime) <= 2 }
-                ?: false
+            dateInterval?.run { ChronoUnit.MONTHS.between(periodStartTime, periodEndTime) <= 2 } ==
+                true
         return when {
             dateInterval is DateInterval.RollingWeek -> dayOfWeekFormatter
             isRangeWithinTwoMonths || dateInterval is DateInterval.RollingMonth ->

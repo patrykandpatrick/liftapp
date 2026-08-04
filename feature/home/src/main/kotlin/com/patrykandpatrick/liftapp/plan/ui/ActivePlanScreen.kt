@@ -148,7 +148,7 @@ private fun PlanItem(
                 LiftAppCard(
                     modifier = Modifier.fillMaxWidth(),
                     colors = colors,
-                    onClick = { (onAction(Action.OnPlanItemClick(planItem))) },
+                    onClick = { onAction(Action.OnPlanItemClick(planItem)) },
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         workout?.let { WorkoutStatusWithDate(it) }

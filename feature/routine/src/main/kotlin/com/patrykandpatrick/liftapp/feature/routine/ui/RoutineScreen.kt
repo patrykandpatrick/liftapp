@@ -50,7 +50,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppDestructiveActionDialog
 import com.patrykandpatrick.liftapp.ui.component.LiftAppFAB
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.Delete
 import com.patrykandpatrick.liftapp.ui.icons.Dumbbell
 import com.patrykandpatrick.liftapp.ui.icons.Edit
@@ -96,8 +95,6 @@ private fun RoutineScreen(
     var removalToConfirm by remember { mutableStateOf<Action?>(null) }
     var fabHeight by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
-    val dimens = LocalDimens.current
-
     if (showDeleteDialog && state != null) {
         DeleteRoutineDialog(
             routineName = state.name,
@@ -209,10 +206,13 @@ private fun RoutineScreen(
                     Exercises(
                         loadableState = loadableState,
                         onAction = { action ->
-                            when (action) {
-                                is Action.RemoveItem,
-                                is Action.RemoveSupersetExercise -> removalToConfirm = action
-                                else -> onAction(action)
+                            if (
+                                action is Action.RemoveItem ||
+                                    action is Action.RemoveSupersetExercise
+                            ) {
+                                removalToConfirm = action
+                            } else {
+                                onAction(action)
                             }
                         },
                         bottomPadding = contentBottomPadding,

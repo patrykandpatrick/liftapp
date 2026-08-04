@@ -12,6 +12,8 @@ class TotalDurationExerciseSetSummaryMapper @Inject constructor() :
 
             is ExerciseSet.Time -> set.duration.inWholeMilliseconds.toDouble()
 
-            else -> null
+            is ExerciseSet.Calisthenics,
+            is ExerciseSet.Reps,
+            is ExerciseSet.Weight -> null
         }
 }

@@ -168,6 +168,6 @@ val LiftAppIcons.Calculator: ImageVector by lazy {
 
 @LightAndDarkThemePreview
 @Composable
-private fun Calculatorreview() {
+private fun CalculatorPreview() {
     LiftAppTheme { LiftAppBackground { Icon(LiftAppIcons.Calculator, null) } }
 }

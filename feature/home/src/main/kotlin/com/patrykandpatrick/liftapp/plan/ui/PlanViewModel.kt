@@ -3,11 +3,8 @@ package com.patrykandpatrick.liftapp.plan.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.core.model.toLoadableStateFlow
-import com.patrykandpatrick.liftapp.domain.datastore.Preference
-import com.patrykandpatrick.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.plan.model.Action
@@ -27,7 +24,6 @@ constructor(
     getPlanStateUseCase: GetPlanStateUseCase,
     scope: CoroutineScope,
     private val navigationCommander: NavigationCommander,
-    @PreferenceQualifier.ActivePlan private val activePlan: Preference<ActivePlan?>,
 ) : ViewModel(scope) {
 
     val state: StateFlow<Loadable<PlanState>> =

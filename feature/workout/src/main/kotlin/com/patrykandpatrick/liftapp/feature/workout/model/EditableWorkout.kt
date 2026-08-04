@@ -82,9 +82,7 @@ data class EditableWorkout(
 
         val firstIncompleteSetIndex: Int = sets.indexOfFirst { !it.isCompleted }
 
-        val completedSets = sets.filter { it.isCompleted }
-
-        val completedSetCount: Int = completedSets.size
+        val completedSetCount: Int = sets.count { it.isCompleted }
 
         val formattedBodyWeight: String? =
             (sets.firstOrNull() as? EditableExerciseSet.Calisthenics)?.formattedBodyWeight

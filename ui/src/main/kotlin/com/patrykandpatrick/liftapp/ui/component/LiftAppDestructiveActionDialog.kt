@@ -26,10 +26,6 @@ fun LiftAppDestructiveActionDialog(
                 text = dismissText,
             )
         },
-        confirmButton = {
-            PlainLiftAppButton(onClick = onConfirm) {
-                Text(confirmText)
-            }
-        },
+        confirmButton = { PlainLiftAppButton(onClick = onConfirm) { Text(confirmText) } },
     )
 }

@@ -73,9 +73,11 @@ class RoutineDaoReplaceItemsTest {
         assertEquals(
             listOf(3L to 0, 4L to 1),
             dao.memberships
+                .asSequence()
                 .filter { it.routineItemID == supersetID }
                 .sortedBy { it.orderIndex }
-                .map { it.exerciseID to it.orderIndex },
+                .map { it.exerciseID to it.orderIndex }
+                .toList(),
         )
         assertEquals(supersetID, dao.supersets.single().routineItemID)
         assertEquals(checkNotNull(superset.supersetConfig).sets, dao.supersets.single().sets)
@@ -89,7 +91,7 @@ class RoutineDaoReplaceItemsTest {
         val routineOrderIndices = mutableMapOf<Long, Int>()
 
         override suspend fun insert(item: RoutineItemEntity): Long {
-            val id = item.id.takeIf { it != ID_NOT_SET } ?: ((items.maxOfOrNull { it.id } ?: 0) + 1)
+            val id = item.id.takeIf { it != ID_NOT_SET } ?: (items.maxOfOrNull { it.id } ?: 0) + 1
             require(items.none { it.id == id }) { "Duplicate routine item ID $id." }
             items.add(item.copy(id = id))
             return id

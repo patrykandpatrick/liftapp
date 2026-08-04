@@ -33,7 +33,9 @@ class GetExerciseStatisticsUseCase @Inject constructor(private val unitConverter
                     is ExerciseSet.Weight -> Triple(set.weight, set.weightUnit, set.reps)
                     is ExerciseSet.Calisthenics ->
                         Triple(set.weight + set.bodyWeight, set.weightUnit, set.reps)
-                    else -> return@mapNotNull null
+                    is ExerciseSet.Cardio,
+                    is ExerciseSet.Reps,
+                    is ExerciseSet.Time -> return@mapNotNull null
                 }
             val convertedWeight = unitConverter.convertToPreferredUnit(weightUnit, weight)
             convertedWeight to reps

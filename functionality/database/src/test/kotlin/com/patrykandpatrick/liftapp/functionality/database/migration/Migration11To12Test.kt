@@ -58,9 +58,7 @@ class Migration11To12Test {
     ) =
         Migration11To12(
             json = json,
-            legacyPlan = {
-                planIDs?.let { Migration11To12.LegacyPlan("My training plan", it) }
-            },
+            legacyPlan = { planIDs?.let { Migration11To12.LegacyPlan("My training plan", it) } },
             startDate = { start },
         )
 
@@ -506,9 +504,7 @@ class Migration11To12Test {
         list(sql, read).single()
 
     private fun <T> SupportSQLiteDatabase.list(sql: String, read: (Cursor) -> T): List<T> =
-        query(sql).use { cursor ->
-            buildList { while (cursor.moveToNext()) add(read(cursor)) }
-        }
+        query(sql).use { cursor -> buildList { while (cursor.moveToNext()) add(read(cursor)) } }
 
     private fun date(epochMillis: Long): String =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), ZoneId.systemDefault())

@@ -20,7 +20,6 @@ import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
 import com.patrykandpatrick.liftapp.core.ui.button.OnClick
-import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -72,8 +71,6 @@ fun DateInput(
     interactionSource.OnClick { setShowDatePicker(true) }
 
     if (showDatePicker) {
-        val dimens = LocalDimens.current
-
         DatePickerDialog(
             onDismissRequest = { setShowDatePicker(false) },
             confirmButton = {

@@ -98,10 +98,11 @@ fun LiftAppAlertDialog(
 object LiftAppAlertDialogDefaults {
 
     @Composable
-    fun DismissButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) =
+    fun DismissButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
         PlainLiftAppButton(onClick = onClick, showDivider = false, modifier = modifier) {
             Text(text)
         }
+    }
 }
 
 @Composable

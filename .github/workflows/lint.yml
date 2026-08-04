@@ -1,7 +1,7 @@
-name: Check formatting
+name: Lint
 on: push
 jobs:
-  check-formatting:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -9,5 +9,5 @@ jobs:
         with:
           distribution: zulu
           java-version: 21
-      - run: ./gradlew ktfmtCheck
-      - run: ./gradlew -p build-logic :convention:ktfmtCheck
+      - run: ./gradlew detektCheck
+      - run: ./gradlew -p build-logic :convention:detektMain :convention:detektTest

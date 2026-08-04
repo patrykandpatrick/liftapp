@@ -53,9 +53,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Composable
-fun rememberBottomAppBarNavigator(): BottomAppBarNavigator {
-    return remember { BottomAppBarNavigator() }
-}
+fun rememberBottomAppBarNavigator(): BottomAppBarNavigator = remember { BottomAppBarNavigator() }
 
 @Navigator.Name(NAME)
 class BottomAppBarNavigator : Navigator<BottomAppBarNavigator.Destination>() {
@@ -83,9 +81,7 @@ class BottomAppBarNavigator : Navigator<BottomAppBarNavigator.Destination>() {
         var hasLeftInitialEntry by remember { mutableStateOf(false) }
         val animateEntrance = hasLeftInitialEntry || entry?.id != initialEntryID
 
-        SideEffect {
-            if (entry?.id != initialEntryID) hasLeftInitialEntry = true
-        }
+        SideEffect { if (entry?.id != initialEntryID) hasLeftInitialEntry = true }
 
         LiftAppScaffold(
             bottomBar = navigationBar,
@@ -154,9 +150,7 @@ internal fun TabEntrance(
     LaunchedEffect(isTarget, animate) {
         if (isTarget && animate) {
             entranceJob?.cancelAndJoin()
-            entranceJob = coroutineScope.launch {
-                animationState.restart()
-            }
+            entranceJob = coroutineScope.launch { animationState.restart() }
         }
     }
 
