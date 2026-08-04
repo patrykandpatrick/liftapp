@@ -20,6 +20,8 @@ import com.patrykandpatrick.liftapp.navigation.serialization.ExercisesSerializer
 import kotlinx.serialization.Serializable
 
 object Routes {
+    sealed interface HomeTabRoute
+
     @Serializable
     object Home {
         @Serializable object Dashboard
@@ -32,6 +34,24 @@ object Routes {
         @Serializable object BodyMeasurements
 
         @Serializable object More
+    }
+
+    /**
+     * Top-level navigation graphs for the destinations shown in the bottom bar.
+     *
+     * Keeping these separate from [Home] lets Navigation save each tab under its own graph rather
+     * than associating every destination popped above Dashboard with Dashboard itself.
+     */
+    object HomeTab {
+        @Serializable object Dashboard : HomeTabRoute
+
+        @Serializable object Plan : HomeTabRoute
+
+        @Serializable object Exercises : HomeTabRoute
+
+        @Serializable object BodyMeasurements : HomeTabRoute
+
+        @Serializable object More : HomeTabRoute
     }
 
     object Routine {
@@ -52,12 +72,6 @@ object Routes {
 
     object Exercise {
         fun details(exerciseID: Long) = ExerciseDetailsRouteData(exerciseID)
-
-        fun list() =
-            ExerciseListRouteData(
-                mode = ExerciseListRouteData.Mode.View,
-                disabledExerciseIDs = null,
-            )
 
         fun pick(resultKey: String, disabledExerciseIDs: List<Long>? = null) =
             ExerciseListRouteData(

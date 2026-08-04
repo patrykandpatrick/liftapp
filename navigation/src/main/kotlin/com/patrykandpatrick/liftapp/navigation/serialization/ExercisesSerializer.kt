@@ -16,10 +16,12 @@ object ExercisesSerializer : KSerializer<Routes.Home.Exercises> {
             element(
                 elementName = "mode",
                 descriptor = ExerciseListRouteData.Mode.serializer().descriptor,
+                isOptional = true,
             )
             element(
                 elementName = "disabledExerciseIDs",
                 descriptor = ListSerializer(Long.serializer()).descriptor,
+                isOptional = true,
             )
         }
 

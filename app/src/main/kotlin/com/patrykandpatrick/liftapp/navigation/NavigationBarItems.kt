@@ -17,22 +17,25 @@ import com.patrykandpatrick.liftapp.ui.icons.Plan
 import com.patrykandpatrick.liftapp.ui.icons.Scale
 
 @Stable
-val navigationBarItems: List<NavItemRoute<Any>> by lazy {
+val navigationBarItems: List<NavItemRoute<Any, Routes.HomeTabRoute>> by lazy {
     listOf(
         NavItemRoute(
             route = Routes.Home.Dashboard,
+            tabRoute = Routes.HomeTab.Dashboard,
             titleRes = R.string.route_dashboard_short,
             icon = LiftAppIcons.House,
             content = { DashboardScreen(modifier = it) },
         ),
         NavItemRoute(
             route = Routes.Home.Plan,
+            tabRoute = Routes.HomeTab.Plan,
             titleRes = R.string.route_active_plan_short,
             icon = LiftAppIcons.Plan,
             content = { PlanScreen(modifier = it) },
         ),
         NavItemRoute(
             route = Routes.Home.Exercises,
+            tabRoute = Routes.HomeTab.Exercises,
             titleRes = R.string.route_exercises,
             icon = LiftAppIcons.BicepsFlexed,
             content = { ExerciseListScreen(modifier = it) },
@@ -40,12 +43,14 @@ val navigationBarItems: List<NavItemRoute<Any>> by lazy {
         ),
         NavItemRoute(
             route = Routes.Home.BodyMeasurements,
+            tabRoute = Routes.HomeTab.BodyMeasurements,
             titleRes = R.string.route_body,
             icon = LiftAppIcons.Scale,
             content = { BodyMeasurementListScreen(modifier = it) },
         ),
         NavItemRoute(
             route = Routes.Home.More,
+            tabRoute = Routes.HomeTab.More,
             titleRes = R.string.route_more,
             icon = LiftAppIcons.Menu,
             content = { MoreScreen(modifier = it) },

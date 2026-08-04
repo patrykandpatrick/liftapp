@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.IntOffset
 const val ENTER_ANIM_DURATION = 300
 const val EXIT_ANIM_DURATION = 200
 
-private const val ENTER_TRANSITION_SPRING_DAMPING_RATIO = 0.55f
-private const val ENTER_TRANSITION_FADE_HEIGHT_DIVIDER = 8
+const val ENTER_TRANSITION_SPRING_DAMPING_RATIO = 0.55f
+const val ENTER_TRANSITION_FADE_HEIGHT_DIVIDER = 8
 private const val ENTER_TRANSITION_SLIDE_WIDTH_DIVIDER = 8f
 
 private const val SLIDE_DURATION = 400

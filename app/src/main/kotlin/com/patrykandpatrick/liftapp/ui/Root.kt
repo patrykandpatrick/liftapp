@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +35,6 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.navDeepLink
-import androidx.navigation.navOptions
 import androidx.navigation.toRoute
 import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.core.deeplink.DeepLink
@@ -83,6 +83,7 @@ import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.SupersetDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.WorkoutRouteData
+import com.patrykandpatrick.liftapp.navigation.navigateTo
 import com.patrykandpatrick.liftapp.navigation.navigationBarItems
 import com.patrykandpatrick.liftapp.navigation.rememberBottomAppBarNavigator
 import com.patrykandpatrick.liftapp.newbodymeasuremententry.ui.NewBodyMeasurementEntryScreen
@@ -96,6 +97,8 @@ import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+
+private const val NAVIGATION_STATE_VERSION = 2
 
 @Composable
 fun Root(
@@ -115,7 +118,13 @@ fun Root(
 
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val bottomAppBarNavigator = rememberBottomAppBarNavigator()
-    val navController = rememberNavController(bottomSheetNavigator, bottomAppBarNavigator)
+    // The previous release stored flat tab destinations in NavController state. Those entries
+    // cannot be restored into the new per-tab graph topology, so version the saveable-state key
+    // once for this migration instead of crashing while an old Activity state is reconstructed.
+    val navController =
+        key(NAVIGATION_STATE_VERSION) {
+            rememberNavController(bottomSheetNavigator, bottomAppBarNavigator)
+        }
     navigationCommander.HandleCommands(navController, viewModel)
 
     LaunchedEffect(deepLinkIntent) {
@@ -212,16 +221,7 @@ private fun NavigationCommander.HandleCommands(
             when (command) {
                 is NavigationCommand.Route -> {
                     if (viewModel.interceptWorkoutStart(command)) return@collect
-                    navController.navigate(
-                        route = command.route,
-                        navOptions =
-                            navOptions {
-                                command.popUpTo?.also {
-                                    popUpTo(it)
-                                    launchSingleTop = command.launchSingleTop
-                                }
-                            },
-                    )
+                    navController.navigateTo(command)
                 }
 
                 is NavigationCommand.PopBackStack -> {
@@ -239,7 +239,7 @@ private fun NavigationCommander.HandleCommands(
 
 fun NavGraphBuilder.addNestedHomeGraph(modifier: Modifier = Modifier) {
     navigation(
-        startDestination = Routes.Home.Dashboard::class,
+        startDestination = Routes.HomeTab.Dashboard::class,
         route = Routes.Home::class,
         enterTransition = { slideAndFadeIn() },
         exitTransition = { fadeOut(animationSpec = tween(durationMillis = EXIT_ANIM_DURATION)) },
@@ -247,10 +247,12 @@ fun NavGraphBuilder.addNestedHomeGraph(modifier: Modifier = Modifier) {
         popExitTransition = { sharedXAxisExitTransition(forward = false) },
     ) {
         navigationBarItems.forEach { item ->
-            bottomAppBarComposable(item.route::class, item.typeMap) {
-                navBackStackEntry,
-                paddingValues ->
-                item.content(modifier.padding(paddingValues).consumeWindowInsets(paddingValues))
+            navigation(startDestination = item.route::class, route = item.tabRoute::class) {
+                bottomAppBarComposable(item.route::class, item.typeMap) {
+                    navBackStackEntry,
+                    paddingValues ->
+                    item.content(modifier.padding(paddingValues).consumeWindowInsets(paddingValues))
+                }
             }
         }
     }

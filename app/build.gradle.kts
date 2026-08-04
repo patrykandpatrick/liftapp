@@ -12,6 +12,8 @@ val releaseKeystorePath = providers.environmentVariable("RELEASE_KEYSTORE_PATH")
 android {
     namespace = "com.patrykandpatrick.liftapp"
 
+    testOptions { unitTests.isIncludeAndroidResources = true }
+
     defaultConfig {
         applicationId = "pl.patrykgoworowski.mintlift"
         versionCode = releaseVersionCode
@@ -67,4 +69,8 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:workout"))
     functionalityModulePaths.forEach { implementation(project(it)) }
+
+    testImplementation(libs.robolectric)
+    testImplementation(libs.test.core)
+    testImplementation(libs.compose.ui.test.junit4)
 }

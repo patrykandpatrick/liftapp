@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.feature.exercises.di
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.patrykandpatrick.liftapp.navigation.Routes
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import dagger.Module
 import dagger.Provides
@@ -15,6 +16,13 @@ interface ExerciseModule {
         @Provides
         fun provideExerciseListRouteData(
             savedStateHandle: SavedStateHandle
-        ): ExerciseListRouteData = savedStateHandle.toRoute(typeMap = ExerciseListRouteData.typeMap)
+        ): ExerciseListRouteData =
+            if (savedStateHandle.contains(MODE_ARGUMENT)) {
+                savedStateHandle.toRoute(typeMap = ExerciseListRouteData.typeMap)
+            } else {
+                Routes.Home.Exercises
+            }
+
+        private val MODE_ARGUMENT = ExerciseListRouteData::mode.name
     }
 }

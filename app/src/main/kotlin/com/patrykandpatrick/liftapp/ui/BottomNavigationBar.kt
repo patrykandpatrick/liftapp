@@ -40,10 +40,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.navOptions
 import com.patrykandpatrick.liftapp.core.navigation.NavItemRoute
 import com.patrykandpatrick.liftapp.navigation.BottomAppBarNavigator
 import com.patrykandpatrick.liftapp.navigation.Routes
+import com.patrykandpatrick.liftapp.navigation.navigateToHomeTab
 import com.patrykandpatrick.liftapp.ui.component.LiftAppHorizontalDivider
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.theme.PillShape
@@ -53,7 +53,7 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 internal fun BottomNavigationBar(
     navController: NavController,
     navigator: BottomAppBarNavigator,
-    navItemRoutes: Collection<NavItemRoute<Any>>,
+    navItemRoutes: Collection<NavItemRoute<Any, Routes.HomeTabRoute>>,
     modifier: Modifier = Modifier,
 ) {
     val currentBackStackEntry by navigator.currentDestination.collectAsStateWithLifecycle(null)
@@ -82,18 +82,7 @@ internal fun BottomNavigationBar(
                         selected = selected,
                         onClick = {
                             if (selected) return@NavigationBarItem
-                            navController.navigate(
-                                menuRoute.route,
-                                navOptions {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                    // Keep the graph's start destination on the stack. Popping to
-                                    // the graph itself can save Dashboard together with another
-                                    // tab;
-                                    // restoring Dashboard would then put that tab back on top.
-                                    popUpTo<Routes.Home.Dashboard> { saveState = true }
-                                },
-                            )
+                            navController.navigateToHomeTab(menuRoute.tabRoute)
                         },
                         icon = menuRoute.icon,
                         label = stringResource(id = menuRoute.titleRes),
@@ -175,8 +164,8 @@ fun RowScope.NavigationBarItem(
     }
 }
 
-private fun NavItemRoute<*>.isSelected(currentDestination: NavDestination?): Boolean =
-    currentDestination?.hierarchy?.any { it.hasRoute(route::class) } == true
+private fun NavItemRoute<*, *>.isSelected(currentDestination: NavDestination?): Boolean =
+    currentDestination?.hierarchy?.any { it.hasRoute(tabRoute::class) } == true
 
 private val IndicatorWidth = 56.dp
 private val MinimumIndicatorGutter = 16.dp
