@@ -253,12 +253,12 @@ private fun previewState() =
                 ),
                 previewItem(
                     id = 6,
-                    name = "Bicep",
+                    name = "Biceps",
                     type = BodyMeasurementType.LengthTwoSides,
                     primary = "38.2",
                     secondary = "38.6",
                     sideBalance = .4974f,
                 ),
-                previewItem(id = 7, name = "Calf", type = BodyMeasurementType.Length),
+                previewItem(id = 7, name = "Calves", type = BodyMeasurementType.Length),
             ),
     )
