@@ -82,14 +82,19 @@ internal fun BodyMeasurementTile(
             }
 
         Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {
-            LiftAppText(text = item.value.primary, style = valueStyle, maxLines = 1)
+            LiftAppText(
+                text = item.value.primary,
+                style = valueStyle,
+                maxLines = 1,
+                modifier = Modifier.alignByBaseline(),
+            )
 
             item.value.secondary?.let { secondary ->
                 LiftAppText(
                     text = SideSeparator,
                     style = typography.titleMedium,
                     color = colorScheme.outline,
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp).alignByBaseline(),
                 )
 
                 LiftAppText(
@@ -97,6 +102,7 @@ internal fun BodyMeasurementTile(
                     style = valueStyle,
                     color = colorScheme.foregroundVariant,
                     maxLines = 1,
+                    modifier = Modifier.alignByBaseline(),
                 )
             }
 
@@ -108,7 +114,7 @@ internal fun BodyMeasurementTile(
                 color = colorScheme.foregroundVariant,
                 maxLines = 1,
                 softWrap = false,
-                modifier = Modifier.padding(start = UnitMinSpacing, bottom = 2.dp),
+                modifier = Modifier.padding(start = UnitMinSpacing).alignByBaseline(),
             )
         }
 

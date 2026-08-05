@@ -104,14 +104,18 @@ internal fun BodyMeasurementHeroCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                LiftAppText(text = item.value.primary, style = Typography.headlineMediumMono)
+                LiftAppText(
+                    text = item.value.primary,
+                    style = Typography.headlineMediumMono,
+                    modifier = Modifier.alignByBaseline(),
+                )
 
                 item.value.secondary?.let { secondary ->
                     LiftAppText(
                         text = secondary,
                         style = Typography.headlineMediumMono,
                         color = colorScheme.foregroundVariant,
-                        modifier = Modifier.padding(start = 2.dp),
+                        modifier = Modifier.padding(start = 2.dp).alignByBaseline(),
                     )
                 }
 
@@ -119,7 +123,7 @@ internal fun BodyMeasurementHeroCard(
                     text = item.value.unit,
                     style = typography.titleSmall,
                     color = colorScheme.foregroundVariant,
-                    modifier = Modifier.padding(bottom = 3.dp),
+                    modifier = Modifier.alignByBaseline(),
                 )
 
                 Spacer(Modifier.weight(1f))
