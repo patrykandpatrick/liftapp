@@ -33,7 +33,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCardDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.SinHorizontalDivider
-import com.patrykandpatrick.liftapp.ui.component.TextComponent
 import com.patrykandpatrick.liftapp.ui.component.appendBulletSeparator
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.CheckCircle
@@ -87,14 +86,12 @@ fun WorkoutCard(
                                     )
                                 )
                         }
-                    withBulletList(bullet = TextComponent.listBullet) {
-                        exerciseNamesWithSets.forEach { (name, sets) ->
-                            withBulletListItem {
-                                append(name)
-                                appendBulletSeparator()
-                                append(sets)
-                            }
-                        }
+                    exerciseNamesWithSets.forEachIndexed { index, (name, sets) ->
+                        if (index > 0) append('\n')
+                        append("• ")
+                        append(name)
+                        appendBulletSeparator()
+                        append(sets)
                     }
                 },
             style = MaterialTheme.typography.bodySmall.copy(lineHeight = 20.sp),

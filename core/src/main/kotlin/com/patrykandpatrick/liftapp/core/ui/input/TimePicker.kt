@@ -133,7 +133,8 @@ private fun TimePickerContent(
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = stringResource(id = R.string.picker_time_colon),
-                style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
+                style =
+                    MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.ExtraBold),
             )
 
             Column(modifier = Modifier.fillMaxHeight().weight(weight = 1f, fill = false)) {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,8 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.core.text.parseMarkup
@@ -33,7 +36,6 @@ import com.patrykandpatrick.liftapp.ui.icons.Play
 import com.patrykandpatrick.liftapp.ui.modifier.interactiveButtonEffect
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.Shapes
-import com.patrykandpatrick.liftapp.ui.theme.Typography
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -77,14 +79,18 @@ fun RestTimer(
             }
 
             UpdateTimeBy(
-                sign = "-",
+                sign = "−",
                 seconds = Constants.UPDATE_TIMER_BY_SECONDS,
                 onClick = { onUpdateTimerBy(-Constants.UPDATE_TIMER_BY_SECONDS.seconds) },
             )
 
             Text(
                 text = remainingDuration.formattedRemainingTime,
-                style = Typography.titleLargeMono,
+                style =
+                    MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontFeatureSettings = "tnum",
+                    ),
             )
 
             UpdateTimeBy(
@@ -133,10 +139,13 @@ private fun UpdateTimeBy(
                 )
                 .padding(8.dp),
     ) {
-        Text(text = sign, style = Typography.titleSmallMono)
+        Text(
+            text = sign,
+            style = MaterialTheme.typography.labelLarge,
+        )
         Text(
             text = parseMarkup(stringResource(R.string.rest_timer_update_by_seconds, seconds)),
-            style = Typography.titleSmallMono,
+            style = MaterialTheme.typography.labelLarge.copy(lineHeight = 12.sp),
             textAlign = TextAlign.Center,
         )
     }

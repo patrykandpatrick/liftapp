@@ -150,24 +150,46 @@ internal fun OpenSourceLicenseScreen(
     }
 }
 
-private fun Resources.readOpenSourceLicenseMetadata(): List<Routes.OpenSourceLicense> =
-    runCatching {
-        openRawResource(R.raw.third_party_license_metadata).bufferedReader().useLines { lines ->
-            lines
-                .mapNotNull { line ->
-                    LICENSE_METADATA_PATTERN.matchEntire(line)?.let { match ->
-                        val (offset, length, name) = match.destructured
-                        Routes.OpenSourceLicense(name, offset.toInt(), length.toInt())
-                    }
+private fun Resources.readOpenSourceLicenseMetadata(): List<Routes.OpenSourceLicense> = buildList {
+    addAll(
+        runCatching {
+                openRawResource(R.raw.third_party_license_metadata).bufferedReader().useLines {
+                    lines ->
+                    lines
+                        .mapNotNull { line ->
+                            LICENSE_METADATA_PATTERN.matchEntire(line)?.let { match ->
+                                val (offset, length, name) = match.destructured
+                                Routes.OpenSourceLicense(
+                                    name,
+                                    offset.toInt(),
+                                    length.toInt(),
+                                )
+                            }
+                        }
+                        .toList()
                 }
-                .toList()
-        }
-    }
-    .getOrDefault(emptyList())
+            }
+            .getOrDefault(emptyList())
+    )
+    add(
+        Routes.OpenSourceLicense(
+            name = "Google Sans Flex",
+            rawResourceId = R.raw.google_sans_flex_license,
+        )
+    )
+    add(Routes.OpenSourceLicense(name = "Inter", rawResourceId = R.raw.inter_license))
+}
     .sortedBy { it.name.lowercase(Locale.ROOT) }
 
 private fun Resources.readOpenSourceLicense(license: Routes.OpenSourceLicense): String =
     runCatching {
+        license.rawResourceId?.let { resourceId ->
+            return@runCatching openRawResource(resourceId)
+                .bufferedReader()
+                .use { it.readText() }
+                .trim()
+        }
+
         require(license.offset >= 0 && license.length >= 0)
         val bytes = ByteArray(license.length)
         openRawResource(R.raw.third_party_licenses).use { input ->

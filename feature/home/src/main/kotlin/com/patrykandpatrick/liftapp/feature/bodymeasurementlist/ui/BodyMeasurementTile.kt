@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.chart.BodyMeasurementChartColors
@@ -25,7 +26,6 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppRatioBar
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
-import com.patrykandpatrick.liftapp.ui.theme.Typography
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 /**
@@ -76,9 +76,9 @@ internal fun BodyMeasurementTile(
         // Two numbers in a half-width tile need the smaller size to leave the unit its room.
         val valueStyle =
             if (item.value.secondary != null) {
-                Typography.titleMediumMono
+                typography.titleMedium.copy(fontWeight = FontWeight.Bold)
             } else {
-                Typography.titleLargeMono
+                typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             }
 
         Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {

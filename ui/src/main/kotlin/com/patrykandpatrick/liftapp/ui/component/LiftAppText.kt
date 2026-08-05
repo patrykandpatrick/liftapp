@@ -1,18 +1,13 @@
 package com.patrykandpatrick.liftapp.ui.component
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
@@ -27,9 +22,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
-import com.patrykandpatrick.liftapp.ui.component.TextComponent.BULLET_SEPARATOR
 import com.patrykandpatrick.liftapp.ui.component.TextComponent.COMPLETED_ICON
-import com.patrykandpatrick.liftapp.ui.component.TextComponent.separatorBullet
 import com.patrykandpatrick.liftapp.ui.icons.BadgeCheck
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
@@ -125,19 +118,6 @@ fun LiftAppText(
 object LiftAppTextDefaults {
     val inlineContent =
         mapOf(
-            BULLET_SEPARATOR to
-                InlineTextContent(
-                    placeholder =
-                        Placeholder(
-                            width =
-                                (separatorBullet.width.value + separatorBullet.padding.value * 2)
-                                    .em,
-                            height = separatorBullet.height,
-                            placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
-                        )
-                ) {
-                    BulletSeparator()
-                },
             COMPLETED_ICON to
                 InlineTextContent(
                     Placeholder(
@@ -147,27 +127,8 @@ object LiftAppTextDefaults {
                     )
                 ) {
                     CompletedIcon()
-                },
+                }
         )
-}
-
-@Composable
-private fun BulletSeparator(modifier: Modifier = Modifier) {
-    val contentColor = LocalContentColor.current
-    Canvas(modifier.fillMaxSize()) {
-        val x = (size.width - size.height) / 2
-        translate(left = x.coerceAtLeast(0f)) {
-            drawOutline(
-                outline =
-                    separatorBullet.shape.createOutline(
-                        size.copy(width = size.width.coerceAtMost(size.height)),
-                        layoutDirection,
-                        this,
-                    ),
-                color = contentColor,
-            )
-        }
-    }
 }
 
 @Composable

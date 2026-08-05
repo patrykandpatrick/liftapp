@@ -98,7 +98,13 @@ object Routes {
 
     @Serializable object OpenSourceLicenses
 
-    @Serializable data class OpenSourceLicense(val name: String, val offset: Int, val length: Int)
+    @Serializable
+    data class OpenSourceLicense(
+        val name: String,
+        val offset: Int = 0,
+        val length: Int = 0,
+        val rawResourceId: Int? = null,
+    )
 
     object Backup {
         @Serializable object Overview

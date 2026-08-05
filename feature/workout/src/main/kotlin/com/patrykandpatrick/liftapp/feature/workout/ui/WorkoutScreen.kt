@@ -119,7 +119,6 @@ import com.patrykandpatrick.liftapp.ui.theme.BottomSheetShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonBorderShape
 import com.patrykandpatrick.liftapp.ui.theme.ButtonShape
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
-import com.patrykandpatrick.liftapp.ui.theme.Typography
 import com.patrykandpatrick.liftapp.ui.theme.bottomSheetShadow
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import com.patrykandpatrick.liftapp.ui.theme.getLiftAppColorScheme
@@ -623,7 +622,10 @@ private fun LazyListScope.setCountButtons(
                                 bottomEnd = CornerSize(5.dp),
                             ),
                     ) {
-                        LiftAppText(text = "-1", style = Typography.bodySmallMono)
+                        LiftAppText(
+                            text = "−1",
+                            style = MaterialTheme.typography.labelLarge,
+                        )
                     }
 
                     LiftAppButton(
@@ -640,7 +642,10 @@ private fun LazyListScope.setCountButtons(
                                 bottomStart = CornerSize(5.dp),
                             ),
                     ) {
-                        LiftAppText(text = "+1", style = Typography.bodySmallMono)
+                        LiftAppText(
+                            text = "+1",
+                            style = MaterialTheme.typography.labelLarge,
+                        )
                     }
                 }
             }

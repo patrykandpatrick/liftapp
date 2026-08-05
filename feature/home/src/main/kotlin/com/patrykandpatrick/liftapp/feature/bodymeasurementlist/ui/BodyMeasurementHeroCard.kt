@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.chart.BodyMeasurementChartColors
@@ -29,7 +30,6 @@ import com.patrykandpatrick.liftapp.ui.dimens.dimens
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.icons.Plus
 import com.patrykandpatrick.liftapp.ui.theme.PillShape
-import com.patrykandpatrick.liftapp.ui.theme.Typography
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 /**
@@ -106,14 +106,14 @@ internal fun BodyMeasurementHeroCard(
             ) {
                 LiftAppText(
                     text = item.value.primary,
-                    style = Typography.headlineMediumMono,
+                    style = typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.alignByBaseline(),
                 )
 
                 item.value.secondary?.let { secondary ->
                     LiftAppText(
                         text = secondary,
-                        style = Typography.headlineMediumMono,
+                        style = typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                         color = colorScheme.foregroundVariant,
                         modifier = Modifier.padding(start = 2.dp).alignByBaseline(),
                     )
