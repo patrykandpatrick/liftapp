@@ -92,7 +92,7 @@ private fun RoutineScreen(
     val state = loadableState.valueOrNull()
     val showWorkoutFab = state?.items?.isNotEmpty() == true
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-    var removalToConfirm by remember { mutableStateOf<Action?>(null) }
+    var removalRequest by remember { mutableStateOf<RemovalRequest?>(null) }
     var fabHeight by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
     if (showDeleteDialog && state != null) {
@@ -106,7 +106,7 @@ private fun RoutineScreen(
         )
     }
 
-    val removalAction = removalToConfirm
+    val removalAction = removalRequest?.action
     val removalCopy =
         when {
             removalAction is Action.RemoveItem && state != null -> {
@@ -136,14 +136,18 @@ private fun RoutineScreen(
         }
 
     if (removalAction != null && removalCopy != null) {
+        val currentRemovalRequest = checkNotNull(removalRequest)
         LiftAppDestructiveActionDialog(
             title = stringResource(R.string.generic_remove_something, removalCopy.first),
             text = removalCopy.second,
             confirmText = stringResource(R.string.action_remove),
             dismissText = stringResource(android.R.string.cancel),
-            onDismissRequest = { removalToConfirm = null },
+            onDismissRequest = {
+                removalRequest = null
+                currentRemovalRequest.onCanceled()
+            },
             onConfirm = {
-                removalToConfirm = null
+                removalRequest = null
                 onAction(removalAction)
             },
         )
@@ -205,15 +209,9 @@ private fun RoutineScreen(
                 RoutineTab.Exercises ->
                     Exercises(
                         loadableState = loadableState,
-                        onAction = { action ->
-                            if (
-                                action is Action.RemoveItem ||
-                                    action is Action.RemoveSupersetExercise
-                            ) {
-                                removalToConfirm = action
-                            } else {
-                                onAction(action)
-                            }
+                        onAction = onAction,
+                        onRemovalRequest = { action, onCanceled ->
+                            removalRequest = RemovalRequest(action, onCanceled)
                         },
                         bottomPadding = contentBottomPadding,
                     )
@@ -275,6 +273,8 @@ private fun RoutineActionBar(
 
 /** The gap the scaffold leaves under the floating action button. */
 private val ScaffoldFabBottomSpacing = 16.dp
+
+private data class RemovalRequest(val action: Action, val onCanceled: () -> Unit)
 
 @MultiDevicePreview
 @Composable

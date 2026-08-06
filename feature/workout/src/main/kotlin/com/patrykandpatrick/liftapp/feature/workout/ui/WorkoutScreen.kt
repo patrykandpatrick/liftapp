@@ -175,7 +175,7 @@ fun WorkoutScreen(
     var backdropListScrolled by remember { mutableStateOf(false) }
     var editedItem by remember(workout?.id) { mutableStateOf<WorkoutIterator.Item?>(null) }
     var showCloseDialog by remember(workout?.id) { mutableStateOf(false) }
-    var workoutItemIDToRemove by remember(workout?.id) { mutableStateOf<Long?>(null) }
+    var removalRequest by remember(workout?.id) { mutableStateOf<WorkoutItemRemovalRequest?>(null) }
     val isBackdropClosed = backdropState.offsetFraction <= 0f
     val timerState = restTimerService.value?.timer?.collectAsStateWithLifecycle(null)?.value
     val isTimerActive = timerState != null && !timerState.isFinished
@@ -304,7 +304,9 @@ fun WorkoutScreen(
                 setPage = { onAction(Action.SelectPage(it)) },
                 restTimerService = restTimerService.value,
                 onEditSet = { editedItem = it },
-                onRemoveItem = { workoutItemIDToRemove = it },
+                onRemoveItem = { itemID, onCanceled ->
+                    removalRequest = WorkoutItemRemovalRequest(itemID, onCanceled)
+                },
                 onAction = onAction,
                 backdropState = backdropState,
                 isRestTimerVisible = isTimerActive && isBackdropClosed,
@@ -349,7 +351,8 @@ fun WorkoutScreen(
             )
         }
 
-        workoutItemIDToRemove?.let { workoutItemID ->
+        removalRequest?.let { currentRemovalRequest ->
+            val workoutItemID = currentRemovalRequest.itemID
             workout.items
                 .firstOrNull { it.id == workoutItemID }
                 ?.let { item ->
@@ -364,9 +367,12 @@ fun WorkoutScreen(
                         text = stringResource(R.string.workout_item_remove_message),
                         confirmText = stringResource(R.string.action_remove),
                         dismissText = stringResource(android.R.string.cancel),
-                        onDismissRequest = { workoutItemIDToRemove = null },
+                        onDismissRequest = {
+                            removalRequest = null
+                            currentRemovalRequest.onCanceled()
+                        },
                         onConfirm = {
-                            workoutItemIDToRemove = null
+                            removalRequest = null
                             onAction(Action.RemoveItem(workoutItemID))
                         },
                     )
@@ -374,6 +380,8 @@ fun WorkoutScreen(
         }
     }
 }
+
+private data class WorkoutItemRemovalRequest(val itemID: Long, val onCanceled: () -> Unit)
 
 @Composable
 fun ContinueActiveWorkoutDialog(
@@ -436,7 +444,7 @@ private fun Content(
     setPage: (Int) -> Unit,
     restTimerService: RestTimerService?,
     onEditSet: (WorkoutIterator.Item) -> Unit,
-    onRemoveItem: (Long) -> Unit,
+    onRemoveItem: (itemID: Long, onCanceled: () -> Unit) -> Unit,
     onAction: (Action) -> Unit,
     backdropState: BackdropState,
     isRestTimerVisible: Boolean,

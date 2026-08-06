@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -51,10 +49,10 @@ import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
 import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemDefaults
 import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
+import com.patrykandpatrick.liftapp.ui.component.LiftAppSwipeToRemoveItem
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.component.appendCompletedIcon
 import com.patrykandpatrick.liftapp.ui.dimens.dimens
-import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
 import com.patrykandpatrick.liftapp.ui.icons.DragHandle
 import com.patrykandpatrick.liftapp.ui.icons.FinishFlag
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -79,7 +77,7 @@ fun ExerciseListPicker(
     revealOffset: Float,
     selectPage: (Int) -> Unit,
     reorderItems: (List<Long>) -> Unit,
-    removeItem: (Long) -> Unit,
+    removeItem: (itemID: Long, onCanceled: () -> Unit) -> Unit,
     bottomContentPadding: Dp,
     onListScrolledChange: (Boolean) -> Unit,
     openExercise: (ExerciseItemData) -> Unit,
@@ -139,7 +137,7 @@ private fun ReorderableExerciseList(
     selectedPage: Int,
     selectPage: (Int) -> Unit,
     reorderItems: (List<Long>) -> Unit,
-    removeItem: (Long) -> Unit,
+    removeItem: (itemID: Long, onCanceled: () -> Unit) -> Unit,
     bottomContentPadding: Dp,
     onListScrolledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -214,7 +212,10 @@ private fun ReorderableExerciseList(
                                 onDragStarted = { captureOrder() },
                                 onDragStopped = { persistOrder() },
                             ),
-                        onRemove = { removeItem(item.id) }.takeIf { canRemoveItem },
+                        onRemove =
+                            ({ onCanceled: () -> Unit -> removeItem(item.id, onCanceled) }).takeIf {
+                                canRemoveItem
+                            },
                         selectPage = selectPage,
                         position = LiftAppListItemPosition(index, orderedItems.size + 1),
                         modifier =
@@ -302,48 +303,56 @@ private fun WorkoutItem(
     nextItemSelected: Boolean,
     interactionSource: MutableInteractionSource,
     dragHandleModifier: Modifier?,
-    onRemove: (() -> Unit)?,
+    onRemove: ((onCanceled: () -> Unit) -> Unit)?,
     selectPage: (Int) -> Unit,
     position: LiftAppListItemPosition,
     modifier: Modifier = Modifier,
 ) {
-    LiftAppListItem(
-        icon = { LiftAppListItemDefaults.LeadingText(text = (item.pageIndex + 1).toString()) },
-        position = position,
-        title = { WorkoutItemTitle(item) },
-        description = { WorkoutItemDescription(item) },
-        actions = {
-            if (onRemove != null) {
-                LiftAppIconButton(onClick = onRemove) {
-                    Icon(
-                        imageVector = LiftAppIcons.CircleMinus,
-                        contentDescription = stringResource(R.string.list_remove),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-                Spacer(Modifier.width(8.dp))
-            }
-            if (dragHandleModifier != null) {
-                Icon(
-                    imageVector = LiftAppIcons.DragHandle,
-                    contentDescription = stringResource(R.string.action_reorder_list),
-                    modifier = dragHandleModifier.size(24.dp),
-                )
-            }
-        },
-        contentPadding =
-            PaddingValues(
-                start = dimens.screen.padding,
-                top = 16.dp,
-                end = 20.dp,
-                bottom = 16.dp,
-            ),
-        selected = isSelected,
-        nextItemSelected = nextItemSelected,
-        interactionSource = interactionSource,
-        onClick = { selectPage(item.pageIndex) },
-        modifier = modifier.height(WorkoutPickerListItemHeight),
-    )
+    val content: @Composable (expanded: Boolean, modifier: Modifier) -> Unit =
+        { expanded, itemModifier ->
+            LiftAppListItem(
+                icon = {
+                    LiftAppListItemDefaults.LeadingText(text = (item.pageIndex + 1).toString())
+                },
+                position = position,
+                title = { WorkoutItemTitle(item) },
+                description = { WorkoutItemDescription(item) },
+                actions = {
+                    if (dragHandleModifier != null) {
+                        Icon(
+                            imageVector = LiftAppIcons.DragHandle,
+                            contentDescription = stringResource(R.string.action_reorder_list),
+                            modifier = dragHandleModifier.size(24.dp),
+                        )
+                    }
+                },
+                contentPadding =
+                    PaddingValues(
+                        start = dimens.screen.padding,
+                        top = 16.dp,
+                        end = 20.dp,
+                        bottom = 16.dp,
+                    ),
+                selected = isSelected,
+                nextItemSelected = nextItemSelected,
+                expanded = expanded,
+                interactionSource = interactionSource,
+                onClick = { selectPage(item.pageIndex) },
+                modifier = itemModifier.height(WorkoutPickerListItemHeight),
+            )
+        }
+    if (onRemove == null) {
+        content(false, modifier)
+    } else {
+        LiftAppSwipeToRemoveItem(
+            position = position,
+            removeLabel = stringResource(R.string.list_remove),
+            onRemove = onRemove,
+            modifier = modifier,
+        ) { expanded ->
+            content(expanded, Modifier)
+        }
+    }
 }
 
 @Composable
@@ -485,7 +494,7 @@ private fun ExerciseListPickerPreview() {
                 selectedPage = 1,
                 selectPage = {},
                 reorderItems = {},
-                removeItem = {},
+                removeItem = { _, _ -> },
                 bottomContentPadding = WorkoutPickerPeekHeight,
                 onListScrolledChange = {},
             )

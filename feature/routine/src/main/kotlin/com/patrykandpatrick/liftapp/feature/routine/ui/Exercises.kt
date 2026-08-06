@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.feature.routine.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,9 +42,9 @@ import com.patrykandpatrick.liftapp.ui.component.EmptyState
 import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppListItem
 import com.patrykandpatrick.liftapp.ui.component.LiftAppListItemPosition
+import com.patrykandpatrick.liftapp.ui.component.LiftAppSwipeToRemoveItem
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.icons.BicepsFlexed
-import com.patrykandpatrick.liftapp.ui.icons.CircleMinus
 import com.patrykandpatrick.liftapp.ui.icons.DragHandle
 import com.patrykandpatrick.liftapp.ui.icons.Goal
 import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
@@ -59,6 +60,7 @@ private val DragHandleSize = 24.dp
 internal fun Exercises(
     loadableState: Loadable<ScreenState>,
     onAction: (Action) -> Unit,
+    onRemovalRequest: (action: Action, onCanceled: () -> Unit) -> Unit,
     bottomPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -66,6 +68,7 @@ internal fun Exercises(
         Exercises(
             state = state,
             onAction = onAction,
+            onRemovalRequest = onRemovalRequest,
             bottomPadding = bottomPadding,
             modifier = modifier,
         )
@@ -76,6 +79,7 @@ internal fun Exercises(
 private fun Exercises(
     state: ScreenState,
     onAction: (Action) -> Unit,
+    onRemovalRequest: (action: Action, onCanceled: () -> Unit) -> Unit,
     bottomPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -145,32 +149,40 @@ private fun Exercises(
                 }
 
                 Column {
-                    RoutineItemRow(
-                        item = item,
-                        interactionSource = interactionSource,
-                        dragHandleModifier =
-                            Modifier.draggableHandle(
-                                interactionSource = interactionSource,
-                                onDragStarted = { captureOrder() },
-                                onDragStopped = { persistOrder() },
-                            ),
-                        onAction = onAction,
-                        position =
-                            LiftAppListItemPosition(
-                                index = segmentStartIndex,
-                                count = segmentCount,
-                            ),
-                        modifier =
-                            Modifier.longPressDraggableHandle(
-                                interactionSource = interactionSource,
-                                onDragStarted = { captureOrder() },
-                                onDragStopped = { persistOrder() },
-                            ),
-                    )
+                    val position =
+                        LiftAppListItemPosition(index = segmentStartIndex, count = segmentCount)
+                    LiftAppSwipeToRemoveItem(
+                        position = position,
+                        removeLabel = stringResource(R.string.list_remove),
+                        onRemove = { onCanceled ->
+                            onRemovalRequest(Action.RemoveItem(item.id), onCanceled)
+                        },
+                    ) { expanded ->
+                        RoutineItemRow(
+                            item = item,
+                            interactionSource = interactionSource,
+                            dragHandleModifier =
+                                Modifier.draggableHandle(
+                                    interactionSource = interactionSource,
+                                    onDragStarted = { captureOrder() },
+                                    onDragStopped = { persistOrder() },
+                                ),
+                            onAction = onAction,
+                            position = position,
+                            expanded = expanded,
+                            modifier =
+                                Modifier.longPressDraggableHandle(
+                                    interactionSource = interactionSource,
+                                    onDragStarted = { captureOrder() },
+                                    onDragStopped = { persistOrder() },
+                                ),
+                        )
+                    }
                     if (item.isSuperset) {
                         SupersetMembers(
                             item = item,
                             onAction = onAction,
+                            onRemovalRequest = onRemovalRequest,
                             segmentStartIndex = segmentStartIndex,
                             segmentCount = segmentCount,
                         )
@@ -188,6 +200,7 @@ private fun RoutineItemRow(
     dragHandleModifier: Modifier,
     onAction: (Action) -> Unit,
     position: LiftAppListItemPosition,
+    expanded: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val isSuperset = item.isSuperset
@@ -196,6 +209,7 @@ private fun RoutineItemRow(
     LiftAppListItem(
         modifier = modifier,
         position = position,
+        expanded = expanded,
         icon = { DragHandle(dragHandleModifier) },
         title = {
             Text(
@@ -226,7 +240,6 @@ private fun RoutineItemRow(
                     }
                 }
             )
-            RemoveButton(onClick = { onAction(Action.RemoveItem(item.id)) })
         },
         contentPadding =
             PaddingValues(
@@ -249,6 +262,7 @@ private fun RoutineItemRow(
 private fun SupersetMembers(
     item: RoutineItemWithExercises,
     onAction: (Action) -> Unit,
+    onRemovalRequest: (action: Action, onCanceled: () -> Unit) -> Unit,
     segmentStartIndex: Int,
     segmentCount: Int,
     modifier: Modifier = Modifier,
@@ -264,23 +278,30 @@ private fun SupersetMembers(
         val interactionSource = remember { MutableInteractionSource() }
 
         ReorderableItem {
+            val position =
+                LiftAppListItemPosition(
+                    index = segmentStartIndex + index + 1,
+                    count = segmentCount,
+                )
+            val remove =
+                if (isRemovable) {
+                    { onCanceled: () -> Unit ->
+                        onRemovalRequest(
+                            Action.RemoveSupersetExercise(item.id, exercise.id),
+                            onCanceled,
+                        )
+                    }
+                } else {
+                    null
+                }
             SupersetMemberRow(
                 exercise = exercise,
-                onRemove =
-                    if (isRemovable) {
-                        { onAction(Action.RemoveSupersetExercise(item.id, exercise.id)) }
-                    } else {
-                        null
-                    },
+                onRemove = remove,
                 interactionSource = interactionSource,
                 dragHandleModifier =
                     Modifier.draggableHandle(interactionSource = interactionSource),
                 onAction = onAction,
-                position =
-                    LiftAppListItemPosition(
-                        index = segmentStartIndex + index + 1,
-                        count = segmentCount,
-                    ),
+                position = position,
                 modifier = Modifier.longPressDraggableHandle(interactionSource = interactionSource),
             )
         }
@@ -290,7 +311,7 @@ private fun SupersetMembers(
 @Composable
 private fun SupersetMemberRow(
     exercise: RoutineExerciseItem,
-    onRemove: (() -> Unit)?,
+    onRemove: ((onCanceled: () -> Unit) -> Unit)?,
     interactionSource: MutableInteractionSource,
     dragHandleModifier: Modifier,
     onAction: (Action) -> Unit,
@@ -301,26 +322,40 @@ private fun SupersetMemberRow(
     // belongs to the superset, while keeping its content in the same visual position as before.
     val indent = DragHandleSize + 16.dp
 
-    LiftAppListItem(
-        title = { Text(exercise.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        position = position,
-        description = { Text(exerciseDescription(exercise)) },
-        icon = { DragHandle(dragHandleModifier) },
-        actions = {
-            GoalButton(onClick = { onAction(Action.NavigateToExerciseGoal(exercise.id)) })
-            if (onRemove != null) RemoveButton(onClick = onRemove)
-        },
-        contentPadding =
-            PaddingValues(
-                start = 16.dp,
-                top = LocalDimens.current.screen.padding,
-                end = 4.dp,
-                bottom = LocalDimens.current.screen.padding,
-            ),
-        interactionSource = interactionSource,
-        onClick = { onAction(Action.NavigateToExercise(exercise.id)) },
-        modifier = modifier.padding(start = indent),
-    )
+    val content =
+        @Composable { expanded: Boolean ->
+            LiftAppListItem(
+                title = { Text(exercise.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                position = position,
+                description = { Text(exerciseDescription(exercise)) },
+                icon = { DragHandle(dragHandleModifier) },
+                actions = {
+                    GoalButton(onClick = { onAction(Action.NavigateToExerciseGoal(exercise.id)) })
+                },
+                expanded = expanded,
+                contentPadding =
+                    PaddingValues(
+                        start = 16.dp,
+                        top = LocalDimens.current.screen.padding,
+                        end = 4.dp,
+                        bottom = LocalDimens.current.screen.padding,
+                    ),
+                interactionSource = interactionSource,
+                onClick = { onAction(Action.NavigateToExercise(exercise.id)) },
+                modifier = modifier,
+            )
+        }
+    if (onRemove == null) {
+        Box(modifier = Modifier.padding(start = indent)) { content(false) }
+    } else {
+        LiftAppSwipeToRemoveItem(
+            position = position,
+            removeLabel = stringResource(R.string.list_remove),
+            onRemove = onRemove,
+            modifier = Modifier.padding(start = indent),
+            content = content,
+        )
+    }
 }
 
 @Composable
@@ -330,17 +365,6 @@ private fun DragHandle(modifier: Modifier = Modifier) {
         contentDescription = stringResource(R.string.action_reorder_list),
         modifier = modifier,
     )
-}
-
-@Composable
-private fun RemoveButton(onClick: () -> Unit) {
-    LiftAppIconButton(onClick = onClick) {
-        Icon(
-            imageVector = LiftAppIcons.CircleMinus,
-            contentDescription = stringResource(R.string.list_remove),
-            modifier = Modifier.size(24.dp),
-        )
-    }
 }
 
 @Composable

@@ -92,6 +92,7 @@ fun LiftAppListItem(
     enabled: Boolean = true,
     checked: Boolean? = null,
     selected: Boolean? = null,
+    expanded: Boolean = false,
     nextItemSelected: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)? = null,
     actions: (@Composable RowScope.() -> Unit)? = null,
@@ -121,6 +122,7 @@ fun LiftAppListItem(
         enabled = enabled,
         checked = checked,
         selected = selected,
+        expanded = expanded,
         nextItemSelected = nextItemSelected,
         onCheckedChange = onCheckedChange,
         interactionSource = interactionSource,
@@ -142,6 +144,7 @@ fun LiftAppListItem(
     enabled: Boolean = true,
     checked: Boolean? = null,
     selected: Boolean? = null,
+    expanded: Boolean = false,
     nextItemSelected: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)? = null,
     contentPadding: PaddingValues = LiftAppListItemDefaults.contentPadding,
@@ -162,7 +165,7 @@ fun LiftAppListItem(
         shape
             ?: animatedFeedbackShape(
                 position = position,
-                expanded = isSelected || isPressed || isDragged,
+                expanded = expanded || isSelected || isPressed || isDragged,
             )
     val clickAction: (() -> Unit)? =
         if (checked != null && onCheckedChange != null) {
