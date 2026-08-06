@@ -55,6 +55,7 @@ fun NewExerciseScreen(modifier: Modifier = Modifier) {
 
     NewExerciseScreen(
         state = viewModel.state,
+        isEdit = viewModel.isEdit,
         onAction = viewModel::onAction,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
@@ -64,6 +65,7 @@ fun NewExerciseScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun NewExerciseScreen(
     state: NewExerciseState,
+    isEdit: Boolean,
     onAction: (Action) -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
@@ -78,7 +80,17 @@ private fun NewExerciseScreen(
         topBar = {
             CompactTopAppBar(
                 scrollBehavior = topAppBarScrollBehavior,
-                title = { Text(stringResource(id = R.string.title_new_exercise)) },
+                title = {
+                    Text(
+                        stringResource(
+                            if (isEdit) {
+                                R.string.title_edit_exercise
+                            } else {
+                                R.string.title_new_exercise
+                            }
+                        )
+                    )
+                },
                 navigationIcon = {
                     CompactTopAppBarDefaults.BackIcon(onClick = { onAction(Action.PopBackStack) })
                 },
@@ -205,6 +217,7 @@ private fun PreviewNewExercise() {
     LiftAppTheme {
         NewExerciseScreen(
             state = NewExerciseState.Invalid(),
+            isEdit = false,
             onAction = {},
             snackbarHostState = SnackbarHostState(),
         )

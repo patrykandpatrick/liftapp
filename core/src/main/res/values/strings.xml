@@ -195,6 +195,7 @@
     <string name="action_show_all">Show all</string>
 
     <string name="title_new_exercise">New exercise</string>
+    <string name="title_edit_exercise">Edit exercise</string>
     <string name="title_new_routine">New routine</string>
     <string name="title_rename_routine">Rename routine</string>
     <string name="title_exercises">Exercises</string>

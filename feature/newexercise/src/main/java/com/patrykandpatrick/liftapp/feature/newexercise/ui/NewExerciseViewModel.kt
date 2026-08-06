@@ -48,9 +48,10 @@ constructor(
     private val stateToUpdateExercise: Mapper<NewExerciseState.Valid, Exercise.Update>,
     private val navigationCommander: NavigationCommander,
 ) : ViewModel(), SavedStateHandleViewModel, LogPublisher by logger {
+    internal val isEdit = newExerciseRouteData.exerciseID != ID_NOT_SET
+
     init {
-        if (newExerciseRouteData.exerciseID != ID_NOT_SET)
-            loadExerciseState(newExerciseRouteData.exerciseID)
+        if (isEdit) loadExerciseState(newExerciseRouteData.exerciseID)
     }
 
     internal var state: NewExerciseState by
