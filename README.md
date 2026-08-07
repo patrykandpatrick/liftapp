@@ -87,6 +87,8 @@ thing that needs picking.
 
 ## Documentation
 
-- [Architecture](docs/architecture.md) — modules, use cases and contracts, the backup format.
+- [Architecture](docs/architecture.md) — modules and their dependency direction, the convention
+  plugins, the domain model, the data layer, the feature layer, navigation, DI, and the design
+  system.
 - [Workout programming](docs/workout-programming.md) — the reference the app's prescriptions are
   built against: loads, rep ranges, proximity to failure, and volume.
