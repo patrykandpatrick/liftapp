@@ -35,6 +35,7 @@ fun BottomAppBarNavigationHost(
     val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     val isBottomAppBarNavigator =
         currentBackStackEntry?.destination?.navigatorName == BottomAppBarNavigator.NAME
+    val isNonDefaultHomeTab = currentBackStackEntry?.destination?.isNonDefaultHomeTab == true
     val previousBackStackEntry =
         remember(currentBackStackEntry) { navController.previousBackStackEntry }
     val wasBottomAppBarNavigator =
@@ -62,6 +63,11 @@ fun BottomAppBarNavigationHost(
         } finally {
             isPredictiveBackInProgress = false
         }
+    }
+
+    PredictiveBackHandler(enabled = isNonDefaultHomeTab) { backEvents ->
+        backEvents.collect {}
+        navController.navigateBackToDefaultHomeTab()
     }
 
     if (isPredictiveBackInProgress) {

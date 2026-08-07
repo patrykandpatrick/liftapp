@@ -1,6 +1,9 @@
 package com.patrykandpatrick.liftapp.navigation
 
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.navOptions
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommand
 
@@ -20,6 +23,22 @@ fun NavController.navigateToHomeTab(tabRoute: Routes.HomeTabRoute) {
         },
     )
 }
+
+/** Returns to Week when system back is pressed from another top-level home tab. */
+internal fun NavController.navigateBackToDefaultHomeTab(): Boolean {
+    if (currentDestination?.isNonDefaultHomeTab != true) return false
+
+    navigateToHomeTab(Routes.HomeTab.Dashboard)
+    return true
+}
+
+internal val NavDestination.isNonDefaultHomeTab: Boolean
+    get() = hierarchy.any {
+        it.hasRoute<Routes.HomeTab.Plan>() ||
+            it.hasRoute<Routes.HomeTab.Exercises>() ||
+            it.hasRoute<Routes.HomeTab.BodyMeasurements>() ||
+            it.hasRoute<Routes.HomeTab.More>()
+    }
 
 private fun NavController.hasDashboardEntry(): Boolean = runCatching {
     getBackStackEntry(Routes.Home.Dashboard)

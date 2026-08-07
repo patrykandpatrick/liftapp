@@ -78,6 +78,29 @@ class HomeTabNavigationTest {
     }
 
     @Test
+    fun `back from each nondefault home tab opens week`() {
+        listOf(
+                Routes.HomeTab.Plan,
+                Routes.HomeTab.Exercises,
+                Routes.HomeTab.BodyMeasurements,
+                Routes.HomeTab.More,
+            )
+            .forEach { tab ->
+                navController.navigateToHomeTab(tab)
+
+                assertTrue(navController.navigateBackToDefaultHomeTab())
+                assertCurrentRoute<Routes.Home.Dashboard>()
+            }
+    }
+
+    @Test
+    fun `back from week is left for the system to handle`() {
+        assertTrue(!navController.navigateBackToDefaultHomeTab())
+
+        assertCurrentRoute<Routes.Home.Dashboard>()
+    }
+
+    @Test
     fun `tab destination command ignores conflicting navigation options`() {
         navController.navigateTo(
             NavigationCommand.Route(
