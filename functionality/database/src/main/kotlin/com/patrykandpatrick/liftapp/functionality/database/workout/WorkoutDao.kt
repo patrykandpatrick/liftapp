@@ -71,6 +71,7 @@ interface WorkoutDao {
                 "current_exercise_set.exercise_set_distance as current_exercise_set_distance, " +
                 "current_exercise_set.exercise_set_distance_unit as current_exercise_set_distance_unit, " +
                 "current_exercise_set.exercise_set_kcal as current_exercise_set_kcal, " +
+                "current_exercise_set.exercise_set_rir as current_exercise_set_rir, " +
                 "current_exercise_set.exercise_set_notes as current_exercise_set_notes, " +
                 "current_exercise_set.workout_exercise_set_index as current_workout_exercise_set_index, " +
                 "last_exercise_set.exercise_set_id as last_exercise_set_id, " +
@@ -83,6 +84,7 @@ interface WorkoutDao {
                 "last_exercise_set.exercise_set_distance as last_exercise_set_distance, " +
                 "last_exercise_set.exercise_set_distance_unit as last_exercise_set_distance_unit, " +
                 "last_exercise_set.exercise_set_kcal as last_exercise_set_kcal, " +
+                "last_exercise_set.exercise_set_rir as last_exercise_set_rir, " +
                 "last_exercise_set.exercise_set_notes as last_exercise_set_notes, " +
                 "last_exercise_set.workout_exercise_set_index as last_workout_exercise_set_index " +
                 "FROM workout_item AS item " +
@@ -155,7 +157,7 @@ interface WorkoutDao {
             "INSERT OR REPLACE INTO exercise_set (" +
                 "exercise_set_id, exercise_set_workout_id, exercise_set_exercise_id, exercise_set_weight, " +
                 "exercise_set_weight_unit, exercise_set_reps, exercise_set_time, exercise_set_distance," +
-                "exercise_set_distance_unit, exercise_set_kcal, exercise_set_notes, " +
+                "exercise_set_distance_unit, exercise_set_kcal, exercise_set_rir, exercise_set_notes, " +
                 "workout_exercise_set_index) " +
                 "SELECT (SELECT COALESCE((SELECT id FROM exercise_set INNER JOIN " +
                 "(SELECT e.exercise_set_id as id, e.exercise_set_workout_id as workoutID, " +
@@ -164,7 +166,7 @@ interface WorkoutDao {
                 "workout_exercise_set_index = :setIndex) ON exercise_set_id = id " +
                 "WHERE exercise_set_workout_id = :workoutID and exercise_set_exercise_id = :exerciseID" +
                 "), NULL)), :workoutID, :exerciseID, :weight, :weightUnit, :reps, :timeMillis, :distance, " +
-                ":distanceUnit, :kcal, :notes, :setIndex"
+                ":distanceUnit, :kcal, :rir, :notes, :setIndex"
     )
     suspend fun upsertExerciseSet(
         workoutID: Long,
@@ -176,6 +178,7 @@ interface WorkoutDao {
         distance: Double? = 0.0,
         distanceUnit: LongDistanceUnit? = null,
         kcal: Double? = null,
+        rir: Int? = null,
         notes: String = "",
         setIndex: Int,
     )
@@ -431,6 +434,7 @@ interface WorkoutDao {
                 "exercise_set.exercise_set_distance AS current_exercise_set_distance, " +
                 "exercise_set.exercise_set_distance_unit AS current_exercise_set_distance_unit, " +
                 "exercise_set.exercise_set_kcal AS current_exercise_set_kcal, " +
+                "exercise_set.exercise_set_rir AS current_exercise_set_rir, " +
                 "exercise_set.exercise_set_notes AS current_exercise_set_notes, " +
                 "exercise_set.workout_exercise_set_index AS current_workout_exercise_set_index " +
                 "FROM workout AS w " +

@@ -62,6 +62,8 @@
     <string name="exercise_set_format_weight">%1$s × %2$s</string>
     <!-- Example: 5 m 24 s · 2.21 km · 334 kcal -->
     <string name="exercise_set_format_cardio">%1$s · %2$s · %3$s</string>
+    <!-- Appended to a logged set that has a reported RIR. Example: 100 kg × 10 reps · 2 RIR -->
+    <string name="exercise_set_format_rir">%1$s · %2$s RIR</string>
     <!-- Example: 3 of 4 sets -->
     <string name="workout_exercise_list_set_format">&lt;b>&lt;color-surface-variant>%1$d&lt;/color-surface-variant>&lt;/b> of &lt;b>&lt;color-surface-variant>%2$d&lt;/color-surface-variant>&lt;/b> %3$s</string>
 
@@ -128,6 +130,14 @@
     <string name="exercise_set_input_duration">Duration</string>
     <string name="exercise_set_input_distance">Distance</string>
     <string name="exercise_set_input_calories">Calories</string>
+
+    <string name="exercise_set_input_rir">Reps in reserve</string>
+    <!-- The top of the RIR range, which is an open bucket rather than an exact count. Shown both
+         as the last option of the selector and wherever a logged set reports that value. -->
+    <string name="exercise_set_rir_max">%1$d+</string>
+    <string name="exercise_set_rir_info_action">What is this?</string>
+    <string name="exercise_set_rir_info_title">Reps in reserve</string>
+    <string name="exercise_set_rir_info_body"><![CDATA[<b>Reps in reserve (RIR) is how many more reps you could have done before failing</b> — what was left in the tank when you stopped.\n\n<b>0</b>  —  you couldn’t have done another rep\n<b>1–2</b>  —  hard, close to your limit\n<b>3–4+</b>  —  you had more left\n\nEffort is what drives muscle growth, more than the weight on the bar. A light set stopped early does little; a hard set does a lot. Recording RIR is what lets the app tell an easy session from a brutal one.\n\nIt’s an estimate, not a measurement — most people underestimate by about a rep. Be honest rather than precise, and leave it blank when you’re not sure.]]></string>
 
     <string name="routine_delete_message">This won’t delete any exercises</string>
     <string name="routine_item_remove_message">This will remove it from the routine</string>

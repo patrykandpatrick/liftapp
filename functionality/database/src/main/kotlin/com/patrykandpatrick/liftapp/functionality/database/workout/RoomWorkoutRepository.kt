@@ -136,6 +136,7 @@ constructor(
             set.distance,
             set.distanceUnit,
             set.kcal,
+            set.rir,
             set.notes,
             setIndex,
         )

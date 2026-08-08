@@ -25,6 +25,7 @@ constructor(private val contract: UpsertExerciseSetContract) {
                     reps = repsInput.value,
                     weightUnit = weightUnit,
                     notes = notesInput.value,
+                    rir = rirInput.recordedRir,
                 )
 
             is EditableExerciseSet.Calisthenics ->
@@ -34,10 +35,15 @@ constructor(private val contract: UpsertExerciseSetContract) {
                     reps = repsInput.value,
                     weightUnit = weightUnit,
                     notes = notesInput.value,
+                    rir = rirInput.recordedRir,
                 )
 
             is EditableExerciseSet.Reps ->
-                ExerciseSet.Reps(reps = repsInput.value, notes = notesInput.value)
+                ExerciseSet.Reps(
+                    reps = repsInput.value,
+                    notes = notesInput.value,
+                    rir = rirInput.recordedRir,
+                )
 
             is EditableExerciseSet.Cardio ->
                 ExerciseSet.Cardio(

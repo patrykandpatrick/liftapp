@@ -37,6 +37,8 @@ data class ExerciseSetEntity(
     @ColumnInfo(name = "exercise_set_distance") val distance: Double? = null,
     @ColumnInfo(name = "exercise_set_distance_unit") val distanceUnit: LongDistanceUnit? = null,
     @ColumnInfo(name = "exercise_set_kcal") val kcal: Double? = null,
+    // Null means the user did not report reps in reserve, which is distinct from zero.
+    @ColumnInfo(name = "exercise_set_rir") val rir: Int? = null,
     @ColumnInfo(name = "exercise_set_notes") val notes: String = "",
     @ColumnInfo(name = "workout_exercise_set_index") val setIndex: Int,
 )

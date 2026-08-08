@@ -48,11 +48,7 @@ fun InputFieldLayout(
     strokeWidth: Dp = 1.dp,
     labelStartMargin: Dp = 12.dp,
     labelHorizontalPadding: Dp = 4.dp,
-    contentPadding: PaddingValues =
-        PaddingValues(
-            horizontal = 16.dp,
-            vertical = 8.dp,
-        ),
+    contentPadding: PaddingValues = InputFieldLayoutDefaults.contentPadding(),
     label: (@Composable RowScope.() -> Unit)? = null,
     isError: Boolean = false,
     enabled: Boolean = true,
@@ -177,6 +173,25 @@ fun InputFieldLayout(
                 }
             },
     )
+}
+
+object InputFieldLayoutDefaults {
+
+    val horizontalPadding = 16.dp
+
+    val verticalPadding = 8.dp
+
+    /**
+     * [PaddingValues] has no `copy`, so overriding a single edge would otherwise mean restating the
+     * other three. Content that brings its own inset — an icon button, which is a fixed-size box
+     * around a smaller icon — wants `end = 0.dp` rather than the two insets stacked.
+     */
+    fun contentPadding(
+        start: Dp = horizontalPadding,
+        top: Dp = verticalPadding,
+        end: Dp = horizontalPadding,
+        bottom: Dp = verticalPadding,
+    ): PaddingValues = PaddingValues(start, top, end, bottom)
 }
 
 private fun Path.addCorner(x: Float, y: Float, cornerSize: Float, startAngle: Float) {

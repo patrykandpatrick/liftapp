@@ -75,10 +75,11 @@ internal fun SetInputBottomSheet(
 
 private fun EditableExerciseSet<*>.inputTexts(): List<String> =
     when (this) {
-        is EditableExerciseSet.Weight -> listOf(weightInput.text, repsInput.text, notesInput.text)
+        is EditableExerciseSet.Weight ->
+            listOf(weightInput.text, repsInput.text, rirInput.text, notesInput.text)
         is EditableExerciseSet.Calisthenics ->
-            listOf(weightInput.text, repsInput.text, notesInput.text)
-        is EditableExerciseSet.Reps -> listOf(repsInput.text, notesInput.text)
+            listOf(weightInput.text, repsInput.text, rirInput.text, notesInput.text)
+        is EditableExerciseSet.Reps -> listOf(repsInput.text, rirInput.text, notesInput.text)
         is EditableExerciseSet.Cardio ->
             listOf(durationInput.text, distanceInput.text, kcalInput.text, notesInput.text)
         is EditableExerciseSet.Time -> listOf(timeInput.text, notesInput.text)
@@ -89,16 +90,19 @@ private fun EditableExerciseSet<*>.restoreInputTexts(texts: List<String>) {
         is EditableExerciseSet.Weight -> {
             weightInput.updateText(texts[0])
             repsInput.updateText(texts[1])
-            notesInput.updateText(texts[2])
+            rirInput.updateText(texts[2])
+            notesInput.updateText(texts[3])
         }
         is EditableExerciseSet.Calisthenics -> {
             weightInput.updateText(texts[0])
             repsInput.updateText(texts[1])
-            notesInput.updateText(texts[2])
+            rirInput.updateText(texts[2])
+            notesInput.updateText(texts[3])
         }
         is EditableExerciseSet.Reps -> {
             repsInput.updateText(texts[0])
-            notesInput.updateText(texts[1])
+            rirInput.updateText(texts[1])
+            notesInput.updateText(texts[2])
         }
         is EditableExerciseSet.Cardio -> {
             durationInput.updateText(texts[0])

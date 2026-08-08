@@ -978,6 +978,7 @@ internal val editableWorkoutPreview: EditableWorkout
                                 repsInput = textFieldStateManager.intTextField("10"),
                                 weightUnit = MassUnit.Kilograms,
                                 notesInput = textFieldStateManager.stringTextField(),
+                                rirInput = textFieldStateManager.intTextField(),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 100.0,
@@ -986,6 +987,7 @@ internal val editableWorkoutPreview: EditableWorkout
                                 repsInput = textFieldStateManager.intTextField("9"),
                                 weightUnit = MassUnit.Kilograms,
                                 notesInput = textFieldStateManager.stringTextField(),
+                                rirInput = textFieldStateManager.intTextField(),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 100.0,
@@ -994,6 +996,7 @@ internal val editableWorkoutPreview: EditableWorkout
                                 repsInput = textFieldStateManager.intTextField("8"),
                                 weightUnit = MassUnit.Kilograms,
                                 notesInput = textFieldStateManager.stringTextField(),
+                                rirInput = textFieldStateManager.intTextField(),
                             ),
                         ),
                     previousWorkoutSets = emptyList(),
@@ -1019,6 +1022,7 @@ internal val editableWorkoutPreview: EditableWorkout
                                 repsInput = textFieldStateManager.intTextField("10"),
                                 weightUnit = MassUnit.Kilograms,
                                 notesInput = textFieldStateManager.stringTextField(),
+                                rirInput = textFieldStateManager.intTextField(),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 0.0,
@@ -1027,6 +1031,7 @@ internal val editableWorkoutPreview: EditableWorkout
                                 repsInput = textFieldStateManager.intTextField("0"),
                                 weightUnit = MassUnit.Kilograms,
                                 notesInput = textFieldStateManager.stringTextField(),
+                                rirInput = textFieldStateManager.intTextField(),
                             ),
                             EditableExerciseSet.Weight(
                                 weight = 0.0,
@@ -1035,6 +1040,7 @@ internal val editableWorkoutPreview: EditableWorkout
                                 repsInput = textFieldStateManager.intTextField("0"),
                                 weightUnit = MassUnit.Kilograms,
                                 notesInput = textFieldStateManager.stringTextField(),
+                                rirInput = textFieldStateManager.intTextField(),
                             ),
                         ),
                     previousWorkoutSets =

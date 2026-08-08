@@ -165,6 +165,7 @@ class WorkoutIteratorTest {
                                 initialValue = if (setIndex in completedSetIndices) "1" else "0"
                             ),
                         notesInput = StringTextFieldState(),
+                        rirInput = IntTextFieldState(),
                     ) as EditableExerciseSet<ExerciseSet>
                 },
             previousWorkoutSets = emptyList(),

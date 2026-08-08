@@ -4,10 +4,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -16,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
+import com.patrykandpatrick.liftapp.core.exercise.rirString
 import com.patrykandpatrick.liftapp.core.extension.prettyString
 import com.patrykandpatrick.liftapp.core.preview.PreviewResource.textFieldStateManager
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
@@ -27,7 +36,11 @@ import com.patrykandpatrick.liftapp.core.text.TextFieldState
 import com.patrykandpatrick.liftapp.core.text.updateValueBy
 import com.patrykandpatrick.liftapp.core.ui.InfoCard
 import com.patrykandpatrick.liftapp.core.ui.InputFieldLayout
+import com.patrykandpatrick.liftapp.core.ui.InputFieldLayoutDefaults
+import com.patrykandpatrick.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
+import com.patrykandpatrick.liftapp.core.ui.SegmentedButton
+import com.patrykandpatrick.liftapp.core.ui.SegmentedButtonContainer
 import com.patrykandpatrick.liftapp.core.ui.SupportingText
 import com.patrykandpatrick.liftapp.core.ui.input.NumberInput
 import com.patrykandpatrick.liftapp.core.ui.wheel.DurationPicker
@@ -37,9 +50,16 @@ import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.domain.unit.ValueUnit
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
+import com.patrykandpatrick.liftapp.feature.workout.model.recordedRir
+import com.patrykandpatrick.liftapp.feature.workout.model.rirOptions
+import com.patrykandpatrick.liftapp.feature.workout.model.toggleRir
 import com.patrykandpatrick.liftapp.ui.component.LiftAppBackground
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
+import com.patrykandpatrick.liftapp.ui.icons.Info
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.preview.LightAndDarkThemePreview
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -53,6 +73,8 @@ internal fun <T : ExerciseSet> ColumnScope.SetEditorContent(
         BodyWeightInfo(bodyWeight = editableExerciseSet.formattedBodyWeight)
     }
 
+    var isRirInfoVisible by rememberSaveable { mutableStateOf(false) }
+
     when (editableExerciseSet) {
         is EditableExerciseSet.Weight -> {
             WeightInput(
@@ -60,6 +82,10 @@ internal fun <T : ExerciseSet> ColumnScope.SetEditorContent(
                 unit = editableExerciseSet.weightUnit,
             )
             RepsInput(textFieldState = editableExerciseSet.repsInput)
+            RirInput(
+                textFieldState = editableExerciseSet.rirInput,
+                onInfoClick = { isRirInfoVisible = true },
+            )
         }
 
         is EditableExerciseSet.Calisthenics -> {
@@ -68,10 +94,18 @@ internal fun <T : ExerciseSet> ColumnScope.SetEditorContent(
                 unit = editableExerciseSet.weightUnit,
             )
             RepsInput(textFieldState = editableExerciseSet.repsInput)
+            RirInput(
+                textFieldState = editableExerciseSet.rirInput,
+                onInfoClick = { isRirInfoVisible = true },
+            )
         }
 
         is EditableExerciseSet.Reps -> {
             RepsInput(textFieldState = editableExerciseSet.repsInput)
+            RirInput(
+                textFieldState = editableExerciseSet.rirInput,
+                onInfoClick = { isRirInfoVisible = true },
+            )
         }
 
         is EditableExerciseSet.Cardio -> {
@@ -89,6 +123,63 @@ internal fun <T : ExerciseSet> ColumnScope.SetEditorContent(
     }
 
     NotesInput(textFieldState = editableExerciseSet.notesInput)
+
+    if (isRirInfoVisible) {
+        RirInfoBottomSheet(onDismissRequest = { isRirInfoVisible = false })
+    }
+}
+
+@Composable
+private fun RirInput(
+    textFieldState: IntTextFieldState,
+    onInfoClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val selected = textFieldState.recordedRir
+
+    InputFieldLayout(
+        // The info button is a fixed-size box around a smaller icon, so it carries its own inset
+        // to the edge; the field does not need to add one.
+        contentPadding = InputFieldLayoutDefaults.contentPadding(end = 0.dp),
+        label = { Text(text = stringResource(R.string.exercise_set_input_rir)) },
+        modifier = modifier,
+    ) {
+        SegmentedButtonContainer(items = rirOptions, modifier = Modifier.weight(1f)) { _, rir ->
+            SegmentedButton(
+                text = rirString(rir),
+                onClick = { textFieldState.toggleRir(rir) },
+                selected = rir == selected,
+                showIcon = false,
+            )
+        }
+
+        LiftAppIconButton(onClick = onInfoClick) {
+            Icon(
+                imageVector = LiftAppIcons.Info,
+                contentDescription = stringResource(R.string.exercise_set_rir_info_action),
+                tint = colorScheme.foregroundVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RirInfoBottomSheet(onDismissRequest: () -> Unit) {
+    LiftAppModalBottomSheetWithTopAppBar(
+        onDismissRequest = onDismissRequest,
+        title = { Text(text = stringResource(R.string.exercise_set_rir_info_title)) },
+    ) {
+        WorkoutInputBottomSheetContent(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Text(
+                text =
+                    LocalMarkupProcessor.current.toAnnotatedString(
+                        stringResource(R.string.exercise_set_rir_info_body)
+                    ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = colorScheme.foreground,
+            )
+        }
+    }
 }
 
 @Composable
@@ -228,6 +319,8 @@ private fun SetEditorWeightExercisePreview() {
                     repsInput = textFieldStateManager.intTextField(initialValue = "10"),
                     weightUnit = MassUnit.Kilograms,
                     notesInput = textFieldStateManager.stringTextField(),
+                    rirInput = textFieldStateManager.intTextField(initialValue = "2"),
+                    rir = 2,
                 )
         )
     }
@@ -249,6 +342,7 @@ private fun SetEditorCalisthenicsExercisePreview() {
                     repsInput = textFieldStateManager.intTextField(initialValue = "10"),
                     weightUnit = MassUnit.Kilograms,
                     notesInput = textFieldStateManager.stringTextField(),
+                    rirInput = textFieldStateManager.intTextField(),
                 )
         )
     }

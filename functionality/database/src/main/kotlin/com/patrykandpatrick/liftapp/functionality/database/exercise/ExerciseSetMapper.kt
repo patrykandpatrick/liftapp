@@ -101,6 +101,7 @@ constructor(
             reps = reps ?: 0,
             weightUnit = weightUnit ?: massUnit,
             notes = notes,
+            rir = recordedRir,
         )
 
     private fun ExerciseSetEntity.toCalisthenicsSet(
@@ -116,11 +117,21 @@ constructor(
             reps = reps ?: 0,
             weightUnit = weightUnit,
             notes = notes,
+            rir = recordedRir,
         )
     }
 
     private fun ExerciseSetEntity.toRepsSet(): ExerciseSet.Reps =
-        ExerciseSet.Reps(reps = reps ?: 0, notes = notes)
+        ExerciseSet.Reps(reps = reps ?: 0, notes = notes, rir = recordedRir)
+
+    /**
+     * Unlike every other nullable column here, an absent value is not zero: zero RIR means the set
+     * was taken to failure. A value from outside [ExerciseSet.RIR_RANGE] can only reach the column
+     * through a restored archive, which replays whatever the file holds — clamp it rather than show
+     * a number the app never asks for.
+     */
+    private val ExerciseSetEntity.recordedRir: Int?
+        get() = rir?.coerceIn(ExerciseSet.RIR_RANGE)
 
     private fun ExerciseSetEntity.toCardioSet(distanceUnit: LongDistanceUnit): ExerciseSet.Cardio =
         ExerciseSet.Cardio(

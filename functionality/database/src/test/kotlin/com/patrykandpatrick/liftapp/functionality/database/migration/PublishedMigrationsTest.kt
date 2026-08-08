@@ -39,13 +39,13 @@ class PublishedMigrationsTest {
         )
 
     @Test
-    fun `a version 6 database reaches version 12 with its data converted`() {
+    fun `a version 6 database reaches the current version with its data converted`() {
         createVersion6Database()
 
         val db =
             helper.runMigrationsAndValidate(
                 DB_NAME,
-                12,
+                13,
                 true,
                 PublishedMigrations.MIGRATION_6_7,
                 PublishedMigrations.MIGRATION_7_8,
@@ -58,6 +58,7 @@ class PublishedMigrationsTest {
                     legacyPlan = { Migration11To12.LegacyPlan("My training plan", listOf(100)) },
                     startDate = { LocalDate.of(2026, 7, 31) },
                 ),
+                Migration12To13,
             )
 
         val items = mutableListOf<Pair<Long, String>>()

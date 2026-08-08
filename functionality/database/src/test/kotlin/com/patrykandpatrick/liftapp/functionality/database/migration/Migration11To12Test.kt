@@ -181,7 +181,13 @@ class Migration11To12Test {
         start: LocalDate = startDate,
     ): SupportSQLiteDatabase {
         createLegacyDatabase()
-        return helper.runMigrationsAndValidate(DB_NAME, 12, true, migration(planIDs, start))
+        return helper.runMigrationsAndValidate(
+            DB_NAME,
+            13,
+            true,
+            migration(planIDs, start),
+            Migration12To13,
+        )
     }
 
     @Test

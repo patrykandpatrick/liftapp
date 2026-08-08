@@ -129,10 +129,11 @@ what is meant to reach the user.
 
 ### Room
 
-[`Database`][database] is at **version 12**, with `exportSchema = true` and a handful of
+[`Database`][database] is at **version 13**, with `exportSchema = true` and a handful of
 `@DatabaseView`s alongside the entities. Versions 2–11 belong to the published app, so [`migration`][migration]
 carries its chain (`PublishedMigrations`) plus the two paths into the rewrite: `Migration11To12`
-from the Play Store build, `Migration1To12` from an early install. Exported JSON sits in
+from the Play Store build, `Migration1To12` from an early install. Everything from 12 up is the
+rewrite's own — `Migration12To13` adds reps in reserve. Exported JSON sits in
 `functionality/database/schemas/`, also registered as a test asset directory so
 `MigrationTestHelper` can read it; a fresh install is seeded by [`DatabaseCallback`][callback].
 

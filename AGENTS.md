@@ -25,8 +25,8 @@ Plus a one-rep-max calculator and backup/restore to a `.lfa` file, on demand or 
 the domain data; DataStore holds user settings.
 
 The app is a rewrite of a legacy *LiftApp*, still published as `pl.patrykgoworowski.mintlift` — which is why
-`:app`'s `applicationId` does not match its namespace, and why the Room schema is at version 12 with
-the published app's migrations behind it.
+`:app`'s `applicationId` does not match its namespace, and why the Room schema is past version 12
+with the published app's migrations behind it.
 
 ## Stack
 

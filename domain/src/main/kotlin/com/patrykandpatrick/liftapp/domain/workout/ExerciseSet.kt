@@ -17,11 +17,19 @@ sealed class ExerciseSet : Serializable {
     open val distanceUnit: LongDistanceUnit? = null
     open val kcal: Double? = null
 
+    /**
+     * Reps in reserve: how many more reps the user could have done, within [RIR_RANGE]. `null`
+     * means they did not report it, which is not the same as `0` — zero is a set taken to failure.
+     * Meaningless for [Cardio] and [Time], which leave it `null` always.
+     */
+    open val rir: Int? = null
+
     open class Weight(
         override val weight: Double,
         override val reps: Int,
         override val weightUnit: MassUnit,
         override val notes: String = "",
+        override val rir: Int? = null,
     ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = weight > 0 && reps > 0
@@ -30,20 +38,23 @@ sealed class ExerciseSet : Serializable {
             fun empty(massUnit: MassUnit) = Weight(0.0, 0, massUnit)
         }
 
-        override fun toString() = "Weight(weight=$weight, reps=$reps, weightUnit=$weightUnit)"
+        override fun toString() =
+            "Weight(weight=$weight, reps=$reps, weightUnit=$weightUnit, rir=$rir)"
 
         override fun equals(other: Any?) =
             other is Weight &&
                 weight == other.weight &&
                 reps == other.reps &&
                 weightUnit == other.weightUnit &&
-                notes == other.notes
+                notes == other.notes &&
+                rir == other.rir
 
         override fun hashCode() =
             weight.hashCode() * 31 +
                 reps.hashCode() * 31 +
                 weightUnit.hashCode() * 31 +
-                notes.hashCode()
+                notes.hashCode() * 31 +
+                rir.hashCode()
     }
 
     open class Calisthenics(
@@ -52,6 +63,7 @@ sealed class ExerciseSet : Serializable {
         override val reps: Int,
         override val weightUnit: MassUnit,
         override val notes: String = "",
+        override val rir: Int? = null,
     ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = reps > 0
@@ -62,7 +74,8 @@ sealed class ExerciseSet : Serializable {
         }
 
         override fun toString() =
-            "Calisthenics(weight=$weight, bodyWeight=$bodyWeight, reps=$reps, weightUnit=$weightUnit)"
+            "Calisthenics(weight=$weight, bodyWeight=$bodyWeight, reps=$reps, " +
+                "weightUnit=$weightUnit, rir=$rir)"
 
         override fun equals(other: Any?) =
             other is Calisthenics &&
@@ -70,17 +83,23 @@ sealed class ExerciseSet : Serializable {
                 bodyWeight == other.bodyWeight &&
                 reps == other.reps &&
                 weightUnit == other.weightUnit &&
-                notes == other.notes
+                notes == other.notes &&
+                rir == other.rir
 
         override fun hashCode() =
             weight.hashCode() * 31 +
                 bodyWeight.hashCode() * 31 +
                 reps.hashCode() * 31 +
                 weightUnit.hashCode() * 31 +
-                notes.hashCode()
+                notes.hashCode() * 31 +
+                rir.hashCode()
     }
 
-    open class Reps(override val reps: Int, override val notes: String = "") : ExerciseSet() {
+    open class Reps(
+        override val reps: Int,
+        override val notes: String = "",
+        override val rir: Int? = null,
+    ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = reps > 0
 
@@ -88,12 +107,12 @@ sealed class ExerciseSet : Serializable {
             val empty = Reps(0)
         }
 
-        override fun toString() = "Reps(reps=$reps)"
+        override fun toString() = "Reps(reps=$reps, rir=$rir)"
 
         override fun equals(other: Any?) =
-            other is Reps && reps == other.reps && notes == other.notes
+            other is Reps && reps == other.reps && notes == other.notes && rir == other.rir
 
-        override fun hashCode() = reps.hashCode() * 31 + notes.hashCode()
+        override fun hashCode() = reps.hashCode() * 31 + notes.hashCode() * 31 + rir.hashCode()
     }
 
     open class Cardio(
@@ -144,5 +163,15 @@ sealed class ExerciseSet : Serializable {
             other is Time && duration == other.duration && notes == other.notes
 
         override fun hashCode() = duration.hashCode() * 31 + notes.hashCode()
+    }
+
+    companion object {
+        /**
+         * The reportable range of [rir]. Lifters cannot tell one value from the next much past four
+         * reps from failure, so the top of the range is an open bucket — "four or more" — rather
+         * than an exact count. Everything that can put a value into [rir] clamps to this, the
+         * restore path included, and the top reads as a bucket wherever it is displayed.
+         */
+        val RIR_RANGE = 0..4
     }
 }

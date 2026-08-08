@@ -222,6 +222,8 @@ constructor(
                     },
             weightUnit = weightUnit,
             notesInput = notesInput(exerciseId, setIndex, notes),
+            rirInput = rirInput(exerciseId, setIndex, rir),
+            rir = rir,
         )
 
     private fun ExerciseSet.Calisthenics.editable(
@@ -272,6 +274,8 @@ constructor(
                     },
             weightUnit = weightUnit,
             notesInput = notesInput(exerciseId, setIndex, notes),
+            rirInput = rirInput(exerciseId, setIndex, rir),
+            rir = rir,
         )
 
     private fun ExerciseSet.Reps.editable(
@@ -300,6 +304,8 @@ constructor(
                         }
                     },
             notesInput = notesInput(exerciseId, setIndex, notes),
+            rirInput = rirInput(exerciseId, setIndex, rir),
+            rir = rir,
         )
 
     private fun ExerciseSet.Cardio.editable(
@@ -400,6 +406,18 @@ constructor(
         textFieldStateManager.stringTextField(
             initialValue = notes,
             savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "notes"),
+        )
+
+    /**
+     * Unlike the other inputs, this one is deliberately not carried forward from the previous set
+     * or the previous workout. Weight and reps are a plan the user is repeating; reps in reserve is
+     * a measurement of the set they just did, and pre-filling it would invent effort they never
+     * reported.
+     */
+    private fun rirInput(exerciseId: Long, setIndex: Int, rir: Int?) =
+        textFieldStateManager.intTextField(
+            initialValue = rir?.toString().orEmpty(),
+            savedStateKey = getTextFieldStateManagerKey(exerciseId, setIndex, "rir"),
         )
 
     private fun formatDecimal(value: Double): String =

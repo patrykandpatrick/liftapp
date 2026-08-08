@@ -30,12 +30,15 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         val repsInput: IntTextFieldState,
         override val weightUnit: MassUnit,
         override val notesInput: TextFieldState<String>,
+        val rirInput: IntTextFieldState,
+        override val rir: Int? = null,
     ) :
-        ExerciseSet.Weight(weight, reps, weightUnit, notesInput.value),
+        ExerciseSet.Weight(weight, reps, weightUnit, notesInput.value, rir),
         EditableExerciseSet<ExerciseSet.Weight> {
 
         override val exerciseSet: ExerciseSet.Weight = this
 
+        // Reps in reserve is optional, so it never gates saving.
         override val isInputValid: Boolean
             get() = weightInput.isValid && repsInput.isValid
 
@@ -43,6 +46,7 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
             weightInput.updateValue(set.weight)
             repsInput.updateValue(set.reps)
             notesInput.updateValue(set.notes)
+            rirInput.updateRir(set.rir)
         }
     }
 
@@ -55,8 +59,10 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         val repsInput: IntTextFieldState,
         override val weightUnit: MassUnit,
         override val notesInput: TextFieldState<String>,
+        val rirInput: IntTextFieldState,
+        override val rir: Int? = null,
     ) :
-        ExerciseSet.Calisthenics(weight, bodyWeight, reps, weightUnit, notesInput.value),
+        ExerciseSet.Calisthenics(weight, bodyWeight, reps, weightUnit, notesInput.value, rir),
         EditableExerciseSet<ExerciseSet.Calisthenics> {
 
         override val exerciseSet: ExerciseSet.Calisthenics = this
@@ -68,6 +74,7 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
             weightInput.updateValue(set.weight)
             repsInput.updateValue(set.reps)
             notesInput.updateValue(set.notes)
+            rirInput.updateRir(set.rir)
         }
     }
 
@@ -75,7 +82,9 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         override val reps: Int,
         val repsInput: IntTextFieldState,
         override val notesInput: TextFieldState<String>,
-    ) : ExerciseSet.Reps(reps, notesInput.value), EditableExerciseSet<ExerciseSet.Reps> {
+        val rirInput: IntTextFieldState,
+        override val rir: Int? = null,
+    ) : ExerciseSet.Reps(reps, notesInput.value, rir), EditableExerciseSet<ExerciseSet.Reps> {
 
         override val exerciseSet: ExerciseSet.Reps = this
 
@@ -85,6 +94,7 @@ sealed interface EditableExerciseSet<out T : ExerciseSet> : Serializable {
         override fun applySet(set: ExerciseSet.Reps) {
             repsInput.updateValue(set.reps)
             notesInput.updateValue(set.notes)
+            rirInput.updateRir(set.rir)
         }
     }
 
