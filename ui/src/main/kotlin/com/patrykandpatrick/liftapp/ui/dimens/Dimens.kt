@@ -84,7 +84,7 @@ data class Dimens(
 
     @Immutable data class RadioButton(val size: Dp = 20.dp)
 
-    @Immutable data class Progress(val thickness: Dp = 5.dp)
+    @Immutable data class Progress(val thickness: Dp = 4.dp)
 
     /** Thinner than a [Progress] bar, which has one weight to carry rather than two. */
     @Immutable data class RatioBar(val thickness: Dp = 4.dp, val spacing: Dp = 3.dp)

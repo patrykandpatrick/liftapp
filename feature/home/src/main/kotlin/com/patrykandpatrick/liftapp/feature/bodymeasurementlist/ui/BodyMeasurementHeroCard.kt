@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.chart.BodyMeasurementChartColors
@@ -106,14 +105,14 @@ internal fun BodyMeasurementHeroCard(
             ) {
                 LiftAppText(
                     text = item.value.primary,
-                    style = typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    style = typography.headlineMedium,
                     modifier = Modifier.alignByBaseline(),
                 )
 
                 item.value.secondary?.let { secondary ->
                     LiftAppText(
                         text = secondary,
-                        style = typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        style = typography.headlineMedium,
                         color = colorScheme.foregroundVariant,
                         modifier = Modifier.padding(start = 2.dp).alignByBaseline(),
                     )

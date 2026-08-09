@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.feature.bodymeasurementlist.ui
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.chart.BodyMeasurementChartColors
@@ -49,7 +47,6 @@ internal fun BodyMeasurementTile(
     LiftAppCard(
         onClick = onClick,
         verticalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = TileContentPadding,
         modifier = modifier,
     ) {
         // A measurement's name is the body part alone — the section heading says they are
@@ -57,7 +54,7 @@ internal fun BodyMeasurementTile(
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             LiftAppText(
                 text = item.name,
-                style = typography.labelMedium,
+                style = typography.titleSmall,
                 color = colorScheme.foregroundVariant,
                 maxLines = 1,
                 modifier = Modifier.weight(1f),
@@ -76,9 +73,9 @@ internal fun BodyMeasurementTile(
         // Two numbers in a half-width tile need the smaller size to leave the unit its room.
         val valueStyle =
             if (item.value.secondary != null) {
-                typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                typography.titleMedium
             } else {
-                typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                typography.titleLarge
             }
 
         Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth()) {
@@ -118,30 +115,36 @@ internal fun BodyMeasurementTile(
             )
         }
 
-        // With the change moved up beside the name, the footer is the measurement's own shape and
-        // nothing else, and it gets the tile's full width to draw it in.
+        val hasVisualization =
+            item.sideBalance != null || item.progress != null || item.trend != null
+        if (hasVisualization) {
+            // The grid gives every card in a row the same height. Consume any difference here so
+            // each visualization sits directly above the card's bottom padding without a
+            // fixed-height slot adding invisible space around thinner bars.
+            Spacer(Modifier.weight(1f))
+        }
+
         when {
             item.sideBalance != null ->
                 LiftAppRatioBar(
                     leadingFraction = item.sideBalance,
                     leadingColor = BodyMeasurementChartColors.leading,
                     trailingColor = BodyMeasurementChartColors.trailing,
-                    modifier = Modifier.fillMaxWidth().height(TileFooterHeight),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             item.progress != null ->
                 LiftAppLinearProgressIndicator(
                     progress = item.progress,
                     color = BodyMeasurementChartColors.leading,
-                    modifier = Modifier.fillMaxWidth().height(TileFooterHeight),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             item.trend != null ->
                 Sparkline(
                     modelProducer = item.trend,
                     color = BodyMeasurementChartColors.leading,
                     strokeWidth = 1.5.dp,
-                    modifier = Modifier.fillMaxWidth().height(TileFooterHeight),
+                    modifier = Modifier.fillMaxWidth().height(TileSparklineHeight),
                 )
-            else -> Spacer(Modifier.height(TileFooterHeight))
         }
     }
 }
@@ -155,23 +158,24 @@ private fun EmptyBodyMeasurementTile(
 ) {
     LiftAppCard(
         onClick = onClick,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = TileContentPadding,
+        // The grid stretches this card to the height of its populated neighbor. Space the two
+        // rows apart so the action stays bottom-aligned without inserting another layout item
+        // that would increase the row's intrinsic height.
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier,
     ) {
         LiftAppText(
             text = name,
-            style = typography.labelMedium,
+            style = typography.titleSmall,
             color = colorScheme.foregroundVariant,
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(Modifier.weight(1f))
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(top = 6.dp),
         ) {
             Icon(
                 imageVector = LiftAppIcons.Plus,
@@ -190,6 +194,5 @@ private fun EmptyBodyMeasurementTile(
 }
 
 private const val SideSeparator = "/"
-private val TileContentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp)
-private val TileFooterHeight = 20.dp
+private val TileSparklineHeight = 20.dp
 private val UnitMinSpacing = 6.dp
