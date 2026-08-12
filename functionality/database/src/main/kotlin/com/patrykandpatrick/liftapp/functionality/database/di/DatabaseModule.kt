@@ -19,6 +19,7 @@ import com.patrykandpatrick.liftapp.functionality.database.exercise.RoomExercise
 import com.patrykandpatrick.liftapp.functionality.database.goal.GoalDao
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration11To12
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration12To13
+import com.patrykandpatrick.liftapp.functionality.database.migration.Migration13To14
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration1To12
 import com.patrykandpatrick.liftapp.functionality.database.migration.PublishedMigrations
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanDao
@@ -83,6 +84,7 @@ interface DatabaseModule {
                     Migration11To12(json, legacyPlan = { readLegacyPlan(application) }),
                     Migration1To12,
                     Migration12To13,
+                    Migration13To14(json),
                 )
                 .build()
 

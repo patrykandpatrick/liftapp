@@ -86,12 +86,19 @@
     <string name="muscle_calves">Calves</string>
     <string name="muscle_chest">Chest</string>
     <string name="muscle_forearms">Forearms</string>
+    <!-- The three heads of the deltoid, kept apart because they receive very different volume:
+         pressing loads the front head heavily and the other two barely at all. -->
+    <string name="muscle_front_delts">Front delts</string>
     <string name="muscle_glutes">Glutes</string>
     <string name="muscle_hamstrings">Hamstrings</string>
     <string name="muscle_lats">Lats</string>
     <string name="muscle_lower_back">Lower back</string>
+    <string name="muscle_obliques">Obliques</string>
     <string name="muscle_quadriceps">Quadriceps</string>
-    <string name="muscle_shoulders">Shoulders</string>
+    <string name="muscle_rear_delts">Rear delts</string>
+    <!-- The serratus anterior, the fan of muscle over the ribs below the armpit. -->
+    <string name="muscle_serratus">Serratus</string>
+    <string name="muscle_side_delts">Side delts</string>
     <string name="muscle_traps">Traps</string>
     <string name="muscle_triceps">Triceps</string>
 
@@ -104,12 +111,16 @@
     <string name="muscle_calves_list_continuation">calves</string>
     <string name="muscle_chest_list_continuation">chest</string>
     <string name="muscle_forearms_list_continuation">forearms</string>
+    <string name="muscle_front_delts_list_continuation">front delts</string>
     <string name="muscle_glutes_list_continuation">glutes</string>
     <string name="muscle_hamstrings_list_continuation">hamstrings</string>
     <string name="muscle_lats_list_continuation">lats</string>
     <string name="muscle_lower_back_list_continuation">lower back</string>
+    <string name="muscle_obliques_list_continuation">obliques</string>
     <string name="muscle_quadriceps_list_continuation">quadriceps</string>
-    <string name="muscle_shoulders_list_continuation">shoulders</string>
+    <string name="muscle_rear_delts_list_continuation">rear delts</string>
+    <string name="muscle_serratus_list_continuation">serratus</string>
+    <string name="muscle_side_delts_list_continuation">side delts</string>
     <string name="muscle_traps_list_continuation">traps</string>
     <string name="muscle_triceps_list_continuation">triceps</string>
 
@@ -122,6 +133,23 @@
     <string name="exercise_type_reps">Reps</string>
     <string name="exercise_type_cardio">Cardio</string>
     <string name="exercise_type_time">Time</string>
+
+    <!-- What an exercise is for, which decides its rep range and how close to failure it is
+         trained. Separate from the type: a weighted pull-up is calisthenics and a primary
+         compound. -->
+    <string name="exercise_role_primary_compound">Primary compound</string>
+    <string name="exercise_role_secondary_compound">Secondary compound</string>
+    <string name="exercise_role_isolation">Isolation</string>
+    <!-- Shown for an exercise nobody has classified yet — something the user can still fix. -->
+    <string name="exercise_role_unclassified">Unclassified</string>
+    <!-- Shown for cardio and timed holds, which have no role to give and never will. Kept apart
+         from "Unclassified" so that bucket stays a list of things worth acting on. -->
+    <string name="exercise_role_none">No role</string>
+
+    <!-- How an exercise is meant to get harder over time. -->
+    <string name="progression_policy_double_progression">Double progression</string>
+    <string name="progression_policy_fixed_increment">Fixed load increase</string>
+    <string name="progression_policy_reps_only">Reps only</string>
 
     <string name="exercise_set_input_weight">Weight</string>
     <string name="exercise_set_input_body_weight">Body weight</string>
@@ -157,6 +185,8 @@
     <string name="generic_name">Name</string>
     <string name="generic_description">Description</string>
     <string name="generic_type">Type</string>
+    <string name="generic_role">Role</string>
+    <string name="generic_progression">Progression</string>
     <string name="generic_list">List</string>
     <string name="generic_main_muscles">Main muscles</string>
     <string name="generic_secondary_muscles">Secondary muscles</string>

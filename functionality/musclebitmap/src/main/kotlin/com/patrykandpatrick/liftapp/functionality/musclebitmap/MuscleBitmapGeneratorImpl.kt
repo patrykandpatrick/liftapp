@@ -109,6 +109,10 @@ constructor(private val resourceBitmapProvider: ResourceBitmapProvider) : Muscle
     }
 }
 
+// Each deltoid head is drawn where it is actually visible: the front head at the front, the rear
+// head at the back, and the side head on both, since the lateral fibres wrap round the shoulder.
+// The trapezius also shows on both — the upper fibres run up the neck at the front, the rest of the
+// sheet covers the upper back.
 internal val Muscle.isFrontMuscle: Boolean
     get() =
         when (this) {
@@ -118,15 +122,19 @@ internal val Muscle.isFrontMuscle: Boolean
             Muscle.Biceps,
             Muscle.Chest,
             Muscle.Forearms,
+            Muscle.FrontDelts,
+            Muscle.Obliques,
             Muscle.Quadriceps,
-            Muscle.Shoulders -> true
+            Muscle.Serratus,
+            Muscle.SideDelts,
+            Muscle.Traps -> true
 
             Muscle.Calves,
             Muscle.Glutes,
             Muscle.Hamstrings,
             Muscle.Lats,
             Muscle.LowerBack,
-            Muscle.Traps,
+            Muscle.RearDelts,
             Muscle.Triceps -> false
         }
 
@@ -140,13 +148,17 @@ internal val Muscle.isRearMuscle: Boolean
             Muscle.Hamstrings,
             Muscle.Lats,
             Muscle.LowerBack,
+            Muscle.RearDelts,
+            Muscle.SideDelts,
             Muscle.Traps,
-            Muscle.Shoulders,
             Muscle.Triceps -> true
 
             Muscle.Abductors,
             Muscle.Abs,
             Muscle.Biceps,
             Muscle.Chest,
-            Muscle.Quadriceps -> false
+            Muscle.FrontDelts,
+            Muscle.Obliques,
+            Muscle.Quadriceps,
+            Muscle.Serratus -> false
         }

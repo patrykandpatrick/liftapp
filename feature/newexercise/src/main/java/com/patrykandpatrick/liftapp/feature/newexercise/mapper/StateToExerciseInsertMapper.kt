@@ -15,5 +15,7 @@ class StateToExerciseInsertMapper @Inject constructor() :
             mainMuscles = input.primaryMuscles.value,
             secondaryMuscles = input.secondaryMuscles,
             tertiaryMuscles = input.tertiaryMuscles,
+            role = input.role,
+            progressionPolicy = input.progressionPolicy,
         )
 }

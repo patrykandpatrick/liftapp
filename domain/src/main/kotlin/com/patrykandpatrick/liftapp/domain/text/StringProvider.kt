@@ -2,6 +2,8 @@ package com.patrykandpatrick.liftapp.domain.text
 
 import com.patrykandpatrick.liftapp.domain.Constants
 import com.patrykandpatrick.liftapp.domain.backup.BackupDataType
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.unit.ValueUnit
@@ -94,6 +96,12 @@ interface StringProvider {
     fun getMuscleName(muscle: Muscle): String
 
     fun getMuscleList(muscles: List<Muscle>): String
+
+    /**
+     * A missing role gets a name rather than a blank, and [type] decides which one: an exercise
+     * nobody has classified is unclassified, while a run has no role to give.
+     */
+    fun getExerciseRoleName(role: ExerciseRole?, type: ExerciseType): String
 
     fun getResolvedName(name: Name): String
 

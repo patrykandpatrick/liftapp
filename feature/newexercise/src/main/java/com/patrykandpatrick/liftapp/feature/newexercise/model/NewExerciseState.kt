@@ -3,7 +3,9 @@ package com.patrykandpatrick.liftapp.feature.newexercise.model
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.exercise.ProgressionPolicy
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.validation.Validatable
@@ -20,6 +22,8 @@ sealed class NewExerciseState {
     abstract val primaryMuscles: Validatable<List<Muscle>>
     abstract val secondaryMuscles: List<Muscle>
     abstract val tertiaryMuscles: List<Muscle>
+    abstract val role: ExerciseRole?
+    abstract val progressionPolicy: ProgressionPolicy
 
     abstract val showErrors: Boolean
 
@@ -42,6 +46,8 @@ sealed class NewExerciseState {
         mainMuscles: Validatable<List<Muscle>> = this.primaryMuscles,
         secondaryMuscles: List<Muscle> = this.secondaryMuscles,
         tertiaryMuscles: List<Muscle> = this.tertiaryMuscles,
+        role: ExerciseRole? = this.role,
+        progressionPolicy: ProgressionPolicy = this.progressionPolicy,
     ): NewExerciseState =
         when {
             name is Validatable.Valid && mainMuscles is Validatable.Valid ->
@@ -52,6 +58,8 @@ sealed class NewExerciseState {
                     primaryMuscles = mainMuscles,
                     secondaryMuscles = secondaryMuscles,
                     tertiaryMuscles = tertiaryMuscles,
+                    role = role,
+                    progressionPolicy = progressionPolicy,
                     id = id,
                 )
             else ->
@@ -62,6 +70,8 @@ sealed class NewExerciseState {
                     primaryMuscles = mainMuscles,
                     secondaryMuscles = secondaryMuscles,
                     tertiaryMuscles = tertiaryMuscles,
+                    role = role,
+                    progressionPolicy = progressionPolicy,
                     showErrors = showErrors && (name.isValid.not() || mainMuscles.isValid.not()),
                     id = id,
                 )
@@ -76,6 +86,8 @@ sealed class NewExerciseState {
         override val primaryMuscles: Validatable.Valid<List<Muscle>>,
         override val secondaryMuscles: List<Muscle>,
         override val tertiaryMuscles: List<Muscle>,
+        override val role: ExerciseRole? = null,
+        override val progressionPolicy: ProgressionPolicy = ProgressionPolicy.DoubleProgression,
         override val id: Long = ID_NOT_SET,
     ) : NewExerciseState(), Parcelable {
 
@@ -95,6 +107,8 @@ sealed class NewExerciseState {
         override val primaryMuscles: Validatable<List<Muscle>> = emptyList<Muscle>().toInvalid(),
         override val secondaryMuscles: List<Muscle> = emptyList(),
         override val tertiaryMuscles: List<Muscle> = emptyList(),
+        override val role: ExerciseRole? = null,
+        override val progressionPolicy: ProgressionPolicy = ProgressionPolicy.DoubleProgression,
         override val showErrors: Boolean = false,
         override val id: Long = ID_NOT_SET,
     ) : NewExerciseState(), Parcelable {

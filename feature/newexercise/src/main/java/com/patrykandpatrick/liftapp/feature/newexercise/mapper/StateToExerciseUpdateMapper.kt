@@ -12,8 +12,11 @@ class StateToExerciseUpdateMapper @Inject constructor() :
         Exercise.Update(
             id = input.id,
             name = input.name.value,
+            exerciseType = input.type,
             mainMuscles = input.primaryMuscles.value,
             secondaryMuscles = input.secondaryMuscles,
             tertiaryMuscles = input.tertiaryMuscles,
+            role = input.role,
+            progressionPolicy = input.progressionPolicy,
         )
 }

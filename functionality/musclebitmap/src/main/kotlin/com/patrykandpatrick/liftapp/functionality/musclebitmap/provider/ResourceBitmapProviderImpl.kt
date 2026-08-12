@@ -29,6 +29,8 @@ class ResourceBitmapProviderImpl @Inject constructor(private val resources: Reso
         BitmapFactory.decodeResource(resources, drawableRes)
 }
 
+// A muscle drawn on both views owns two drawables: the plain name is the front and `_back` is the
+// rear. A muscle visible from one side only takes the plain name whichever side that is.
 val Muscle.rearDrawableRes: Int
     get() =
         when (this) {
@@ -39,14 +41,18 @@ val Muscle.rearDrawableRes: Int
             Muscle.Hamstrings -> R.drawable.body_hamstrings
             Muscle.Lats -> R.drawable.body_lats
             Muscle.LowerBack -> R.drawable.body_lower_back
-            Muscle.Traps -> R.drawable.body_traps
-            Muscle.Shoulders -> R.drawable.body_shoulders_back
+            Muscle.RearDelts -> R.drawable.body_rear_delts
+            Muscle.SideDelts -> R.drawable.body_side_delts_back
+            Muscle.Traps -> R.drawable.body_traps_back
             Muscle.Triceps -> R.drawable.body_triceps
             Muscle.Abductors,
             Muscle.Abs,
             Muscle.Biceps,
             Muscle.Chest,
-            Muscle.Quadriceps -> error("${this.name} is not a rear muscle.")
+            Muscle.FrontDelts,
+            Muscle.Obliques,
+            Muscle.Quadriceps,
+            Muscle.Serratus -> error("${this.name} is not a rear muscle.")
         }
 
 val Muscle.frontDrawableRes: Int
@@ -58,13 +64,17 @@ val Muscle.frontDrawableRes: Int
             Muscle.Biceps -> R.drawable.body_bicep
             Muscle.Chest -> R.drawable.body_chest
             Muscle.Forearms -> R.drawable.body_forearms
+            Muscle.FrontDelts -> R.drawable.body_front_delts
+            Muscle.Obliques -> R.drawable.body_obliques
             Muscle.Quadriceps -> R.drawable.body_quads
-            Muscle.Shoulders -> R.drawable.body_shoulders
+            Muscle.Serratus -> R.drawable.body_serratus
+            Muscle.SideDelts -> R.drawable.body_side_delts
+            Muscle.Traps -> R.drawable.body_traps
             Muscle.Calves,
             Muscle.Glutes,
             Muscle.Hamstrings,
             Muscle.Lats,
             Muscle.LowerBack,
-            Muscle.Traps,
+            Muscle.RearDelts,
             Muscle.Triceps -> error("${this.name} is not a front muscle.")
         }

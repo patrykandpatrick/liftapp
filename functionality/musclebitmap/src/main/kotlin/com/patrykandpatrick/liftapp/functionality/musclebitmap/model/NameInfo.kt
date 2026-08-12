@@ -11,7 +11,12 @@ private constructor(
     val secondaryMuscles: List<Muscle>,
     val tertiaryMuscles: List<Muscle>,
     val isDark: Boolean,
-    val version: Int = VERSION,
+    /**
+     * Deliberately without a default. The app's `Json` leaves `encodeDefaults` off, so a property
+     * holding its default value is left out of the encoded form — which would keep [VERSION] out of
+     * the hash and make bumping it do nothing at all.
+     */
+    val version: Int,
     val muscleImageType: MuscleImageType,
 ) {
 
@@ -44,9 +49,9 @@ private constructor(
     companion object {
         /**
          * Generated images are cached under the name this info encodes to, so bumping the version
-         * is what makes already cached ones give way to images drawn with new colors.
+         * is what makes already cached ones give way to images drawn with new colors or new art.
          */
-        const val VERSION = 1
+        const val VERSION = 3
 
         fun create(
             mainMuscles: List<Muscle>,

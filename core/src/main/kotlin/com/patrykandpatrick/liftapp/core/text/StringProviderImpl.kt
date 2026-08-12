@@ -8,9 +8,13 @@ import com.patrykandpatrick.liftapp.core.R.string
 import com.patrykandpatrick.liftapp.core.extension.stringResourceId
 import com.patrykandpatrick.liftapp.core.ui.resource.listContinuationStringRes
 import com.patrykandpatrick.liftapp.core.ui.resource.nameListContinuationStringRes
+import com.patrykandpatrick.liftapp.core.ui.resource.nameRes
 import com.patrykandpatrick.liftapp.core.ui.resource.nameStringRes
 import com.patrykandpatrick.liftapp.core.ui.resource.stringRes
 import com.patrykandpatrick.liftapp.domain.backup.BackupDataType
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.exercise.hasRole
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
@@ -135,6 +139,9 @@ class StringProviderImpl @Inject constructor(private val context: Context) : Str
                 string(if (index == 0) muscle.stringRes else muscle.listContinuationStringRes)
             }
         )
+
+    override fun getExerciseRoleName(role: ExerciseRole?, type: ExerciseType): String =
+        string(if (role == null && type.hasRole.not()) string.exercise_role_none else role.nameRes)
 
     override fun getResolvedName(name: Name): String =
         when (name) {

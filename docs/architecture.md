@@ -129,13 +129,14 @@ what is meant to reach the user.
 
 ### Room
 
-[`Database`][database] is at **version 13**, with `exportSchema = true` and a handful of
+[`Database`][database] is at **version 14**, with `exportSchema = true` and a handful of
 `@DatabaseView`s alongside the entities. Versions 2–11 belong to the published app, so [`migration`][migration]
 carries its chain (`PublishedMigrations`) plus the two paths into the rewrite: `Migration11To12`
 from the Play Store build, `Migration1To12` from an early install. Everything from 12 up is the
-rewrite's own — `Migration12To13` adds reps in reserve. Exported JSON sits in
-`functionality/database/schemas/`, also registered as a test asset directory so
-`MigrationTestHelper` can read it; a fresh install is seeded by [`DatabaseCallback`][callback].
+rewrite's own — `Migration12To13` adds reps in reserve, `Migration13To14` classifies exercises and
+splits the deltoid. Exported JSON sits in `functionality/database/schemas/`, also registered as a
+test asset directory so `MigrationTestHelper` can read it; a fresh install is seeded by
+[`DatabaseCallback`][callback].
 
 **Changing the schema means a new version, a migration, a new exported JSON, and a migration test.**
 
@@ -145,7 +146,9 @@ rewrite's own — `Migration12To13` adds reps in reserve. Exported JSON sits in
   Queries built at runtime use `@RawQuery`.
 - **Converters** live in `converter/`. `JsonConverters` is `@ProvidedTypeConverter` with an injected
   `Json` and serializes the rich types — `Name`, `Goal`, `List<Muscle>`, units — to strings;
-  `LocalDateTimeConverters` handles dates; enums use Room's built-in converter.
+  `LocalDateTimeConverters` handles dates; enums use Room's built-in converter. `List<Muscle>` goes
+  through `MuscleListSerializer`, which resolves retired constant names and drops unknown ones,
+  because a `.lfa` archive replays raw column text that no migration can ever reach.
 - **Mappers** split by direction: `toDomain(...)` is a method on an `@Inject`-constructed `XMapper`,
   `toEntity()` an extension function. A read is typically
   `dao.getX().map(mapper::toDomain).flowOn(dispatcher)`.

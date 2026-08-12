@@ -1,12 +1,18 @@
 package com.patrykandpatrick.liftapp.feature.newexercise.model
 
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.exercise.ProgressionPolicy
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 
 sealed interface Action {
     data class UpdateName(val name: String) : Action
 
     data class UpdateExerciseType(val exerciseType: ExerciseType) : Action
+
+    data class UpdateRole(val role: ExerciseRole?) : Action
+
+    data class UpdateProgressionPolicy(val progressionPolicy: ProgressionPolicy) : Action
 
     data class MainMuscleListAction(val listAction: ListAction) : Action
 

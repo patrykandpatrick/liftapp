@@ -32,6 +32,33 @@ class JsonConvertersTest {
     }
 
     @Test
+    fun `Muscles are stored under their constant names`() {
+        assertEquals(
+            """["Chest","FrontDelts"]""",
+            converter.toString(listOf(Muscle.Chest, Muscle.FrontDelts)),
+        )
+    }
+
+    // A `.lfa` archive written before the deltoid was split replays raw column text back into the
+    // table at any later date, so this is the only thing standing between an old backup and a
+    // crash on restore.
+    @Test
+    fun `A muscle list written before the deltoid was split reads as the front head`() {
+        assertContentEquals(
+            listOf(Muscle.Chest, Muscle.FrontDelts),
+            converter.toMuscles("""["Chest","Shoulders"]"""),
+        )
+    }
+
+    @Test
+    fun `A muscle this version does not know is dropped rather than failing the whole list`() {
+        assertContentEquals(
+            listOf(Muscle.Chest, Muscle.Triceps),
+            converter.toMuscles("""["Chest","Sternocleidomastoid","Triceps"]"""),
+        )
+    }
+
+    @Test
     fun `Conversion of Name#Raw to String and back yields the same result`() {
         val input = Name.Raw("A raw name")
         val serializedInput = converter.toString(input)

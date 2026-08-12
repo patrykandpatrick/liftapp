@@ -71,6 +71,10 @@ constructor(
                             }
                     }
             }
+            GroupBy.Role ->
+                groupBy { exercise ->
+                    stringProvider.getExerciseRoleName(exercise.role, exercise.exerciseType)
+                }
         }
 
     private fun Map<String, List<Exercise>>.sortByHeader() = toSortedMap { header1, header2 ->

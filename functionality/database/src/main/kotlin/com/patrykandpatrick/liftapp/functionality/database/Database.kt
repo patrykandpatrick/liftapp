@@ -53,7 +53,7 @@ import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutItemEn
     views = [BodyMeasurementWithLatestEntryViewResult::class, RoutineWithExerciseNamesView::class],
     // 2 through 11 belong to the published app; 12 onwards is this schema. See the `migration`
     // package.
-    version = 13,
+    version = 14,
     exportSchema = true,
 )
 @TypeConverters(

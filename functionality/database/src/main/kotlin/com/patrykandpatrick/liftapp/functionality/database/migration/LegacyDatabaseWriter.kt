@@ -11,6 +11,7 @@ import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.domain.unit.PercentageUnit
 import com.patrykandpatrick.liftapp.domain.unit.ShortDistanceUnit
+import com.patrykandpatrick.liftapp.functionality.database.converter.MuscleListSerializer
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -397,8 +398,18 @@ class LegacyDatabaseWriter(private val json: Json) {
         )
 }
 
-private fun muscle(value: String): Muscle? =
-    Muscle.entries.firstOrNull { it.name.equals(value.replace("_", ""), ignoreCase = true) }
+/**
+ * The published app spelled its muscles `SHOULDERS` and `LOWER_BACK`, so match case-insensitively
+ * with the separators removed. [MuscleListSerializer.ALIASES] covers the names this app has since
+ * retired — without it a legacy import would silently drop every shoulder annotation.
+ */
+private fun muscle(value: String): Muscle? {
+    val normalized = value.replace("_", "")
+    return Muscle.entries.firstOrNull { it.name.equals(normalized, ignoreCase = true) }
+        ?: MuscleListSerializer.ALIASES.entries
+            .firstOrNull { (alias, _) -> alias.equals(normalized, ignoreCase = true) }
+            ?.value
+}
 
 private fun String.titlecase(): String = lowercase().replaceFirstChar(Char::titlecase)
 

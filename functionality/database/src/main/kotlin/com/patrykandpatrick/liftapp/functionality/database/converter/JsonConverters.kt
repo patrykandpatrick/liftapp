@@ -27,9 +27,14 @@ class JsonConverters @Inject constructor(private val json: Json) {
     @TypeConverter
     fun toBodyValues(string: String): BodyMeasurementValue = json.decodeFromString(string)
 
-    @TypeConverter fun toString(muscles: List<Muscle>): String = json.encodeToString(muscles)
+    // The one place the muscle columns are (de)serialized, and so the one place that has to survive
+    // a name this version no longer knows. See MuscleListSerializer.
+    @TypeConverter
+    fun toString(muscles: List<Muscle>): String = json.encodeToString(MuscleListSerializer, muscles)
 
-    @TypeConverter fun toMuscles(string: String): List<Muscle> = json.decodeFromString(string)
+    @TypeConverter
+    fun toMuscles(string: String): List<Muscle> =
+        json.decodeFromString(MuscleListSerializer, string)
 
     @TypeConverter fun toString(goal: Goal): String = json.encodeToString(goal)
 

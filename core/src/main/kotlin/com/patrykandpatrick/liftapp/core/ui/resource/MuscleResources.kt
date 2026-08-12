@@ -17,12 +17,16 @@ val Muscle.stringRes: Int
             Muscle.Calves -> R.string.muscle_calves
             Muscle.Chest -> R.string.muscle_chest
             Muscle.Forearms -> R.string.muscle_forearms
+            Muscle.FrontDelts -> R.string.muscle_front_delts
             Muscle.Glutes -> R.string.muscle_glutes
             Muscle.Hamstrings -> R.string.muscle_hamstrings
             Muscle.Lats -> R.string.muscle_lats
             Muscle.LowerBack -> R.string.muscle_lower_back
+            Muscle.Obliques -> R.string.muscle_obliques
             Muscle.Quadriceps -> R.string.muscle_quadriceps
-            Muscle.Shoulders -> R.string.muscle_shoulders
+            Muscle.RearDelts -> R.string.muscle_rear_delts
+            Muscle.Serratus -> R.string.muscle_serratus
+            Muscle.SideDelts -> R.string.muscle_side_delts
             Muscle.Traps -> R.string.muscle_traps
             Muscle.Triceps -> R.string.muscle_triceps
         }
@@ -37,12 +41,16 @@ val Muscle.listContinuationStringRes: Int
             Muscle.Calves -> R.string.muscle_calves_list_continuation
             Muscle.Chest -> R.string.muscle_chest_list_continuation
             Muscle.Forearms -> R.string.muscle_forearms_list_continuation
+            Muscle.FrontDelts -> R.string.muscle_front_delts_list_continuation
             Muscle.Glutes -> R.string.muscle_glutes_list_continuation
             Muscle.Hamstrings -> R.string.muscle_hamstrings_list_continuation
             Muscle.Lats -> R.string.muscle_lats_list_continuation
             Muscle.LowerBack -> R.string.muscle_lower_back_list_continuation
+            Muscle.Obliques -> R.string.muscle_obliques_list_continuation
             Muscle.Quadriceps -> R.string.muscle_quadriceps_list_continuation
-            Muscle.Shoulders -> R.string.muscle_shoulders_list_continuation
+            Muscle.RearDelts -> R.string.muscle_rear_delts_list_continuation
+            Muscle.Serratus -> R.string.muscle_serratus_list_continuation
+            Muscle.SideDelts -> R.string.muscle_side_delts_list_continuation
             Muscle.Traps -> R.string.muscle_traps_list_continuation
             Muscle.Triceps -> R.string.muscle_triceps_list_continuation
         }

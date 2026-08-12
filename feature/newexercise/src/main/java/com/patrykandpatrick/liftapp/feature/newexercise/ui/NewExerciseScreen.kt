@@ -1,7 +1,13 @@
 package com.patrykandpatrick.liftapp.feature.newexercise.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -34,10 +40,17 @@ import com.patrykandpatrick.liftapp.core.ui.BottomAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatrick.liftapp.core.ui.LiftAppTextFieldWithSupportingText
+import com.patrykandpatrick.liftapp.core.ui.animation.ENTER_ANIM_DURATION
+import com.patrykandpatrick.liftapp.core.ui.animation.EXIT_ANIM_DURATION
+import com.patrykandpatrick.liftapp.core.ui.resource.getExerciseRolePrettyName
 import com.patrykandpatrick.liftapp.core.ui.resource.getMusclePrettyName
 import com.patrykandpatrick.liftapp.core.ui.resource.prettyList
 import com.patrykandpatrick.liftapp.core.ui.resource.prettyName
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.exercise.ProgressionPolicy
+import com.patrykandpatrick.liftapp.domain.exercise.carriesLoad
+import com.patrykandpatrick.liftapp.domain.exercise.hasRole
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.feature.newexercise.model.Action
 import com.patrykandpatrick.liftapp.feature.newexercise.model.NewExerciseState
@@ -108,18 +121,27 @@ private fun NewExerciseScreen(
                         start = dimens.screen.padding,
                         top = dimens.screen.padding,
                         end = dimens.screen.padding,
-                        bottom = dimens.screen.padding,
-                    ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                    )
         ) {
             Content(state = state, onAction = onAction)
         }
     }
 }
 
+/**
+ * The gap below a field, carried by the field rather than by the [Column] that holds it, so that a
+ * field which animates away takes its share of the spacing with it. The trailing gap under the last
+ * field doubles as the form's bottom padding.
+ */
+private val FieldSpacing = 16.dp
+
+private val fieldModifier = Modifier.fillMaxWidth().padding(bottom = FieldSpacing)
+
 @Composable
-private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
+private fun ColumnScope.Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     val (typeExpanded, setTypeExpanded) = remember { mutableStateOf(false) }
+    val (roleExpanded, setRoleExpanded) = remember { mutableStateOf(false) }
+    val (progressionExpanded, setProgressionExpanded) = remember { mutableStateOf(false) }
     val (mainMusclesExpanded, setMainMusclesExpanded) = remember { mutableStateOf(false) }
     val (secondaryMusclesExpanded, setSecondaryMusclesExpanded) = remember { mutableStateOf(false) }
     val (tertiaryMusclesExpanded, setTertiaryMusclesExpanded) = remember { mutableStateOf(false) }
@@ -128,7 +150,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     val focusManager = LocalFocusManager.current
 
     LiftAppTextFieldWithSupportingText(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = fieldModifier,
         value = state.displayName,
         onValueChange = { onAction(Action.UpdateName(it)) },
         label = { Text(text = stringResource(id = R.string.generic_name)) },
@@ -153,6 +175,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     )
 
     ListTextField(
+        modifier = fieldModifier,
         expanded = typeExpanded,
         onExpandedChange = setTypeExpanded,
         selectedItem = state.type,
@@ -162,7 +185,39 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         onClick = { onAction(Action.UpdateExerciseType(it)) },
     )
 
+    // Both fields are shown only where the type admits more than one answer. Cardio and a timed
+    // hold have no role at all, and nothing that records no load can progress one, so offering the
+    // choice there would be a question with a single correct answer.
+    HideableField(visible = state.type.hasRole) {
+        // Null is a value in this list, not an absence — it is how the user says an exercise is
+        // one they would rather not classify.
+        ListTextField(
+            modifier = fieldModifier,
+            expanded = roleExpanded,
+            onExpandedChange = setRoleExpanded,
+            selectedItem = state.role,
+            items = remember { listOf(null) + ExerciseRole.entries },
+            getItemText = getExerciseRolePrettyName,
+            label = stringResource(id = R.string.generic_role),
+            onClick = { onAction(Action.UpdateRole(it)) },
+        )
+    }
+
+    HideableField(visible = state.type.carriesLoad) {
+        ListTextField(
+            modifier = fieldModifier,
+            expanded = progressionExpanded,
+            onExpandedChange = setProgressionExpanded,
+            selectedItem = state.progressionPolicy,
+            items = remember { ProgressionPolicy.entries },
+            getItemText = { it.prettyName },
+            label = stringResource(id = R.string.generic_progression),
+            onClick = { onAction(Action.UpdateProgressionPolicy(it)) },
+        )
+    }
+
     ListTextField(
+        modifier = fieldModifier,
         expanded = mainMusclesExpanded,
         onExpandedChange = setMainMusclesExpanded,
         selectedItems = state.primaryMuscles.value,
@@ -178,6 +233,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     )
 
     ListTextField(
+        modifier = fieldModifier,
         expanded = secondaryMusclesExpanded,
         onExpandedChange = setSecondaryMusclesExpanded,
         selectedItems = state.secondaryMuscles,
@@ -193,6 +249,7 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
     )
 
     ListTextField(
+        modifier = fieldModifier,
         expanded = tertiaryMusclesExpanded,
         onExpandedChange = setTertiaryMusclesExpanded,
         selectedItems = state.tertiaryMuscles,
@@ -204,6 +261,30 @@ private fun Content(state: NewExerciseState, onAction: (Action) -> Unit) {
         onClear = { onAction(Action.TertiaryMuscleListAction(Action.ListAction.Clear)) },
         disabledItems = state.disabledTertiaryMuscles,
     )
+}
+
+/**
+ * A field only some exercise types have, which grows and fades in rather than appearing between two
+ * others without warning.
+ *
+ * The gap below the field belongs to the field itself — see [fieldModifier] — so it collapses along
+ * with it. Were the spacing the [Column]'s instead, a child of zero height would still have spacing
+ * reserved on both sides of it, and everything below would drop by one gap in a single frame at the
+ * very end of an otherwise smooth animation.
+ */
+@Composable
+private fun ColumnScope.HideableField(visible: Boolean, content: @Composable () -> Unit) {
+    AnimatedVisibility(
+        visible = visible,
+        enter =
+            expandVertically(animationSpec = tween(ENTER_ANIM_DURATION)) +
+                fadeIn(animationSpec = tween(ENTER_ANIM_DURATION)),
+        exit =
+            shrinkVertically(animationSpec = tween(EXIT_ANIM_DURATION)) +
+                fadeOut(animationSpec = tween(EXIT_ANIM_DURATION)),
+    ) {
+        content()
+    }
 }
 
 @MultiDevicePreview

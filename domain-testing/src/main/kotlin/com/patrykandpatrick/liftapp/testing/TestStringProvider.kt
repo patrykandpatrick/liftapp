@@ -1,6 +1,9 @@
 package com.patrykandpatrick.liftapp.testing
 
 import com.patrykandpatrick.liftapp.domain.backup.BackupDataType
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.exercise.hasRole
 import com.patrykandpatrick.liftapp.domain.extension.getTypeErrorMessage
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
@@ -122,6 +125,9 @@ object TestStringProvider : StringProvider {
     override fun getMuscleName(muscle: Muscle): String = muscle.name
 
     override fun getMuscleList(muscles: List<Muscle>): String = formatList(muscles.map { it.name })
+
+    override fun getExerciseRoleName(role: ExerciseRole?, type: ExerciseType): String =
+        role?.name ?: if (type.hasRole) "Unclassified" else "No role"
 
     override fun getErrorNameTooLong(actual: Int, limit: Int): String =
         "The name is too long (%1\$d/%2\$d).".format(actual, limit)

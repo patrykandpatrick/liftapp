@@ -18,6 +18,9 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
             primaryMuscles = exercise.mainMuscles,
             secondaryMuscles = exercise.secondaryMuscles,
             tertiaryMuscles = exercise.tertiaryMuscles,
+            role = exercise.role,
+            progressionPolicy = exercise.progressionPolicy,
+            loadIncrement = exercise.loadIncrement,
         )
 
     fun toDomain(exercises: List<ExerciseEntity>): List<Exercise> = exercises.map(::toDomain)
@@ -59,6 +62,9 @@ internal fun Exercise.Insert.toEntity(): ExerciseEntity =
         mainMuscles = mainMuscles,
         secondaryMuscles = secondaryMuscles,
         tertiaryMuscles = tertiaryMuscles,
+        role = role,
+        progressionPolicy = progressionPolicy,
+        loadIncrement = loadIncrement,
     )
 
 internal fun List<Exercise.Insert>.toEntity(): List<ExerciseEntity> = map { it.toEntity() }
@@ -67,7 +73,10 @@ internal fun Exercise.Update.toEntity(): ExerciseEntity.Update =
     ExerciseEntity.Update(
         id = id,
         name = name,
+        exerciseType = exerciseType,
         mainMuscles = mainMuscles,
         secondaryMuscles = secondaryMuscles,
         tertiaryMuscles = tertiaryMuscles,
+        role = role,
+        progressionPolicy = progressionPolicy,
     )
