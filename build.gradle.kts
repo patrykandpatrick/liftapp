@@ -99,5 +99,13 @@ subprojects {
     }
     pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
         detektCheck.configure { dependsOn(tasks.named("detektMain"), tasks.named("detektTest")) }
+        // A JVM module's test task is `test`, so `./gradlew testDebug` — what CI runs, and what
+        // AGENTS.md documents as "all unit tests" — matched nothing here and silently skipped
+        // `:domain` entirely. Alias it rather than teach every caller which modules are which.
+        tasks.register("testDebug") {
+            group = "verification"
+            description = "Runs the unit tests, under the name the Android modules use."
+            dependsOn(tasks.named("test"))
+        }
     }
 }
