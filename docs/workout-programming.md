@@ -8,6 +8,35 @@ It is written to be implemented, so it commits to numbers. Where the evidence do
 number, it says so rather than inventing one — the sections marked **Weak** are the ones where the
 app should stay out of the user's way.
 
+## What is built so far
+
+Two phases have landed, and neither prescribes anything yet. Together they are the measurement and
+the vocabulary that everything in Parts 3 and 4 depends on.
+
+**Reps in reserve** (`716e0ce6`, schema 13). [`ExerciseSet`][set] carries a nullable `rir` in
+`0..4`, collected as a small integer set and clamped wherever it is written. Null is not zero: an
+unreported set has no effort attached to it, zero means the set went to failure. `Weight`,
+`Calisthenics` and `Reps` only. This is item 1 of [Part 5](#part-5--what-this-app-is-missing), and
+it is what makes an [RIR-adjusted e1RM](#rir-adjusted-e1rm) possible — nothing computes one yet.
+
+**Exercise classification and the deltoid split** (`ec711df0`, schema 14). [`Exercise`][ex] gains a
+nullable `role` (primary compound / secondary compound / isolation), a `progressionPolicy` (double
+progression / fixed increment / reps-only), and a `loadIncrement` in kilograms — the step "round
+to the equipment" asks for. All 101 seeded exercises are classified by hand: 13 primary
+compounds, 38 secondary, 39 isolation, and null for exactly the eleven `Cardio` and `Time` entries,
+which have no role to give. The muscle-count heuristic this document warns about is offered as a
+pre-selection in the exercise editor and never stored, because the three-way split it is asked for
+is right only about 70% of the time and finds 3 of 13 primary compounds. This is items 5 and 8.
+
+The same phase split [`Muscle`][muscle]`.Shoulders` into `FrontDelts`, `SideDelts` and `RearDelts`,
+and added `Obliques` and `Serratus`. Two mis-annotations in the seeded catalog were corrected on the
+way through: `Shrugs` named the shoulders where the traps belong, and the two cable hip machines
+each named the group the other works.
+
+Still open, in the order Part 5 gives them: per-set targets (2), a target load (3), training intent
+(4), a week index on [`Plan`][plan] (6), and per-exercise fatigue cost (7). Items 2 through 4 are
+being taken together, by moving prescription out of `Goal` and into the plan.
+
 ## What the app actually has to decide
 
 A prescription for one exercise in one workout is five numbers, and today [`Goal`][goal] only
@@ -169,8 +198,10 @@ of it that is defensible.
 ## Part 2 — Defaults
 
 Defaults have to come from somewhere the app already knows. Two axes are available:
-[`ExerciseType`][type], and whether the exercise is compound or isolation — which the model does
-*not* record today (see [gaps](#part-5--what-this-app-is-missing)).
+[`ExerciseType`][type], and whether the exercise is compound or isolation — which [`Exercise`][ex]
+now records as a nullable `role`. Nullable is the operative word: `Cardio` and `Time` have no role,
+and neither does an exercise the user wrote and has not classified, so every default indexed by
+role needs an answer for its absence.
 
 ### Rep range and RIR by exercise role
 
@@ -376,18 +407,22 @@ Sum `sets × weight` per muscle across all routines in the cycle, normalise to a
 length, and compare against the landmarks in Part 1. Present it as a band, not a number — the input
 precision does not justify one decimal place.
 
-One modelling problem to be aware of: [`Muscle`][muscle] has a single `Shoulders` entry. Front delts
-receive heavy indirect volume from every press while side and rear delts receive almost none, so
-aggregate shoulder volume is the least trustworthy row in that table. Splitting the enum is a
-migration; until then, do not let the app conclude the user's shoulders are covered.
+The shoulder row used to be the least trustworthy in that table, because [`Muscle`][muscle] had a
+single `Shoulders` entry while front delts receive heavy indirect volume from every press and side
+and rear delts receive almost none. The enum now names the three heads separately, so those rows
+mean something. One residue: a muscle list written before the split resolves `Shoulders` to
+`FrontDelts` alone, which under-claims the other two heads on purpose, so an exercise the user has
+not revisited reads as front-delt work.
 
 ## Part 5 — What this app is missing
 
-In rough dependency order.
+In rough dependency order. Items 1, 5 and 8 are done — see
+[What is built so far](#what-is-built-so-far) — and stay here so the numbering the rest of this
+document uses still holds.
 
-1. **RIR on [`ExerciseSet`][set].** Nullable `Int`, valid `0..4`, meaningless for `Cardio`/`Time`.
-   Nothing autoregulates without it. The backup format is schema-driven and derives its header from
-   the table, so a new column travels for free — but it is still a Room migration.
+1. **RIR on [`ExerciseSet`][set].** *Done, schema 13.* Nullable `Int`, valid `0..4`, meaningless for
+   `Cardio`/`Time`. Nothing autoregulates without it. The backup format is schema-driven and derives
+   its header from the table, so a new column travels for free — but it is still a Room migration.
 
 2. **Per-set targets instead of a flat [`Goal`][goal].** The current shape cannot express a top set
    plus back-offs, a load drop, or a rep drop. Either give `Goal` a list of per-set targets or add a
@@ -399,9 +434,10 @@ In rough dependency order.
 4. **Training intent.** Strength / hypertrophy / both, per routine or per exercise. Every default
    table in Part 2 is indexed by it.
 
-5. **Compound vs isolation classification.** Not in the model. `primaryMuscles.size` is a tempting
-   proxy and a bad one — a barbell curl has one primary muscle and a cable fly has one too. Make it
-   an explicit field on [`Exercise`][ex], defaulted per seeded exercise.
+5. **Compound vs isolation classification.** *Done, schema 14, as a nullable three-way `role`.*
+   `primaryMuscles.size` is a tempting proxy and a bad one — a barbell curl has one primary muscle
+   and a cable fly has one too. It is an explicit field on [`Exercise`][ex], authored per seeded
+   exercise.
 
 6. **A week/cycle index on [`Plan`][plan].** Without it there is no mesocycle, so no RIR ramp, no
    volume ramp, and no scheduled deload.
@@ -409,8 +445,9 @@ In rough dependency order.
 7. **Per-exercise fatigue cost.** A three-level hint (low/moderate/high) would let the app stop
    suggesting 5 sets of 15 deadlifts. Cannot be derived from muscle lists.
 
-8. **A progression policy per exercise.** Double progression, fixed load increment, or reps-only.
-   Small-load exercises must default to reps-only.
+8. **A progression policy per exercise.** *Done, schema 14, alongside a per-exercise load
+   increment.* Double progression, fixed load increment, or reps-only. Small-load exercises default
+   to reps-only, as does everything that records no external load at all.
 
 ### The autoregulation loop, once those exist
 
