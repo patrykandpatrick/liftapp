@@ -1,11 +1,28 @@
 # Workout programming — implementation roadmap, phases 2–7
 
+## Status
+
+**Phases 2 and 3 have shipped.** Phase 4 is next, and needs nothing that is not already there.
+
+| Phase | State |
+| --- | --- |
+| 2 — Classification, progression metadata, shoulder split | **Done**, `ec711df0`, schema 14 |
+| 3 — Estimation math | **Done**, `ed1476b5`, no schema |
+| 4 — Weekly volume per muscle (actual) | Next |
+| 5 — Prescription moves into the plan | Open, schema 15 |
+| 6 — Autoregulation and stalls | Open |
+| 7 — Mesocycle, deloads, planned volume | Open |
+
+Each shipped phase keeps its section below, with what actually happened recorded at the top of it.
+The plan is left as written underneath: where the two disagree, the note is what is true.
+
 ## Context
 
 [workout-programming.md](workout-programming.md) is the reference for how LiftApp should prescribe
-work. Its Part 5 lists eight gaps "in rough dependency order"; **item 1 (RIR on `ExerciseSet`)
-shipped** in `716e0ce6`. This roadmap covers everything left: the math in Part 4, the progression
-mechanics in Part 3, and items 2–8.
+work. Its Part 5 lists eight gaps "in rough dependency order"; **items 1, 5 and 8 have shipped**, in
+`716e0ce6` and `ec711df0`. This roadmap covers everything left: the math in Part 4 (shipped as
+Phase 3, and not itself a Part 5 item), the progression mechanics in Part 3, and items 2, 3, 4, 6
+and 7.
 
 One decision reshapes the rest. The reference assumes `Goal` stays where it is and grows fields.
 Instead, **prescription moves into the plan**: exercises stop carrying goals, and targets are
@@ -32,6 +49,12 @@ genuine judgement calls. It can be added later as one more column in the same sh
 ---
 
 ## Phase 2 — Exercise classification, progression metadata, and the shoulder split
+
+> **Shipped** in `ec711df0` as schema 14, as planned. All 101 seeded exercises were classified by
+> hand — 13 primary compounds, 38 secondary, 39 isolation, null for the eleven `Cardio` and `Time`
+> entries. The split also added `Obliques` and `Serratus`, which the plan below does not mention,
+> and corrected two mis-annotations beyond the `Shrugs` one anticipated here: the two cable hip
+> machines each named the group the other works.
 
 **Schema 13 → 14.** Items 5 and 8, plus the `Muscle.Shoulders` split from Part 4. First because it
 has the longest lead time — ~250 authored defaults — and because Phase 5's target generator and
@@ -191,6 +214,31 @@ throwing and lands on `FrontDelts`. Check the muscle diagram renders for an exer
 ---
 
 ## Phase 3 — Estimation math
+
+> **Shipped** in `ed1476b5`, no schema. Four things worth carrying forward, three of which this plan
+> did not anticipate:
+>
+> - **Part 4's percentage table is the *inverse* curve** — each cell is `loadFor` against a 100 kg
+>   e1RM, not the percentage a 100 kg set implies. Read forwards it misses by up to 3.3 points at
+>   20 reps; read as the inverse all 36 cells reproduce exactly. It is now the acceptance test, and
+>   the reference says which direction it runs in.
+> - **The floor is 20 kg**, and it is a judgement call rather than a derived value. This plan's
+>   "plausible band" figures (~47 kg at 10 reps, ~87 kg at 12) would have left the new curve
+>   applying to almost nothing; 53 kg is a hard ceiling, being the table's lightest cell, which has
+>   to stay on the weight-dependent curve for the acceptance test to mean anything. The curve
+>   degrades continuously, so there is no boundary to find — 20 kg is an equipment landmark that
+>   catches the 10 kg lateral raise this plan names.
+> - **The two curves do not meet**, crossing near 100 kg, so the floor is a step and not a seam. The
+>   step is upward at every rep count, so the estimate stays monotonic in load; `loadFor` returns
+>   the floor for the band of one-rep maxes that no load reaches. Both are asserted.
+> - **`./gradlew testDebug` was not running `:domain`'s tests at all.** A JVM module's test task is
+>   `test`, so the name CI uses — and that [AGENTS.md](../AGENTS.md) calls "all unit tests" —
+>   matched nothing in the module this phase lives in. Aliased in the root build; see
+>   [Cross-cutting](#cross-cutting).
+>
+> Beyond the plan: the exercise chart now folds in a recorded RIR, so a set of 8 at 2 RIR plots as a
+> 10-rep max. A null RIR keeps the old reading, so sets logged before Phase 1 are untouched. The
+> mapper had no test and now has one.
 
 **No schema. Pure `:domain`.** Independent of Phase 2; either order works.
 
@@ -409,5 +457,9 @@ Every schema phase needs a version bump, a migration, an exported JSON, and a mi
 but restoring an older archive writes new columns at their SQL default, so prefer defaults that are
 honest about being unknown. Run `./gradlew testDebug ktfmtCheck detektCheck` per phase, and
 `./gradlew -p build-logic :convention:ktfmtCheck` if a convention plugin is touched.
+
+`testDebug` now reaches the JVM modules too. It did not before Phase 3 — the root build registers it
+as an alias for `test` there — so a test added to `:domain` before that commit was never run by CI.
+Worth knowing when reading a green run from further back.
 
 [arxiv]: https://arxiv.org/abs/2603.17495

@@ -10,8 +10,8 @@ app should stay out of the user's way.
 
 ## What is built so far
 
-Two phases have landed, and neither prescribes anything yet. Together they are the measurement and
-the vocabulary that everything in Parts 3 and 4 depends on.
+Three phases have landed, and none of them prescribes anything yet. Together they are the
+measurement, the vocabulary and the arithmetic that everything in Part 3 depends on.
 
 **Reps in reserve** (`716e0ce6`, schema 13). [`ExerciseSet`][set] carries a nullable `rir` in
 `0..4`, collected as a small integer set and clamped wherever it is written. Null is not zero: an
@@ -32,6 +32,20 @@ The same phase split [`Muscle`][muscle]`.Shoulders` into `FrontDelts`, `SideDelt
 and added `Obliques` and `Serratus`. Two mis-annotations in the seeded catalog were corrected on the
 way through: `Shrugs` named the shoulders where the traps belong, and the two cable hip machines
 each named the group the other works.
+
+**Estimation math** (`ed1476b5`, no schema). [`OneRepMaxCalculator`][orm] now carries all of
+[Part 4](#part-4--the-math)'s arithmetic: the [weight-dependent curve](#estimated-1rm) above a
+20 kg floor with Epley below it, an [RIR-adjusted estimate](#rir-adjusted-e1rm), the
+[inverse](#load-for-a-target) that turns a rep and RIR target into a load, and the snap to an
+exercise's `loadIncrement`. Every entry point takes a [`MassUnit`][mass_unit] and normalises to
+kilograms, because the `ln w` term makes the curve unit-dependent where Epley was not. The exercise
+chart reads a recorded RIR, so a set of 8 at 2 RIR plots as the 10-rep max it is; a set logged
+before RIR existed is unchanged, because a null RIR is not a zero.
+
+This is not a Part 5 item — it is the math those items will call, and until they exist nothing
+consumes `loadFor` or the rounding. What it does mean is that
+[the autoregulation loop](#the-autoregulation-loop-once-those-exist) is now missing only its inputs,
+not its primitives.
 
 Still open, in the order Part 5 gives them: per-set targets (2), a target load (3), training intent
 (4), a week index on [`Plan`][plan] (6), and per-exercise fatigue cost (7). Items 2 through 4 are
@@ -325,7 +339,7 @@ to hang off. This is the second big gap after per-set targets.
 ### Estimated 1RM
 
 Everything load-related keys off an e1RM, and the app can compute one from any near-failure logged
-set. [`OneRepMaxCalculator`][orm] currently uses Epley:
+set. [`OneRepMaxCalculator`][orm] used to be Epley alone:
 
 ```
 1RM = w × (1 + r / 30)
@@ -344,11 +358,24 @@ conversion factor vary with the load lifted ([arXiv 2603.17495][arxiv]):
 ```
 
 It reduced internal inconsistency by 17–22% against four classical formulas, improved on every one
-of the 183 exercises with enough data, and is exact at `r = 1` by construction. Worth adopting —
-with **one blocking caveat**: the `ln(w)` term makes the formula **unit-dependent**. The paper does
-not state the unit in its abstract, and the app supports both [`MassUnit`][mass_unit] values.
-Determine the source unit and normalise before applying, or the formula will be systematically wrong
-for every lb user. Verify against the paper before shipping.
+of the 183 exercises with enough data, and is exact at `r = 1` by construction. **This is what the
+app uses**, above a load floor. Three things were settled on the way in:
+
+- **`w` is in kilograms.** The `ln(w)` term makes the formula unit-dependent, and the paper does not
+  say so in its abstract. Reading `w` as kg reproduces every cell of the table below to the rounded
+  percentage point, which settles it. Every entry point takes a [`MassUnit`][mass_unit] and
+  normalises. Epley is scale-invariant, so there was no unit bug to inherit — the `ln(w)` term
+  introduces one, and the callers were all passing the user's preferred unit.
+- **It collapses at light loads.** The divisor reaches zero at `w ≈ 1.745 kg` and is unreliable well
+  above that. A 10 kg lateral raise for 12 reps comes out at 51% of one-rep max against the 69% in
+  the table below — precisely the light, high-rep isolation work Part 2 puts at 10–15 reps. Below
+  **20 kg** the app falls back to Epley.
+- **The two curves do not meet.** They cross near 100 kg, so the floor is a step rather than a seam.
+  The step is upward at every rep count, so the estimate still rises with the load across it, and
+  the inverse below returns the floor for the narrow band of one-rep maxes no load reaches. 20 kg is
+  an equipment landmark, not a fitted value: the curve degrades continuously, and the constraint
+  that fixes the ceiling is that the table below — whose lightest cell is 53 kg — has to stay on the
+  weight-dependent curve.
 
 ### RIR-adjusted e1RM
 
@@ -359,8 +386,11 @@ fun estimatedOneRepMax(weight: Double, reps: Int, rir: Int): Double =
     oneRepMax(weight, reps + rir)
 ```
 
-A set of 8 at 2 RIR is a 10-rep max. Without a recorded RIR this cannot be computed, which is why the
-missing field on [`ExerciseSet`][set] blocks the whole feature.
+A set of 8 at 2 RIR is a 10-rep max. Both halves of this are now in place — the field on
+[`ExerciseSet`][set] and the function — and `rir` is deliberately **not** nullable here, though the
+field is. An unrecorded RIR is not a zero, so the caller has to decide what an unreported set means
+rather than have the arithmetic quietly assume failure. The exercise chart decides it the only way
+available: read the reps logged as the reps that were there, which is what it always did.
 
 ### Load for a target
 
@@ -391,7 +421,12 @@ Two derived rules the UI can use directly:
 - **One rep ≈ 3% of load** in the 5–12 rep band, ~4% in the 2–4 band, ~5% at 1 rep. So a user who
   missed their rep target by 2 reps should drop ~6%, not "a plate".
 - **Round to the equipment.** Compute a target, then snap it to what the user can actually load. A
-  suggestion of 62.4 kg is worse than 62.5 kg even though it is more precise.
+  suggestion of 62.4 kg is worse than 62.5 kg even though it is more precise. `roundToIncrement`
+  does this against the exercise's `loadIncrement`, and leaves the load alone where no step has been
+  recorded rather than inventing one.
+
+The inverse is `loadFor`, and the table above is its acceptance test: the curve has no closed-form
+inverse, so it is solved by iteration.
 
 ### Volume accounting
 
@@ -453,6 +488,10 @@ document uses still holds.
    to reps-only, as does everything that records no external load at all.
 
 ### The autoregulation loop, once those exist
+
+Every function this calls exists: `oneRepMax` and `loadFor` on [`OneRepMaxCalculator`][orm], and
+`snapToEquipment` under the name `roundToIncrement`. What is missing is the prescription to compare
+against — `minReps`, `maxReps` and a target RIR per set — which is items 2 through 4.
 
 ```
 on completing a set:
