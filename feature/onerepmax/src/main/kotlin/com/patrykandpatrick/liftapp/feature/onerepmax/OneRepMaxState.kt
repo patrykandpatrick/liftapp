@@ -44,10 +44,6 @@ class OneRepMaxState(
 
     private val repsValue = MutableStateFlow(0)
 
-    private val oneRepMaxValue =
-        combine(massValue, repsValue, OneRepMaxCalculator::getOneRepMax)
-            .stateIn(coroutineScope, SharingStarted.Eagerly, 0.0)
-
     private var historyUpdateJob: Job? = null
 
     val mass: State<String> = _mass
@@ -56,6 +52,12 @@ class OneRepMaxState(
 
     val massUnit: StateFlow<MassUnit> =
         getMassUnit().stateIn(coroutineScope, SharingStarted.Lazily, MassUnit.Kilograms)
+
+    // The mass entered is in whichever unit is on display, and the curve is unit-dependent, so the
+    // unit is an input to the calculation and not only to the formatting.
+    private val oneRepMaxValue =
+        combine(massValue, repsValue, massUnit, OneRepMaxCalculator::getOneRepMax)
+            .stateIn(coroutineScope, SharingStarted.Eagerly, 0.0)
 
     val oneRepMax: StateFlow<String> =
         combine(oneRepMaxValue, massUnit, formatWeight)

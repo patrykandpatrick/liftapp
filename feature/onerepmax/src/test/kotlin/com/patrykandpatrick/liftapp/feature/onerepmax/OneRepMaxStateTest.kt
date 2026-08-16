@@ -6,6 +6,7 @@ import com.patrykandpatrick.liftapp.domain.format.Formatter
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.testing.TestStringProvider
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,9 +27,11 @@ class OneRepMaxStateTest {
 
     private val coroutineScope = CoroutineScope(coroutineContext)
 
-    private val sut =
+    private val sut = createState(MassUnit.Kilograms)
+
+    private fun createState(massUnit: MassUnit) =
         OneRepMaxState(
-            getMassUnit = { flowOf(MassUnit.Kilograms) },
+            getMassUnit = { flowOf(massUnit) },
             savedStateHandle = SavedStateHandle(),
             formatWeight = formatter::formatWeight,
             coroutineScope = coroutineScope,
@@ -54,10 +57,31 @@ class OneRepMaxStateTest {
         sut.updateReps(reps.toString())
         assertEquals(
             formatter.formatWeight(
-                OneRepMaxCalculator.getOneRepMax(mass, reps),
+                OneRepMaxCalculator.getOneRepMax(mass, reps, MassUnit.Kilograms),
                 MassUnit.Kilograms,
             ),
             sut.oneRepMax.value,
+        )
+    }
+
+    @Test
+    fun `Given the mass unit is pounds, the 1RM is calculated in pounds`() {
+        val mass = 225.0
+        val reps = 5
+        val pounds = createState(MassUnit.Pounds)
+        pounds.updateMass(mass.toString())
+        pounds.updateReps(reps.toString())
+        // The curve is unit-dependent, so reading 225 lb as 225 kg would be a different number.
+        assertEquals(
+            formatter.formatWeight(
+                OneRepMaxCalculator.getOneRepMax(mass, reps, MassUnit.Pounds),
+                MassUnit.Pounds,
+            ),
+            pounds.oneRepMax.value,
+        )
+        assertNotEquals(
+            OneRepMaxCalculator.getOneRepMax(mass, reps, MassUnit.Kilograms),
+            OneRepMaxCalculator.getOneRepMax(mass, reps, MassUnit.Pounds),
         )
     }
 

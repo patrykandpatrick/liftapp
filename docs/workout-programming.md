@@ -364,8 +364,11 @@ missing field on [`ExerciseSet`][set] blocks the whole feature.
 
 ### Load for a target
 
-Invert the same curve to get a working load for a rep target and RIR. Expressed as a percentage of
-e1RM (computed from the weight-dependent formula at a 100 kg reference load):
+Invert the same curve to get a working load for a rep target and RIR. Each cell is the load that
+solves the weight-dependent formula for a **100 kg e1RM**, as a percentage of it — the inverse, not
+the percentage a 100 kg *set* implies. The distinction is not cosmetic: because the curve is
+weight-dependent, the load being solved for is not 100 kg, and reading the table forwards misses by
+up to 3.3 points at 20 reps. Taken as the inverse, all 36 cells reproduce exactly.
 
 | Reps | 0 RIR | 1 RIR | 2 RIR | 3 RIR |
 | --- | --- | --- | --- | --- |

@@ -18,4 +18,15 @@ enum class MassUnit(val kilogramsConversion: Double, val poundsConversion: Doubl
     fun toKilograms(value: Double): Double = value * kilogramsConversion
 
     fun toPounds(value: Double): Double = value * poundsConversion
+
+    /**
+     * The inverse of [toKilograms]: [kilograms] expressed in this unit. Arithmetic that only holds
+     * in kilograms — the one-rep max curve, whose `ln w` term is unit-dependent — needs this to
+     * hand its answer back in the unit it was given.
+     */
+    fun fromKilograms(kilograms: Double): Double =
+        when (this) {
+            Kilograms -> kilograms
+            Pounds -> Kilograms.toPounds(kilograms)
+        }
 }
