@@ -31,6 +31,7 @@ import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.extension.increaseBy
 import com.patrykandpatrick.liftapp.core.model.Unfold
 import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
+import com.patrykandpatrick.liftapp.core.preview.PreviewMuscleVolume
 import com.patrykandpatrick.liftapp.core.preview.PreviewRoutineWithExercises
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.core.ui.ListSectionTitleDefaults
@@ -218,6 +219,20 @@ private fun Content(
             )
         }
 
+        item(key = "muscle_volume") {
+            MuscleVolumeCard(
+                muscleVolume = state.muscleVolume,
+                onAction = onAction,
+                modifier =
+                    Modifier.animateItem()
+                        .padding(
+                            top = 32.dp,
+                            start = contentHorizontal,
+                            end = contentHorizontal,
+                        ),
+            )
+        }
+
         item(key = "shortcuts") {
             ListSectionTitle(title = stringResource(R.string.shortcut_section_title))
             Shortcuts(
@@ -367,6 +382,7 @@ private fun getPreviewDashboardState(): DashboardState {
                 workouts = 4,
                 timeExercised = 226.minutes,
             ),
+        muscleVolume = PreviewMuscleVolume,
         dayItems = DashboardViewModel.getWeekDays(today, DayOfWeek.MONDAY),
         selectedDate = today,
         activeWorkouts = emptyList(),

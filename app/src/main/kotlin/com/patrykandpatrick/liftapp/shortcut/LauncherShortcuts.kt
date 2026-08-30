@@ -11,11 +11,11 @@ import com.patrykandpatrick.liftapp.core.deeplink.DeepLink
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementRepository
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementType
+import com.patrykandpatrick.liftapp.domain.date.currentDateFlow
 import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanItemContract
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.workout.GetActiveWorkoutsUseCase
-import com.patrykandpatrick.liftapp.feature.home.currentDateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher

@@ -1,12 +1,14 @@
 package com.patrykandpatrick.liftapp.feature.dashboard.model
 
 import androidx.compose.runtime.Immutable
+import com.patrykandpatrick.liftapp.domain.muscle.MuscleVolume
 import com.patrykandpatrick.liftapp.domain.workout.Workout
 import java.time.LocalDate
 
 @Immutable
 data class DashboardState(
     val statistics: DashboardStatistics,
+    val muscleVolume: MuscleVolume,
     val dayItems: List<DayItem>,
     val selectedDate: LocalDate,
     val activeWorkouts: List<Workout>,

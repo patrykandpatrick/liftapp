@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":feature:exercisedetails"))
     implementation(project(":feature:exercisegoal"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:musclevolume"))
     implementation(project(":feature:newexercise"))
     implementation(project(":feature:newbodymeasuremententry"))
     implementation(project(":feature:onerepmax"))

@@ -4,6 +4,7 @@ import java.io.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 sealed class DateInterval : Serializable {
 
@@ -12,6 +13,24 @@ sealed class DateInterval : Serializable {
     abstract val periodStartTime: LocalDateTime
 
     abstract val periodEndTime: LocalDateTime
+
+    val periodDays: Long
+        get() =
+            ChronoUnit.DAYS.between(
+                periodStartTime.toLocalDate(),
+                periodEndTime.toLocalDate(),
+            ) + 1
+
+    /**
+     * [periodDays] capped at today. Anything averaging over this window must divide by these, or a
+     * month still in progress divides by weeks that have not happened.
+     */
+    val elapsedDays: Long
+        get() =
+            ChronoUnit.DAYS.between(
+                periodStartTime.toLocalDate(),
+                minOf(periodEndTime, LocalDateTime.now()).toLocalDate(),
+            ) + 1
 
     val isIncrementable: Boolean
         get() = periodEndTime.toLocalDate().plusDays(1).atStartOfDay().isBefore(LocalDateTime.now())
@@ -85,6 +104,14 @@ sealed class DateInterval : Serializable {
                 RollingWeek(firstDayOfWeek = firstDayOfWeek),
                 RollingMonth(),
                 RollingYear(),
+            )
+
+        fun volumeOptions(firstDayOfWeek: DayOfWeek): List<DateInterval> =
+            listOf(
+                RollingDays(DAYS_IN_WEEK),
+                RollingWeek(firstDayOfWeek = firstDayOfWeek),
+                RollingDays.Standard,
+                RollingMonth(),
             )
 
         fun bodyMeasurementOptions(firstDayOfWeek: DayOfWeek): List<DateInterval> =

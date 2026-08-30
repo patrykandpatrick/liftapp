@@ -355,6 +355,34 @@
     <string name="dashboard_active_workout_date_title"><![CDATA[Started on <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
     <string name="dashboard_completed_workout_date_title"><![CDATA[Completed on <b><color-surface-variant>%s</color-surface-variant></b>]]></string>
 
+    <!-- Volume per muscle -->
+    <string name="muscle_volume_title">Volume per muscle</string>
+    <string name="muscle_volume_caption">Working sets, counting an assisting muscle as half a set and a stabilising one as a quarter.</string>
+    <!-- Shown for a window longer than a week, whose totals are divided down to one. -->
+    <string name="muscle_volume_caption_weekly_average">Weekly average, counting an assisting muscle as half a set and a stabilising one as a quarter.</string>
+    <!-- The window the dashboard card reads, which is fixed while the screen's is not. -->
+    <string name="muscle_volume_rolling_week">Last 7 days</string>
+    <!-- Reachable after a week of cardio, which is logged training but not working sets, so
+         neither line may claim nothing was done. -->
+    <string name="muscle_volume_empty">No working sets in the last 7 days</string>
+    <string name="muscle_volume_empty_hint">Sets you log against a muscle show up here. Cardio is not counted.</string>
+    <!-- Work too slight to round up to a whole set, which a long window averaged down produces. -->
+    <string name="muscle_volume_under_one_set">Under 1 set</string>
+    <plurals name="muscle_volume_sets">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
+    <!-- Each band's span in whole sets, so the dots on every bar need no labels of their own. -->
+    <!-- Example: "Maintenance · 6–9" -->
+    <string name="muscle_volume_band_legend">%1$s · %2$s</string>
+    <string name="volume_band_range_under">under %1$s</string>
+    <string name="volume_band_range_between">%1$s–%2$s</string>
+    <string name="volume_band_range_from">%1$s+</string>
+    <string name="volume_band_below_maintenance">Below maintenance</string>
+    <string name="volume_band_maintenance">Maintenance</string>
+    <string name="volume_band_adaptive">Adaptive</string>
+    <string name="volume_band_maximum">At the ceiling</string>
+
     <!-- Rest timer -->
     <string name="rest_timer_notification_channel_name">Rest timer</string>
     <string name="rest_timer_finished_notification_channel_name">End of rest</string>

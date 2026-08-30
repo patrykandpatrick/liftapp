@@ -1,12 +1,12 @@
 package com.patrykandpatrick.liftapp.plan.model
 
+import com.patrykandpatrick.liftapp.domain.date.currentDateFlow
 import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.plan.GetActivePlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.GetAllPlansUseCase
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.plan.invoke
 import com.patrykandpatrick.liftapp.domain.workout.GetWorkoutsByDateContract
-import com.patrykandpatrick.liftapp.feature.home.currentDateFlow
 import com.patrykandpatrick.liftapp.plan.ui.PlanState
 import jakarta.inject.Inject
 import java.time.LocalDate

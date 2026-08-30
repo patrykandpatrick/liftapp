@@ -118,6 +118,8 @@ object Routes {
 
     @Serializable object OneRepMax
 
+    @Serializable object MuscleVolume
+
     object Plan {
         fun edit(planID: Long) = PlanCreatorRouteData(planID)
 

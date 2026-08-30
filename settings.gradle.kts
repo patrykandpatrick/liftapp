@@ -33,6 +33,7 @@ include(
     ":feature:exercisedetails",
     ":feature:exercisegoal",
     ":feature:home",
+    ":feature:musclevolume",
     ":feature:newbodymeasuremententry",
     ":feature:newexercise",
     ":feature:newroutine",

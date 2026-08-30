@@ -1,4 +1,4 @@
-package com.patrykandpatrick.liftapp.feature.home
+package com.patrykandpatrick.liftapp.domain.date
 
 import java.time.LocalDate
 import java.time.LocalTime

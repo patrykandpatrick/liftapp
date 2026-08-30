@@ -55,6 +55,7 @@ import com.patrykandpatrick.liftapp.feature.bodymeasurementdetails.ui.BodyMeasur
 import com.patrykandpatrick.liftapp.feature.exercise.ui.ExerciseDetailsScreen
 import com.patrykandpatrick.liftapp.feature.exercises.ui.ExerciseListScreen
 import com.patrykandpatrick.liftapp.feature.journal.ui.JournalScreen
+import com.patrykandpatrick.liftapp.feature.musclevolume.ui.MuscleVolumeScreen
 import com.patrykandpatrick.liftapp.feature.newexercise.ui.NewExerciseScreen
 import com.patrykandpatrick.liftapp.feature.newroutine.ui.NewRoutineScreen
 import com.patrykandpatrick.liftapp.feature.onerepmax.OneRepMaxScreen
@@ -180,6 +181,7 @@ fun Root(
                                 addPlanList()
                                 addPlanConfigurator()
                                 addNewRoutine()
+                                addMuscleVolume()
                                 addOneRepMax()
                                 addRoutine()
                                 addSuperset()
@@ -341,6 +343,10 @@ fun NavGraphBuilder.addSettings(navController: NavController) {
             onBackClick = { navController.popBackStack() },
         )
     }
+}
+
+fun NavGraphBuilder.addMuscleVolume() {
+    composable<Routes.MuscleVolume> { MuscleVolumeScreen() }
 }
 
 fun NavGraphBuilder.addOneRepMax() {

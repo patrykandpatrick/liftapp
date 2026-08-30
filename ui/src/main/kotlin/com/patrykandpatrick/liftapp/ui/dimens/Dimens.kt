@@ -22,6 +22,7 @@ data class Dimens(
     val radioButton: RadioButton = RadioButton(),
     val ratioBar: RatioBar = RatioBar(),
     val routine: Routine = Routine(),
+    val scaleBar: ScaleBar = ScaleBar(),
     val screen: Screen = Screen(),
     val segmentedButton: SegmentedButton = SegmentedButton(),
     val stepper: Stepper = Stepper(),
@@ -88,6 +89,15 @@ data class Dimens(
 
     /** Thinner than a [Progress] bar, which has one weight to carry rather than two. */
     @Immutable data class RatioBar(val thickness: Dp = 4.dp, val spacing: Dp = 3.dp)
+
+    /** The thumb is taller than the track so it reads as a mark against a scale, not part of it. */
+    @Immutable
+    data class ScaleBar(
+        val thickness: Dp = 6.dp,
+        val thumbWidth: Dp = 5.dp,
+        val thumbHeight: Dp = 16.dp,
+        val markSize: Dp = 4.dp,
+    )
 
     @Immutable data class Routine(val minCardWidth: Dp = 140.dp)
 

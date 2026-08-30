@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.map
  * Totals the workouts finished during the week the dashboard is showing, which is the same week the
  * day picker lays out. Sets that were never completed are left out, so a workout that was abandoned
  * partway only counts what was actually done.
+ *
+ * Volume per muscle is its own query: it reads the rolling seven days rather than the calendar week
+ * these totals cover — see `GetMuscleVolumeUseCase`.
  */
 class GetDashboardStatisticsUseCase
 @Inject

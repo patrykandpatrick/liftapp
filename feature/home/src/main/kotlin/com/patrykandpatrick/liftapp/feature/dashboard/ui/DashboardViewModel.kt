@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatrick.liftapp.domain.date.DAYS_IN_WEEK
+import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.date.GetFirstDayOfWeekUseCase
+import com.patrykandpatrick.liftapp.domain.date.currentDateFlow
 import com.patrykandpatrick.liftapp.domain.date.invoke
+import com.patrykandpatrick.liftapp.domain.muscle.GetMuscleVolumeUseCase
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.plan.GetActivePlanUseCase
@@ -21,7 +24,6 @@ import com.patrykandpatrick.liftapp.feature.dashboard.model.GetDashboardStatisti
 import com.patrykandpatrick.liftapp.feature.dashboard.model.GetPlanScheduleItemUseCase
 import com.patrykandpatrick.liftapp.feature.dashboard.model.PlanScheduleItem
 import com.patrykandpatrick.liftapp.feature.dashboard.model.WorkoutTarget
-import com.patrykandpatrick.liftapp.feature.home.currentDateFlow
 import com.patrykandpatrick.liftapp.navigation.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.DayOfWeek
@@ -44,6 +46,7 @@ constructor(
     savedStateHandle: SavedStateHandle,
     private val getPlanScheduleItemUseCase: GetPlanScheduleItemUseCase,
     getDashboardStatisticsUseCase: GetDashboardStatisticsUseCase,
+    getMuscleVolumeUseCase: GetMuscleVolumeUseCase,
     getFirstDayOfWeekUseCase: GetFirstDayOfWeekUseCase,
     private val deleteWorkoutUseCase: DeleteWorkoutUseCase,
     getActivePlanUseCase: GetActivePlanUseCase,
@@ -73,24 +76,38 @@ constructor(
             }
         }
 
+    /**
+     * Different windows on purpose: a calendar week read on a Monday morning holds almost nothing,
+     * and a muscle trained on Sunday would drop out of the picture overnight.
+     */
+    private val statisticsAndVolume =
+        currentDateFlow().flatMapLatest { currentDate ->
+            combine(
+                getDashboardStatisticsUseCase(currentDate),
+                getMuscleVolumeUseCase(DateInterval.RollingDays(DAYS_IN_WEEK)),
+                ::Pair,
+            )
+        }
+
     val state =
         combine(
                 activeWorkoutsAndTarget,
                 getPastWorkoutsUseCase(limit = RECENT_WORKOUT_COUNT + 1),
                 combine(selectedDate, getFirstDayOfWeekUseCase(), ::Pair),
                 selectedDate.flatMapLatest { date -> getPlanScheduleItemUseCase(date) },
-                currentDateFlow().flatMapLatest { getDashboardStatisticsUseCase(it) },
+                statisticsAndVolume,
             ) {
                 (activeWorkouts, workoutTarget),
                 pastWorkouts,
                 (selectedDate, firstDayOfWeek),
                 planItem,
-                statistics ->
+                (statistics, muscleVolume) ->
                 val planItemWorkout = (planItem as? PlanScheduleItem.Routine)?.workout
                 // One more than the dashboard shows is read, so that the journal can be offered
                 // when it holds a workout past the recent-workout cap.
                 DashboardState(
                     statistics = statistics,
+                    muscleVolume = muscleVolume,
                     dayItems = getWeekDays(selectedDate, firstDayOfWeek),
                     selectedDate = selectedDate,
                     activeWorkouts = activeWorkouts.filter { it.id != planItemWorkout?.id },
