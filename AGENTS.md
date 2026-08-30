@@ -72,6 +72,23 @@ There is no `.editorconfig`; ktfmt's kotlinlang style is the single source of tr
 Five workflows in `.github/workflows/`: `build-debug-apk`, `run-tests`, `check-formatting`, and
 `lint` on every push, plus `build-release` on a `v*.*.*` tag.
 
+## Comments and KDoc
+
+Names, signatures and types already say *what* something is. A comment earns its place only by
+saying something they cannot — and most code does not need one.
+
+Think twice before adding any. First ask whether a better name or a smaller function would remove
+the need; if it would, do that instead.
+
+- **Skip it** where the code is self-explanatory: data-class properties, one-line delegating
+  functions, obvious overrides, previews, and tests whose name already states what they assert.
+- **Write it** where a reader would otherwise get it wrong — where a number came from, an invariant
+  callers must uphold, an ordering that looks arbitrary, a workaround and what it works around, or
+  an obvious-looking simplification that is wrong.
+- **Keep it to a sentence or two.** Anything longer belongs in `docs/`, linked from the code.
+- Do not restate the signature, narrate the implementation, or recount how the code got this way —
+  naming the bug a guard exists to prevent is useful, retelling the change that caused it is not.
+
 ## Adding a module
 
 Apply a convention plugin rather than hand-writing Gradle config — see
