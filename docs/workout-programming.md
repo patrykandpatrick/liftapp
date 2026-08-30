@@ -482,6 +482,14 @@ A muscle named in two tiers of the same exercise is credited once, at the highes
 in. The lists are hand-authored and a repeat is an authoring slip, not a claim that the muscle does
 the work one and a half times.
 
+The tiers predate this fold. They were authored for the body diagram, where a bench press highlights
+chest *and* triceps because both are visibly worked — true of a picture, wrong as volume credit,
+which read a pressing day's triceps at a full set apiece and put twelve sets of pressing in the
+adaptive band on an arm that had done six. The seven bench variants and the two chin-up variants now
+name only the prime mover and take the assistant at `INDIRECT`. Dips, diamond push-ups, the squat,
+the deadlifts and the rows still name two or three, because those movements genuinely share the
+work; **main is for a muscle the exercise trains, not one it merely uses.**
+
 Cardio is excluded. The landmarks count working sets of resistance training, and a five-kilometre
 run is not one set of quadriceps — counting it as one would put every runner over the ceiling on
 the legs. A held position is a set, so `Time` exercises count.

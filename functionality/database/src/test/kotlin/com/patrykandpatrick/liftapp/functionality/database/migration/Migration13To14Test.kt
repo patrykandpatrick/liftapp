@@ -131,7 +131,7 @@ class Migration13To14Test {
     fun `shoulders become the deltoid head the exercise actually loads`() {
         val db = migrate()
 
-        assertEquals("""["FrontDelts"]""", db.muscles(BENCH_PRESS_ID).secondary)
+        assertEquals("""["Triceps","FrontDelts"]""", db.muscles(BENCH_PRESS_ID).secondary)
         assertEquals("""["RearDelts"]""", db.muscles(FACE_PULL_ID).main)
         assertEquals("""["SideDelts"]""", db.muscles(SIDE_ARM_RAISE_ID).main)
     }

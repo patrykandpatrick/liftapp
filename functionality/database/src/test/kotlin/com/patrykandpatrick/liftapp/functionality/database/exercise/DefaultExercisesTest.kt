@@ -104,6 +104,33 @@ class DefaultExercisesTest {
         )
     }
 
+    // A main muscle is credited a whole working set. Listing the prime mover's assistant there
+    // doubles what a pressing or pulling day reads as, on the two muscles the fractional credits
+    // exist to get right.
+    @Test
+    fun `The assistant in a press or a chin-up is credited at half a set`() {
+        val presses =
+            listOf(
+                ExerciseStringResource.FlatBenchPress,
+                ExerciseStringResource.InclineBenchPress,
+                ExerciseStringResource.DeclineBenchPress,
+                ExerciseStringResource.FlatDbBenchPress,
+                ExerciseStringResource.InclineDbBenchPress,
+                ExerciseStringResource.DeclineDbBenchPress,
+                ExerciseStringResource.ReverseGripBenchPress,
+            )
+        val chinUps = listOf(ExerciseStringResource.PullUps, ExerciseStringResource.ChinUps)
+
+        presses.map(::seeded).forEach { exercise ->
+            assertEquals(listOf(Muscle.Chest), exercise.mainMuscles, "${exercise.name}")
+            assertTrue(Muscle.Triceps in exercise.secondaryMuscles, "${exercise.name}")
+        }
+        chinUps.map(::seeded).forEach { exercise ->
+            assertEquals(listOf(Muscle.Lats), exercise.mainMuscles, "${exercise.name}")
+            assertTrue(Muscle.Biceps in exercise.secondaryMuscles, "${exercise.name}")
+        }
+    }
+
     @Test
     fun `Primary compounds are the exception, not the rule`() {
         val byRole = exercises.groupingBy { it.role }.eachCount()

@@ -18,6 +18,10 @@ import com.patrykandpatrick.liftapp.functionality.database.string.ExerciseString
  * changes what those migrations write. `Migration13To14` replays the roles, policies and increments
  * onto an upgrading device, which is why they belong here rather than in the migration.
  *
+ * The muscle tiers are volume credit, not display prominence: `MuscleVolume` gives a main muscle a
+ * whole working set, a secondary half, a tertiary a quarter. Name a muscle main only where the
+ * exercise trains it rather than merely working it — the triceps in a bench press are secondary.
+ *
  * The classification is hand-authored, not derived. `role` is null exactly for the eleven `Cardio`
  * and `Time` entries, which have none. `progressionPolicy` is `RepsOnly` wherever a load suggestion
  * would be dishonest: everything that carries no external load, and the small-load isolation work
@@ -42,8 +46,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.PullUps),
                 exerciseType = ExerciseType.Calisthenics,
-                mainMuscles = listOf(Muscle.Lats, Muscle.Biceps),
-                secondaryMuscles = listOf(Muscle.RearDelts, Muscle.Forearms),
+                mainMuscles = listOf(Muscle.Lats),
+                secondaryMuscles = listOf(Muscle.Biceps, Muscle.RearDelts, Muscle.Forearms),
                 tertiaryMuscles = listOf(Muscle.Abs),
                 role = ExerciseRole.PrimaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -90,8 +94,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.FlatBenchPress),
                 exerciseType = ExerciseType.Weight,
-                mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
-                secondaryMuscles = listOf(Muscle.FrontDelts),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps, Muscle.FrontDelts),
                 tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Abs, Muscle.Lats),
                 role = ExerciseRole.PrimaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -202,8 +206,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.InclineBenchPress),
                 exerciseType = ExerciseType.Weight,
-                mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
-                secondaryMuscles = listOf(Muscle.FrontDelts),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps, Muscle.FrontDelts),
                 tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Abs, Muscle.Lats),
                 role = ExerciseRole.PrimaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -214,8 +218,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.DeclineBenchPress),
                 exerciseType = ExerciseType.Weight,
-                mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
-                secondaryMuscles = listOf(Muscle.FrontDelts),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps, Muscle.FrontDelts),
                 tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Abs, Muscle.Lats),
                 role = ExerciseRole.PrimaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -226,8 +230,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.FlatDbBenchPress),
                 exerciseType = ExerciseType.Weight,
-                mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
-                secondaryMuscles = listOf(Muscle.FrontDelts),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps, Muscle.FrontDelts),
                 tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Abs, Muscle.Lats),
                 role = ExerciseRole.SecondaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -238,8 +242,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.InclineDbBenchPress),
                 exerciseType = ExerciseType.Weight,
-                mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
-                secondaryMuscles = listOf(Muscle.FrontDelts),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps, Muscle.FrontDelts),
                 tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Abs, Muscle.Lats),
                 role = ExerciseRole.SecondaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -250,8 +254,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.DeclineDbBenchPress),
                 exerciseType = ExerciseType.Weight,
-                mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
-                secondaryMuscles = listOf(Muscle.FrontDelts),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps, Muscle.FrontDelts),
                 tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Abs, Muscle.Lats),
                 role = ExerciseRole.SecondaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -359,8 +363,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.ChinUps),
                 exerciseType = ExerciseType.Calisthenics,
-                mainMuscles = listOf(Muscle.Lats, Muscle.Biceps),
-                secondaryMuscles = listOf(Muscle.Forearms),
+                mainMuscles = listOf(Muscle.Lats),
+                secondaryMuscles = listOf(Muscle.Biceps, Muscle.Forearms),
                 tertiaryMuscles = listOf(Muscle.LowerBack),
                 role = ExerciseRole.PrimaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
@@ -1181,8 +1185,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.ReverseGripBenchPress),
                 exerciseType = ExerciseType.Weight,
-                mainMuscles = listOf(Muscle.Chest, Muscle.Triceps),
-                secondaryMuscles = listOf(Muscle.FrontDelts),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps, Muscle.FrontDelts),
                 tertiaryMuscles = listOf(Muscle.Forearms, Muscle.Abs, Muscle.Lats),
                 role = ExerciseRole.SecondaryCompound,
                 progressionPolicy = ProgressionPolicy.DoubleProgression,
