@@ -76,26 +76,27 @@ reading of the mass a set moved — body weight included — where the statistic
 chart mappers did not, and the dashboard's tonnage did not either. An unweighted pull-up used to
 plot a one-rep max of zero.
 
-Still open, in the order Part 5 gives them: per-set targets (2), a target load (3), training intent
-(4), a week index on [`Plan`][plan] (6), and per-exercise fatigue cost (7). Items 2 through 4 are
-being taken together, by moving prescription out of `Goal` and into the plan.
+Still open, in the order Part 5 gives them: a target load (3), training intent (4), and
+per-exercise fatigue cost (7). Item 2 has shipped and item 6 with it: prescription has moved out of
+`Goal` and into the plan, keyed by cycle, and `Goal` is gone.
 
 ## What the app actually has to decide
 
-A prescription for one exercise in one workout is five numbers, and today [`Goal`][goal] only
-carries two and a half of them:
+A prescription for one exercise in one workout is five numbers. [`SetTarget`][target] carries
+four of them per set, and [`ExerciseTarget`][exercisetarget] the fifth for the exercise:
 
-| Decision | In `Goal` today |
+| Decision | Where it lives |
 | --- | --- |
-| How many sets | `sets` |
-| What rep target | `minReps`..`maxReps` |
-| How close to failure (RIR) | **missing** |
-| What load | **missing** |
-| How long to rest | `restTime` |
+| How many sets | the length of `ExerciseTarget.sets` |
+| What rep target | `SetTarget.minReps`..`maxReps` |
+| How close to failure (RIR) | `SetTarget.rir`, nullable |
+| What load | `SetTarget.loadPercent`, nullable and not yet generated |
+| How long to rest | `ExerciseTarget.restTime` |
 
-`Goal` is also flat: one prescription for every set of the exercise. That is the single biggest
-modelling gap, because the interesting parts of programming — fatigue within a session, a top set
-followed by back-offs, a load that rises while reps hold — are all *differences between sets*.
+The list is the point. The flat `Goal` this replaced said one thing about every set of an exercise,
+which left the interesting parts of programming — fatigue within a session, a top set followed by
+back-offs, a load that rises while reps hold — inexpressible, because they are all *differences
+between sets*.
 
 Everything below feeds two outputs the app should be able to compute:
 
@@ -511,12 +512,12 @@ document uses still holds.
    `Cardio`/`Time`. Nothing autoregulates without it. The backup format is schema-driven and derives
    its header from the table, so a new column travels for free — but it is still a Room migration.
 
-2. **Per-set targets instead of a flat [`Goal`][goal].** The current shape cannot express a top set
-   plus back-offs, a load drop, or a rep drop. Either give `Goal` a list of per-set targets or add a
-   set-pattern enum that generates them.
+2. **Per-set targets instead of a flat `Goal`.** *Done, schema 15.* Prescription is a
+   [`SetTarget`][target] list hung off `(plan, cycle, day, exercise)`. The set count is the length
+   of that list, which is what makes a volume ramp across weeks authorable at all.
 
-3. **A target load or `%e1RM` on `Goal`.** Currently the app prescribes reps and sets but says nothing
-   about load, so the user carries the hardest decision themselves.
+3. **A target load or `%e1RM`.** [`SetTarget.loadPercent`][target] is the field; nothing fills it in
+   yet, so the user still carries the hardest decision themselves.
 
 4. **Training intent.** Strength / hypertrophy / both, per routine or per exercise. Every default
    table in Part 2 is indexed by it.
@@ -582,7 +583,8 @@ users read it as the app giving up.
 - The best program is the one the user follows. Complexity that does not change the prescription is
   cost without benefit — which is also the 2026 ACSM position stand's headline finding.
 
-[goal]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/goal/Goal.kt
+[target]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/target/SetTarget.kt
+[exercisetarget]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/target/ExerciseTarget.kt
 [plan]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/plan/Plan.kt
 [set]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/workout/ExerciseSet.kt
 [orm]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/exerciseset/OneRepMaxCalculator.kt

@@ -31,7 +31,6 @@ include(
     ":feature:backup",
     ":feature:bodymeasurementdetails",
     ":feature:exercisedetails",
-    ":feature:exercisegoal",
     ":feature:home",
     ":feature:musclevolume",
     ":feature:newbodymeasuremententry",

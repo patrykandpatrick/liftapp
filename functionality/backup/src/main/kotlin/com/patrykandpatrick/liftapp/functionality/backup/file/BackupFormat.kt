@@ -51,10 +51,10 @@ internal enum class BackupTable(val tableName: String, val type: BackupDataType)
     RoutineItem("routine_item", BackupDataType.Routines),
     ExerciseWithRoutineItem("exercise_with_routine_item", BackupDataType.Routines),
     Superset("superset", BackupDataType.Routines),
-    Goal("goal", BackupDataType.Routines),
     Plan("plan", BackupDataType.TrainingPlans),
     PlanItem("plan_item", BackupDataType.TrainingPlans),
     PlanItemSchedule("plan_item_schedule", BackupDataType.TrainingPlans),
+    ExerciseTarget("exercise_target", BackupDataType.TrainingPlans),
     Workout("workout", BackupDataType.Workouts),
     WorkoutItem("workout_item", BackupDataType.Workouts),
     ExerciseWithWorkoutItem("exercise_with_workout_item", BackupDataType.Workouts),
@@ -77,14 +77,14 @@ internal enum class BackupTable(val tableName: String, val type: BackupDataType)
         get() =
             when (this) {
                 Routine -> "routine_id = ?"
-                RoutineItem,
-                Goal -> "${routineColumn()} = ?"
+                RoutineItem -> "${routineColumn()} = ?"
                 ExerciseWithRoutineItem,
                 Superset -> "${routineItemColumn()} IN ($ROUTINE_ITEM_IDS)"
                 Exercise -> "exercise_id IN ($ROUTINE_EXERCISE_IDS)"
                 Plan,
                 PlanItem,
                 PlanItemSchedule,
+                ExerciseTarget,
                 Workout,
                 WorkoutItem,
                 ExerciseWithWorkoutItem,
@@ -100,7 +100,6 @@ internal enum class BackupTable(val tableName: String, val type: BackupDataType)
     private fun routineColumn(): String =
         when (this) {
             RoutineItem -> "routine_item_routine_id"
-            Goal -> "goal_routine_id"
             Exercise,
             Routine,
             ExerciseWithRoutineItem,
@@ -108,6 +107,7 @@ internal enum class BackupTable(val tableName: String, val type: BackupDataType)
             Plan,
             PlanItem,
             PlanItemSchedule,
+            ExerciseTarget,
             Workout,
             WorkoutItem,
             ExerciseWithWorkoutItem,
@@ -124,10 +124,10 @@ internal enum class BackupTable(val tableName: String, val type: BackupDataType)
             Exercise,
             Routine,
             RoutineItem,
-            Goal,
             Plan,
             PlanItem,
             PlanItemSchedule,
+            ExerciseTarget,
             Workout,
             WorkoutItem,
             ExerciseWithWorkoutItem,

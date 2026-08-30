@@ -7,7 +7,6 @@ import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.exercise.ProgressionPolicy
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 
@@ -19,8 +18,6 @@ data class ExerciseEntity(
     @ColumnInfo(name = "exercise_main_muscles", index = true) val mainMuscles: List<Muscle>,
     @ColumnInfo(name = "exercise_secondary_muscles") val secondaryMuscles: List<Muscle>,
     @ColumnInfo(name = "exercise_tertiary_muscles") val tertiaryMuscles: List<Muscle>,
-    @ColumnInfo(name = "exercise_goal")
-    val goal: Goal = Goal.default, // TODO add custom goals for built-in exercises.
     /**
      * Nullable with no default, so an exercise nobody has classified stays visibly unclassified
      * rather than claiming a role it was never given. Restoring an archive written before this
@@ -35,7 +32,7 @@ data class ExerciseEntity(
 
     /**
      * The columns the exercise editor writes. Room updates only what is declared here, so
-     * `exercise_load_increment` and `exercise_goal` keep whatever the row already held.
+     * `exercise_load_increment` keeps whatever the row already held.
      */
     class Update(
         @ColumnInfo(name = "exercise_id") val id: Long,

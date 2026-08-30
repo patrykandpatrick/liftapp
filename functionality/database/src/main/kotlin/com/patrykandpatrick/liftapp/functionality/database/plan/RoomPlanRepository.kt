@@ -77,21 +77,17 @@ constructor(
     override suspend fun addPlanItemsSchedule(plan: Plan, startDate: LocalDate, cycleCount: Int) {
         var currentDate = startDate
         val schedule = buildList {
-            repeat(cycleCount) {
-                plan.items.forEach { planItem ->
-                    if (planItem is Plan.Item.Routine) {
-                        add(
-                            PlanItemSchedule(
-                                planID = plan.id,
-                                routineID = planItem.routine.id,
-                                date = currentDate,
-                            )
+            repeat(cycleCount) { cycleIndex ->
+                plan.items.forEachIndexed { itemOrderIndex, planItem ->
+                    add(
+                        PlanItemSchedule(
+                            planID = plan.id,
+                            routineID = (planItem as? Plan.Item.Routine)?.routine?.id,
+                            date = currentDate,
+                            cycleIndex = cycleIndex,
+                            itemOrderIndex = itemOrderIndex,
                         )
-                    } else {
-                        add(
-                            PlanItemSchedule(planID = plan.id, routineID = null, date = currentDate)
-                        )
-                    }
+                    )
                     currentDate = currentDate.plusDays(1)
                 }
             }

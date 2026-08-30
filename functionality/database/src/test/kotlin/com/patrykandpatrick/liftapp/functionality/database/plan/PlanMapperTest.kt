@@ -50,7 +50,6 @@ class PlanMapperTest {
             orderIndex = orderIndex,
             routine = routine,
             exercise = null,
-            goalEntity = null,
         )
 
     private companion object {

@@ -3,7 +3,6 @@ package com.patrykandpatrick.liftapp.functionality.database.migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementType
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementValue
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
@@ -358,7 +357,7 @@ class LegacyDatabaseWriter(private val json: Json) {
         exerciseID: Long,
         legacy: LegacyExerciseGoal?,
     ) {
-        val goal = legacy?.toGoal() ?: Goal.default
+        val goal = legacy?.toGoal() ?: LegacyGoal.default
         db.execSQL(
             "INSERT INTO goal (goal_routine_id, goal_exercise_id, goal_min_reps, goal_max_reps, " +
                 "goal_sets, goal_rest_time, goal_duration_millis, goal_distance, goal_distance_unit, " +
@@ -373,7 +372,7 @@ class LegacyDatabaseWriter(private val json: Json) {
         exerciseID: Long,
         legacy: LegacyExerciseGoal?,
     ) {
-        val goal = legacy?.toGoal() ?: Goal.default
+        val goal = legacy?.toGoal() ?: LegacyGoal.default
         db.execSQL(
             "INSERT INTO workout_goal (workout_goal_workout_id, workout_goal_exercise_id, " +
                 "workout_goal_min_reps, workout_goal_max_reps, workout_goal_sets, " +
@@ -383,7 +382,7 @@ class LegacyDatabaseWriter(private val json: Json) {
         )
     }
 
-    private fun goalValues(parentID: Long, exerciseID: Long, goal: Goal): Array<Any?> =
+    private fun goalValues(parentID: Long, exerciseID: Long, goal: LegacyGoal): Array<Any?> =
         arrayOf<Any?>(
             parentID,
             exerciseID,

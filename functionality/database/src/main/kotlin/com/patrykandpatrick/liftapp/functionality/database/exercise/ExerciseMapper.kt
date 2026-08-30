@@ -4,7 +4,6 @@ import com.patrykandpatrick.liftapp.domain.exercise.Exercise
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseNameAndType
 import com.patrykandpatrick.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
-import com.patrykandpatrick.liftapp.functionality.database.goal.toDomain
 import javax.inject.Inject
 
 class ExerciseMapper @Inject constructor(private val stringProvider: StringProvider) {
@@ -36,21 +35,6 @@ class ExerciseMapper @Inject constructor(private val stringProvider: StringProvi
             name = stringProvider.getResolvedName(exercise.name),
             muscles = stringProvider.getMuscleList(exercise.mainMuscles),
             type = exercise.exerciseType,
-            goal = exercise.goal,
-        )
-    }
-
-    fun exerciseWithGoalDtoToRoutineExerciseItem(
-        exercises: List<ExerciseWithGoalDto>
-    ): List<RoutineExerciseItem> = exercises.map { (exercise, goalEntity) ->
-        val goal = goalEntity?.toDomain() ?: exercise.goal
-
-        RoutineExerciseItem(
-            id = exercise.id,
-            name = stringProvider.getResolvedName(exercise.name),
-            muscles = stringProvider.getMuscleList(exercise.mainMuscles),
-            type = exercise.exerciseType,
-            goal = goal,
         )
     }
 }

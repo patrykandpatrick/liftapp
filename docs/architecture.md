@@ -41,7 +41,7 @@ the split [Now in Android][nia] draws between `core:designsystem` and `core:ui`.
 `:ui` therefore does not have `:domain` on its compile classpath, and the `liftapp.android.compose`
 convention plugin deliberately does not put it there — modules that render domain models ask for
 `:domain` themselves. **Do not add `:domain` to `:ui` to make an import resolve.** A component that
-needs to know what a `Name`, a `Goal`, or an `ExerciseSet` is belongs in `:core`, which depends on
+needs to know what a `Name`, a `SetTarget`, or an `ExerciseSet` is belongs in `:core`, which depends on
 both.
 
 ### `:domain`
@@ -82,10 +82,8 @@ A module's namespace is declared explicitly and matches its path:
 `com.patrykandpatrick.liftapp`, `applicationId` `pl.patrykgoworowski.mintlift` (`.dev` in debug),
 the identity it already has on the Play Store.
 
-Three deviations survive, all deliberately left alone: `:feature:exercisedetails` uses
-`…liftapp.feature.exercise`; `:feature:exercisegoal`'s sources drop the `liftapp` segment
-(`com.patrykandpatrick.feature.exercisegoal`) though its namespace keeps it; and
-`:feature:newexercise` holds its Kotlin under `src/main/java/`.
+Two deviations survive, both deliberately left alone: `:feature:exercisedetails` uses
+`…liftapp.feature.exercise`, and `:feature:newexercise` holds its Kotlin under `src/main/java/`.
 
 ## Use cases and contracts
 
@@ -99,7 +97,6 @@ A use case is only a class when it does something a repository call does not:
 
 - handles cancellation or switches dispatcher, as `InsertExercisesUseCase` does with
   `withContext(NonCancellable)`,
-- binds route arguments into the call, as `SaveGoalUseCase` does with `ExerciseGoalRouteData`,
 - or composes several sources, as `GetEditableWorkoutUseCase` does.
 
 Pure delegation does not earn a class. Write it as a `fun interface` and let the repository
@@ -145,7 +142,7 @@ test asset directory so `MigrationTestHelper` can read it; a fresh install is se
 - **DAOs** are `XDao`. **Reads return `Flow<…>`** and are not `suspend`; **writes are `suspend`**.
   Queries built at runtime use `@RawQuery`.
 - **Converters** live in `converter/`. `JsonConverters` is `@ProvidedTypeConverter` with an injected
-  `Json` and serializes the rich types — `Name`, `Goal`, `List<Muscle>`, units — to strings;
+  `Json` and serializes the rich types — `Name`, `List<SetTarget>`, `List<Muscle>`, units — to strings;
   `LocalDateTimeConverters` handles dates; enums use Room's built-in converter. `List<Muscle>` goes
   through `MuscleListSerializer`, which resolves retired constant names and drops unknown ones,
   because a `.lfa` archive replays raw column text that no migration can ever reach.

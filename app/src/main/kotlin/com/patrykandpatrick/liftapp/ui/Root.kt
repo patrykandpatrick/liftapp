@@ -36,7 +36,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import com.patrykandpatrick.feature.exercisegoal.ui.ExerciseGoalScreen
 import com.patrykandpatrick.liftapp.core.deeplink.DeepLink
 import com.patrykandpatrick.liftapp.core.format.LocalFormatter
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
@@ -72,7 +71,6 @@ import com.patrykandpatrick.liftapp.navigation.bottomAppBarComposable
 import com.patrykandpatrick.liftapp.navigation.data.BackupRestoreRouteData
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
-import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
@@ -186,7 +184,6 @@ fun Root(
                                 addRoutine()
                                 addSuperset()
                                 addRoutineList()
-                                addRoutineExerciseGoal()
                                 addSettings(navController)
                                 addWorkout()
                             }
@@ -270,10 +267,6 @@ fun NavGraphBuilder.addSuperset() {
 
 fun NavGraphBuilder.addRoutineList() {
     composable<RoutineListRouteData> { RoutineListScreen() }
-}
-
-fun NavGraphBuilder.addRoutineExerciseGoal() {
-    composable<ExerciseGoalRouteData> { ExerciseGoalScreen() }
 }
 
 fun NavGraphBuilder.addPlanCreator() {

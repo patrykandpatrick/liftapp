@@ -1,14 +1,14 @@
 package com.patrykandpatrick.liftapp.functionality.database.workout
 
-import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementValue
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
+import com.patrykandpatrick.liftapp.domain.target.TargetDefaults
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.domain.workout.Workout
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseEntity
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseSetMapper
+import com.patrykandpatrick.liftapp.functionality.database.target.toWorkoutGoal
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.first
@@ -37,7 +37,7 @@ constructor(
             exercises =
                 exercises.groupByExercise().map { (exercise, currentAndLastSets) ->
                     val goal =
-                        (exercise.goal?.toDomain() ?: exercise.exercise.goal.toWorkoutGoal())
+                        (exercise.goal?.toDomain() ?: exercise.exercise.defaultGoal())
                             .withSupersetConfig(exercise.item)
                     val mapSets = { sets: Map<Int, ExerciseSetEntity?> ->
                         exerciseSetMapper.mapWorkoutExerciseSets(
@@ -159,14 +159,20 @@ private fun WorkoutGoalEntity.toDomain(): Workout.Goal =
         calories = calories,
     )
 
-internal fun Goal.toWorkoutGoal(): Workout.Goal =
-    Workout.Goal(
-        id = ID_NOT_SET,
+/** No `workout_goal` row: an exercise added to a session that had no target for it. */
+private fun ExerciseEntity.defaultGoal(): Workout.Goal =
+    TargetDefaults.of(exerciseType, role).toWorkoutGoal()
+
+internal fun Workout.Goal.toEntity(workoutID: Long, exerciseID: Long): WorkoutGoalEntity =
+    WorkoutGoalEntity(
+        id = id,
+        workoutID = workoutID,
+        exerciseID = exerciseID,
         minReps = minReps,
         maxReps = maxReps,
         sets = sets,
-        restTime = restTime,
-        duration = duration,
+        restTimeMillis = restTime.inWholeMilliseconds,
+        durationMillis = duration.inWholeMilliseconds,
         distance = distance,
         distanceUnit = distanceUnit,
         calories = calories,

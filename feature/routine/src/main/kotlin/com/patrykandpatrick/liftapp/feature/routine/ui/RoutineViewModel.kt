@@ -98,7 +98,6 @@ constructor(
             Action.NewSuperset -> openSuperset(routineItemID = ID_NOT_SET)
             is Action.EditSuperset -> openSuperset(action.itemID)
             is Action.NavigateToExercise -> navigateToExercise(action.exerciseID)
-            is Action.NavigateToExerciseGoal -> navigateToExerciseGoal(action.exerciseID)
         }
     }
 
@@ -220,12 +219,6 @@ constructor(
     private fun navigateToExercise(exerciseID: Long) {
         viewModelScope.launch {
             navigationCommander.navigateTo(Routes.Exercise.details(exerciseID))
-        }
-    }
-
-    private fun navigateToExerciseGoal(exerciseID: Long) {
-        viewModelScope.launch {
-            navigationCommander.navigateTo(Routes.Exercise.goal(routeData.routineID, exerciseID))
         }
     }
 

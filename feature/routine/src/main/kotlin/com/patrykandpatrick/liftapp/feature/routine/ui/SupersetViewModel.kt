@@ -7,7 +7,6 @@ import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.exercise.GetRoutineExercisesUseCase
 import com.patrykandpatrick.liftapp.domain.exercise.invoke
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.domain.routine.GetRoutineWithItemsUseCase
 import com.patrykandpatrick.liftapp.domain.routine.Routine
@@ -18,6 +17,7 @@ import com.patrykandpatrick.liftapp.domain.routine.RoutineWithItems
 import com.patrykandpatrick.liftapp.domain.routine.SupersetConfig
 import com.patrykandpatrick.liftapp.domain.routine.UpsertRoutineWithItemsUseCase
 import com.patrykandpatrick.liftapp.domain.routine.invoke
+import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.validation.validNumber
 import com.patrykandpatrick.liftapp.domain.validation.valueInRange
 import com.patrykandpatrick.liftapp.feature.routine.model.SupersetEditorState
@@ -57,7 +57,7 @@ constructor(
         textFieldStateManager.intTextField(
             validators = {
                 validNumber()
-                valueInRange(Goal.setRange)
+                valueInRange(SetTarget.setRange)
             }
         )
 

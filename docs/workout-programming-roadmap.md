@@ -2,14 +2,16 @@
 
 ## Status
 
-**Phases 2, 3 and 4 have shipped.** Phase 5 is next, and it is the big one.
+**Phases 2, 3 and 4 have shipped, and Phase 5's first landing with them.** 5b and 5c are next.
 
 | Phase | State |
 | --- | --- |
 | 2 — Classification, progression metadata, shoulder split | **Done**, `ec711df0`, schema 14 |
 | 3 — Estimation math | **Done**, `ed1476b5`, no schema |
 | 4 — Weekly volume per muscle (actual) | **Done**, no schema |
-| 5 — Prescription moves into the plan | Next, schema 15 |
+| 5a — Data model swap | **Done**, schema 15 |
+| 5b — Authoring and generation | Next, no schema |
+| 5c — Show the target during the workout | Open, no schema |
 | 6 — Autoregulation and stalls | Open |
 | 7 — Mesocycle, deloads, planned volume | Open |
 
@@ -388,6 +390,31 @@ reaching for Vico.
 ---
 
 ## Phase 5 — Prescription moves into the plan
+
+> **5a landed, schema 15.** `SetTarget` and `ExerciseTarget` in `:domain`, an `exercise_target`
+> table keyed by `(plan, cycle, day, exercise)` with the per-set list as JSON, and `Goal` — both
+> domain types minus `Workout.Goal`, the `goal` table, `exercise.exercise_goal`, and
+> `:feature:exercisegoal` — gone. The routine screen no longer shows a prescription, which is the
+> one visible change 5a makes.
+>
+> Three things the plan below did not anticipate:
+>
+> - **The legacy migration had to be frozen first.** `Migration11To12` writes the version 12 schema,
+>   which *has* `goal` and `exercise_goal`, so it cannot follow a domain type that no longer exists.
+>   `LegacyGoal` in the migration package is that shape pinned, and it is what `Migration14To15`
+>   reads back. A migration that tracks the live domain rewrites history every time the domain moves.
+> - **`plan_item_schedule` grew `cycle_index` and `item_order_index`.** Targets are keyed by where a
+>   day falls in the plan, so starting a workout has to turn "today" into that key. Deriving it from
+>   the active plan's start date would have made prescription depend on a preference the schedule
+>   rows do not; storing it on the row it describes does not.
+> - **`workout_goal` is still flat, so the snapshot loses per-set differences.** It takes the widest
+>   range any set asks for. That is invisible while 5a generates uniform sets and stops being true
+>   the moment 5b ramps them — 5c is where per-set targets reach the screen and the snapshot has to
+>   grow with them.
+>
+> `SupersetConfig` no longer overrides a per-exercise prescription, because there is none on a
+> routine to override: it stays the superset's own set count and rest time. `UpsertGoalSetsUseCase`
+> was left alone — it edits `Workout.Goal`, which survives.
 
 **Schema 14 → 15. The big one — split into three landings.**
 

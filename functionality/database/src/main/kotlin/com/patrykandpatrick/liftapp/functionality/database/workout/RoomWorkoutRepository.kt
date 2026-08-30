@@ -2,7 +2,9 @@ package com.patrykandpatrick.liftapp.functionality.database.workout
 
 import androidx.room.InvalidationTracker
 import androidx.room.RoomRawQuery
+import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
+import com.patrykandpatrick.liftapp.domain.target.TargetDefaults
 import com.patrykandpatrick.liftapp.domain.workout.DeleteWorkoutContract
 import com.patrykandpatrick.liftapp.domain.workout.EditWorkoutItemsContract
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
@@ -17,6 +19,10 @@ import com.patrykandpatrick.liftapp.domain.workout.UpsertExerciseSetContract
 import com.patrykandpatrick.liftapp.domain.workout.UpsertWorkoutGoalContract
 import com.patrykandpatrick.liftapp.domain.workout.Workout
 import com.patrykandpatrick.liftapp.functionality.database.converter.LocalDateTimeConverters
+import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineItemExerciseDto
+import com.patrykandpatrick.liftapp.functionality.database.target.TargetDao
+import com.patrykandpatrick.liftapp.functionality.database.target.toDomain
+import com.patrykandpatrick.liftapp.functionality.database.target.toWorkoutGoal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -39,6 +45,7 @@ class RoomWorkoutRepository
 @Inject
 constructor(
     private val workoutDao: WorkoutDao,
+    private val targetDao: TargetDao,
     private val workoutMapper: WorkoutMapper,
     private val invalidationTracker: InvalidationTracker,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
@@ -98,8 +105,37 @@ constructor(
                     bodyWeight = bodyWeight.await(),
                 ),
             routineItems = routineItems.await(),
-            routineID = routineID,
+            goals = resolveGoals(routineID, routineItems.await()),
         )
+    }
+
+    /**
+     * What today's sets are meant to be, taken from the plan this routine is scheduled in.
+     *
+     * Prescription is keyed by (plan, cycle, day), so a routine run outside any plan — or one whose
+     * plan has no target for an exercise that was added later — has nothing to read, and falls back
+     * to the app defaults rather than to an empty prescription.
+     */
+    private suspend fun resolveGoals(
+        routineID: Long,
+        routineItems: List<RoutineItemExerciseDto>,
+    ): List<WorkoutGoalEntity> {
+        val position = targetDao.getPlanPosition(routineID, LocalDate.now())
+        val targets =
+            position
+                ?.let { targetDao.getTargetsOnce(it.planID, it.cycleIndex, it.itemOrderIndex) }
+                .orEmpty()
+                .associateBy { it.exerciseID }
+
+        return routineItems
+            .distinctBy { it.exercise.id }
+            .map { row ->
+                val exercise = row.exercise
+                val goal =
+                    targets[exercise.id]?.toDomain()?.toWorkoutGoal()
+                        ?: TargetDefaults.of(exercise.exerciseType, exercise.role).toWorkoutGoal()
+                goal.toEntity(workoutID = ID_NOT_SET, exerciseID = exercise.id)
+            }
     }
 
     override suspend fun upsertWorkoutGoal(workoutID: Long, exerciseID: Long, goal: Workout.Goal) {

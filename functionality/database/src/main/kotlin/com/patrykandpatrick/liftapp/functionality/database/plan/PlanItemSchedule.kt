@@ -45,4 +45,8 @@ data class PlanItemSchedule(
     @ColumnInfo(name = "plan_item_schedule_plan_id") val planID: Long,
     @ColumnInfo(name = "plan_item_routine_id") val routineID: Long?,
     @ColumnInfo(name = "plan_item_schedule_date") val date: LocalDate,
+    @ColumnInfo(name = "plan_item_schedule_cycle_index", defaultValue = "0")
+    val cycleIndex: Int = 0,
+    @ColumnInfo(name = "plan_item_schedule_item_order_index", defaultValue = "0")
+    val itemOrderIndex: Int = 0,
 )

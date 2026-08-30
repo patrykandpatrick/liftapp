@@ -12,25 +12,23 @@ import kotlinx.coroutines.flow.Flow
 interface PlanDao {
 
     @Query(
-        "SELECT p.*, plan_item_order_index, r.*, e.*, g.*  FROM `plan` p " +
+        "SELECT p.*, plan_item_order_index, r.*, e.* FROM `plan` p " +
             "LEFT JOIN plan_item pi ON p.plan_id = pi.plan_item_plan_id " +
             "LEFT JOIN routine r ON pi.plan_item_routine_id = r.routine_id " +
             "LEFT JOIN routine_item ri ON ri.routine_item_routine_id = plan_item_routine_id " +
             "LEFT JOIN exercise_with_routine_item ewr ON ewr.routine_item_id = ri.routine_item_id " +
             "LEFT JOIN exercise e ON e.exercise_id = ewr.exercise_id " +
-            "LEFT JOIN goal g ON g.goal_routine_id = r.routine_id AND g.goal_exercise_id = ewr.exercise_id " +
             "ORDER BY p.plan_id, pi.plan_item_order_index, ri.routine_item_order_index, ewr.routine_item_exercise_order_index"
     )
     fun getAllPlans(): Flow<List<PlanWithRoutine>>
 
     @Query(
-        "SELECT p.*, plan_item_order_index, r.*, e.*, g.*  FROM `plan` p " +
+        "SELECT p.*, plan_item_order_index, r.*, e.* FROM `plan` p " +
             "LEFT JOIN plan_item pi ON p.plan_id = pi.plan_item_plan_id " +
             "LEFT JOIN routine r ON pi.plan_item_routine_id = r.routine_id " +
             "LEFT JOIN routine_item ri ON ri.routine_item_routine_id = plan_item_routine_id " +
             "LEFT JOIN exercise_with_routine_item ewr ON ewr.routine_item_id = ri.routine_item_id " +
             "LEFT JOIN exercise e ON e.exercise_id = ewr.exercise_id " +
-            "LEFT JOIN goal g ON g.goal_routine_id = r.routine_id AND g.goal_exercise_id = ewr.exercise_id " +
             "WHERE p.plan_id = :id ORDER BY p.plan_id, pi.plan_item_order_index, " +
             "ri.routine_item_order_index, ewr.routine_item_exercise_order_index"
     )
@@ -63,12 +61,11 @@ interface PlanDao {
     @Insert suspend fun insertPlanItemSchedule(schedule: List<PlanItemSchedule>): List<Long>
 
     @Query(
-        "SELECT r.*, e.*, g.*  FROM plan_item_schedule p " +
+        "SELECT r.*, e.* FROM plan_item_schedule p " +
             "LEFT JOIN routine r ON p.plan_item_routine_id = r.routine_id " +
             "LEFT JOIN routine_item ri ON ri.routine_item_routine_id = r.routine_id " +
             "LEFT JOIN exercise_with_routine_item ewr ON ewr.routine_item_id = ri.routine_item_id " +
             "LEFT JOIN exercise e ON e.exercise_id = ewr.exercise_id " +
-            "LEFT JOIN goal g ON g.goal_routine_id = r.routine_id AND g.goal_exercise_id = ewr.exercise_id " +
             "WHERE p.plan_item_schedule_date = :date ORDER BY ri.routine_item_order_index, " +
             "ewr.routine_item_exercise_order_index"
     )

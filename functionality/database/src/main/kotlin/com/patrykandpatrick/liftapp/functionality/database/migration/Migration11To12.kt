@@ -4,7 +4,6 @@ import android.database.Cursor
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.patrykandpatrick.liftapp.domain.Constants
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.functionality.database.bodymeasurement.DefaultBodyMeasurements
 import com.patrykandpatrick.liftapp.functionality.database.exercise.DefaultExercises
@@ -245,7 +244,7 @@ class Migration11To12(
         return if (isNull(index)) "" else getString(index)
     }
 
-    private val defaultGoalJson by lazy { json.encodeToString(Goal.default) }
+    private val defaultGoalJson by lazy { json.encodeToString(LegacyGoal.default) }
 
     private companion object {
 

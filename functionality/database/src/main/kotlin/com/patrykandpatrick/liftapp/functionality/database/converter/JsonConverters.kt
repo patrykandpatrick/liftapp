@@ -3,9 +3,9 @@ package com.patrykandpatrick.liftapp.functionality.database.converter
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementValue
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
+import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.domain.unit.ValueUnit
@@ -36,9 +36,10 @@ class JsonConverters @Inject constructor(private val json: Json) {
     fun toMuscles(string: String): List<Muscle> =
         json.decodeFromString(MuscleListSerializer, string)
 
-    @TypeConverter fun toString(goal: Goal): String = json.encodeToString(goal)
+    // Named rather than overloaded: List<SetTarget> and List<Muscle> share a JVM signature.
+    @TypeConverter fun setTargetsToString(sets: List<SetTarget>): String = json.encodeToString(sets)
 
-    @TypeConverter fun toGoal(string: String): Goal = json.decodeFromString(string)
+    @TypeConverter fun toSetTargets(string: String): List<SetTarget> = json.decodeFromString(string)
 
     @TypeConverter fun toString(valueUnit: ValueUnit): String = json.encodeToString(valueUnit)
 

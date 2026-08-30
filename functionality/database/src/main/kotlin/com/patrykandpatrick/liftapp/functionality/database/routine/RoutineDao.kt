@@ -18,7 +18,7 @@ interface RoutineDao {
 
     @Query(
         value =
-            "SELECT item.*, exercise.*, goal.*, " +
+            "SELECT item.*, exercise.*, " +
                 "membership.routine_item_exercise_order_index AS routine_item_exercise_order, " +
                 "superset.superset_sets AS superset_sets, " +
                 "superset.superset_rest_time_millis AS superset_rest_time_millis " +
@@ -27,8 +27,6 @@ interface RoutineDao {
                 "LEFT JOIN exercise_with_routine_item AS membership " +
                 "ON membership.routine_item_id = item.routine_item_id " +
                 "LEFT JOIN exercise ON exercise.exercise_id = membership.exercise_id " +
-                "LEFT JOIN goal on goal.goal_exercise_id = exercise.exercise_id " +
-                "AND goal.goal_routine_id = :routineId " +
                 "WHERE item.routine_item_routine_id = :routineId " +
                 "ORDER BY item.routine_item_order_index, membership.routine_item_exercise_order_index"
     )

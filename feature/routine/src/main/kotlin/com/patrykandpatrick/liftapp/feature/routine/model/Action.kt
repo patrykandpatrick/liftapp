@@ -28,6 +28,4 @@ sealed interface Action {
     data class EditSuperset(val itemID: Long) : Action
 
     data class NavigateToExercise(val exerciseID: Long) : Action
-
-    data class NavigateToExerciseGoal(val exerciseID: Long) : Action
 }

@@ -6,7 +6,6 @@ import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.exercise.GetRoutineExercisesUseCase
 import com.patrykandpatrick.liftapp.domain.format.Formatter
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommand
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.domain.routine.GetRoutineWithItemsUseCase
@@ -207,10 +206,10 @@ class SupersetViewModelTest {
 
         val exercises =
             listOf(
-                RoutineExerciseItem(1L, "Squat", "Legs", ExerciseType.Weight, Goal.default),
-                RoutineExerciseItem(2L, "Bench Press", "Chest", ExerciseType.Weight, Goal.default),
-                RoutineExerciseItem(3L, "Deadlift", "Back", ExerciseType.Weight, Goal.default),
-                RoutineExerciseItem(4L, "Row", "Back", ExerciseType.Weight, Goal.default),
+                RoutineExerciseItem(1L, "Squat", "Legs", ExerciseType.Weight),
+                RoutineExerciseItem(2L, "Bench Press", "Chest", ExerciseType.Weight),
+                RoutineExerciseItem(3L, "Deadlift", "Back", ExerciseType.Weight),
+                RoutineExerciseItem(4L, "Row", "Back", ExerciseType.Weight),
             )
     }
 }

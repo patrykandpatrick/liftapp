@@ -1,6 +1,5 @@
 package com.patrykandpatrick.liftapp.functionality.database.migration
 
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -32,15 +31,15 @@ data class LegacyExerciseGoal(
     val maxReps: Int,
 ) {
     fun toGoal() =
-        Goal(
+        LegacyGoal(
             minReps = minReps,
             maxReps = maxReps,
             sets = sets,
             restTime = restSeconds.seconds,
-            duration = Goal.default.duration,
-            distance = Goal.default.distance,
-            distanceUnit = Goal.default.distanceUnit,
-            calories = Goal.default.calories,
+            duration = LegacyGoal.default.duration,
+            distance = LegacyGoal.default.distance,
+            distanceUnit = LegacyGoal.default.distanceUnit,
+            calories = LegacyGoal.default.calories,
         )
 }
 
@@ -143,17 +142,17 @@ fun parseLegacySets(source: String): LegacySets {
 }
 
 /** Reads an `Exercise.exercise_goal` value: `sets minReps maxReps breakTime`. */
-fun parseLegacyGoal(text: String): Goal {
+fun parseLegacyGoal(text: String): LegacyGoal {
     val values = legacyWords(text).mapNotNull(String::toIntOrNull)
-    return Goal(
+    return LegacyGoal(
         minReps = values.getOrElse(1) { 8 },
         maxReps = values.getOrElse(2) { 12 },
         sets = values.getOrElse(0) { 3 },
         restTime = values.getOrElse(3) { 120 }.seconds,
-        duration = Goal.default.duration,
-        distance = Goal.default.distance,
-        distanceUnit = Goal.default.distanceUnit,
-        calories = Goal.default.calories,
+        duration = LegacyGoal.default.duration,
+        distance = LegacyGoal.default.distance,
+        distanceUnit = LegacyGoal.default.distanceUnit,
+        calories = LegacyGoal.default.calories,
     )
 }
 

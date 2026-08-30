@@ -34,7 +34,7 @@ interface WorkoutDao {
     fun getRoutineName(routineID: Long): Flow<String?>
 
     @Query(
-        "SELECT item.*, exercise.*, goal.*, " +
+        "SELECT item.*, exercise.*, " +
             "membership.routine_item_exercise_order_index AS routine_item_exercise_order, " +
             "superset.superset_sets AS superset_sets, " +
             "superset.superset_rest_time_millis AS superset_rest_time_millis " +
@@ -43,8 +43,6 @@ interface WorkoutDao {
             "LEFT JOIN exercise_with_routine_item AS membership " +
             "ON membership.routine_item_id = item.routine_item_id " +
             "LEFT JOIN exercise ON exercise.exercise_id = membership.exercise_id " +
-            "LEFT JOIN goal ON goal.goal_exercise_id = exercise.exercise_id " +
-            "AND goal.goal_routine_id = :routineID " +
             "WHERE item.routine_item_routine_id = :routineID " +
             "ORDER BY item.routine_item_order_index, membership.routine_item_exercise_order_index"
     )
@@ -138,17 +136,7 @@ interface WorkoutDao {
     @Query("DELETE FROM workout WHERE workout_id = :workoutID")
     suspend fun deleteWorkout(workoutID: Long)
 
-    @Query(
-        value =
-            "INSERT INTO workout_goal (" +
-                "workout_goal_workout_id, workout_goal_exercise_id, workout_goal_min_reps, workout_goal_max_reps, " +
-                "workout_goal_sets, workout_goal_rest_time, workout_goal_duration_millis, workout_goal_distance, " +
-                "workout_goal_distance_unit, workout_goal_calories" +
-                ") SELECT :workoutID, goal_exercise_id, goal_min_reps, goal_max_reps, goal_sets, goal_rest_time, " +
-                "goal_duration_millis, goal_distance, goal_distance_unit, goal_calories " +
-                "FROM goal WHERE goal_routine_id = :routineID"
-    )
-    suspend fun copyRoutineGoalsToWorkoutGoals(routineID: Long, workoutID: Long)
+    @Insert suspend fun insertWorkoutGoals(goals: List<WorkoutGoalEntity>)
 
     @Upsert suspend fun upsertWorkoutGoal(goal: WorkoutGoalEntity)
 
@@ -192,11 +180,15 @@ interface WorkoutDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertWorkout(workout: WorkoutEntity): Long
 
+    /**
+     * [goals] arrive already resolved because a target is keyed by where the day falls in a plan,
+     * which is not something the routine alone knows. They carry no workout ID until there is one.
+     */
     @Transaction
     suspend fun getOrInsertActiveWorkoutWithItemsAndGoals(
         workout: WorkoutEntity,
         routineItems: List<RoutineItemExerciseDto>,
-        routineID: Long,
+        goals: List<WorkoutGoalEntity>,
     ): Long {
         getActiveWorkoutID()?.let {
             return it
@@ -204,7 +196,7 @@ interface WorkoutDao {
 
         val workoutID = insertWorkout(workout)
         insertWorkoutItems(workoutID, routineItems)
-        copyRoutineGoalsToWorkoutGoals(routineID, workoutID)
+        insertWorkoutGoals(goals.map { goal -> goal.copy(workoutID = workoutID) })
         return workoutID
     }
 

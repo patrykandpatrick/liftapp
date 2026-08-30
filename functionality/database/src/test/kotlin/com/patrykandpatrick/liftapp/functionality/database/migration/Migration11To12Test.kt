@@ -6,7 +6,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.test.platform.app.InstrumentationRegistry
 import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatrick.liftapp.domain.di.DomainModule
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.domain.unit.PercentageUnit
@@ -210,13 +209,13 @@ class Migration11To12Test {
             },
         )
         val benchGoal =
-            json.decodeFromString<Goal>(
+            json.decodeFromString<LegacyGoal>(
                 db.single("SELECT exercise_goal FROM exercise WHERE exercise_id = 6") {
                     it.getString(0)
                 }
             )
         assertEquals(
-            Goal.default.copy(sets = 4, minReps = 3, maxReps = 12, restTime = 180.seconds),
+            LegacyGoal.default.copy(sets = 4, minReps = 3, maxReps = 12, restTime = 180.seconds),
             benchGoal,
         )
         assertEquals(

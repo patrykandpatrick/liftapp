@@ -1,7 +1,6 @@
 package com.patrykandpatrick.liftapp.functionality.database.plan
 
 import com.patrykandpatrick.liftapp.domain.plan.Plan
-import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseWithGoalDto
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineMapper
 import javax.inject.Inject
 
@@ -23,14 +22,7 @@ class PlanMapper @Inject constructor(private val routineMapper: RoutineMapper) {
                                 val routineWithExercises =
                                     routineMapper.toDomainFlat(
                                         checkNotNull(plansWithRoutines.first().routine),
-                                        plansWithRoutines.mapNotNull { planWithRoutine ->
-                                            if (planWithRoutine.exercise == null)
-                                                return@mapNotNull null
-                                            ExerciseWithGoalDto(
-                                                exerciseEntity = planWithRoutine.exercise,
-                                                goalEntity = planWithRoutine.goalEntity,
-                                            )
-                                        },
+                                        plansWithRoutines.mapNotNull { it.exercise },
                                     )
                                 Plan.Item.Routine(routineWithExercises)
                             } else {
@@ -48,10 +40,7 @@ class PlanMapper @Inject constructor(private val routineMapper: RoutineMapper) {
         val routineWithExercises =
             routineMapper.toDomainFlat(
                 routine = routine,
-                exercises =
-                    schedule.mapNotNull { (_, exercise, goal) ->
-                        exercise?.let { ExerciseWithGoalDto(it, goal) }
-                    },
+                exercises = schedule.mapNotNull { it.exercise },
             )
         return Plan.Item.Routine(routineWithExercises)
     }

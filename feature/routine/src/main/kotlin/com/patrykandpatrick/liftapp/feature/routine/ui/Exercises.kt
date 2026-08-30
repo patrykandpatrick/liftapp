@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.model.Unfold
-import com.patrykandpatrick.liftapp.core.model.getPrettyStringLong
 import com.patrykandpatrick.liftapp.core.text.LocalMarkupProcessor
 import com.patrykandpatrick.liftapp.domain.extension.moved
 import com.patrykandpatrick.liftapp.domain.model.Loadable
@@ -231,15 +230,9 @@ private fun RoutineItemRow(
             }
         },
         actions = {
-            GoalButton(
-                onClick = {
-                    if (isSuperset) {
-                        onAction(Action.EditSuperset(item.id))
-                    } else {
-                        onAction(Action.NavigateToExerciseGoal(exercise.id))
-                    }
-                }
-            )
+            if (isSuperset) {
+                EditSupersetButton(onClick = { onAction(Action.EditSuperset(item.id)) })
+            }
         },
         contentPadding =
             PaddingValues(
@@ -329,9 +322,6 @@ private fun SupersetMemberRow(
                 position = position,
                 description = { Text(exerciseDescription(exercise)) },
                 icon = { DragHandle(dragHandleModifier) },
-                actions = {
-                    GoalButton(onClick = { onAction(Action.NavigateToExerciseGoal(exercise.id)) })
-                },
                 expanded = expanded,
                 contentPadding =
                     PaddingValues(
@@ -368,7 +358,7 @@ private fun DragHandle(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun GoalButton(onClick: () -> Unit) {
+private fun EditSupersetButton(onClick: () -> Unit) {
     LiftAppIconButton(onClick = onClick) {
         Icon(
             imageVector = LiftAppIcons.Goal,
@@ -393,7 +383,5 @@ private fun supersetSummary(exerciseCount: Int, sets: Int): AnnotatedString {
 
 @Composable
 private fun exerciseDescription(exercise: RoutineExerciseItem) = buildAnnotatedString {
-    append(exercise.goal.getPrettyStringLong(exercise.type))
-    append("\n")
     append(exercise.muscles)
 }

@@ -36,7 +36,6 @@ import com.patrykandpatrick.liftapp.core.preview.MultiDevicePreview
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.core.ui.TopAppBarWithTabs
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
-import com.patrykandpatrick.liftapp.domain.goal.Goal
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
@@ -297,7 +296,6 @@ private fun RoutineScreenPreview() {
                                                 "Bench Press",
                                                 "Chest",
                                                 ExerciseType.Weight,
-                                                Goal.default,
                                             )
                                         ),
                                 ),
@@ -311,7 +309,6 @@ private fun RoutineScreenPreview() {
                                                 "Squat",
                                                 "Legs",
                                                 ExerciseType.Weight,
-                                                Goal.default,
                                             )
                                         ),
                                 ),
@@ -325,7 +322,6 @@ private fun RoutineScreenPreview() {
                                                 "Deadlift",
                                                 "Back",
                                                 ExerciseType.Weight,
-                                                Goal.default,
                                             )
                                         ),
                                 ),

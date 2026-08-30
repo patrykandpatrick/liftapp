@@ -16,10 +16,10 @@ import com.patrykandpatrick.liftapp.functionality.database.bodymeasurement.BodyM
 import com.patrykandpatrick.liftapp.functionality.database.converter.JsonConverters
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatrick.liftapp.functionality.database.exercise.RoomExerciseRepository
-import com.patrykandpatrick.liftapp.functionality.database.goal.GoalDao
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration11To12
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration12To13
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration13To14
+import com.patrykandpatrick.liftapp.functionality.database.migration.Migration14To15
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration1To12
 import com.patrykandpatrick.liftapp.functionality.database.migration.PublishedMigrations
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanDao
@@ -27,6 +27,7 @@ import com.patrykandpatrick.liftapp.functionality.database.routine.RoomRoutineRe
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineDao
 import com.patrykandpatrick.liftapp.functionality.database.string.BodyMeasurementStringResource
 import com.patrykandpatrick.liftapp.functionality.database.string.ExerciseStringResource
+import com.patrykandpatrick.liftapp.functionality.database.target.TargetDao
 import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutDao
 import dagger.Binds
 import dagger.Module
@@ -85,6 +86,7 @@ interface DatabaseModule {
                     Migration1To12,
                     Migration12To13,
                     Migration13To14(json),
+                    Migration14To15(json),
                 )
                 .build()
 
@@ -118,7 +120,7 @@ interface DatabaseModule {
 
         @Provides fun provideRoutineDao(database: Database): RoutineDao = database.routineDao
 
-        @Provides fun provideGoalDao(database: Database): GoalDao = database.goalDao
+        @Provides fun provideTargetDao(database: Database): TargetDao = database.targetDao
 
         @Provides fun provideWorkoutDao(database: Database): WorkoutDao = database.workoutDao
 

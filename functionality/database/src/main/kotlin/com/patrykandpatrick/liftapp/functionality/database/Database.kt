@@ -11,8 +11,6 @@ import com.patrykandpatrick.liftapp.functionality.database.converter.JsonConvert
 import com.patrykandpatrick.liftapp.functionality.database.converter.LocalDateTimeConverters
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseDao
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseEntity
-import com.patrykandpatrick.liftapp.functionality.database.goal.GoalDao
-import com.patrykandpatrick.liftapp.functionality.database.goal.GoalEntity
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanDao
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanEntity
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanItemEntity
@@ -23,6 +21,8 @@ import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineEntity
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineItemEntity
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineWithExerciseNamesView
 import com.patrykandpatrick.liftapp.functionality.database.routine.SupersetEntity
+import com.patrykandpatrick.liftapp.functionality.database.target.ExerciseTargetEntity
+import com.patrykandpatrick.liftapp.functionality.database.target.TargetDao
 import com.patrykandpatrick.liftapp.functionality.database.workout.ExerciseSetEntity
 import com.patrykandpatrick.liftapp.functionality.database.workout.ExerciseWithWorkoutItemEntity
 import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutDao
@@ -40,7 +40,6 @@ import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutItemEn
             RoutineItemEntity::class,
             ExerciseWithRoutineItemEntity::class,
             SupersetEntity::class,
-            GoalEntity::class,
             WorkoutEntity::class,
             WorkoutItemEntity::class,
             ExerciseWithWorkoutItemEntity::class,
@@ -49,11 +48,12 @@ import com.patrykandpatrick.liftapp.functionality.database.workout.WorkoutItemEn
             PlanEntity::class,
             PlanItemEntity::class,
             PlanItemSchedule::class,
+            ExerciseTargetEntity::class,
         ],
     views = [BodyMeasurementWithLatestEntryViewResult::class, RoutineWithExerciseNamesView::class],
     // 2 through 11 belong to the published app; 12 onwards is this schema. See the `migration`
     // package.
-    version = 14,
+    version = 15,
     exportSchema = true,
 )
 @TypeConverters(
@@ -68,7 +68,7 @@ abstract class Database : RoomDatabase() {
 
     abstract val routineDao: RoutineDao
 
-    abstract val goalDao: GoalDao
+    abstract val targetDao: TargetDao
 
     abstract val workoutDao: WorkoutDao
 

@@ -4,7 +4,6 @@ import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.navigation.data.BackupRestoreRouteData
 import com.patrykandpatrick.liftapp.navigation.data.BodyMeasurementDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseDetailsRouteData
-import com.patrykandpatrick.liftapp.navigation.data.ExerciseGoalRouteData
 import com.patrykandpatrick.liftapp.navigation.data.ExerciseListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewBodyMeasurementRouteData
 import com.patrykandpatrick.liftapp.navigation.data.NewExerciseRouteData
@@ -82,8 +81,6 @@ object Routes {
         fun new() = NewExerciseRouteData(ID_NOT_SET)
 
         fun edit(exerciseID: Long) = NewExerciseRouteData(exerciseID)
-
-        fun goal(routineID: Long, exerciseID: Long) = ExerciseGoalRouteData(routineID, exerciseID)
     }
 
     object BodyMeasurement {

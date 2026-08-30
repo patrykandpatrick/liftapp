@@ -3,7 +3,6 @@ package com.patrykandpatrick.liftapp.functionality.database.routine
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.routine.Routine
-import com.patrykandpatrick.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemWithExercises
 import com.patrykandpatrick.liftapp.domain.routine.RoutineWithExerciseNames
@@ -12,7 +11,6 @@ import com.patrykandpatrick.liftapp.domain.routine.SupersetConfig
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseEntity
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseMapper
-import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseWithGoalDto
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.serialization.decodeFromString
@@ -32,7 +30,7 @@ constructor(
     ): RoutineWithExercises =
         toDomain(
             routine = routine,
-            exercises = itemRows.map { it.toExerciseWithGoal() },
+            exercises = itemRows.map { it.exercise },
             items = itemRows.groupBy(RoutineItemExerciseDto::item).map(::toDomain),
         )
 
@@ -42,13 +40,13 @@ constructor(
      */
     fun toDomainFlat(
         routine: RoutineEntity,
-        exercises: List<ExerciseWithGoalDto>,
+        exercises: List<ExerciseEntity>,
     ): RoutineWithExercises =
         toDomain(
             routine = routine,
             exercises = exercises,
             items =
-                exerciseMapper.exerciseWithGoalDtoToRoutineExerciseItem(exercises).mapIndexed {
+                exerciseMapper.exerciseEntityToRoutineExerciseItem(exercises).mapIndexed {
                     index,
                     exercise ->
                     RoutineItemWithExercises(
@@ -73,7 +71,7 @@ constructor(
 
     private fun toDomain(
         routine: RoutineEntity,
-        exercises: List<ExerciseWithGoalDto>,
+        exercises: List<ExerciseEntity>,
         items: List<RoutineItemWithExercises>,
     ): RoutineWithExercises {
         val primaryMuscles = exercises.flattenMuscles { mainMuscles }
@@ -98,23 +96,17 @@ constructor(
     ): RoutineItemWithExercises {
         val (entity, rows) = item
         val supersetConfig = rows.first().toSupersetConfig(entity.type)
-        val exercises =
-            exerciseMapper.exerciseWithGoalDtoToRoutineExerciseItem(
-                rows.map { it.toExerciseWithGoal() }
-            )
+        val exercises = exerciseMapper.exerciseEntityToRoutineExerciseItem(rows.map { it.exercise })
         return RoutineItemWithExercises(
             id = entity.id,
             type = entity.type,
-            exercises = exercises.map { it.withSupersetConfig(supersetConfig) },
+            exercises = exercises,
             supersetConfig = supersetConfig,
         )
     }
 }
 
 internal fun Routine.toEntity(): RoutineEntity = RoutineEntity(id = id, name = name)
-
-private fun RoutineItemExerciseDto.toExerciseWithGoal(): ExerciseWithGoalDto =
-    ExerciseWithGoalDto(exercise, goal)
 
 private fun RoutineItemExerciseDto.toSupersetConfig(type: RoutineItemType): SupersetConfig? =
     if (type == RoutineItemType.Superset) {
@@ -126,18 +118,8 @@ private fun RoutineItemExerciseDto.toSupersetConfig(type: RoutineItemType): Supe
         null
     }
 
-/** The set count and the rest time of a superset apply to each of its exercises. */
-private fun RoutineExerciseItem.withSupersetConfig(config: SupersetConfig?): RoutineExerciseItem =
-    if (config == null) {
-        this
-    } else {
-        copy(goal = goal.copy(sets = config.sets, restTime = config.restTime))
-    }
-
-private inline fun List<ExerciseWithGoalDto>.flattenMuscles(
+private inline fun List<ExerciseEntity>.flattenMuscles(
     getMuscles: ExerciseEntity.() -> List<Muscle>
 ): MutableList<Muscle> =
-    fold(HashSet<Muscle>()) { set, exerciseWithGoal ->
-            set.apply { addAll(getMuscles(exerciseWithGoal.exerciseEntity)) }
-        }
+    fold(HashSet<Muscle>()) { set, exercise -> set.apply { addAll(getMuscles(exercise)) } }
         .toMutableList()
