@@ -20,9 +20,14 @@ constructor(
     private val preferenceRepository: PreferenceRepository,
 ) {
 
+    /**
+     * Without [bodyWeight] a calisthenics set reports only the weight hung off the bar, so an
+     * unweighted pull-up reads as no load at all.
+     */
     suspend fun mapCompletedExerciseSets(
         exerciseType: ExerciseType,
         sets: List<ExerciseSetEntity>,
+        bodyWeight: BodyMeasurementValue.SingleValue?,
     ): List<ExerciseSet> {
         val massUnit = preferenceRepository.massUnit.get().first()
         val distanceUnit = preferenceRepository.longDistanceUnit.get().first()
@@ -33,6 +38,7 @@ constructor(
             sets = sets.associateBy { it.setIndex },
             massUnit = massUnit,
             distanceUnit = distanceUnit,
+            bodyWeight = bodyWeight,
             fillWithEmptySets = false,
         )
     }

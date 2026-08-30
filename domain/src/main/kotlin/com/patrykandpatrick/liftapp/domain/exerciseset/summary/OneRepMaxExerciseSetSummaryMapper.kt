@@ -25,10 +25,22 @@ constructor(private val unitConverter: UnitConverter) : ExerciseSetSummaryMapper
                 group.sets.maxOf { set ->
                     when (set) {
                         is ExerciseSet.Calisthenics ->
-                            oneRepMax(set.weight, set.reps, set.weightUnit, set.rir, preferredUnit)
+                            oneRepMax(
+                                set.totalWeight,
+                                set.reps,
+                                set.weightUnit,
+                                set.rir,
+                                preferredUnit,
+                            )
 
                         is ExerciseSet.Weight ->
-                            oneRepMax(set.weight, set.reps, set.weightUnit, set.rir, preferredUnit)
+                            oneRepMax(
+                                set.totalWeight,
+                                set.reps,
+                                set.weightUnit,
+                                set.rir,
+                                preferredUnit,
+                            )
 
                         is ExerciseSet.Cardio,
                         is ExerciseSet.Reps,

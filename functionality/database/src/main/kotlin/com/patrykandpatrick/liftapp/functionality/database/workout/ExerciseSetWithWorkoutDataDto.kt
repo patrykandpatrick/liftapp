@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.functionality.database.workout
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import java.time.LocalDateTime
 
 class ExerciseSetWithWorkoutDataDto(
@@ -9,4 +10,6 @@ class ExerciseSetWithWorkoutDataDto(
     @ColumnInfo(name = "workout_start_date") val workoutStartDate: LocalDateTime,
     @ColumnInfo(name = "workout_name") val workoutName: String,
     @ColumnInfo(name = "workout_item_exercise_notes") val exerciseNotes: String,
+    /** Null for a workout logged before the user had any body measurement. */
+    @ColumnInfo(name = "workout_body_weight") val bodyWeight: BodyMeasurementValue?,
 )

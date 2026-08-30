@@ -56,7 +56,7 @@ class OneRepMaxExerciseSetSummaryMapperTest {
     }
 
     @Test
-    fun `A calisthenics set is read the same way`() = runBlocking {
+    fun `A calisthenics set is read against the body weight it moved as well`() = runBlocking {
         val set =
             ExerciseSet.Calisthenics(
                 weight = WEIGHT,
@@ -66,7 +66,23 @@ class OneRepMaxExerciseSetSummaryMapperTest {
                 rir = 2,
             )
         assertEquals(
-            OneRepMaxCalculator.getOneRepMax(WEIGHT, reps = 10, unit = MassUnit.Kilograms),
+            OneRepMaxCalculator.getOneRepMax(WEIGHT + 80.0, reps = 10, unit = MassUnit.Kilograms),
+            oneRepMaxOf(set),
+        )
+    }
+
+    @Test
+    fun `An unweighted calisthenics set still has a one-rep max`() = runBlocking {
+        val set =
+            ExerciseSet.Calisthenics(
+                weight = 0.0,
+                bodyWeight = 80.0,
+                reps = 8,
+                weightUnit = MassUnit.Kilograms,
+                rir = 0,
+            )
+        assertEquals(
+            OneRepMaxCalculator.getOneRepMax(80.0, reps = 8, unit = MassUnit.Kilograms),
             oneRepMaxOf(set),
         )
     }

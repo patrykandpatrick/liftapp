@@ -26,7 +26,7 @@ interface ExerciseDao {
     fun getExerciseNameAndType(id: Long): Flow<ExerciseNameAndTypeDto?>
 
     @Query(
-        "SELECT exercise_set.*, workout_start_date, workout_name, " +
+        "SELECT exercise_set.*, workout_start_date, workout_name, workout_body_weight, " +
             "COALESCE((" +
             "SELECT membership.workout_item_exercise_notes " +
             "FROM exercise_with_workout_item AS membership " +

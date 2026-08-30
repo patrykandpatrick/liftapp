@@ -40,7 +40,12 @@ class GetDashboardStatisticsUseCaseTest {
                     GetPastWorkoutsInRangeContract { start, endExclusive ->
                         flowOf(
                             workouts.filter { workout ->
-                                !workout.startDate.isBefore(start) &&
+                                // Mirrors `workout_end_date IS NOT NULL AND
+                                // workout_start_date >= ? AND workout_start_date < ?`: dropping
+                                // the first clause would let tests pin behaviour production
+                                // cannot reach.
+                                workout.endDate != null &&
+                                    !workout.startDate.isBefore(start) &&
                                     workout.startDate.isBefore(endExclusive)
                             }
                         )
@@ -116,11 +121,39 @@ class GetDashboardStatisticsUseCaseTest {
     }
 
     @Test
-    fun `A workout still in progress contributes no time`() = runTest {
-        val statistics = statisticsOf(workout(MONDAY, hours = null))
+    fun `A workout still in progress does not count at all`() = runTest {
+        // Not merely "contributes no time": the query only returns workouts that have ended, so an
+        // unfinished one is absent from the totals entirely.
+        val statistics =
+            statisticsOf(
+                workout(MONDAY, hours = null, sets = listOf(weightSet(100.0, reps = 5))),
+                workout(SUNDAY, hours = 1, sets = listOf(weightSet(100.0, reps = 5))),
+            )
 
         assertEquals(1, statistics.workouts)
-        assertEquals(kotlin.time.Duration.ZERO, statistics.timeExercised)
+        assertEquals(500.0, statistics.volume)
+        assertEquals(1.hours, statistics.timeExercised)
+    }
+
+    @Test
+    fun `Body weight is part of what a calisthenics set lifted`() = runTest {
+        val statistics =
+            statisticsOf(
+                workout(
+                    MONDAY,
+                    sets =
+                        listOf(
+                            ExerciseSet.Calisthenics(
+                                weight = 10.0,
+                                bodyWeight = 80.0,
+                                reps = 5,
+                                weightUnit = MassUnit.Kilograms,
+                            )
+                        ),
+                )
+            )
+
+        assertEquals(450.0, statistics.volume)
     }
 
     private companion object {

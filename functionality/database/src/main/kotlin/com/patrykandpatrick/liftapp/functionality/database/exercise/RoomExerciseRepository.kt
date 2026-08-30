@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.functionality.database.exercise
 
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.patrykandpatrick.liftapp.domain.bodymeasurement.BodyMeasurementValue
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
 import com.patrykandpatrick.liftapp.domain.exercise.Exercise
@@ -105,6 +106,7 @@ constructor(
                                         exerciseSetMapper.mapCompletedExerciseSets(
                                             exercise.exerciseType,
                                             dtos.map { it.exerciseSet },
+                                            workout.bodyWeight as? BodyMeasurementValue.SingleValue,
                                         ),
                                     workoutStartDate = workoutStartDate,
                                     notes = workout.exerciseNotes,

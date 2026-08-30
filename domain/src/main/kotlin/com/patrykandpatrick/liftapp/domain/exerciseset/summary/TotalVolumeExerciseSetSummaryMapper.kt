@@ -11,10 +11,10 @@ constructor(private val unitConverter: UnitConverter) : SetSplitExerciseSetSumma
     override suspend fun processSet(set: ExerciseSet, setIndex: Int): Double? =
         when (set) {
             is ExerciseSet.Calisthenics ->
-                unitConverter.convertToPreferredUnit(set.weightUnit, set.weight) * set.reps
+                unitConverter.convertToPreferredUnit(set.weightUnit, set.totalWeight) * set.reps
 
             is ExerciseSet.Weight ->
-                unitConverter.convertToPreferredUnit(set.weightUnit, set.weight) * set.reps
+                unitConverter.convertToPreferredUnit(set.weightUnit, set.totalWeight) * set.reps
 
             is ExerciseSet.Cardio,
             is ExerciseSet.Reps,

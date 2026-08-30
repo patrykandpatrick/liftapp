@@ -18,6 +18,14 @@ sealed class ExerciseSet : Serializable {
     open val kcal: Double? = null
 
     /**
+     * The mass the set moved: for [Calisthenics] the body weight as well as whatever was added.
+     * Every reading of a set's load goes through this rather than [weight], so the layers agree on
+     * what a bodyweight pull-up counted as.
+     */
+    open val totalWeight: Double?
+        get() = weight
+
+    /**
      * Reps in reserve: how many more reps the user could have done, within [RIR_RANGE]. `null`
      * means they did not report it, which is not the same as `0` — zero is a set taken to failure.
      * Meaningless for [Cardio] and [Time], which leave it `null` always.
@@ -33,6 +41,9 @@ sealed class ExerciseSet : Serializable {
     ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = weight > 0 && reps > 0
+
+        override val totalWeight: Double
+            get() = weight
 
         companion object {
             fun empty(massUnit: MassUnit) = Weight(0.0, 0, massUnit)
@@ -67,6 +78,9 @@ sealed class ExerciseSet : Serializable {
     ) : ExerciseSet() {
         override val isCompleted: Boolean
             get() = reps > 0
+
+        override val totalWeight: Double
+            get() = weight + bodyWeight
 
         companion object {
             fun empty(bodyWeight: Double, massUnit: MassUnit) =

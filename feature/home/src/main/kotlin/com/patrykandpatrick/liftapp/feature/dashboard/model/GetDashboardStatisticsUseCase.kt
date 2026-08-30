@@ -56,7 +56,7 @@ constructor(
                     val setReps = set.reps ?: return@forEach
                     reps += setReps
 
-                    val weight = set.weight
+                    val weight = set.totalWeight
                     val weightUnit = set.weightUnit
                     if (weight != null && weightUnit != null) {
                         volume += unitConverter.convert(weightUnit, massUnit, weight) * setReps

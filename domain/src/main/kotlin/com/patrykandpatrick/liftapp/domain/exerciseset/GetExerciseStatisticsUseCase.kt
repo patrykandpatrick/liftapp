@@ -30,9 +30,8 @@ class GetExerciseStatisticsUseCase @Inject constructor(private val unitConverter
         val values = sets.mapNotNull { set ->
             val (weight, weightUnit, reps) =
                 when (set) {
-                    is ExerciseSet.Weight -> Triple(set.weight, set.weightUnit, set.reps)
-                    is ExerciseSet.Calisthenics ->
-                        Triple(set.weight + set.bodyWeight, set.weightUnit, set.reps)
+                    is ExerciseSet.Weight -> Triple(set.totalWeight, set.weightUnit, set.reps)
+                    is ExerciseSet.Calisthenics -> Triple(set.totalWeight, set.weightUnit, set.reps)
                     is ExerciseSet.Cardio,
                     is ExerciseSet.Reps,
                     is ExerciseSet.Time -> return@mapNotNull null
