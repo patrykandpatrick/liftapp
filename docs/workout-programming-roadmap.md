@@ -2,14 +2,14 @@
 
 ## Status
 
-**Phases 2 and 3 have shipped.** Phase 4 is next, and needs nothing that is not already there.
+**Phases 2, 3 and 4 have shipped.** Phase 5 is next, and it is the big one.
 
 | Phase | State |
 | --- | --- |
 | 2 — Classification, progression metadata, shoulder split | **Done**, `ec711df0`, schema 14 |
 | 3 — Estimation math | **Done**, `ed1476b5`, no schema |
-| 4 — Weekly volume per muscle (actual) | Next |
-| 5 — Prescription moves into the plan | Open, schema 15 |
+| 4 — Weekly volume per muscle (actual) | **Done**, no schema |
+| 5 — Prescription moves into the plan | Next, schema 15 |
 | 6 — Autoregulation and stalls | Open |
 | 7 — Mesocycle, deloads, planned volume | Open |
 
@@ -279,6 +279,77 @@ details chart still render.
 ---
 
 ## Phase 4 — Weekly volume per muscle (actual)
+
+> **Shipped**, no schema. Eight things worth carrying forward; the sixth and seventh move it off
+> the dashboard the plan below puts it on:
+>
+> - **The accumulator is `MuscleVolume` in `:domain`**, not a `Map<Muscle, Double>` on the
+>   statistics. Phase 7 has to fold planned volume the same way for the two to be comparable, and a
+>   bare map would have meant reimplementing the fractional credits next to the plan. It also owns
+>   the rounding: `bandOf` reads the *rounded* set count, so the number on screen and the band
+>   beside it can never disagree — 5.75 sets reads as six sets at maintenance, not as six sets
+>   below it. Work too slight to round up to one reads as *under 1 set* rather than as none.
+> - **A muscle named in two tiers is credited once, at the highest.** Not anticipated here, and it
+>   matters: the annotations are hand-authored and a few name the same muscle twice. Summing them
+>   would have paid 1.5× for an authoring slip.
+> - **Cardio is excluded from the set count.** The landmarks count working sets of resistance
+>   training; a five-kilometre run is not one set of quadriceps, and counting it as one would put
+>   every runner over the ceiling on the legs. `Time` exercises are counted — a plank is a set.
+> - **The adaptive band starts at 10 sets, not 8.** MEV is a range (~8–10) rather than a line, so
+>   the band boundary takes its top: a muscle only reads as productive once it clearly is, and 10 is
+>   also ACSM's summary figure. Four bands on three boundaries — 6 / 10 / 20 — and every one of
+>   them is a landmark the reference names, none invented to make the bands even.
+> - **The calisthenics fix was wider than "volume".** Both chart mappers read the added weight
+>   alone, so an unweighted pull-up plotted a one-rep max of zero while the statistics card above it
+>   showed the body weight it moved. `ExerciseSet.totalWeight` is now the single reading, and the
+>   dashboard's tonnage — a third layer, which this plan does not mention — was counting the added
+>   weight alone too.
+> - **It did not stay in the dashboard fold, and the dashboard is not where it lives.** The window
+>   is the rolling seven days, not the calendar week the rest of the dashboard totals cover: a
+>   Monday morning would otherwise report an almost empty week, and Sunday's work would drop out
+>   overnight. Two windows means two queries, so the fold is `GetMuscleVolumeUseCase` in `:domain`,
+>   the table is `:feature:musclevolume` — where the window is selectable, following
+>   `:feature:exercisedetails` — and the dashboard keeps a card of the three hardest-worked
+>   muscles, which is a way in rather than the picture. The row and the legend live in `:core`, so
+>   the card and the screen draw the same thing.
+> - **A window longer than a week is divided down to one.** Every landmark is stated per week, so a
+>   month's total is a number nothing can be compared against. `MuscleVolume.perWeek` restates it
+>   as a weekly average and the caption says which of the two is on show. There is no yearly
+>   option: a year averaged to a week smooths away every block, deload and layoff that made it.
+>
+> - **A scale with a thumb, not a bar to fill.** A filled bar is a claim about direction: more is
+>   nearer to done, and full is the goal. That is the wrong shape for this quantity — the
+>   productive band is in the middle and the top of the range is a limit — so `LiftAppScaleBar`
+>   draws the whole scale as a muted gradient and only the thumb moves. It also makes the
+>   landmarks visible, where the old bar left them to the legend. The track runs a quarter past
+>   MRV so the top band has width instead of being a point every over-reaching muscle pins to,
+>   each boundary crossfades over one set rather than a knife edge, and the track is drawn well
+>   back so a column of rows is not fifteen rainbows and the thumb is not lost on its own colour.
+>   The landmarks — 6, 10 and 20 — are dots on every bar rather than labels on a strip above the
+>   column: a strip is only beside the first row or two, and by the tenth the reader is sighting up
+>   an imaginary line or has scrolled it away. A dot is a position, and a position only needs
+>   naming once, so the set counts live in the key beside the band names — above the rows rather
+>   than below them, since a key that follows what it decodes is one the reader meets too late.
+>   The card carries the counts without the names, on one line: the names do not fit across a
+>   card's narrower measure without being cut, and a card is only being asked what the colours are
+>   worth. That the key holds a fixed number of entries to a row is not cosmetic — a card sizes
+>   itself on what its content says it needs, and a freely wrapping flow answers that question
+>   differently depending on the width it is asked about, which left the card a line short and its
+>   button squeezed to nothing. Those counts are
+>   written over whole sets — 6–9, 10–19, 20+ — because whole sets are what the rows show, and
+>   "6–10" would put a row reading ten sets in two bands at once.
+>
+> Beyond the plan: `TotalVolumeExerciseSetSummaryMapper` had no test and now has one.
+>
+> **The bands do not use the theme's semantic colors.** Read in band order, grey / yellow / green /
+> red reverses direction around the color wheel twice, so a gradient between them crosses the middle
+> of the wheel where there is no color left, and the crossfades come out olive and brown. The scale
+> sweeps slate → sky → emerald → amber instead, which only ever turns one way, and it is drawn by
+> rotating hue at held chroma rather than cutting straight across — worth up to half again as much
+> chroma at the midpoint of a blend. Two things fell out of getting that right: the track is muted
+> by taking its chroma away rather than its alpha, because backing a color off toward a dark
+> background turns the warm end brown (a dark amber *is* brown), and it is opaque, so a row looks
+> the same on the dashboard's card as on the screen behind it.
 
 **No schema.** Part 4's volume accounting applied to *logged* work. Planned volume needs the targets
 from Phase 5 and lands in Phase 7.

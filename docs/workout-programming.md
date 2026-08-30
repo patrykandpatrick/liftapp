@@ -10,8 +10,9 @@ app should stay out of the user's way.
 
 ## What is built so far
 
-Three phases have landed, and none of them prescribes anything yet. Together they are the
-measurement, the vocabulary and the arithmetic that everything in Part 3 depends on.
+Four phases have landed, and none of them prescribes anything yet. Together they are the
+measurement, the vocabulary, the arithmetic and the accounting that everything in Part 3 depends
+on.
 
 **Reps in reserve** (`716e0ce6`, schema 13). [`ExerciseSet`][set] carries a nullable `rir` in
 `0..4`, collected as a small integer set and clamped wherever it is written. Null is not zero: an
@@ -46,6 +47,34 @@ This is not a Part 5 item — it is the math those items will call, and until th
 consumes `loadFor` or the rounding. What it does mean is that
 [the autoregulation loop](#the-autoregulation-loop-once-those-exist) is now missing only its inputs,
 not its primitives.
+
+**Weekly volume per muscle** (no schema). `MuscleVolume` in `:domain` credits each completed set to
+the muscles its exercise names, at the fractional weights in
+[Volume accounting](#volume-accounting), and `GetMuscleVolumeUseCase` folds it over whatever window
+the caller asks for. It is reported as whole sets and a band against the
+[Part 1 landmarks](#part-1--what-actually-separates-strength-from-hypertrophy) — under 6, 6 to 10,
+10 to 20, 20 and over — and it warns about none of it, because the landmarks describe a curve with
+no cliff in it. The band is read off the *rounded* count so that the number and the band shown next
+to it cannot contradict each other, and work too slight to round up to a set reads as under one
+rather than as none. Each row draws the whole scale and marks where the muscle falls on it, rather
+than filling a bar: a fill would say more is nearer to done, and the top of this range is a limit,
+not a target. Every bar carries the three landmarks as dots, so a row says how far through its band
+it is and not only which band it is in; what those dots are worth in sets is named once, in the
+legend.
+
+A dedicated screen shows every muscle and lets the window be changed, from the rolling seven days
+out to a month; the dashboard carries a card of the three hardest-worked muscles over the rolling
+week, which is a different window from the calendar week the rest of its totals cover. Anything
+longer than a week is divided down to one, because a monthly total is a number no landmark speaks
+to.
+
+This is logged volume only. Planned volume is the same fold over the targets in Part 3, and lands
+with them.
+
+The same pass settled what a calisthenics set weighs. `ExerciseSet.totalWeight` is now the one
+reading of the mass a set moved — body weight included — where the statistics card counted it, both
+chart mappers did not, and the dashboard's tonnage did not either. An unweighted pull-up used to
+plot a one-rep max of zero.
 
 Still open, in the order Part 5 gives them: per-set targets (2), a target load (3), training intent
 (4), a week index on [`Plan`][plan] (6), and per-exercise fatigue cost (7). Items 2 through 4 are
@@ -430,8 +459,9 @@ inverse, so it is solved by iteration.
 
 ### Volume accounting
 
-[`Exercise`][ex] already carries `primaryMuscles`, `secondaryMuscles` and `tertiaryMuscles`. Weekly
-volume per muscle is a fold over the active [`Plan`][plan]'s routines:
+[`Exercise`][ex] already carries `primaryMuscles`, `secondaryMuscles` and `tertiaryMuscles`. A set
+is credited to every muscle its exercise names, discounted by how much of the movement that muscle
+does:
 
 ```kotlin
 // Fractional weights are a convention, not a measured quantity.
@@ -441,9 +471,20 @@ private const val INDIRECT = 0.5
 private const val MINOR = 0.25
 ```
 
-Sum `sets × weight` per muscle across all routines in the cycle, normalise to a week by the cycle
-length, and compare against the landmarks in Part 1. Present it as a band, not a number — the input
-precision does not justify one decimal place.
+Sum `sets × weight` per muscle and compare against the landmarks in Part 1. Present it as a band,
+not a number — the input precision does not justify one decimal place. `MuscleVolume` is that fold,
+and it takes sets from wherever they come: **logged** volume is a week of finished workouts, which
+is what the dashboard shows today, and **planned** volume will be the same fold over the active
+[`Plan`][plan]'s targets, normalised to a week by the cycle length. Building both the same way is
+what makes them comparable.
+
+A muscle named in two tiers of the same exercise is credited once, at the highest tier it appears
+in. The lists are hand-authored and a repeat is an authoring slip, not a claim that the muscle does
+the work one and a half times.
+
+Cardio is excluded. The landmarks count working sets of resistance training, and a five-kilometre
+run is not one set of quadriceps — counting it as one would put every runner over the ceiling on
+the legs. A held position is a set, so `Time` exercises count.
 
 The shoulder row used to be the least trustworthy in that table, because [`Muscle`][muscle] had a
 single `Shoulders` entry while front delts receive heavy indirect volume from every press and side
