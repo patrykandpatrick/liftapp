@@ -43,6 +43,14 @@ interface TargetDao {
     /**
      * The day's prescription with enough of each exercise to name it, ordered as the routine lays
      * them out rather than by whatever the target rows happen to return.
+     *
+     * The routine is reached for the ordering in `ORDER BY` subqueries rather than joined. Joining
+     * `routine_item` returns every item of the routine against every target, so one exercise came
+     * back once per item — four exercises over four items were sixteen rows, and the editor's list
+     * met the same key four times and crashed. A subquery cannot multiply the rows it orders.
+     *
+     * An exercise dropped from the routine keeps its target, so both subqueries can be null; the
+     * exercise ID is the last tiebreaker to keep the order total either way.
      */
     @Query(
         "SELECT t.*, e.exercise_name, e.exercise_type, r.routine_name FROM exercise_target t " +
@@ -50,13 +58,16 @@ interface TargetDao {
             "LEFT JOIN plan_item pi ON pi.plan_item_plan_id = t.exercise_target_plan_id " +
             "AND pi.plan_item_order_index = t.exercise_target_item_order_index " +
             "LEFT JOIN routine r ON r.routine_id = pi.plan_item_routine_id " +
-            "LEFT JOIN routine_item ri ON ri.routine_item_routine_id = r.routine_id " +
-            "LEFT JOIN exercise_with_routine_item ewr ON ewr.routine_item_id = ri.routine_item_id " +
-            "AND ewr.exercise_id = e.exercise_id " +
             "WHERE t.exercise_target_plan_id = :planID " +
             "AND t.exercise_target_cycle_index = :cycleIndex " +
             "AND t.exercise_target_item_order_index = :itemOrderIndex " +
-            "ORDER BY ri.routine_item_order_index, ewr.routine_item_exercise_order_index"
+            "ORDER BY (SELECT MIN(ri.routine_item_order_index) FROM routine_item ri " +
+            "INNER JOIN exercise_with_routine_item ewr ON ewr.routine_item_id = ri.routine_item_id " +
+            "WHERE ri.routine_item_routine_id = r.routine_id AND ewr.exercise_id = e.exercise_id), " +
+            "(SELECT MIN(ewr.routine_item_exercise_order_index) FROM exercise_with_routine_item ewr " +
+            "INNER JOIN routine_item ri ON ri.routine_item_id = ewr.routine_item_id " +
+            "WHERE ri.routine_item_routine_id = r.routine_id AND ewr.exercise_id = e.exercise_id), " +
+            "t.exercise_target_exercise_id"
     )
     fun getTargetsWithExercises(
         planID: Long,

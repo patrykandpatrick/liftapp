@@ -41,14 +41,19 @@ constructor(
                     cycleIndex = cycleIndex,
                     planItemOrderIndex = planItemOrderIndex,
                     routineName = rows.firstOrNull()?.routineName,
+                    // One row per exercise is an invariant of the target table's primary key, so
+                    // a repeat can only be a join fanning out. The screen keys a list on this;
+                    // holding the invariant here keeps that a wrong order rather than a crash.
                     exercises =
-                        rows.map { row ->
-                            PlanDayTargets.Item(
-                                name = row.exerciseName,
-                                exerciseType = row.exerciseType,
-                                target = row.target.toDomain(),
-                            )
-                        },
+                        rows
+                            .distinctBy { it.target.exerciseID }
+                            .map { row ->
+                                PlanDayTargets.Item(
+                                    name = row.exerciseName,
+                                    exerciseType = row.exerciseType,
+                                    target = row.target.toDomain(),
+                                )
+                            },
                 )
             }
             .flowOn(dispatcher)
