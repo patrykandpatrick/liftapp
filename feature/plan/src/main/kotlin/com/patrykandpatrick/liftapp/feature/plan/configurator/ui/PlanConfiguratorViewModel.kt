@@ -65,6 +65,8 @@ constructor(
 
     private var intent = TrainingIntent.Both
 
+    private var rebuildTargets = false
+
     private val refreshState = MutableSharedFlow<Unit>(replay = 1)
 
     val screenState: StateFlow<Loadable<ScreenState>> =
@@ -81,6 +83,7 @@ constructor(
             cycleCount = cycleCount,
             intent = intent,
             startingRir = startingRir,
+            rebuildTargets = rebuildTargets,
             endDate = startDate.value.plusDays(daysInCycle.toLong()),
             lengthWeeks = daysInCycle / DayOfWeek.entries.size,
             lengthRemainingDays = daysInCycle % DayOfWeek.entries.size,
@@ -95,12 +98,18 @@ constructor(
         when (action) {
             Action.PopBackStack -> popBackStack()
             is Action.SetIntent -> setIntent(action.intent)
+            is Action.SetRebuildTargets -> setRebuildTargets(action.rebuild)
             is Action.Save -> save(action.state.plan)
         }
     }
 
     private fun setIntent(intent: TrainingIntent) {
         this.intent = intent
+        refreshState()
+    }
+
+    private fun setRebuildTargets(rebuild: Boolean) {
+        rebuildTargets = rebuild
         refreshState()
     }
 
@@ -119,6 +128,7 @@ constructor(
                         cycleCount = cycleCount.value,
                         startingRir = startingRir.value,
                     ),
+                rebuildTargets = rebuildTargets,
             )
             navigationCommander.popBackStack()
         }

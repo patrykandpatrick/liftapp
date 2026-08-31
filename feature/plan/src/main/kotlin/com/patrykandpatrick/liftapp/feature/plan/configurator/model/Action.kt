@@ -8,5 +8,7 @@ sealed interface Action {
 
     data class SetIntent(val intent: TrainingIntent) : Action
 
+    data class SetRebuildTargets(val rebuild: Boolean) : Action
+
     data class Save(val state: ScreenState) : Action
 }

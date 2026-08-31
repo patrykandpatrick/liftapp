@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.feature.plan.configurator.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,9 +46,11 @@ import com.patrykandpatrick.liftapp.core.ui.resource.prettyName
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.target.TrainingIntent
 import com.patrykandpatrick.liftapp.feature.plan.configurator.model.Action
+import com.patrykandpatrick.liftapp.ui.component.LiftAppCheckbox
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
 import com.patrykandpatrick.liftapp.ui.theme.LiftAppTheme
+import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -158,7 +161,39 @@ private fun Content(
                 )
         )
 
+        RebuildTargetsToggle(
+            checked = state.rebuildTargets,
+            onCheckedChange = { onAction(Action.SetRebuildTargets(it)) },
+        )
+
         Spacer(Modifier.height(10.dp))
+    }
+}
+
+/**
+ * Off by default, because saving this screen after only moving the start date must not silently
+ * throw away targets the user edited by hand.
+ */
+@Composable
+private fun RebuildTargetsToggle(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        LiftAppCheckbox(checked = checked, onCheckedChange = onCheckedChange)
+
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = stringResource(R.string.training_plan_rebuild_targets),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = stringResource(R.string.training_plan_rebuild_targets_note),
+                style = MaterialTheme.typography.labelMedium,
+                color = colorScheme.foregroundVariant,
+            )
+        }
     }
 }
 
@@ -226,6 +261,7 @@ private fun PlanConfiguratorPreview() {
                         cycleCount = IntTextFieldState(initialValue = "6"),
                         intent = TrainingIntent.Both,
                         startingRir = IntTextFieldState(initialValue = "3"),
+                        rebuildTargets = false,
                         endDate = LocalDate.now().plusDays(42),
                         lengthWeeks = 6,
                         lengthRemainingDays = 0,

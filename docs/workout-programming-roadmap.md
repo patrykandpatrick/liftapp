@@ -2,8 +2,7 @@
 
 ## Status
 
-**Phases 2, 3 and 4 have shipped, and Phase 5 bar one piece: 5b generates but does not yet let you
-edit what it generated.** That editor is what is left of Phase 5.
+**Phases 2 through 5 have shipped.** Phase 6 is next.
 
 | Phase | State |
 | --- | --- |
@@ -11,7 +10,7 @@ edit what it generated.** That editor is what is left of Phase 5.
 | 3 — Estimation math | **Done**, `ed1476b5`, no schema |
 | 4 — Weekly volume per muscle (actual) | **Done**, no schema |
 | 5a — Data model swap | **Done**, schema 15 |
-| 5b — Authoring and generation | **Generator done**, editor outstanding, no schema |
+| 5b — Authoring and generation | **Done**, no schema |
 | 5c — Show the target during the workout | **Done**, schema 16 |
 | 6 — Autoregulation and stalls | Open |
 | 7 — Mesocycle, deloads, planned volume | Open |
@@ -462,7 +461,7 @@ list; `UpsertGoalSetsUseCase` (the ±1 set buttons in the workout) must edit the
 
 ### 5b — Authoring and generation
 
-> **The generator landed; the editor did not.** `TrainingIntent`, `TargetPrescriptions` — the Part 2
+> **Landed in two parts; this note covers both.** `TrainingIntent`, `TargetPrescriptions` — the Part 2
 > tables as one lookup, read by both the generator and the out-of-plan defaults so the two cannot
 > disagree — and `TargetGenerator`, which writes one target per (cycle, day, exercise). Activation
 > runs it: `SetActivePlanUseCase` now takes `GenerationParameters` and re-authors the whole plan,
@@ -478,14 +477,22 @@ list; `UpsertGoalSetsUseCase` (the ±1 set buttons in the workout) must edit the
 > so the shape survives — what it cannot do is notice that two exercises share one. Phase 7's fold
 > over planned volume is what would.
 >
-> **Still to build: the editor.** Every target is a stored row, so editing one needs no merge logic
-> — but there is no screen that edits it, which means the plan is only as good as the tables until
-> there is. It wants a route keyed by (plan, cycle, day), a query joining targets to exercise names,
-> and an entry point from `ActivePlanScreen`, which already lays out cycles and days.
+> **The editor** is `PlanTargetsScreen`, keyed by (plan, cycle, day) and reached from a Targets
+> button on every day of `ActivePlanScreen` — every day, not just today's, because authoring per
+> cycle is for changing what a day will ask for before it arrives. It lists each exercise with its
+> sets spelled out rather than summarised, and a sheet edits the set count, the rep range, the RIR
+> and the rest time.
 >
-> Note that **activation re-authors the plan**, so configuring one a second time discards any edit
-> made to a cell. That is the right way round for a screen whose whole job is to say what the block
-> is, but it is a trap once the editor exists and should be revisited with it.
+> **It edits the exercise, not the set.** That is the shape the generator writes and the shape a
+> lifter changes — "make this exercise fives this week", not "make set three fives" — so saving
+> levels any difference between an exercise's sets. Nothing can author such a difference yet; when
+> something can, this is where it has to grow.
+>
+> **Activation no longer re-authors by default.** It fills gaps only, so a plan reconfigured to
+> start on a different date keeps every edited target, and a plan that gained a day or an exercise
+> still gets a prescription for it. A checkbox on the configurator asks for the full rebuild that
+> changing the intent or the starting RIR implies. A silent rebuild is indistinguishable from having
+> lost the edits to a bug, which is why this is a question rather than a default.
 >
 > `TrainingIntent` is deliberately *not* on `ActivePlan`: the targets are materialised, so nothing
 > downstream needs it, and leaving it off keeps the DataStore JSON — which

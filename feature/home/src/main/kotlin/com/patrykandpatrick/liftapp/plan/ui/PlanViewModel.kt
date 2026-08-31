@@ -40,6 +40,8 @@ constructor(
             is Action.OnPlanItemClick -> onPlanItemClick(action.item)
             is Action.StartWorkout -> onStartWorkoutClick(action.item)
             is Action.GoToWorkout -> goToWorkout(action.workoutID)
+            is Action.EditTargets ->
+                editTargets(action.planID, action.cycleIndex, action.planItemOrderIndex)
         }
     }
 
@@ -73,6 +75,14 @@ constructor(
     fun onStartWorkoutClick(item: Plan.Item.Routine) {
         viewModelScope.launch {
             navigationCommander.navigateTo(Routes.Workout.new(item.routine.id))
+        }
+    }
+
+    private fun editTargets(planID: Long, cycleIndex: Int, planItemOrderIndex: Int) {
+        viewModelScope.launch {
+            navigationCommander.navigateTo(
+                Routes.Plan.targets(planID, cycleIndex, planItemOrderIndex)
+            )
         }
     }
 

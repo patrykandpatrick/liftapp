@@ -12,4 +12,7 @@ sealed interface Action {
     data class StartWorkout(val item: Plan.Item.Routine) : Action
 
     data class GoToWorkout(val workoutID: Long) : Action
+
+    data class EditTargets(val planID: Long, val cycleIndex: Int, val planItemOrderIndex: Int) :
+        Action
 }

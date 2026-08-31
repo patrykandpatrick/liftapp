@@ -11,6 +11,7 @@ import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanConfiguratorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanCreatorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.PlanTargetsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.SupersetDetailsRouteData
@@ -128,6 +129,9 @@ object Routes {
             PlanListRouteData(isPickingTrainingPlan = true, resultKey = resultKey)
 
         fun configure(planID: Long) = PlanConfiguratorRouteData(planID)
+
+        fun targets(planID: Long, cycleIndex: Int, planItemOrderIndex: Int) =
+            PlanTargetsRouteData(planID, cycleIndex, planItemOrderIndex)
     }
 
     object Workout {

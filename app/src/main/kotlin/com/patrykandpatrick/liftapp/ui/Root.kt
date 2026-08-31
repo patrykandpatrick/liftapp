@@ -59,6 +59,7 @@ import com.patrykandpatrick.liftapp.feature.newexercise.ui.NewExerciseScreen
 import com.patrykandpatrick.liftapp.feature.newroutine.ui.NewRoutineScreen
 import com.patrykandpatrick.liftapp.feature.onerepmax.OneRepMaxScreen
 import com.patrykandpatrick.liftapp.feature.plan.configurator.ui.PlanConfiguratorScreen
+import com.patrykandpatrick.liftapp.feature.plan.targets.ui.PlanTargetsScreen
 import com.patrykandpatrick.liftapp.feature.routine.ui.RoutineScreen
 import com.patrykandpatrick.liftapp.feature.routine.ui.SupersetScreen
 import com.patrykandpatrick.liftapp.feature.routines.ui.RoutineListScreen
@@ -78,6 +79,7 @@ import com.patrykandpatrick.liftapp.navigation.data.NewRoutineRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanConfiguratorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanCreatorRouteData
 import com.patrykandpatrick.liftapp.navigation.data.PlanListRouteData
+import com.patrykandpatrick.liftapp.navigation.data.PlanTargetsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineDetailsRouteData
 import com.patrykandpatrick.liftapp.navigation.data.RoutineListRouteData
 import com.patrykandpatrick.liftapp.navigation.data.SupersetDetailsRouteData
@@ -178,6 +180,7 @@ fun Root(
                                 addPlanCreator()
                                 addPlanList()
                                 addPlanConfigurator()
+                                addPlanTargets()
                                 addNewRoutine()
                                 addMuscleVolume()
                                 addOneRepMax()
@@ -275,6 +278,10 @@ fun NavGraphBuilder.addPlanCreator() {
 
 fun NavGraphBuilder.addPlanList() {
     composable<PlanListRouteData> { PlanListScreen() }
+}
+
+fun NavGraphBuilder.addPlanTargets() {
+    composable<PlanTargetsRouteData> { PlanTargetsScreen() }
 }
 
 fun NavGraphBuilder.addPlanConfigurator() {

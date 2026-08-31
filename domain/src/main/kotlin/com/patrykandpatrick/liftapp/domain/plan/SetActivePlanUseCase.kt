@@ -11,10 +11,11 @@ import javax.inject.Inject
 /**
  * Starts a plan: records it as active, lays out its days, and writes out its prescription.
  *
- * Activation re-authors the plan. Every target is regenerated from [parameters], so changing the
- * intent or the cycle count here does what it looks like it does — and an edit made to a single
- * cell afterwards is lost if the plan is configured again. Activation is the explicit act of saying
- * what the block is, which is the only place that trade is the right way round.
+ * [rebuildTargets] decides what happens to a plan that already has one. Off, generation only fills
+ * the gaps, so a plan reconfigured to start on a different date keeps every target the user edited.
+ * On, the whole prescription is re-authored from [parameters], which is what changing the intent or
+ * the starting RIR has to mean — and what discards those edits. Asking rather than assuming is the
+ * point: a silent rebuild is indistinguishable from having lost the edits to a bug.
  */
 class SetActivePlanUseCase
 @Inject
@@ -28,6 +29,7 @@ constructor(
         plan: Plan,
         startDate: LocalDate,
         parameters: GenerationParameters,
+        rebuildTargets: Boolean = false,
     ) {
         activePlan.set(
             ActivePlan(
@@ -37,6 +39,11 @@ constructor(
             )
         )
         addPlanItemsScheduleContract.addPlanItemsSchedule(plan, startDate, parameters.cycleCount)
-        upsertTargets.upsertTargets(generateTargets(plan, parameters))
+        val targets = generateTargets(plan, parameters)
+        if (rebuildTargets) {
+            upsertTargets.upsertTargets(targets)
+        } else {
+            upsertTargets.addMissingTargets(targets)
+        }
     }
 }

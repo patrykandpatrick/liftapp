@@ -479,6 +479,21 @@
     <string name="training_intent_both">Both</string>
     <!-- The top of the mesocycle ramp: the app tightens RIR from here to the last cycle. -->
     <string name="training_plan_starting_rir">Starting reps in reserve</string>
+    <string name="route_plan_targets">Targets</string>
+    <!-- Example: "Push · Cycle 2" -->
+    <string name="plan_targets_subtitle">%1$s · %2$s</string>
+    <string name="plan_targets_cycle">Cycle %1$d</string>
+    <!-- Example: "3 sets · 2 min rest" -->
+    <string name="plan_targets_sets_and_rest">%1$d %2$s · %3$s rest</string>
+    <string name="plan_targets_empty">This day has nothing scheduled</string>
+    <string name="plan_targets_set_count">Sets</string>
+    <string name="plan_targets_min_reps">Lowest reps</string>
+    <string name="plan_targets_max_reps">Highest reps</string>
+    <string name="plan_targets_rest_seconds">Rest between sets (seconds)</string>
+    <string name="plan_targets_rir_none">Not set</string>
+    <string name="plan_targets_edit_info">This applies to every set of the exercise in this cycle. Other cycles keep what they were given.</string>
+    <string name="training_plan_rebuild_targets">Rebuild every target</string>
+    <string name="training_plan_rebuild_targets_note">Off, only days and exercises without a target get one. On, the whole plan is written again from these settings and any change you made to an exercise is lost.</string>
     <string name="training_plan_generation_info"><![CDATA[Every set gets a rep range and an effort target. Reps in reserve tightens from <b><color-surface-variant>%1$s</color-surface-variant></b> in the first cycle to the hardest in the last, and sets climb as it goes. Change any of it afterwards.]]></string>
 
     <!-- Errors -->

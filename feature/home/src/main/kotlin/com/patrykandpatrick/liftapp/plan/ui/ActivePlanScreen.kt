@@ -63,6 +63,8 @@ internal fun ActivePlanScreen(
             PlanItem(
                 planItem = item,
                 dayIndex = index,
+                planID = planState.plan.id,
+                cycleIndex = planState.cycleNumber,
                 isActive = index == planState.currentPlanItemIndex,
                 workout =
                     planState.currentWorkout.takeIf { index == planState.currentPlanItemIndex },
@@ -121,6 +123,8 @@ private fun Header(planState: PlanState.ActivePlan, modifier: Modifier = Modifie
 private fun PlanItem(
     planItem: Plan.Item,
     dayIndex: Int,
+    planID: Long,
+    cycleIndex: Int,
     isActive: Boolean,
     workout: Workout?,
     onAction: (Action) -> Unit,
@@ -155,6 +159,16 @@ private fun PlanItem(
                         RoutineCard(
                             routineWithExercises = planItem.routine,
                             actionsRow = {
+                                // Offered on every day, not only today's: the point of authoring
+                                // per cycle is changing what a day will ask for before it arrives.
+                                PlainLiftAppButton(
+                                    onClick = {
+                                        onAction(Action.EditTargets(planID, cycleIndex, dayIndex))
+                                    }
+                                ) {
+                                    Text(stringResource(R.string.route_plan_targets))
+                                }
+
                                 if (isActive) {
                                     PlainLiftAppButton(
                                         onClick = {

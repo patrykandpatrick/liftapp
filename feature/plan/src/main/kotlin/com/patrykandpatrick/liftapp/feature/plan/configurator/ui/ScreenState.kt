@@ -14,6 +14,7 @@ data class ScreenState(
     val cycleCount: IntTextFieldState,
     val intent: TrainingIntent,
     val startingRir: IntTextFieldState,
+    val rebuildTargets: Boolean,
     val endDate: LocalDate,
     val lengthWeeks: Int,
     val lengthRemainingDays: Int,

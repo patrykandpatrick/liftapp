@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.functionality.database.target
 
 import com.patrykandpatrick.liftapp.domain.di.IODispatcher
 import com.patrykandpatrick.liftapp.domain.target.ExerciseTarget
+import com.patrykandpatrick.liftapp.domain.target.PlanDayTargets
 import com.patrykandpatrick.liftapp.domain.target.TargetRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,7 +28,38 @@ constructor(
             .map { entities -> entities.map(ExerciseTargetEntity::toDomain) }
             .flowOn(dispatcher)
 
+    override fun getDayTargets(
+        planID: Long,
+        cycleIndex: Int,
+        planItemOrderIndex: Int,
+    ): Flow<PlanDayTargets> =
+        targetDao
+            .getTargetsWithExercises(planID, cycleIndex, planItemOrderIndex)
+            .map { rows ->
+                PlanDayTargets(
+                    planID = planID,
+                    cycleIndex = cycleIndex,
+                    planItemOrderIndex = planItemOrderIndex,
+                    routineName = rows.firstOrNull()?.routineName,
+                    exercises =
+                        rows.map { row ->
+                            PlanDayTargets.Item(
+                                name = row.exerciseName,
+                                exerciseType = row.exerciseType,
+                                target = row.target.toDomain(),
+                            )
+                        },
+                )
+            }
+            .flowOn(dispatcher)
+
     override suspend fun upsertTargets(targets: List<ExerciseTarget>) {
         withContext(dispatcher) { targetDao.upsertTargets(targets.map(ExerciseTarget::toEntity)) }
+    }
+
+    override suspend fun addMissingTargets(targets: List<ExerciseTarget>) {
+        withContext(dispatcher) {
+            targetDao.insertMissingTargets(targets.map(ExerciseTarget::toEntity))
+        }
     }
 }
