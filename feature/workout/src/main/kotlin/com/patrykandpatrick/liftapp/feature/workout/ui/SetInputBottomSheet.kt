@@ -57,6 +57,12 @@ internal fun SetInputBottomSheet(
         },
     ) { dismissSheet ->
         WorkoutInputBottomSheetContent(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            SetTargetCard(
+                goal = exercise.goal,
+                setIndex = setIndex,
+                exerciseType = exercise.exerciseType,
+            )
+
             SetEditorContent(set)
             LiftAppButton(
                 onClick = {

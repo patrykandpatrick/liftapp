@@ -20,6 +20,7 @@ import com.patrykandpatrick.liftapp.functionality.database.migration.Migration11
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration12To13
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration13To14
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration14To15
+import com.patrykandpatrick.liftapp.functionality.database.migration.Migration15To16
 import com.patrykandpatrick.liftapp.functionality.database.migration.Migration1To12
 import com.patrykandpatrick.liftapp.functionality.database.migration.PublishedMigrations
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanDao
@@ -87,6 +88,7 @@ interface DatabaseModule {
                     Migration12To13,
                     Migration13To14(json),
                     Migration14To15(json),
+                    Migration15To16(json),
                 )
                 .build()
 

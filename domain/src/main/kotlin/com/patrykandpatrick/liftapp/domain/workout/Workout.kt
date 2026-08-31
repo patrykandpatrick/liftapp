@@ -4,6 +4,7 @@ import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
+import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
 import java.io.Serializable
 import java.time.LocalDateTime
@@ -45,20 +46,59 @@ data class Workout(
             get() = workoutItemType == RoutineItemType.Superset
     }
 
+    /**
+     * What this workout was prescribed, snapshotted when it started.
+     *
+     * A copy rather than a reference to the plan's target: re-authoring a plan must not rewrite
+     * what a session that already happened was asked to do.
+     *
+     * [setTargets] is the prescription; everything else here is read off it, so a set count and a
+     * list of sets can never disagree.
+     */
     data class Goal(
         val id: Long,
-        val minReps: Int,
-        val maxReps: Int,
-        val sets: Int,
+        val setTargets: List<SetTarget>,
         val restTime: Duration,
-        val duration: Duration,
-        val distance: Double,
-        val distanceUnit: LongDistanceUnit,
-        val calories: Double,
+        val distanceUnit: LongDistanceUnit = LongDistanceUnit.Kilometer,
     ) {
+        val sets: Int
+            get() = setTargets.size
+
+        val minReps: Int
+            get() = setTargets.minOfOrNull { it.minReps } ?: 0
+
+        val maxReps: Int
+            get() = setTargets.maxOfOrNull { it.maxReps } ?: 0
+
+        val duration: Duration
+            get() = setTargets.firstOrNull()?.duration ?: Duration.ZERO
+
+        val distance: Double
+            get() = setTargets.firstOrNull()?.distance ?: 0.0
+
+        val calories: Double
+            get() = setTargets.firstOrNull()?.calories ?: 0.0
+
+        /** Null past the end: a set added during the session was never prescribed. */
+        fun targetFor(setIndex: Int): SetTarget? = setTargets.getOrNull(setIndex)
+
+        /**
+         * Extra sets repeat the last one prescribed rather than arriving blank, which is what the ±
+         * buttons in a workout mean by "one more set of this".
+         */
+        fun withSetCount(count: Int): Goal {
+            if (count == setTargets.size) return this
+            val last = setTargets.lastOrNull() ?: return this
+            return copy(setTargets = List(count) { index -> setTargets.getOrElse(index) { last } })
+        }
+
         companion object {
             val default =
-                Goal(0, 8, 12, 3, 2L.minutes, 5L.minutes, 0.5, LongDistanceUnit.Kilometer, 50.0)
+                Goal(
+                    id = 0,
+                    setTargets = List(3) { SetTarget(minReps = 8, maxReps = 12, rir = 2) },
+                    restTime = 2L.minutes,
+                )
         }
     }
 }

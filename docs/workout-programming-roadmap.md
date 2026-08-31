@@ -2,8 +2,8 @@
 
 ## Status
 
-**Phases 2, 3 and 4 have shipped, and Phase 5a with them. 5b generates, but does not yet let you
-edit what it generated.** That editor and 5c are next.
+**Phases 2, 3 and 4 have shipped, and Phase 5 bar one piece: 5b generates but does not yet let you
+edit what it generated.** That editor is what is left of Phase 5.
 
 | Phase | State |
 | --- | --- |
@@ -12,7 +12,7 @@ edit what it generated.** That editor and 5c are next.
 | 4 — Weekly volume per muscle (actual) | **Done**, no schema |
 | 5a — Data model swap | **Done**, schema 15 |
 | 5b — Authoring and generation | **Generator done**, editor outstanding, no schema |
-| 5c — Show the target during the workout | Open, no schema |
+| 5c — Show the target during the workout | **Done**, schema 16 |
 | 6 — Autoregulation and stalls | Open |
 | 7 — Mesocycle, deloads, planned volume | Open |
 
@@ -505,6 +505,26 @@ has to grow a cycle dimension. `PlanConfiguratorScreen` already speaks in weeks 
 `lengthRemainingDays`) and is the natural home for the generator parameters.
 
 ### 5c — Show the target during the workout
+
+> **Landed, schema 16.** The snapshot got the shape the target already had. `workout_goal` held one
+> rep range and a count; it now holds a `List<SetTarget>`, and `Workout.Goal` reads its set count,
+> rep range and duration off that list so the two can never disagree. The sheet that logs a set
+> shows what that set was asked for, above the fields recording what it was.
+>
+> Part 3's note — that the last set lands closer to failure than the first — is shown only for
+> straight sets, where every target is identical. That is the one shape where it is true: a ramped
+> or backed-off prescription has already accounted for the drift, and saying it there would be
+> wrong.
+>
+> Two things worth knowing:
+>
+> - **The column was renamed, not just retyped.** `workout_goal_sets` held a count; the new one is
+>   `workout_goal_set_targets`. A restore matches archive columns to table columns by name and skips
+>   what it does not recognise, so keeping the name would have fed a pre-16 archive's `3` to a JSON
+>   parser. Renamed, the stale column is ignored and the new one takes its `'[]'` default — the old
+>   session keeps its logged sets and loses only the target it was measured against.
+> - **A set added mid-session has no target**, and the card is absent rather than empty: a blank
+>   target card reads as a prescription of zero.
 
 `:feature:workout` consumes the goal only as behaviour — `goal.restTime` for the timer, `goal.sets`
 for how many empty rows. **`minReps`/`maxReps` never reach the screen.** So this is new UI, not

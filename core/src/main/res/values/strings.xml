@@ -403,6 +403,14 @@
     <string name="workout_set_suggestion_previous_set">Previous set</string>
     <string name="workout_set_suggestion_previous_workout">Previous workout</string>
     <string name="workout_set_input_title">Set %d</string>
+    <string name="workout_set_target_title">Target</string>
+    <!-- Example: "8–12 reps" -->
+    <string name="workout_set_target_reps_range">%1$d–%2$d %3$s</string>
+    <!-- Example: "5 reps" -->
+    <string name="workout_set_target_reps_single">%1$d %2$s</string>
+    <string name="workout_set_target_none">No target for this set</string>
+    <!-- Shown only for straight sets, where the load and reps hold and the effort therefore does not. -->
+    <string name="workout_set_target_straight_sets_note">Same reps and weight each set, so the last will land closer to failure than the first. That is expected.</string>
     <string name="workout_set_entry_section_past_sets">Past sets</string>
     <string name="workout_set_entry_section_previous_workout">Sets from the previous workout</string>
     <string name="workout_calisthenics_set_body_weight"><![CDATA[Body weight <b><color-surface-variant>%s</color-surface-variant></b>]]></string>

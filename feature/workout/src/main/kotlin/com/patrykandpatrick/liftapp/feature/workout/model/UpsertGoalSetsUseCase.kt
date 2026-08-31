@@ -12,7 +12,7 @@ class UpsertGoalSetsUseCase @Inject constructor(private val contract: UpsertWork
         contract.upsertWorkoutGoal(
             workoutID = workoutID,
             exerciseID = exercise.id,
-            goal = exercise.goal.copy(sets = setCount),
+            goal = exercise.goal.withSetCount(setCount),
         )
     }
 }

@@ -139,21 +139,7 @@ constructor(
     }
 
     override suspend fun upsertWorkoutGoal(workoutID: Long, exerciseID: Long, goal: Workout.Goal) {
-        workoutDao.upsertWorkoutGoal(
-            WorkoutGoalEntity(
-                goal.id,
-                workoutID,
-                exerciseID,
-                goal.minReps,
-                goal.maxReps,
-                goal.sets,
-                goal.restTime.inWholeMilliseconds,
-                goal.duration.inWholeMilliseconds,
-                goal.distance,
-                goal.distanceUnit,
-                goal.calories,
-            )
-        )
+        workoutDao.upsertWorkoutGoal(goal.toEntity(workoutID = workoutID, exerciseID = exerciseID))
     }
 
     override suspend fun upsertExerciseSet(

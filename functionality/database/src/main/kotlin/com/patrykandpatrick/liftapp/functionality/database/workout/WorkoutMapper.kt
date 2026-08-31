@@ -138,10 +138,8 @@ internal fun WorkoutWithWorkoutExerciseDto.toWorkoutExerciseDtoOrNull(): Workout
 /** The set count and the rest time of a superset apply to each of its exercises. */
 private fun Workout.Goal.withSupersetConfig(item: WorkoutItemEntity): Workout.Goal =
     if (item.type == RoutineItemType.Superset) {
-        copy(
-            sets = checkNotNull(item.sets),
-            restTime = checkNotNull(item.restTimeMillis).milliseconds,
-        )
+        withSetCount(checkNotNull(item.sets))
+            .copy(restTime = checkNotNull(item.restTimeMillis).milliseconds)
     } else {
         this
     }
@@ -149,14 +147,9 @@ private fun Workout.Goal.withSupersetConfig(item: WorkoutItemEntity): Workout.Go
 private fun WorkoutGoalEntity.toDomain(): Workout.Goal =
     Workout.Goal(
         id = id,
-        minReps = minReps,
-        maxReps = maxReps,
-        sets = sets,
+        setTargets = sets,
         restTime = restTimeMillis.milliseconds,
-        duration = durationMillis.milliseconds,
-        distance = distance,
         distanceUnit = distanceUnit,
-        calories = calories,
     )
 
 /** No `workout_goal` row: an exercise added to a session that had no target for it. */
@@ -168,12 +161,7 @@ internal fun Workout.Goal.toEntity(workoutID: Long, exerciseID: Long): WorkoutGo
         id = id,
         workoutID = workoutID,
         exerciseID = exerciseID,
-        minReps = minReps,
-        maxReps = maxReps,
-        sets = sets,
+        sets = setTargets,
         restTimeMillis = restTime.inWholeMilliseconds,
-        durationMillis = duration.inWholeMilliseconds,
-        distance = distance,
         distanceUnit = distanceUnit,
-        calories = calories,
     )
