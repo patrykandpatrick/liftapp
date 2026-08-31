@@ -13,9 +13,11 @@ import com.patrykandpatrick.liftapp.functionality.database.di.DatabaseModule
 import com.patrykandpatrick.liftapp.functionality.database.exercise.ExerciseEntity
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanEntity
 import com.patrykandpatrick.liftapp.functionality.database.plan.PlanItemEntity
+import com.patrykandpatrick.liftapp.functionality.database.plan.PlanItemSchedule
 import com.patrykandpatrick.liftapp.functionality.database.routine.ExerciseWithRoutineItemEntity
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineEntity
 import com.patrykandpatrick.liftapp.functionality.database.routine.RoutineItemEntity
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -96,6 +98,54 @@ class TargetDaoTest {
         assertEquals(1, rows.single().target.cycleIndex)
     }
 
+    @Test
+    fun `The cycle count is one past the highest cycle with a prescription`() = runTest {
+        seedRoutineOfFourItems()
+
+        assertEquals(1, database.targetDao.getCycleCount(PLAN_ID).first())
+
+        database.targetDao.upsertTargets(listOf(target(FIRST_ID, cycleIndex = 5)))
+
+        assertEquals(6, database.targetDao.getCycleCount(PLAN_ID).first())
+    }
+
+    @Test
+    fun `A plan with no targets has no cycles rather than one`() = runTest {
+        assertEquals(0, database.targetDao.getCycleCount(PLAN_ID).first())
+    }
+
+    @Test
+    fun `The position of a date is the one belonging to the plan asked for`() = runTest {
+        seedRoutineOfFourItems()
+        // A second plan running the same routine on the same day. Schedules are appended rather
+        // than replaced, so both rows exist and only the plan tells them apart.
+        database.planDao.upsertPlan(
+            PlanEntity(id = OTHER_PLAN_ID, name = "Other", description = "", itemCount = 1)
+        )
+        insertSchedule(planID = PLAN_ID, cycleIndex = 0, itemOrderIndex = 0)
+        insertSchedule(planID = OTHER_PLAN_ID, cycleIndex = 3, itemOrderIndex = 2)
+
+        val mine = database.targetDao.getPlanPosition(PLAN_ID, ROUTINE_ID, DATE)
+        val theirs = database.targetDao.getPlanPosition(OTHER_PLAN_ID, ROUTINE_ID, DATE)
+
+        assertEquals(PlanPosition(PLAN_ID, 0, 0), mine)
+        assertEquals(PlanPosition(OTHER_PLAN_ID, 3, 2), theirs)
+    }
+
+    private suspend fun insertSchedule(planID: Long, cycleIndex: Int, itemOrderIndex: Int) {
+        database.planDao.insertPlanItemSchedule(
+            listOf(
+                PlanItemSchedule(
+                    planID = planID,
+                    routineID = ROUTINE_ID,
+                    date = DATE,
+                    cycleIndex = cycleIndex,
+                    itemOrderIndex = itemOrderIndex,
+                )
+            )
+        )
+    }
+
     /** Four items, one exercise each — the shape that multiplied every target by four. */
     private suspend fun seedRoutineOfFourItems() {
         database.routineDao.insertRoutine(RoutineEntity(id = ROUTINE_ID, name = "Push"))
@@ -154,6 +204,8 @@ class TargetDaoTest {
         const val PLAN_ID = 1L
         const val ROUTINE_ID = 7L
         const val FIRST_ID = 8L
+        const val OTHER_PLAN_ID = 2L
+        val DATE: LocalDate = LocalDate.of(2026, 9, 1)
         const val ITEM_COUNT = 4
     }
 }

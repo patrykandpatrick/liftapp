@@ -6,7 +6,14 @@ import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.target.PlanDayTargets
 
-@Stable data class ScreenState(val day: PlanDayTargets, val editor: Editor?)
+@Stable
+data class ScreenState(val day: PlanDayTargets, val editor: Editor?) {
+    val hasPreviousCycle: Boolean
+        get() = day.cycleIndex > 0
+
+    val hasNextCycle: Boolean
+        get() = day.cycleIndex < day.cycleCount - 1
+}
 
 /**
  * One exercise's prescription, open for editing.
@@ -25,4 +32,8 @@ class Editor(
     val maxReps: IntTextFieldState,
     val restSeconds: IntTextFieldState,
     val rir: Int?,
-)
+) {
+    /** What the Save button is gated on: a target of no sets leaves the workout nothing to log. */
+    val isValid: Boolean
+        get() = setCount.isValid && minReps.isValid && maxReps.isValid && restSeconds.isValid
+}

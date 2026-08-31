@@ -7,6 +7,7 @@ import com.patrykandpatrick.liftapp.domain.target.TargetRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -33,14 +34,16 @@ constructor(
         cycleIndex: Int,
         planItemOrderIndex: Int,
     ): Flow<PlanDayTargets> =
-        targetDao
-            .getTargetsWithExercises(planID, cycleIndex, planItemOrderIndex)
-            .map { rows ->
+        combine(
+                targetDao.getTargetsWithExercises(planID, cycleIndex, planItemOrderIndex),
+                targetDao.getCycleCount(planID),
+            ) { rows, cycleCount ->
                 PlanDayTargets(
                     planID = planID,
                     cycleIndex = cycleIndex,
                     planItemOrderIndex = planItemOrderIndex,
                     routineName = rows.firstOrNull()?.routineName,
+                    cycleCount = cycleCount,
                     // One row per exercise is an invariant of the target table's primary key, so
                     // a repeat can only be a join fanning out. The screen keys a list on this;
                     // holding the invariant here keeps that a wrong order rather than a crash.

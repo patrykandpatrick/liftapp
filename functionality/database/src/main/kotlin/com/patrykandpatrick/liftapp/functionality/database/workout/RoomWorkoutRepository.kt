@@ -3,7 +3,10 @@ package com.patrykandpatrick.liftapp.functionality.database.workout
 import androidx.room.InvalidationTracker
 import androidx.room.RoomRawQuery
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
+import com.patrykandpatrick.liftapp.domain.datastore.Preference
 import com.patrykandpatrick.liftapp.domain.di.DefaultDispatcher
+import com.patrykandpatrick.liftapp.domain.di.PreferenceQualifier
+import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.target.TargetDefaults
 import com.patrykandpatrick.liftapp.domain.workout.DeleteWorkoutContract
 import com.patrykandpatrick.liftapp.domain.workout.EditWorkoutItemsContract
@@ -46,6 +49,7 @@ class RoomWorkoutRepository
 constructor(
     private val workoutDao: WorkoutDao,
     private val targetDao: TargetDao,
+    @param:PreferenceQualifier.ActivePlan private val activePlan: Preference<ActivePlan?>,
     private val workoutMapper: WorkoutMapper,
     private val invalidationTracker: InvalidationTracker,
     @DefaultDispatcher dispatcher: CoroutineDispatcher,
@@ -120,7 +124,10 @@ constructor(
         routineID: Long,
         routineItems: List<RoutineItemExerciseDto>,
     ): List<WorkoutGoalEntity> {
-        val position = targetDao.getPlanPosition(routineID, LocalDate.now())
+        // The plan has to be named: two plans can hold a row for this routine on this date, and
+        // only the one being run should prescribe the session.
+        val planID = activePlan.get().first()?.planID
+        val position = planID?.let { targetDao.getPlanPosition(it, routineID, LocalDate.now()) }
         val targets =
             position
                 ?.let { targetDao.getTargetsOnce(it.planID, it.cycleIndex, it.itemOrderIndex) }

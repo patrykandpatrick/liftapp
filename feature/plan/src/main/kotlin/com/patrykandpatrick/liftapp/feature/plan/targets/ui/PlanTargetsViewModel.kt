@@ -6,7 +6,6 @@ import com.patrykandpatrick.liftapp.core.model.toLoadableStateFlow
 import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
-import com.patrykandpatrick.liftapp.domain.target.ExerciseTarget
 import com.patrykandpatrick.liftapp.domain.target.GetPlanDayTargetsContract
 import com.patrykandpatrick.liftapp.domain.target.PlanDayTargets
 import com.patrykandpatrick.liftapp.domain.target.SetTarget
@@ -21,123 +20,144 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class PlanTargetsViewModel
 @Inject
 constructor(
-    routeData: PlanTargetsRouteData,
+    private val routeData: PlanTargetsRouteData,
     getDayTargets: GetPlanDayTargetsContract,
-    private val textFieldStateManager: TextFieldStateManager,
+    textFieldStateManager: TextFieldStateManager,
     private val upsertTargets: UpsertExerciseTargetsContract,
     private val navigationCommander: NavigationCommander,
 ) : ViewModel() {
 
-    private val editor = MutableStateFlow<Editor?>(null)
+    private val cycleIndex = MutableStateFlow(routeData.cycleIndex)
 
-    /** The target the open editor is editing, held apart from it because [Editor] is view state. */
-    private var editedTarget: ExerciseTarget? = null
+    /** The exercise the editor is open on, and the source of the target being written. */
+    private val editedItem = MutableStateFlow<PlanDayTargets.Item?>(null)
+
+    private val rir = MutableStateFlow<Int?>(null)
+
+    /**
+     * Made once and reset as the editor opens, rather than built per exercise. Each `intTextField`
+     * without an explicit key claims a fresh generated one and writes to the saved state on every
+     * keystroke, so building them per open grew that state without bound — and never read a value
+     * back, because the key it was stored under changed with it.
+     *
+     * The vetoes are floors the steppers would otherwise walk straight through: a negative set
+     * count reaches `List(-1)` in [save]. Zero is left reachable so the field can be cleared and
+     * retyped, and answered by the validator instead, which is what disables Save.
+     */
+    private val setCount =
+        textFieldStateManager.intTextField(
+            savedStateKey = "plan_target_set_count",
+            validators = { validNumberHigherThanZero() },
+            veto = { it < 0 || it > SetTarget.setRange.endInclusive },
+        )
+
+    // Reps are not validated above zero: a run or a held position is prescribed none.
+    private val minReps =
+        textFieldStateManager.intTextField(
+            savedStateKey = "plan_target_min_reps",
+            veto = { it < 0 || it > SetTarget.repRange.endInclusive },
+        )
+
+    private val maxReps =
+        textFieldStateManager.intTextField(
+            savedStateKey = "plan_target_max_reps",
+            veto = { it < 0 || it > SetTarget.repRange.endInclusive },
+        )
+
+    private val restSeconds =
+        textFieldStateManager.intTextField(
+            savedStateKey = "plan_target_rest_seconds",
+            veto = { it < 0 || it > MAX_REST_SECONDS },
+        )
 
     val screenState: StateFlow<Loadable<ScreenState>> =
-        combine(
-                getDayTargets.getDayTargets(
-                    planID = routeData.planID,
-                    cycleIndex = routeData.cycleIndex,
-                    planItemOrderIndex = routeData.planItemOrderIndex,
-                ),
-                editor,
-                ::ScreenState,
-            )
+        cycleIndex
+            .flatMapLatest { cycle ->
+                combine(
+                    getDayTargets.getDayTargets(
+                        planID = routeData.planID,
+                        cycleIndex = cycle,
+                        planItemOrderIndex = routeData.planItemOrderIndex,
+                    ),
+                    editedItem,
+                    rir,
+                ) { day, item, rirValue ->
+                    ScreenState(day = day, editor = item?.let { editor(it, rirValue) })
+                }
+            }
             .toLoadableStateFlow(viewModelScope)
 
     fun onAction(action: Action) {
         when (action) {
             Action.PopBackStack -> viewModelScope.launch { navigationCommander.popBackStack() }
+            Action.PreviousCycle -> cycleIndex.value = (cycleIndex.value - 1).coerceAtLeast(0)
+            Action.NextCycle -> cycleIndex.value += 1
             is Action.Edit -> openEditor(action.item)
-            Action.DismissEditor -> closeEditor()
-            is Action.SetRir -> editor.value = editor.value?.withRir(action.rir)
+            Action.DismissEditor -> editedItem.value = null
+            is Action.SetRir -> rir.value = action.rir
             Action.SaveEdit -> save()
         }
     }
 
     private fun openEditor(item: PlanDayTargets.Item) {
         val first = item.target.sets.firstOrNull()
-        editedTarget = item.target
-        editor.value =
-            Editor(
-                name = item.name,
-                exerciseType = item.exerciseType,
-                setCount =
-                    textFieldStateManager.intTextField(
-                        initialValue = item.target.setCount.toString(),
-                        validators = { validNumberHigherThanZero() },
-                        veto = { it > SetTarget.setRange.endInclusive },
-                    ),
-                minReps =
-                    textFieldStateManager.intTextField(
-                        initialValue = (first?.minReps ?: 0).toString(),
-                        veto = { it > SetTarget.repRange.endInclusive },
-                    ),
-                maxReps =
-                    textFieldStateManager.intTextField(
-                        initialValue = (first?.maxReps ?: 0).toString(),
-                        veto = { it > SetTarget.repRange.endInclusive },
-                    ),
-                restSeconds =
-                    textFieldStateManager.intTextField(
-                        initialValue = item.target.restTime.inWholeSeconds.toString(),
-                        veto = { it > MAX_REST_SECONDS },
-                    ),
-                rir = first?.rir,
-            )
+        setCount.updateValue(item.target.setCount)
+        minReps.updateValue(first?.minReps ?: 0)
+        maxReps.updateValue(first?.maxReps ?: 0)
+        restSeconds.updateValue(item.target.restTime.inWholeSeconds.toInt())
+        rir.value = first?.rir
+        editedItem.value = item
     }
 
-    private fun closeEditor() {
-        editedTarget = null
-        editor.value = null
-    }
-
-    /**
-     * Writes the exercise's values onto every one of its sets. Sets beyond the count are dropped
-     * and new ones arrive prescribed the same as the rest, which is what the count control means.
-     */
-    private fun save() {
-        val open = editor.value ?: return
-        val target = editedTarget ?: return
-        val set =
-            SetTarget(
-                minReps = open.minReps.value,
-                maxReps = maxOf(open.maxReps.value, open.minReps.value),
-                rir = open.rir,
-                duration = target.sets.firstOrNull()?.duration ?: Duration.ZERO,
-                distance = target.sets.firstOrNull()?.distance ?: 0.0,
-                calories = target.sets.firstOrNull()?.calories ?: 0.0,
-            )
-
-        viewModelScope.launch {
-            upsertTargets.upsertTargets(
-                listOf(
-                    target.copy(
-                        sets = List(open.setCount.value) { set },
-                        restTime = open.restSeconds.value.seconds,
-                    )
-                )
-            )
-            closeEditor()
-        }
-    }
-
-    private fun Editor.withRir(rir: Int?): Editor =
+    private fun editor(item: PlanDayTargets.Item, rir: Int?): Editor =
         Editor(
-            name = name,
-            exerciseType = exerciseType,
+            name = item.name,
+            exerciseType = item.exerciseType,
             setCount = setCount,
             minReps = minReps,
             maxReps = maxReps,
             restSeconds = restSeconds,
             rir = rir,
         )
+
+    /**
+     * Writes the exercise's values onto every one of its sets. Sets beyond the count are dropped
+     * and new ones arrive prescribed the same as the rest, which is what the count control means.
+     */
+    private fun save() {
+        val target = editedItem.value?.target ?: return
+        val first = target.sets.firstOrNull()
+        val set =
+            SetTarget(
+                minReps = minReps.value,
+                maxReps = maxOf(maxReps.value, minReps.value),
+                rir = rir.value,
+                duration = first?.duration ?: Duration.ZERO,
+                distance = first?.distance ?: 0.0,
+                calories = first?.calories ?: 0.0,
+            )
+
+        viewModelScope.launch {
+            upsertTargets.upsertTargets(
+                listOf(
+                    target.copy(
+                        // Save is disabled below one, and the stepper cannot reach a negative; this
+                        // is the same floor the workout's set-count buttons hold.
+                        sets = List(setCount.value.coerceAtLeast(1)) { set },
+                        restTime = restSeconds.value.seconds,
+                    )
+                )
+            )
+            editedItem.value = null
+        }
+    }
 
     private companion object {
         /** Ten minutes, which is past the longest rest the reference contemplates. */

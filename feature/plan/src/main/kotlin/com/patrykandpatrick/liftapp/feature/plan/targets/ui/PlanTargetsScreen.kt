@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,9 +41,13 @@ import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.feature.plan.targets.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppCard
+import com.patrykandpatrick.liftapp.ui.component.LiftAppIconButton
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.component.LiftAppText
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
+import com.patrykandpatrick.liftapp.ui.icons.ArrowBack
+import com.patrykandpatrick.liftapp.ui.icons.ArrowForward
+import com.patrykandpatrick.liftapp.ui.icons.LiftAppIcons
 import com.patrykandpatrick.liftapp.ui.theme.colorScheme
 
 @Composable
@@ -82,6 +87,30 @@ private fun PlanTargetsScreen(state: ScreenState, onAction: (Action) -> Unit) {
                 },
                 navigationIcon = {
                     CompactTopAppBarDefaults.BackIcon { onAction(Action.PopBackStack) }
+                },
+                actions = {
+                    // Every cycle is authored, so every cycle has to be reachable — the whole point
+                    // of a prescription per week is changing one before its week arrives.
+                    LiftAppIconButton(
+                        onClick = { onAction(Action.PreviousCycle) },
+                        enabled = state.hasPreviousCycle,
+                    ) {
+                        Icon(
+                            imageVector = LiftAppIcons.ArrowBack,
+                            contentDescription =
+                                stringResource(R.string.plan_targets_previous_cycle),
+                        )
+                    }
+
+                    LiftAppIconButton(
+                        onClick = { onAction(Action.NextCycle) },
+                        enabled = state.hasNextCycle,
+                    ) {
+                        Icon(
+                            imageVector = LiftAppIcons.ArrowForward,
+                            contentDescription = stringResource(R.string.plan_targets_next_cycle),
+                        )
+                    }
                 },
             )
         },
@@ -148,7 +177,7 @@ private fun ExerciseTargetCard(item: PlanDayTargets.Item, onClick: () -> Unit) {
                 LiftAppText(
                     text =
                         stringResource(
-                            R.string.plan_targets_subtitle,
+                            R.string.plan_targets_set_line,
                             stringResource(R.string.workout_set_input_title, index + 1),
                             set.prettyString(item.exerciseType, item.target.distanceUnit),
                         ),
@@ -225,6 +254,7 @@ private fun EditorSheet(editor: Editor, onAction: (Action) -> Unit) {
                     onAction(Action.SaveEdit)
                     dismissSheet()
                 },
+                enabled = editor.isValid,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(stringResource(R.string.action_save))

@@ -10,6 +10,8 @@ data class PlanDayTargets(
     val planItemOrderIndex: Int,
     val routineName: String?,
     val exercises: List<Item>,
+    /** How many cycles the plan has a prescription for, which bounds stepping between them. */
+    val cycleCount: Int,
 ) {
     data class Item(val name: Name, val exerciseType: ExerciseType, val target: ExerciseTarget)
 }

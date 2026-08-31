@@ -486,6 +486,10 @@
     <!-- Example: "3 sets · 2 min rest" -->
     <string name="plan_targets_sets_and_rest">%1$d %2$s · %3$s rest</string>
     <string name="plan_targets_empty">This day has nothing scheduled</string>
+    <string name="plan_targets_previous_cycle">Previous cycle</string>
+    <string name="plan_targets_next_cycle">Next cycle</string>
+    <!-- Example: "Set 1 · 8–12 reps · 2 RIR" -->
+    <string name="plan_targets_set_line">%1$s · %2$s</string>
     <string name="plan_targets_set_count">Sets</string>
     <string name="plan_targets_min_reps">Lowest reps</string>
     <string name="plan_targets_max_reps">Highest reps</string>

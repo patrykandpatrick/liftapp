@@ -5,6 +5,10 @@ import com.patrykandpatrick.liftapp.domain.target.PlanDayTargets
 sealed interface Action {
     data object PopBackStack : Action
 
+    data object PreviousCycle : Action
+
+    data object NextCycle : Action
+
     data class Edit(val item: PlanDayTargets.Item) : Action
 
     data object DismissEditor : Action

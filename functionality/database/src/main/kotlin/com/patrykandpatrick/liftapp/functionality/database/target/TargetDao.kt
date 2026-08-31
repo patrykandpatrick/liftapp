@@ -21,13 +21,27 @@ interface TargetDao {
         itemOrderIndex: Int,
     ): Flow<List<ExerciseTargetEntity>>
 
-    /** The position a date falls on, which is what turns "today" into a key into this table. */
+    /**
+     * The position a date falls on, which is what turns "today" into a key into this table.
+     *
+     * Scoped to one plan on purpose. Schedules are appended rather than replaced, so two plans can
+     * hold rows for the same routine on the same date; matching on routine and date alone picked
+     * arbitrarily between them and could prescribe a session from a plan the user is not running.
+     */
     @Query(
         "SELECT plan_item_schedule_plan_id AS planID, plan_item_schedule_cycle_index AS cycleIndex, " +
             "plan_item_schedule_item_order_index AS itemOrderIndex FROM plan_item_schedule " +
-            "WHERE plan_item_routine_id = :routineID AND plan_item_schedule_date = :date LIMIT 1"
+            "WHERE plan_item_schedule_plan_id = :planID AND plan_item_routine_id = :routineID " +
+            "AND plan_item_schedule_date = :date LIMIT 1"
     )
-    suspend fun getPlanPosition(routineID: Long, date: LocalDate): PlanPosition?
+    suspend fun getPlanPosition(planID: Long, routineID: Long, date: LocalDate): PlanPosition?
+
+    /** One past the highest cycle that has a prescription, or zero when the plan has none. */
+    @Query(
+        "SELECT COALESCE(MAX(exercise_target_cycle_index) + 1, 0) FROM exercise_target " +
+            "WHERE exercise_target_plan_id = :planID"
+    )
+    fun getCycleCount(planID: Long): Flow<Int>
 
     @Query(
         "SELECT * FROM exercise_target WHERE exercise_target_plan_id = :planID " +
