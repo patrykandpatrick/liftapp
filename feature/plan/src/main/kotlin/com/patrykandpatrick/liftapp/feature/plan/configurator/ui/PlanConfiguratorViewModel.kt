@@ -10,8 +10,11 @@ import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.plan.SetActivePlanUseCase
+import com.patrykandpatrick.liftapp.domain.target.GenerationParameters
+import com.patrykandpatrick.liftapp.domain.target.TrainingIntent
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.domain.validation.validNumberHigherThanZero
+import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.feature.plan.configurator.model.Action
 import com.patrykandpatrick.liftapp.navigation.data.PlanConfiguratorRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +56,15 @@ constructor(
             veto = { it > MAX_CYCLE_COUNT },
         )
 
+    private val startingRir =
+        textFieldStateManager.intTextField(
+            initialValue = GenerationParameters.DEFAULT_STARTING_RIR.toString(),
+            onValueChange = { refreshState() },
+            veto = { it !in ExerciseSet.RIR_RANGE },
+        )
+
+    private var intent = TrainingIntent.Both
+
     private val refreshState = MutableSharedFlow<Unit>(replay = 1)
 
     val screenState: StateFlow<Loadable<ScreenState>> =
@@ -67,6 +79,8 @@ constructor(
             plan = plan,
             startDate = startDate,
             cycleCount = cycleCount,
+            intent = intent,
+            startingRir = startingRir,
             endDate = startDate.value.plusDays(daysInCycle.toLong()),
             lengthWeeks = daysInCycle / DayOfWeek.entries.size,
             lengthRemainingDays = daysInCycle % DayOfWeek.entries.size,
@@ -80,8 +94,14 @@ constructor(
     fun onAction(action: Action) {
         when (action) {
             Action.PopBackStack -> popBackStack()
+            is Action.SetIntent -> setIntent(action.intent)
             is Action.Save -> save(action.state.plan)
         }
+    }
+
+    private fun setIntent(intent: TrainingIntent) {
+        this.intent = intent
+        refreshState()
     }
 
     private fun popBackStack() {
@@ -93,7 +113,12 @@ constructor(
             setActivePlanUseCase(
                 plan = plan,
                 startDate = startDate.value,
-                cycleCount = cycleCount.value,
+                parameters =
+                    GenerationParameters(
+                        intent = intent,
+                        cycleCount = cycleCount.value,
+                        startingRir = startingRir.value,
+                    ),
             )
             navigationCommander.popBackStack()
         }

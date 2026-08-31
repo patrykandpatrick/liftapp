@@ -2,7 +2,8 @@
 
 ## Status
 
-**Phases 2, 3 and 4 have shipped, and Phase 5's first landing with them.** 5b and 5c are next.
+**Phases 2, 3 and 4 have shipped, and Phase 5a with them. 5b generates, but does not yet let you
+edit what it generated.** That editor and 5c are next.
 
 | Phase | State |
 | --- | --- |
@@ -10,7 +11,7 @@
 | 3 — Estimation math | **Done**, `ed1476b5`, no schema |
 | 4 — Weekly volume per muscle (actual) | **Done**, no schema |
 | 5a — Data model swap | **Done**, schema 15 |
-| 5b — Authoring and generation | Next, no schema |
+| 5b — Authoring and generation | **Generator done**, editor outstanding, no schema |
 | 5c — Show the target during the workout | Open, no schema |
 | 6 — Autoregulation and stalls | Open |
 | 7 — Mesocycle, deloads, planned volume | Open |
@@ -460,6 +461,35 @@ list; `UpsertGoalSetsUseCase` (the ±1 set buttons in the workout) must edit the
 `Goal.setRange` is used by `SupersetViewModel`.
 
 ### 5b — Authoring and generation
+
+> **The generator landed; the editor did not.** `TrainingIntent`, `TargetPrescriptions` — the Part 2
+> tables as one lookup, read by both the generator and the out-of-plan defaults so the two cannot
+> disagree — and `TargetGenerator`, which writes one target per (cycle, day, exercise). Activation
+> runs it: `SetActivePlanUseCase` now takes `GenerationParameters` and re-authors the whole plan,
+> and `PlanConfiguratorScreen` grew the intent picker and the starting-RIR input. 23 unit tests.
+>
+> Two ramps, per Phase 7's note that both are generator defaults rather than new data. **RIR** goes
+> evenly from the declared start down to the floor of the role's band, so four cycles from 3 read
+> 3, 2, 2, 1; a start already at or below the floor is left alone rather than raised to give the
+> ramp somewhere to fall from. **Set count** climbs linearly to roughly double by the last cycle.
+>
+> The volume ramp is the one place the translation is lossy. The reference states MEV → MRV *per
+> muscle*; the generator applies it per exercise. Doubling every exercise does double each muscle,
+> so the shape survives — what it cannot do is notice that two exercises share one. Phase 7's fold
+> over planned volume is what would.
+>
+> **Still to build: the editor.** Every target is a stored row, so editing one needs no merge logic
+> — but there is no screen that edits it, which means the plan is only as good as the tables until
+> there is. It wants a route keyed by (plan, cycle, day), a query joining targets to exercise names,
+> and an entry point from `ActivePlanScreen`, which already lays out cycles and days.
+>
+> Note that **activation re-authors the plan**, so configuring one a second time discards any edit
+> made to a cell. That is the right way round for a screen whose whole job is to say what the block
+> is, but it is a trap once the editor exists and should be revisited with it.
+>
+> `TrainingIntent` is deliberately *not* on `ActivePlan`: the targets are materialised, so nothing
+> downstream needs it, and leaving it off keeps the DataStore JSON — which
+> `LegacySharedPreferencesMigrationTest` asserts exactly — untouched.
 
 Plan creation grows target authoring. The generator takes intent (strength / hypertrophy / both) plus
 a starting RIR and ramps, and indexes the Part 2 tables by **(role × intent)** — role from Phase 2,

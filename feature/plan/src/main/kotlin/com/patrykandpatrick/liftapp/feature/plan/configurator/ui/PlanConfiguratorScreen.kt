@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -35,10 +36,14 @@ import com.patrykandpatrick.liftapp.core.ui.BottomAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatrick.liftapp.core.ui.InfoCard
+import com.patrykandpatrick.liftapp.core.ui.SegmentedButton
+import com.patrykandpatrick.liftapp.core.ui.SegmentedButtonContainer
 import com.patrykandpatrick.liftapp.core.ui.input.DateInput
 import com.patrykandpatrick.liftapp.core.ui.input.DateInputDefaults
 import com.patrykandpatrick.liftapp.core.ui.input.NumberInput
+import com.patrykandpatrick.liftapp.core.ui.resource.prettyName
 import com.patrykandpatrick.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.target.TrainingIntent
 import com.patrykandpatrick.liftapp.feature.plan.configurator.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.dimens.LocalDimens
@@ -74,12 +79,16 @@ private fun PlanConfiguratorScreen(state: ScreenState, onAction: (Action) -> Uni
         bottomBar = { BottomAppBar.Save(onClick = { onAction(Action.Save(state)) }) },
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
-        Content(state = state, modifier = Modifier.padding(paddingValues))
+        Content(state = state, onAction = onAction, modifier = Modifier.padding(paddingValues))
     }
 }
 
 @Composable
-private fun Content(state: ScreenState, modifier: Modifier = Modifier) {
+private fun Content(
+    state: ScreenState,
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier =
             modifier
@@ -111,6 +120,45 @@ private fun Content(state: ScreenState, modifier: Modifier = Modifier) {
         )
 
         InfoCard(text = getInfoText(state))
+
+        // What the block is for and how hard it starts: the two things the tables cannot know.
+        // Everything else the generator needs it reads off the exercises themselves.
+        Text(
+            text = stringResource(R.string.training_plan_intent),
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.align(Alignment.Start),
+        )
+
+        SegmentedButtonContainer(
+            items = TrainingIntent.entries,
+            modifier = Modifier.fillMaxWidth(),
+        ) { _, intent ->
+            SegmentedButton(
+                text = intent.prettyName,
+                onClick = { onAction(Action.SetIntent(intent)) },
+                selected = intent == state.intent,
+                showIcon = false,
+            )
+        }
+
+        NumberInput(
+            textFieldState = state.startingRir,
+            onPlusClick = { state.startingRir.updateValueBy(1) },
+            onMinusClick = { state.startingRir.updateValueBy(-1) },
+            hint = stringResource(R.string.training_plan_starting_rir),
+        )
+
+        InfoCard(
+            text =
+                LocalMarkupProcessor.current.toAnnotatedString(
+                    stringResource(
+                        R.string.training_plan_generation_info,
+                        state.startingRir.value.toString(),
+                    )
+                )
+        )
+
+        Spacer(Modifier.height(10.dp))
     }
 }
 
@@ -176,6 +224,8 @@ private fun PlanConfiguratorPreview() {
                                 initialValue = "Sunday, 13 April 2025",
                             ),
                         cycleCount = IntTextFieldState(initialValue = "6"),
+                        intent = TrainingIntent.Both,
+                        startingRir = IntTextFieldState(initialValue = "3"),
                         endDate = LocalDate.now().plusDays(42),
                         lengthWeeks = 6,
                         lengthRemainingDays = 0,

@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.domain.routine
 
+import com.patrykandpatrick.liftapp.domain.exercise.ExerciseRole
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import java.io.Serializable
 
@@ -8,6 +9,8 @@ data class RoutineExerciseItem(
     val name: String,
     val muscles: String,
     val type: ExerciseType,
+    /** Null where nobody has classified the exercise; every reader has to answer for that. */
+    val role: ExerciseRole? = null,
 ) : Serializable {
 
     companion object {

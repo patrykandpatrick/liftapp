@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import com.patrykandpatrick.liftapp.core.text.IntTextFieldState
 import com.patrykandpatrick.liftapp.core.text.LocalDateTextFieldState
 import com.patrykandpatrick.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.target.TrainingIntent
 import java.time.LocalDate
 
 @Stable
@@ -11,6 +12,8 @@ data class ScreenState(
     val plan: Plan,
     val startDate: LocalDateTextFieldState,
     val cycleCount: IntTextFieldState,
+    val intent: TrainingIntent,
+    val startingRir: IntTextFieldState,
     val endDate: LocalDate,
     val lengthWeeks: Int,
     val lengthRemainingDays: Int,

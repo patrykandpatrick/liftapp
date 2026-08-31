@@ -465,6 +465,14 @@
     <!-- Example: "2 weeks" -->
     <string name="training_plan_configure_ends_in_weeks">%1$d %2$s</string>
 
+    <string name="training_plan_intent">What this block is for</string>
+    <string name="training_intent_strength">Strength</string>
+    <string name="training_intent_hypertrophy">Growth</string>
+    <string name="training_intent_both">Both</string>
+    <!-- The top of the mesocycle ramp: the app tightens RIR from here to the last cycle. -->
+    <string name="training_plan_starting_rir">Starting reps in reserve</string>
+    <string name="training_plan_generation_info"><![CDATA[Every set gets a rep range and an effort target. Reps in reserve tightens from <b><color-surface-variant>%1$s</color-surface-variant></b> in the first cycle to the hardest in the last, and sets climb as it goes. Change any of it afterwards.]]></string>
+
     <!-- Errors -->
     <string name="generic_error_title">Unexpected error</string>
     <string name="error_routine_not_found">The routine could not be found</string>
