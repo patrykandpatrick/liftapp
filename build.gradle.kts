@@ -63,6 +63,22 @@ fun Project.registerAndroidKtfmtTasks() {
     tasks.named("ktfmtFormat") { dependsOn(formatAndroid) }
 }
 
+/**
+ * An Android module's unit tests are `testDebugUnitTest`; nothing there answers to `testDebug`.
+ *
+ * Gradle abbreviates a *qualified* task name, so `:some:module:testDebug` resolves and hides this.
+ * The unqualified `./gradlew testDebug` — what CI runs, and what AGENTS.md calls "all unit tests" —
+ * does not abbreviate, so it matched only the JVM alias below and every Android module's tests went
+ * unrun.
+ */
+fun Project.registerAndroidTestDebugAlias() {
+    tasks.register("testDebug") {
+        group = "verification"
+        description = "Runs the unit tests, under the name every module answers to."
+        dependsOn(tasks.named("testDebugUnitTest"))
+    }
+}
+
 subprojects {
     apply(plugin = "dev.detekt")
     apply(plugin = "com.ncorti.ktfmt.gradle")
@@ -81,6 +97,7 @@ subprojects {
 
     pluginManager.withPlugin("com.android.application") {
         registerAndroidKtfmtTasks()
+        registerAndroidTestDebugAlias()
         detektCheck.configure {
             dependsOn(tasks.named("detektDebug"), tasks.named("detektDebugUnitTest"))
         }
@@ -90,6 +107,7 @@ subprojects {
     }
     pluginManager.withPlugin("com.android.library") {
         registerAndroidKtfmtTasks()
+        registerAndroidTestDebugAlias()
         detektCheck.configure {
             dependsOn(tasks.named("detektDebug"), tasks.named("detektDebugUnitTest"))
         }
@@ -104,7 +122,7 @@ subprojects {
         // `:domain` entirely. Alias it rather than teach every caller which modules are which.
         tasks.register("testDebug") {
             group = "verification"
-            description = "Runs the unit tests, under the name the Android modules use."
+            description = "Runs the unit tests, under the name every module answers to."
             dependsOn(tasks.named("test"))
         }
     }
