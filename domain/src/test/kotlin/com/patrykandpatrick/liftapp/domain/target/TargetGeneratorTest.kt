@@ -214,8 +214,8 @@ class TargetGeneratorTest {
 
         val setsByCycle = (0..5).map { targets.forExercise(BENCH_ID, cycle = it).setCount }
 
-        // Two accumulating weeks then a deload, twice over.
-        assertEquals(listOf(3, 6, 2, 3, 6, 2), setsByCycle)
+        // Two accumulating weeks then a deload at half the second, twice over.
+        assertEquals(listOf(3, 6, 3, 3, 6, 3), setsByCycle)
     }
 
     @Test

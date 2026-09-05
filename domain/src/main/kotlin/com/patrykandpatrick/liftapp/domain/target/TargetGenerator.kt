@@ -71,7 +71,7 @@ class TargetGenerator @Inject constructor() {
             cycleIndex = cycleIndex,
             planItemOrderIndex = itemOrderIndex,
             exerciseID = exercise.id,
-            sets = List(if (isDeload) deloadSets(parameters) else accumulatedSets) { set },
+            sets = List(if (isDeload) deloadSets(accumulatedSets) else accumulatedSets) { set },
             restTime = prescription.restTime,
         )
     }
@@ -103,16 +103,17 @@ class TargetGenerator @Inject constructor() {
         (rirRange.first + DELOAD_RIR_INCREASE).coerceAtMost(ExerciseSet.RIR_RANGE.last)
 
     /**
-     * Half the volume the block *started* at, not half the peak it climbed to.
+     * Half of what the week before asked for, rounded up — the reference's "cut sets by roughly
+     * half", read against the volume actually being carried into the deload.
      *
-     * The reference says "cut sets by roughly half" and its worked example ramps 10 → 20 and then
-     * deloads to about 6 — well under the starting figure, not half the top. Halving the peak would
-     * land back on the first week's volume and read as more accumulation rather than a reset.
+     * Under the doubling ramp this lands on the volume the block opened at, which the reference's
+     * own worked example undercuts: it ramps 10 → 20 and deloads to about 6 rather than 10. The
+     * halving rule is the one stated, though, and the week is lighter than its opening week
+     * regardless — the load comes down and [deloadRir] backs the effort well off failure.
      *
      * Never none: reduced training preserves adaptation where stopping does not.
      */
-    private fun deloadSets(parameters: GenerationParameters): Int =
-        ((parameters.baseSetCount + 1) / 2).coerceAtLeast(1)
+    private fun deloadSets(accumulatedSets: Int): Int = ((accumulatedSets + 1) / 2).coerceAtLeast(1)
 
     /**
      * Linear from the base count to roughly double it by the last accumulating cycle — the MEV →
