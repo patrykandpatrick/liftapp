@@ -610,6 +610,16 @@ With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–
 > enforced inside it rather than left to callers — a caller cannot obtain a suggestion without its
 > reason, because `LoadSuggestion` cannot be built without one.
 >
+> **The reason is a type, not a string.** The plan asks for a reason *string* and the verification
+> line for a populated one; what shipped is a sealed `SuggestionReason` carrying the numbers —
+> `Hold(achievedReps = 9, maxReps = 12)` rather than `"Same weight — you got 9 of 12 last time"`.
+> `:domain` has no resources and no `Context`, so building the sentence there would either hard-code
+> English or drag a `StringProvider` into the loop, and "9 of 12 reps" needs a plural form that only
+> `pluralStringResource` can pick. It is the same split `VolumeBandResources` and
+> `SetTargetResources` already use: the domain holds the fact, `:core` says it in a language. The
+> guard is met more strictly than asked as a result — a reason is not merely always populated, it is
+> unrepresentable to have a suggestion without one.
+>
 > Two things the plan did not say, both found by the tests:
 >
 > - **A regression is not a stall.** Going backwards has an answer already — the back-off — and
@@ -625,9 +635,10 @@ With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–
 > persisted, so cheapest-first falls out of the history rather than out of a counter someone has to
 > keep. Changing the exercise is reachable only after the three cheaper answers.
 >
-> **Not wired to a screen.** The loop and its guards are done and tested; nothing shows a suggestion
-> to a user yet. Where it belongs is the weight field of the set being logged, and what it says
-> there is `SuggestionReason` turned into a sentence with the resources.
+> **Not wired to a screen**, which leaves half of "show the reason" open: the reason exists and
+> nothing shows it. What is left is a `SuggestionReason` mapper in `:core` — one string per case,
+> plus the plurals — and a line beside the weight field of the set being logged. Everything below
+> the sentence is done and tested.
 >
 > **Moved behind the mesocycle work**, which was Phase 6 — see the note there. Its inputs were all
 > in place from Phase 5 onward; it waited on the other only for the cycle arithmetic and the plan

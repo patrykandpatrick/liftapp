@@ -510,9 +510,9 @@ not revisited reads as front-delt work.
 
 ## Part 5 — What this app is missing
 
-In rough dependency order. Items 1, 5 and 8 are done — see
-[What is built so far](#what-is-built-so-far) — and stay here so the numbering the rest of this
-document uses still holds.
+In rough dependency order. Everything here is now done bar item 3's authored load and item 7, which
+was deferred — see [What is built so far](#what-is-built-so-far). The list stays as written so the
+numbering the rest of this document uses still holds.
 
 1. **RIR on [`ExerciseSet`][set].** *Done, schema 13.* Nullable `Int`, valid `0..4`, meaningless for
    `Cardio`/`Time`. Nothing autoregulates without it. The backup format is schema-driven and derives
@@ -522,32 +522,40 @@ document uses still holds.
    [`SetTarget`][target] list hung off `(plan, cycle, day, exercise)`. The set count is the length
    of that list, which is what makes a volume ramp across weeks authorable at all.
 
-3. **A target load or `%e1RM`.** [`SetTarget.loadPercent`][target] is the field; nothing fills it in
-   yet, so the user still carries the hardest decision themselves.
+3. **A target load or `%e1RM`.** *Half done.* [`SuggestLoadUseCase`][suggest] computes a load from
+   what the last sessions did, which is the answer to the hard decision — but it is computed at
+   suggestion time rather than authored, so [`SetTarget.loadPercent`][target] is still never filled
+   in, and nothing yet shows the suggestion to a user.
 
-4. **Training intent.** Strength / hypertrophy / both, per routine or per exercise. Every default
-   table in Part 2 is indexed by it.
+4. **Training intent.** *Done, no schema.* Strength / hypertrophy / both, chosen per plan rather
+   than per routine or exercise — it is a property of the block. Every default table in Part 2 is
+   indexed by it, through `TargetPrescriptions`.
 
 5. **Compound vs isolation classification.** *Done, schema 14, as a nullable three-way `role`.*
    `primaryMuscles.size` is a tempting proxy and a bad one — a barbell curl has one primary muscle
    and a cable fly has one too. It is an explicit field on [`Exercise`][ex], authored per seeded
    exercise.
 
-6. **A week/cycle index on [`Plan`][plan].** Without it there is no mesocycle, so no RIR ramp, no
-   volume ramp, and no scheduled deload.
+6. **A week/cycle index on [`Plan`][plan].** *Done, schema 15.* Not on the plan itself, which is
+   still a repeating list of days: the cycle is a column on the target and on the scheduled day, so
+   a plan can prescribe differently in week five than in week one without the routines changing.
+   The RIR ramp, the volume ramp and the scheduled deload all hang off it.
 
-7. **Per-exercise fatigue cost.** A three-level hint (low/moderate/high) would let the app stop
-   suggesting 5 sets of 15 deadlifts. Cannot be derived from muscle lists.
+7. **Per-exercise fatigue cost.** *Deferred, and the only item nothing has been built for.* A
+   three-level hint (low/moderate/high) would let the app stop suggesting 5 sets of 15 deadlifts.
+   Cannot be derived from muscle lists, so it needs 101 judgement calls for what only ever changed
+   a warning.
 
 8. **A progression policy per exercise.** *Done, schema 14, alongside a per-exercise load
    increment.* Double progression, fixed load increment, or reps-only. Small-load exercises default
    to reps-only, as does everything that records no external load at all.
 
-### The autoregulation loop, once those exist
+### The autoregulation loop
 
-Every function this calls exists: `oneRepMax` and `loadFor` on [`OneRepMaxCalculator`][orm], and
-`snapToEquipment` under the name `roundToIncrement`. What is missing is the prescription to compare
-against — `minReps`, `maxReps` and a target RIR per set — which is items 2 through 4.
+*Built, as [`SuggestLoadUseCase`][suggest].* The prescription it compares against — `minReps`,
+`maxReps` and a target RIR per set — arrived with per-set targets, and the math it calls was
+already there: `oneRepMax` and `loadFor` on [`OneRepMaxCalculator`][orm], and `snapToEquipment`
+under the name `roundToIncrement`.
 
 ```
 on completing a set:
@@ -572,6 +580,19 @@ Guard it with three rules:
 - **Show the reason.** "Same weight — you got 9 of 12 last time" is a coaching cue. A number that
   changes silently is a bug report.
 
+The reason travels as a `SuggestionReason` carrying the numbers rather than as a finished sentence,
+because the domain has no resources to build one from and "9 of 12 reps" needs a plural form the
+locale picks. A suggestion cannot be constructed without one, so the guard holds by construction
+rather than by remembering. The sentence itself is the piece still to write.
+
+Two things the loop settled that this document did not say. A **regression is not a stall** — going
+backwards already has an answer in the back-off, and treating it as one escalates over what a single
+back-off handles. And the **ten-percent guard fires on honest arithmetic, not only on outliers**:
+dropping from twelve reps to eight at the same effort is worth more than a tenth of the bar by
+itself, so a double progression across a wide range meets the cap every time. That is the guard
+working; what it costs is that the suggestion has to say it was capped, or three identical +10%
+weeks look like the loop is stuck.
+
 ### Stalls
 
 Two sessions without progress on reps or load at the target RIR is a stall. Escalate in this order,
@@ -594,6 +615,7 @@ users read it as the app giving up.
 [plan]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/plan/Plan.kt
 [set]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/workout/ExerciseSet.kt
 [orm]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/exerciseset/OneRepMaxCalculator.kt
+[suggest]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/progression/SuggestLoadUseCase.kt
 [ex]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/exercise/Exercise.kt
 [type]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/exercise/ExerciseType.kt
 [mc]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/muscle/MuscleContainer.kt
