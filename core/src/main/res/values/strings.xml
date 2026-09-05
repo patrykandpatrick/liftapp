@@ -369,6 +369,9 @@
     <!-- Work too slight to round up to a whole set, which a long window averaged down produces. -->
     <string name="muscle_volume_under_one_set">Under 1 set</string>
     <string name="muscle_volume_untrained_title">Nothing this period</string>
+    <!-- Example: "8 of 12 sets" — what was done against what the plan asks for in a week. -->
+    <string name="muscle_volume_sets_of_planned">%1$d of %2$d %3$s</string>
+    <string name="muscle_volume_planned_caption">Compared with what your plan asks of each muscle in a week.</string>
     <plurals name="muscle_volume_sets">
         <item quantity="one">%d set</item>
         <item quantity="other">%d sets</item>

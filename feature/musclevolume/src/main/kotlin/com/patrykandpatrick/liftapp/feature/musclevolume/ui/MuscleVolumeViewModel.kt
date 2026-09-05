@@ -8,6 +8,7 @@ import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.date.currentDateFlow
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.muscle.GetMuscleVolumeUseCase
+import com.patrykandpatrick.liftapp.domain.muscle.GetPlannedMuscleVolumeUseCase
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.domain.preference.PreferenceRepository
 import com.patrykandpatrick.liftapp.feature.musclevolume.model.Action
@@ -18,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -26,6 +26,7 @@ class MuscleVolumeViewModel
 @Inject
 constructor(
     getMuscleVolume: GetMuscleVolumeUseCase,
+    getPlannedMuscleVolume: GetPlannedMuscleVolumeUseCase,
     savedStateHandle: SavedStateHandle,
     coroutineScope: CoroutineScope,
     private val navigationCommander: NavigationCommander,
@@ -40,10 +41,13 @@ constructor(
 
     val screenState: StateFlow<Loadable<ScreenState>> =
         combine(currentDateFlow(), dateInterval, ::Pair)
-            .flatMapLatest { (_, interval) ->
-                getMuscleVolume(interval).map { muscleVolume ->
+            .flatMapLatest { (date, interval) ->
+                combine(getMuscleVolume(interval), getPlannedMuscleVolume(date)) {
+                    muscleVolume,
+                    plannedVolume ->
                     ScreenState(
                         muscleVolume = muscleVolume,
+                        plannedVolume = plannedVolume,
                         dateInterval = interval,
                         dateIntervalOptions = dateIntervalOptions,
                     )

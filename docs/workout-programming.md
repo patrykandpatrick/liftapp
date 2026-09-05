@@ -71,8 +71,11 @@ week, which is a different window from the calendar week the rest of its totals 
 longer than a week is divided down to one, because a monthly total is a number no landmark speaks
 to.
 
-This is logged volume only. Planned volume is the same fold over the targets in Part 3, and lands
-with them.
+Planned volume is the same fold over the targets in Part 3, restated to a week the same way — with
+one difference. A logged window shorter than a week is never scaled up, because it is a count that
+happened and the week it implies is a guess; a *cycle* shorter than a week is scaled up, because a
+cycle repeats by construction and its weekly rate is therefore knowable. Both being weekly rates is
+what lets a row read "8 of 12 sets" at all.
 
 The same pass settled what a calisthenics set weighs. `ExerciseSet.totalWeight` is now the one
 reading of the mass a set moved — body weight included — where the statistics card counted it, both

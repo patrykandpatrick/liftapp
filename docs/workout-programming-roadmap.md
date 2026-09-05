@@ -2,8 +2,8 @@
 
 ## Status
 
-**Phases 2 through 5 have shipped.** Phase 6 is next — and 6 and 7 have swapped places, so it is
-now the mesocycle work rather than autoregulation. See the note under Phase 6 for why.
+**Phases 2 through 6 have shipped.** Phase 7, autoregulation, is next — 6 and 7 swapped places,
+so the mesocycle work came first. See the note under Phase 6 for why.
 
 | Phase | State |
 | --- | --- |
@@ -13,8 +13,8 @@ now the mesocycle work rather than autoregulation. See the note under Phase 6 fo
 | 5a — Data model swap | **Done**, schema 15 |
 | 5b — Authoring and generation | **Done**, no schema |
 | 5c — Show the target during the workout | **Done**, schema 16 |
-| 6 — Mesocycle, deloads, planned volume | Next |
-| 7 — Autoregulation and stalls | Open |
+| 6 — Mesocycle, deloads, planned volume | **Done**, no schema |
+| 7 — Autoregulation and stalls | Next |
 
 Each shipped phase keeps its section below, with what actually happened recorded at the top of it.
 The plan is left as written underneath: where the two disagree, the note is what is true.
@@ -547,6 +547,31 @@ and restore.
 
 ## Phase 6 — Mesocycle, deloads, planned volume
 
+> **Done, no schema.** The schedule table now holds the days of the plan being run and nothing
+> else: activation replaces it rather than appending, and both readers name the plan they want,
+> because a restored archive arrives without passing through activation. `PlanSchedule` answers
+> every cycle-position question that was written out three times, and says a date outside the plan
+> has no position rather than an extrapolated one.
+>
+> Deloads are a block length on the plan. The ramps read the block rather than the whole plan, so a
+> second block starts over at the top of the RIR range instead of continuing down from where the
+> first ended — the gap 5b left. The deload halves the volume the week before it carried and backs
+> RIR well off failure, keeping the days. Note the reference disagrees with itself here: the stated
+> rule is "cut sets by roughly half", while its worked example ramps 10 → 20 and deloads to about 6
+> rather than 10. The rule won.
+>
+> **Planned volume** is the same per-muscle accumulator as logged volume, folded over the active
+> plan's targets for the cycle a date falls in, and shown beside the actual figure on the volume
+> screen. It needed one thing logged volume does not have: `perWeekOfCycle` scales *up* as well as
+> down, because a five-day cycle run back to back really does deliver its sets seven-fifths as
+> often as a week. `perWeek` refuses to scale up for exactly the opposite reason — a short window
+> of logged work is a count that happened.
+>
+> One thing found while verifying this phase and fixed separately in `afdca431`: **CI was running
+> 161 of the repo's 382 tests.** An Android module has no `testDebug` task, only
+> `testDebugUnitTest`; Gradle abbreviates a qualified task name so `:module:testDebug` resolved and
+> hid it, while the unqualified `./gradlew testDebug` that CI runs matched only the JVM alias.
+>
 > **Moved ahead of autoregulation.** This was Phase 7 and is now Phase 6, because two of its items
 > are foundations the other phase would build on rather than follow. Cycle-position arithmetic is
 > written three times already and autoregulation adds a fourth reader of it. The two plan bugs are

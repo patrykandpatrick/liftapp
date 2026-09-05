@@ -41,6 +41,9 @@ import com.patrykandpatrick.liftapp.ui.theme.colorScheme
  * Takes the whole [volume] rather than a count and a band, so the two cannot be passed in
  * disagreeing — and so that work too slight to round up to a set reads as *less than one* rather
  * than as none.
+ *
+ * [plannedVolume] is what the active plan asks of the muscle in a week, when there is one. Both are
+ * weekly rates, which is the only footing on which they compare.
  */
 @Composable
 fun MuscleVolumeRow(
@@ -48,6 +51,7 @@ fun MuscleVolumeRow(
     volume: MuscleVolume,
     colorStops: List<Pair<Float, Color>>,
     modifier: Modifier = Modifier,
+    plannedVolume: MuscleVolume? = null,
 ) {
     val sets = volume.wholeSetsOf(muscle)
     Column(
@@ -62,12 +66,20 @@ fun MuscleVolumeRow(
                 modifier = Modifier.weight(1f),
             )
 
+            val planned = plannedVolume?.wholeSetsOf(muscle)?.takeIf { it > 0 }
             LiftAppText(
                 text =
-                    if (sets == 0 && volume[muscle] > 0) {
-                        stringResource(R.string.muscle_volume_under_one_set)
-                    } else {
-                        pluralStringResource(R.plurals.muscle_volume_sets, sets, sets)
+                    when {
+                        sets == 0 && volume[muscle] > 0 ->
+                            stringResource(R.string.muscle_volume_under_one_set)
+                        planned != null ->
+                            stringResource(
+                                R.string.muscle_volume_sets_of_planned,
+                                sets,
+                                planned,
+                                pluralStringResource(R.plurals.set_count, planned),
+                            )
+                        else -> pluralStringResource(R.plurals.muscle_volume_sets, sets, sets)
                     },
                 style = typography.labelMedium,
                 color = colorScheme.foregroundVariant,

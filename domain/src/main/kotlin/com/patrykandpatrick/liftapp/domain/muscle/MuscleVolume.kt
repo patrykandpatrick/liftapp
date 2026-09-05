@@ -59,6 +59,21 @@ value class MuscleVolume private constructor(val setsPerMuscle: Map<Muscle, Doub
         return MuscleVolume(setsPerMuscle.mapValues { (_, sets) -> sets / weeks })
     }
 
+    /**
+     * Restated as a weekly rate for a cycle that repeats.
+     *
+     * Unlike [perWeek] this scales *up* as well as down: a five-day cycle run back to back really
+     * does deliver its sets seven-fifths as often as a week does. That holds only for work that
+     * repeats by construction, which is why logged volume uses [perWeek] instead — there, a window
+     * shorter than a week is a count that happened and the week it implies is a guess.
+     */
+    fun perWeekOfCycle(cycleDays: Long): MuscleVolume {
+        require(cycleDays > 0) { "A cycle has to span at least a day, not $cycleDays." }
+        if (cycleDays == DAYS_IN_WEEK.toLong() || setsPerMuscle.isEmpty()) return this
+        val weeks = cycleDays.toDouble() / DAYS_IN_WEEK
+        return MuscleVolume(setsPerMuscle.mapValues { (_, sets) -> sets / weeks })
+    }
+
     operator fun plus(other: MuscleVolume): MuscleVolume =
         when {
             setsPerMuscle.isEmpty() -> other

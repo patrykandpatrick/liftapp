@@ -1,5 +1,6 @@
 package com.patrykandpatrick.liftapp.functionality.database.di
 
+import com.patrykandpatrick.liftapp.domain.muscle.GetPlannedCycleVolumeContract
 import com.patrykandpatrick.liftapp.domain.target.GetExerciseTargetsContract
 import com.patrykandpatrick.liftapp.domain.target.GetPlanDayTargetsContract
 import com.patrykandpatrick.liftapp.domain.target.TargetRepository
@@ -17,6 +18,11 @@ interface TargetModule {
 
     @Binds
     fun bindGetExerciseTargetsContract(repository: RoomTargetRepository): GetExerciseTargetsContract
+
+    @Binds
+    fun bindGetPlannedCycleVolumeContract(
+        repository: RoomTargetRepository
+    ): GetPlannedCycleVolumeContract
 
     @Binds
     fun bindGetPlanDayTargetsContract(repository: RoomTargetRepository): GetPlanDayTargetsContract

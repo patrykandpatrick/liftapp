@@ -139,7 +139,10 @@ private fun Content(
                         } else {
                             R.string.muscle_volume_caption
                         }
-                    ),
+                    ) +
+                        state.plannedVolume
+                            ?.let { " " + stringResource(R.string.muscle_volume_planned_caption) }
+                            .orEmpty(),
                 style = typography.bodySmall,
                 color = colorScheme.foregroundVariant,
                 modifier =
@@ -165,6 +168,7 @@ private fun Content(
                 muscle = muscle,
                 volume = state.muscleVolume,
                 colorStops = colorStops,
+                plannedVolume = state.plannedVolume,
                 modifier =
                     Modifier.animateItem()
                         .padding(horizontal = screenPadding)
@@ -257,6 +261,7 @@ private fun MuscleVolumeScreenPreview() {
                 Loadable.Success(
                     ScreenState(
                         muscleVolume = PreviewMuscleVolume,
+                        plannedVolume = PreviewMuscleVolume,
                         dateInterval = DateInterval.RollingDays(DAYS_IN_WEEK),
                         dateIntervalOptions = DateInterval.volumeOptions(DayOfWeek.MONDAY),
                     )

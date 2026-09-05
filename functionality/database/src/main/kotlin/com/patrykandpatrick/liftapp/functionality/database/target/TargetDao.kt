@@ -89,6 +89,24 @@ interface TargetDao {
         itemOrderIndex: Int,
     ): Flow<List<TargetWithExerciseDto>>
 
+    /**
+     * Every exercise prescribed anywhere in one cycle, with the muscles it credits.
+     *
+     * Every day of the cycle at once, because a week's volume per muscle is the sum over the whole
+     * cycle rather than anything a single day answers.
+     */
+    @Query(
+        "SELECT t.exercise_target_sets, e.exercise_type, e.exercise_main_muscles, " +
+            "e.exercise_secondary_muscles, e.exercise_tertiary_muscles FROM exercise_target t " +
+            "INNER JOIN exercise e ON e.exercise_id = t.exercise_target_exercise_id " +
+            "WHERE t.exercise_target_plan_id = :planID " +
+            "AND t.exercise_target_cycle_index = :cycleIndex"
+    )
+    fun getCycleTargetsWithMuscles(
+        planID: Long,
+        cycleIndex: Int,
+    ): Flow<List<TargetWithMusclesDto>>
+
     @Upsert suspend fun upsertTargets(targets: List<ExerciseTargetEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

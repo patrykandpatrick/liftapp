@@ -1,6 +1,8 @@
 package com.patrykandpatrick.liftapp.functionality.database.target
 
 import com.patrykandpatrick.liftapp.domain.di.IODispatcher
+import com.patrykandpatrick.liftapp.domain.muscle.GetPlannedCycleVolumeContract
+import com.patrykandpatrick.liftapp.domain.muscle.PlannedExerciseVolume
 import com.patrykandpatrick.liftapp.domain.target.ExerciseTarget
 import com.patrykandpatrick.liftapp.domain.target.PlanDayTargets
 import com.patrykandpatrick.liftapp.domain.target.TargetRepository
@@ -17,7 +19,26 @@ class RoomTargetRepository
 constructor(
     private val targetDao: TargetDao,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
-) : TargetRepository {
+) : TargetRepository, GetPlannedCycleVolumeContract {
+
+    override fun getPlannedCycleVolume(
+        planID: Long,
+        cycleIndex: Int,
+    ): Flow<List<PlannedExerciseVolume>> =
+        targetDao
+            .getCycleTargetsWithMuscles(planID, cycleIndex)
+            .map { rows ->
+                rows.map { row ->
+                    PlannedExerciseVolume(
+                        setCount = row.sets.size,
+                        exerciseType = row.exerciseType,
+                        primaryMuscles = row.mainMuscles,
+                        secondaryMuscles = row.secondaryMuscles,
+                        tertiaryMuscles = row.tertiaryMuscles,
+                    )
+                }
+            }
+            .flowOn(dispatcher)
 
     override fun getTargets(
         planID: Long,

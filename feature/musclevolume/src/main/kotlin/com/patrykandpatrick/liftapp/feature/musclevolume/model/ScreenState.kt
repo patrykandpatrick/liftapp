@@ -8,6 +8,8 @@ import com.patrykandpatrick.liftapp.domain.muscle.MuscleVolume
 @Immutable
 data class ScreenState(
     val muscleVolume: MuscleVolume,
+    /** What the active plan asks for in a week, or null when no plan covers today. */
+    val plannedVolume: MuscleVolume?,
     val dateInterval: DateInterval,
     val dateIntervalOptions: List<DateInterval>,
 ) {
