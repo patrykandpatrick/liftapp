@@ -60,16 +60,32 @@ interface PlanDao {
 
     @Insert suspend fun insertPlanItemSchedule(schedule: List<PlanItemSchedule>): List<Long>
 
+    @Query("DELETE FROM plan_item_schedule") suspend fun deletePlanItemSchedule()
+
+    /**
+     * The table holds the schedule of the plan being run, and only one plan is ever active, so
+     * activating one replaces whatever was there.
+     *
+     * It used to append. Re-activating a plan, or switching to another, left the old days lying
+     * beside the new ones, and a query for "what is scheduled today" then had two answers and no
+     * way to choose.
+     */
+    @Transaction
+    suspend fun replacePlanItemSchedule(schedule: List<PlanItemSchedule>) {
+        deletePlanItemSchedule()
+        insertPlanItemSchedule(schedule)
+    }
+
     @Query(
         "SELECT r.*, e.* FROM plan_item_schedule p " +
             "LEFT JOIN routine r ON p.plan_item_routine_id = r.routine_id " +
             "LEFT JOIN routine_item ri ON ri.routine_item_routine_id = r.routine_id " +
             "LEFT JOIN exercise_with_routine_item ewr ON ewr.routine_item_id = ri.routine_item_id " +
             "LEFT JOIN exercise e ON e.exercise_id = ewr.exercise_id " +
-            "WHERE p.plan_item_schedule_date = :date ORDER BY ri.routine_item_order_index, " +
-            "ewr.routine_item_exercise_order_index"
+            "WHERE p.plan_item_schedule_plan_id = :planID AND p.plan_item_schedule_date = :date " +
+            "ORDER BY ri.routine_item_order_index, ewr.routine_item_exercise_order_index"
     )
-    fun getScheduledRoutine(date: LocalDate): Flow<List<ScheduledRoutine>>
+    fun getScheduledRoutine(planID: Long, date: LocalDate): Flow<List<ScheduledRoutine>>
 
     private companion object {
         /** What `@Upsert` returns when it updated an existing row rather than inserting one. */

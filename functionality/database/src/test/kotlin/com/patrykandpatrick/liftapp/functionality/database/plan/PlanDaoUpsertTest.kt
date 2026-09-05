@@ -45,8 +45,14 @@ class PlanDaoUpsertTest {
         override suspend fun insertPlanItemSchedule(schedule: List<PlanItemSchedule>): List<Long> =
             emptyList()
 
-        override fun getScheduledRoutine(date: LocalDate): Flow<List<ScheduledRoutine>> =
-            emptyFlow()
+        override fun getScheduledRoutine(
+            planID: Long,
+            date: LocalDate,
+        ): Flow<List<ScheduledRoutine>> = emptyFlow()
+
+        override suspend fun deletePlanItemSchedule() {
+            calls += "deletePlanItemSchedule"
+        }
     }
 
     @Test

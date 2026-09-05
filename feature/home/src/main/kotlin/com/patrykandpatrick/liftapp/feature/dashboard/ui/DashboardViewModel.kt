@@ -14,6 +14,7 @@ import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
 import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.plan.GetActivePlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.plan.PlanSchedule
 import com.patrykandpatrick.liftapp.domain.workout.DeleteWorkoutUseCase
 import com.patrykandpatrick.liftapp.domain.workout.GetActiveWorkoutsUseCase
 import com.patrykandpatrick.liftapp.domain.workout.GetPastWorkoutsUseCase
@@ -28,7 +29,6 @@ import com.patrykandpatrick.liftapp.navigation.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
@@ -186,16 +186,19 @@ constructor(
             skipCurrentPlanItem: Boolean = false,
         ): Long? {
             val (selection, plan) = activePlan ?: return null
-            if (plan.items.isEmpty()) return null
+            val schedule =
+                PlanSchedule(
+                    startDate = selection.startDate,
+                    itemCount = plan.items.size,
+                    cycleCount = selection.cycleCount,
+                )
 
-            val elapsedDays = ChronoUnit.DAYS.between(selection.startDate, today).toInt()
-            val scheduledDayCount = plan.items.size * selection.cycleCount
-            if (elapsedDays !in 0 until scheduledDayCount) return null
-
-            val firstDayIndex = elapsedDays + if (skipCurrentPlanItem) 1 else 0
-            return (firstDayIndex until scheduledDayCount).firstNotNullOfOrNull { dayIndex ->
-                (plan.items[dayIndex % plan.items.size] as? Plan.Item.Routine)?.routine?.id
-            }
+            return schedule
+                .dayIndicesFrom(today, skipFirst = skipCurrentPlanItem)
+                .firstNotNullOfOrNull { dayIndex ->
+                    val item = plan.items[schedule.positionOfDay(dayIndex).itemOrderIndex]
+                    (item as? Plan.Item.Routine)?.routine?.id
+                }
         }
     }
 }

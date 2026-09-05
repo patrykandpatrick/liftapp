@@ -108,6 +108,10 @@ private fun Header(planState: PlanState.ActivePlan, modifier: Modifier = Modifie
                         append("${planState.cycleNumber + 1}/${planState.cycleCount}")
                         appendBulletSeparator()
                         append(formatDateRange(startDate, endDate))
+                        if (planState.isDeloadCycle) {
+                            appendBulletSeparator()
+                            append(stringResource(R.string.plan_cycle_deload))
+                        }
                     },
                 style = typography.titleSmall,
             )

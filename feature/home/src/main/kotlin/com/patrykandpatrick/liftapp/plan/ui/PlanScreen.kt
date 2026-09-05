@@ -21,6 +21,7 @@ import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBar
 import com.patrykandpatrick.liftapp.core.ui.CompactTopAppBarDefaults
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.plan.PlanSchedule
 import com.patrykandpatrick.liftapp.plan.model.Action
 import com.patrykandpatrick.liftapp.ui.component.LiftAppScaffold
 import com.patrykandpatrick.liftapp.ui.icons.Edit
@@ -105,7 +106,9 @@ internal val previewActivePlanState: PlanState.ActivePlan
             cycleNumber = 1,
             cycleCount = 6,
             currentPlanItemIndex = 2,
-            cycleDates = PlanState.getAllCycleDates(LocalDate.now().minusDays(7), 6, 6L),
+            cycleDates =
+                PlanSchedule(LocalDate.now().minusDays(7), itemCount = 6, cycleCount = 6)
+                    .cycleDates,
             currentWorkout = null,
         )
 

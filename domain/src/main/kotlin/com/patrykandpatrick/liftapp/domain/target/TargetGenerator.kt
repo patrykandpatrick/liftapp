@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.domain.target
 
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.routine.RoutineExerciseItem
+import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -12,16 +13,16 @@ import kotlin.math.roundToInt
  * materialises one row per date. That is what makes every cell editable afterwards without any
  * merge logic — an edited target is simply the row that is there.
  *
- * Two things ramp across the cycles, and only these two, because the reference is emphatic that
+ * Two things ramp across a block, and only these two, because the reference is emphatic that
  * complex periodization does not change outcomes:
  *
  * - **RIR ramps down**, from [GenerationParameters.startingRir] to the bottom of the role's band.
  *   Early cycles buy volume cheaply; the last extracts the most stimulus before a reset.
- * - **Set count ramps up**, roughly doubling by the last cycle, which is the MEV → MRV climb.
+ * - **Set count ramps up**, roughly doubling by the last accumulating cycle — the MEV → MRV climb.
  *
- * Deloads and mesocycle segmentation are not here. A plan run long enough to need a second block
- * ramps straight through where it should reset, which is the gap Phase 6 closes with a deload flag
- * on the cycle.
+ * Both read [Mesocycle], so a block that ends in a deload starts the next one over rather than
+ * ramping straight through. The deload itself is the reference's composition: sets roughly halved,
+ * RIR raised well clear of failure, the same days kept, and never nothing.
  */
 class TargetGenerator @Inject constructor() {
 
@@ -55,53 +56,84 @@ class TargetGenerator @Inject constructor() {
         parameters: GenerationParameters,
     ): ExerciseTarget {
         val prescription = TargetPrescriptions.of(exercise.type, exercise.role, parameters.intent)
+        val isDeload = parameters.mesocycle.isDeload(cycleIndex)
+        val position = parameters.mesocycle.accumulationPosition(cycleIndex, parameters.cycleCount)
+        val accumulatedSets = setCountFor(position, parameters)
         val set =
             prescription.setTarget(
-                rir = prescription.rirRange?.let { rirFor(cycleIndex, it, parameters) }
+                rir =
+                    prescription.rirRange?.let { range ->
+                        if (isDeload) deloadRir(range) else rirFor(position, range, parameters)
+                    }
             )
         return ExerciseTarget(
             planID = planID,
             cycleIndex = cycleIndex,
             planItemOrderIndex = itemOrderIndex,
             exerciseID = exercise.id,
-            sets = List(setCountFor(cycleIndex, parameters)) { set },
+            sets = List(if (isDeload) deloadSets(parameters) else accumulatedSets) { set },
             restTime = prescription.restTime,
         )
     }
 
     /**
-     * Evenly spaced from the declared start down to the bottom of the role's band, so a four-cycle
-     * plan starting at 3 reads 3, 2, 1, 1 rather than bottoming out in week two.
+     * Evenly spaced from the declared start down to the bottom of the role's band, so a block of
+     * four starting at 3 reads 3, 2, 2, 1 rather than bottoming out in its second week.
      *
      * A start already at or below the band's floor is left alone: the user asked for hard sets from
      * the first week, and a ramp that raised RIR to get somewhere to fall from would be inventing
      * easier work than was asked for.
      */
     private fun rirFor(
-        cycleIndex: Int,
+        position: AccumulationPosition,
         rirRange: IntRange,
         parameters: GenerationParameters,
     ): Int {
         val floor = rirRange.first
         val start = parameters.startingRir
-        if (start <= floor || parameters.cycleCount <= 1) return minOf(start, rirRange.last)
-        val progress = cycleIndex.toDouble() / (parameters.cycleCount - 1)
-        return (start - progress * (start - floor)).roundToInt().coerceAtLeast(floor)
+        if (start <= floor || position.length <= 1) return minOf(start, rirRange.last)
+        return (start - position.progress * (start - floor)).roundToInt().coerceAtLeast(floor)
     }
 
     /**
-     * Linear from the base count to roughly double it by the last cycle — the MEV → MRV climb, at
-     * the grain the app can actually author.
+     * Well clear of failure — the reference's "raise RIR by two or three" read against the bottom
+     * of the band, capped at the highest value a lifter can report.
+     */
+    private fun deloadRir(rirRange: IntRange): Int =
+        (rirRange.first + DELOAD_RIR_INCREASE).coerceAtMost(ExerciseSet.RIR_RANGE.last)
+
+    /**
+     * Half the volume the block *started* at, not half the peak it climbed to.
+     *
+     * The reference says "cut sets by roughly half" and its worked example ramps 10 → 20 and then
+     * deloads to about 6 — well under the starting figure, not half the top. Halving the peak would
+     * land back on the first week's volume and read as more accumulation rather than a reset.
+     *
+     * Never none: reduced training preserves adaptation where stopping does not.
+     */
+    private fun deloadSets(parameters: GenerationParameters): Int =
+        ((parameters.baseSetCount + 1) / 2).coerceAtLeast(1)
+
+    /**
+     * Linear from the base count to roughly double it by the last accumulating cycle — the MEV →
+     * MRV climb, at the grain the app can actually author.
      *
      * The reference states that climb per muscle, not per exercise. Doubling every exercise doubles
      * each muscle too, so the shape survives the translation; what it cannot do is notice that two
-     * exercises share a muscle. Phase 6's fold over planned volume is what would.
+     * exercises share a muscle. The planned-volume fold is what would.
      */
-    private fun setCountFor(cycleIndex: Int, parameters: GenerationParameters): Int {
+    private fun setCountFor(
+        position: AccumulationPosition,
+        parameters: GenerationParameters,
+    ): Int {
         val base = parameters.baseSetCount
-        if (parameters.cycleCount <= 1) return base
-        val progress = cycleIndex.toDouble() / (parameters.cycleCount - 1)
-        return base + (progress * base).roundToInt()
+        if (position.length <= 1) return base
+        return base + (position.progress * base).roundToInt()
+    }
+
+    private companion object {
+        /** The reference's "+2–3 RIR"; the top of that, because a deload should be unmistakable. */
+        const val DELOAD_RIR_INCREASE = 3
     }
 }
 
@@ -116,6 +148,7 @@ data class GenerationParameters(
     val cycleCount: Int,
     val startingRir: Int = DEFAULT_STARTING_RIR,
     val baseSetCount: Int = TargetDefaults.SET_COUNT,
+    val mesocycle: Mesocycle = Mesocycle.Continuous,
 ) {
     companion object {
         const val DEFAULT_STARTING_RIR = 3

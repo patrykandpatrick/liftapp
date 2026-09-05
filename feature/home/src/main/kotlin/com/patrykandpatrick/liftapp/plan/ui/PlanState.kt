@@ -15,22 +15,9 @@ sealed class PlanState {
         val currentPlanItemIndex: Int,
         val cycleDates: List<Pair<LocalDate, LocalDate>>,
         val currentWorkout: Workout?,
+        /** The block this cycle belongs to says whether it is a week of reduced work. */
+        val isDeloadCycle: Boolean = false,
     ) : PlanState()
 
     data class NoActivePlan(val hasPlans: Boolean) : PlanState()
-
-    companion object {
-        fun getAllCycleDates(
-            startDate: LocalDate,
-            cycleCount: Int,
-            daysInCycle: Long,
-        ): List<Pair<LocalDate, LocalDate>> = buildList {
-            val startDate = startDate
-            for (i in 0 until cycleCount) {
-                val cycleStartDate = startDate.plusDays(i * daysInCycle)
-                val cycleEndDate = cycleStartDate.plusDays(daysInCycle - 1)
-                add(cycleStartDate to cycleEndDate)
-            }
-        }
-    }
 }

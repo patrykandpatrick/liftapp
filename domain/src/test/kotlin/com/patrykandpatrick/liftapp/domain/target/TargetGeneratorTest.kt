@@ -148,7 +148,8 @@ class TargetGeneratorTest {
         cycleCount: Int = 1,
         startingRir: Int = GenerationParameters.DEFAULT_STARTING_RIR,
         baseSetCount: Int = TargetDefaults.SET_COUNT,
-    ) = GenerationParameters(intent, cycleCount, startingRir, baseSetCount)
+        mesocycle: Mesocycle = Mesocycle.Continuous,
+    ) = GenerationParameters(intent, cycleCount, startingRir, baseSetCount, mesocycle)
 
     private fun bench() =
         RoutineExerciseItem(
@@ -205,5 +206,58 @@ class TargetGeneratorTest {
         const val RUN_ID = 12L
         const val UNCLASSIFIED_ID = 99L
         const val REST_DAY_INDEX = 1
+    }
+
+    @Test
+    fun `The last cycle of a block is a deload, and only that one`() {
+        val targets = generator(twoDayPlan(), parameters(cycleCount = 6, mesocycle = Mesocycle(3)))
+
+        val setsByCycle = (0..5).map { targets.forExercise(BENCH_ID, cycle = it).setCount }
+
+        // Two accumulating weeks then a deload, twice over.
+        assertEquals(listOf(3, 6, 2, 3, 6, 2), setsByCycle)
+    }
+
+    @Test
+    fun `A deload raises effort well clear of failure`() {
+        val targets = generator(twoDayPlan(), parameters(cycleCount = 3, mesocycle = Mesocycle(3)))
+
+        val deload = targets.forExercise(BENCH_ID, cycle = 2).sets.first()
+
+        assertEquals(4, deload.rir, "A primary compound's floor is 1 RIR, raised by three.")
+    }
+
+    @Test
+    fun `A deload cuts sets but never to none`() {
+        val targets =
+            generator(
+                twoDayPlan(),
+                parameters(cycleCount = 2, mesocycle = Mesocycle(2), baseSetCount = 1),
+            )
+
+        assertEquals(1, targets.forExercise(BENCH_ID, cycle = 1).setCount)
+    }
+
+    @Test
+    fun `Each block starts its ramps over rather than running straight through`() {
+        val targets =
+            generator(
+                twoDayPlan(),
+                parameters(cycleCount = 6, mesocycle = Mesocycle(3), startingRir = 3),
+            )
+
+        val rirByCycle = (0..5).map { targets.forExercise(BENCH_ID, cycle = it).sets.first().rir }
+
+        // Two accumulating weeks per block: 3 then 1, deload at 4, then the same again.
+        assertEquals(listOf(3, 1, 4, 3, 1, 4), rirByCycle)
+    }
+
+    @Test
+    fun `A plan with no deloads is one block, ramping its whole length`() {
+        val targets = generator(twoDayPlan(), parameters(cycleCount = 4))
+
+        val setsByCycle = (0..3).map { targets.forExercise(BENCH_ID, cycle = it).setCount }
+
+        assertEquals(listOf(3, 4, 5, 6), setsByCycle)
     }
 }

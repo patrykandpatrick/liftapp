@@ -11,6 +11,7 @@ import com.patrykandpatrick.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.Plan
 import com.patrykandpatrick.liftapp.domain.plan.SetActivePlanUseCase
 import com.patrykandpatrick.liftapp.domain.target.GenerationParameters
+import com.patrykandpatrick.liftapp.domain.target.Mesocycle
 import com.patrykandpatrick.liftapp.domain.target.TrainingIntent
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.domain.validation.validNumberHigherThanZero
@@ -63,6 +64,14 @@ constructor(
             veto = { it !in ExerciseSet.RIR_RANGE },
         )
 
+    /** Zero is off: a plan short enough not to need a deload should not be given one. */
+    private val deloadEveryCycles =
+        textFieldStateManager.intTextField(
+            initialValue = Mesocycle.DEFAULT_LENGTH.toString(),
+            onValueChange = { refreshState() },
+            veto = { it < 0 || it > MAX_CYCLE_COUNT },
+        )
+
     private var intent = TrainingIntent.Both
 
     private var rebuildTargets = false
@@ -83,6 +92,7 @@ constructor(
             cycleCount = cycleCount,
             intent = intent,
             startingRir = startingRir,
+            deloadEveryCycles = deloadEveryCycles,
             rebuildTargets = rebuildTargets,
             endDate = startDate.value.plusDays(daysInCycle.toLong()),
             lengthWeeks = daysInCycle / DayOfWeek.entries.size,
@@ -127,6 +137,7 @@ constructor(
                         intent = intent,
                         cycleCount = cycleCount.value,
                         startingRir = startingRir.value,
+                        mesocycle = Mesocycle(deloadEveryCycles.value.takeIf { it > 0 }),
                     ),
                 rebuildTargets = rebuildTargets,
             )

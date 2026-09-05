@@ -480,6 +480,9 @@
     <string name="training_intent_both">Both</string>
     <!-- The top of the mesocycle ramp: the app tightens RIR from here to the last cycle. -->
     <string name="training_plan_starting_rir">Starting reps in reserve</string>
+    <string name="training_plan_deload_every">Deload every (cycles)</string>
+    <string name="training_plan_deload_off">0 for no deloads</string>
+    <string name="plan_cycle_deload">Deload</string>
     <string name="route_plan_targets">Targets</string>
     <!-- Example: "Push · Cycle 2" -->
     <string name="plan_targets_subtitle">%1$s · %2$s</string>

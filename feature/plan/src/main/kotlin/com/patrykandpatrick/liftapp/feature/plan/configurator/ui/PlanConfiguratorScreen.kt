@@ -151,6 +151,14 @@ private fun Content(
             hint = stringResource(R.string.training_plan_starting_rir),
         )
 
+        NumberInput(
+            textFieldState = state.deloadEveryCycles,
+            onPlusClick = { state.deloadEveryCycles.updateValueBy(1) },
+            onMinusClick = { state.deloadEveryCycles.updateValueBy(-1) },
+            hint = stringResource(R.string.training_plan_deload_every),
+            suffix = stringResource(R.string.training_plan_deload_off),
+        )
+
         InfoCard(
             text =
                 LocalMarkupProcessor.current.toAnnotatedString(
@@ -261,6 +269,7 @@ private fun PlanConfiguratorPreview() {
                         cycleCount = IntTextFieldState(initialValue = "6"),
                         intent = TrainingIntent.Both,
                         startingRir = IntTextFieldState(initialValue = "3"),
+                        deloadEveryCycles = IntTextFieldState(initialValue = "5"),
                         rebuildTargets = false,
                         endDate = LocalDate.now().plusDays(42),
                         lengthWeeks = 6,

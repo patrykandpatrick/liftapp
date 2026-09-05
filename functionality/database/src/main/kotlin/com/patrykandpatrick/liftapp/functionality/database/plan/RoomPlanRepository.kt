@@ -1,7 +1,10 @@
 package com.patrykandpatrick.liftapp.functionality.database.plan
 
+import com.patrykandpatrick.liftapp.domain.datastore.Preference
 import com.patrykandpatrick.liftapp.domain.di.IODispatcher
+import com.patrykandpatrick.liftapp.domain.di.PreferenceQualifier
 import com.patrykandpatrick.liftapp.domain.exception.PlanNotFoundException
+import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.plan.AddPlanItemsScheduleContract
 import com.patrykandpatrick.liftapp.domain.plan.DeletePlanContract
 import com.patrykandpatrick.liftapp.domain.plan.GetAllPlansUseCase
@@ -14,6 +17,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -24,6 +29,7 @@ constructor(
     private val dao: PlanDao,
     private val mapper: PlanMapper,
     @IODispatcher private val dispatcher: CoroutineDispatcher,
+    @param:PreferenceQualifier.ActivePlan private val activePlan: Preference<ActivePlan?>,
 ) :
     GetAllPlansUseCase,
     GetPlanUseCase,
@@ -92,9 +98,19 @@ constructor(
                 }
             }
         }
-        dao.insertPlanItemSchedule(schedule)
+        dao.replacePlanItemSchedule(schedule)
     }
 
+    /**
+     * Scoped to the active plan rather than trusting the table to hold only its rows. Activation
+     * clears the rest, but a restored archive arrives without passing through it.
+     */
     override fun getPlanItem(date: LocalDate): Flow<Plan.Item?> =
-        dao.getScheduledRoutine(date).map(mapper::toDomain)
+        activePlan
+            .get()
+            .flatMapLatest { active ->
+                if (active == null) flowOf(null)
+                else dao.getScheduledRoutine(active.planID, date).map(mapper::toDomain)
+            }
+            .flowOn(dispatcher)
 }

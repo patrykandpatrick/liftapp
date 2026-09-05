@@ -36,6 +36,7 @@ constructor(
                 planID = plan.id,
                 startDate = startDate,
                 cycleCount = parameters.cycleCount,
+                deloadEveryCycles = parameters.mesocycle.length,
             )
         )
         addPlanItemsScheduleContract.addPlanItemsSchedule(plan, startDate, parameters.cycleCount)
