@@ -2,8 +2,9 @@
 
 ## Status
 
-**Phases 2 through 6 have shipped.** Phase 7, autoregulation, is next — 6 and 7 swapped places,
-so the mesocycle work came first. See the note under Phase 6 for why.
+**Every phase has shipped.** The loop is closed: classified exercises, estimation math, volume
+per muscle both logged and planned, prescription authored in the plan and shown during the
+workout, mesocycles with deloads, and load suggestions with their reasons.
 
 | Phase | State |
 | --- | --- |
@@ -14,7 +15,7 @@ so the mesocycle work came first. See the note under Phase 6 for why.
 | 5b — Authoring and generation | **Done**, no schema |
 | 5c — Show the target during the workout | **Done**, schema 16 |
 | 6 — Mesocycle, deloads, planned volume | **Done**, no schema |
-| 7 — Autoregulation and stalls | Next |
+| 7 — Autoregulation and stalls | **Done**, no schema |
 
 Each shipped phase keeps its section below, with what actually happened recorded at the top of it.
 The plan is left as written underneath: where the two disagree, the note is what is true.
@@ -605,9 +606,32 @@ With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–
 
 ## Phase 7 — Autoregulation and stalls
 
-> **Moved behind the mesocycle work**, which was Phase 6 — see the note there. Nothing in this
-> phase changed, and its inputs were all in place from Phase 5 onward; it waits on the other only
-> for the cycle arithmetic and the plan bugs it would otherwise inherit.
+> **Done, no schema.** `SuggestLoadUseCase` is the reference's loop, and the three guards are
+> enforced inside it rather than left to callers — a caller cannot obtain a suggestion without its
+> reason, because `LoadSuggestion` cannot be built without one.
+>
+> Two things the plan did not say, both found by the tests:
+>
+> - **A regression is not a stall.** Going backwards has an answer already — the back-off — and
+>   treating it as a stall escalated to questioning the effort and then deloading over what one
+>   back-off handles. A stall is standing *still*, and only that.
+> - **An ordinary double progression over a wide rep range meets the ten-percent guard every time.**
+>   Dropping from twelve reps to eight at the same effort is worth more than a tenth of the bar on
+>   its own, so over 8–12 the guard fires on the honest arithmetic rather than only on an outlier.
+>   That is the guard working, and it is why the capped reason carries what was asked for: a user
+>   who sees the same +10% three weeks running deserves to know the loop wanted more.
+>
+> Stall escalation needs no stored state — the step is read off how many sessions the stall has
+> persisted, so cheapest-first falls out of the history rather than out of a counter someone has to
+> keep. Changing the exercise is reachable only after the three cheaper answers.
+>
+> **Not wired to a screen.** The loop and its guards are done and tested; nothing shows a suggestion
+> to a user yet. Where it belongs is the weight field of the set being logged, and what it says
+> there is `SuggestionReason` turned into a sentence with the resources.
+>
+> **Moved behind the mesocycle work**, which was Phase 6 — see the note there. Its inputs were all
+> in place from Phase 5 onward; it waited on the other only for the cycle arithmetic and the plan
+> bugs it would otherwise have inherited.
 
 **Little or no schema.** The loop from Part 5, now that RIR, e1RM, role, increments and targets all
 exist. `Workout.Exercise.lastSets` is already populated and surfaced as `previousWorkoutSets` — that
