@@ -14,6 +14,7 @@ import com.patrykandpatrick.liftapp.feature.musclevolume.model.Action
 import com.patrykandpatrick.liftapp.feature.musclevolume.model.ScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -26,9 +27,10 @@ class MuscleVolumeViewModel
 constructor(
     getMuscleVolume: GetMuscleVolumeUseCase,
     savedStateHandle: SavedStateHandle,
+    coroutineScope: CoroutineScope,
     private val navigationCommander: NavigationCommander,
     preferenceRepository: PreferenceRepository,
-) : ViewModel() {
+) : ViewModel(coroutineScope) {
 
     private val dateIntervalOptions: List<DateInterval> =
         DateInterval.volumeOptions(preferenceRepository.currentFirstDayOfWeek.value)

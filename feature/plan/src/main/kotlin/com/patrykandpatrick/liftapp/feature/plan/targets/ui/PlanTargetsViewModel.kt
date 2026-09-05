@@ -17,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -30,9 +31,10 @@ constructor(
     private val routeData: PlanTargetsRouteData,
     getDayTargets: GetPlanDayTargetsContract,
     textFieldStateManager: TextFieldStateManager,
+    coroutineScope: CoroutineScope,
     private val upsertTargets: UpsertExerciseTargetsContract,
     private val navigationCommander: NavigationCommander,
-) : ViewModel() {
+) : ViewModel(coroutineScope) {
 
     private val cycleIndex = MutableStateFlow(routeData.cycleIndex)
 
