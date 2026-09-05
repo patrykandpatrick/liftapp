@@ -2,6 +2,7 @@ package com.patrykandpatrick.liftapp.domain.muscle
 
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import org.junit.Test
 
@@ -209,5 +210,57 @@ class MuscleVolumeTest {
             ),
             MuscleVolume.of(sets = 3, muscles = container),
         )
+    }
+
+    @Test
+    fun `Muscles that got nothing are named, because a gap is the finding`() {
+        val volume =
+            MuscleVolume.of(
+                sets = 3,
+                primaryMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.Triceps),
+                tertiaryMuscles = emptyList(),
+            )
+
+        val untrained = volume.untrainedMuscles
+
+        assertFalse(Muscle.Chest in untrained)
+        assertFalse(Muscle.Triceps in untrained)
+        assertTrue(Muscle.Calves in untrained)
+    }
+
+    @Test
+    fun `Worked and untrained together account for every muscle, once each`() {
+        val volume =
+            MuscleVolume.of(
+                sets = 3,
+                primaryMuscles = listOf(Muscle.Lats),
+                secondaryMuscles = listOf(Muscle.Biceps),
+                tertiaryMuscles = emptyList(),
+            )
+
+        val all = volume.workedMuscles + volume.untrainedMuscles
+
+        assertEquals(Muscle.entries.size, all.size)
+        assertEquals(Muscle.entries.toSet(), all.toSet())
+    }
+
+    @Test
+    fun `Nothing logged leaves every muscle untrained`() {
+        assertEquals(Muscle.entries, MuscleVolume.Empty.untrainedMuscles)
+    }
+
+    @Test
+    fun `Work too slight to round up to a set still counts as trained`() {
+        val volume =
+            MuscleVolume.of(
+                sets = 1,
+                primaryMuscles = emptyList(),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = listOf(Muscle.Forearms),
+            )
+
+        assertEquals(0, volume.wholeSetsOf(Muscle.Forearms))
+        assertFalse(Muscle.Forearms in volume.untrainedMuscles)
     }
 }

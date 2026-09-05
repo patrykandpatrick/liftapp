@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
  * - **Set count ramps up**, roughly doubling by the last cycle, which is the MEV → MRV climb.
  *
  * Deloads and mesocycle segmentation are not here. A plan run long enough to need a second block
- * ramps straight through where it should reset, which is the gap Phase 7 closes with a deload flag
+ * ramps straight through where it should reset, which is the gap Phase 6 closes with a deload flag
  * on the cycle.
  */
 class TargetGenerator @Inject constructor() {
@@ -95,7 +95,7 @@ class TargetGenerator @Inject constructor() {
      *
      * The reference states that climb per muscle, not per exercise. Doubling every exercise doubles
      * each muscle too, so the shape survives the translation; what it cannot do is notice that two
-     * exercises share a muscle. Phase 7's fold over planned volume is what would.
+     * exercises share a muscle. Phase 6's fold over planned volume is what would.
      */
     private fun setCountFor(cycleIndex: Int, parameters: GenerationParameters): Int {
         val base = parameters.baseSetCount

@@ -32,6 +32,7 @@ import com.patrykandpatrick.liftapp.core.preview.PreviewMuscleVolume
 import com.patrykandpatrick.liftapp.core.preview.PreviewTheme
 import com.patrykandpatrick.liftapp.core.ui.DropdownMenu
 import com.patrykandpatrick.liftapp.core.ui.TopAppBar
+import com.patrykandpatrick.liftapp.core.ui.resource.prettyList
 import com.patrykandpatrick.liftapp.core.ui.volume.MuscleVolumeDefaults
 import com.patrykandpatrick.liftapp.core.ui.volume.MuscleVolumeRow
 import com.patrykandpatrick.liftapp.core.ui.volume.VolumeBandLegend
@@ -39,6 +40,7 @@ import com.patrykandpatrick.liftapp.core.ui.volume.VolumeScale
 import com.patrykandpatrick.liftapp.domain.date.DAYS_IN_WEEK
 import com.patrykandpatrick.liftapp.domain.date.DateInterval
 import com.patrykandpatrick.liftapp.domain.model.Loadable
+import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.feature.musclevolume.model.Action
 import com.patrykandpatrick.liftapp.feature.musclevolume.model.ScreenState
 import com.patrykandpatrick.liftapp.ui.component.EmptyState
@@ -107,6 +109,7 @@ private fun Content(
     // Held rather than recomputed: workedMuscles sorts on every read and hands LazyColumn a new
     // list identity each time, rebuilding the content for no reason.
     val muscles = remember(state.muscleVolume) { state.muscleVolume.workedMuscles }
+    val untrained = remember(state.muscleVolume) { state.muscleVolume.untrainedMuscles }
     val colorStops = VolumeScale.rememberColorStops()
 
     LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = contentPadding) {
@@ -168,6 +171,40 @@ private fun Content(
                         .padding(bottom = MuscleVolumeDefaults.rowSpacing),
             )
         }
+
+        if (untrained.isNotEmpty()) {
+            item(key = "untrained") {
+                UntrainedMuscles(
+                    muscles = untrained,
+                    modifier =
+                        Modifier.animateItem()
+                            .padding(horizontal = screenPadding)
+                            .padding(top = 12.dp, bottom = 24.dp),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * The muscles that got nothing, named rather than drawn.
+ *
+ * A row apiece would be a dozen identical bars pinned at zero, which says no more than the names do
+ * — but leaving them out entirely hides the gap the screen exists to show.
+ */
+@Composable
+private fun UntrainedMuscles(muscles: List<Muscle>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        LiftAppText(
+            text = stringResource(R.string.muscle_volume_untrained_title),
+            style = typography.titleSmall,
+        )
+
+        LiftAppText(
+            text = muscles.prettyList(),
+            style = typography.bodyMedium,
+            color = colorScheme.foregroundVariant,
+        )
     }
 }
 

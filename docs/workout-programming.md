@@ -63,7 +63,10 @@ it is and not only which band it is in; what those dots are worth in sets is nam
 legend.
 
 A dedicated screen shows every muscle and lets the window be changed, from the rolling seven days
-out to a month; the dashboard carries a card of the three hardest-worked muscles over the rolling
+out to a month. Every muscle, but not every muscle as a bar: the ones that were worked get a row
+apiece, and the ones that got nothing are named together beneath them, because a dozen bars pinned
+at zero say no more than the names do while burying the rows that carry a reading. The gap is the
+finding, so it is shown rather than filtered out; the dashboard carries a card of the three hardest-worked muscles over the rolling
 week, which is a different window from the calendar week the rest of its totals cover. Anything
 longer than a week is divided down to one, because a monthly total is a number no landmark speaks
 to.

@@ -27,6 +27,16 @@ value class MuscleVolume private constructor(val setsPerMuscle: Map<Muscle, Doub
                 .map { (muscle, _) -> muscle }
                 .toList()
 
+    /**
+     * Muscles nothing credited over the window, in the enum's order.
+     *
+     * The complement of [workedMuscles], and the point of a volume screen as much as the worked
+     * ones are: a muscle that got nothing is the finding a lifter acts on. There is no volume to
+     * place on a scale for one, though, so its name is the whole of what there is to say.
+     */
+    val untrainedMuscles: List<Muscle>
+        get() = Muscle.entries.filter { muscle -> this[muscle] <= 0 }
+
     operator fun get(muscle: Muscle): Double = setsPerMuscle[muscle] ?: 0.0
 
     /** A quarter of a set is an artefact of the fractional credits, not a set anybody did. */

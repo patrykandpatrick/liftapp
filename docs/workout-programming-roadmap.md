@@ -2,7 +2,8 @@
 
 ## Status
 
-**Phases 2 through 5 have shipped.** Phase 6 is next.
+**Phases 2 through 5 have shipped.** Phase 6 is next — and 6 and 7 have swapped places, so it is
+now the mesocycle work rather than autoregulation. See the note under Phase 6 for why.
 
 | Phase | State |
 | --- | --- |
@@ -12,8 +13,8 @@
 | 5a — Data model swap | **Done**, schema 15 |
 | 5b — Authoring and generation | **Done**, no schema |
 | 5c — Show the target during the workout | **Done**, schema 16 |
-| 6 — Autoregulation and stalls | Open |
-| 7 — Mesocycle, deloads, planned volume | Open |
+| 6 — Mesocycle, deloads, planned volume | Next |
+| 7 — Autoregulation and stalls | Open |
 
 Each shipped phase keeps its section below, with what actually happened recorded at the top of it.
 The plan is left as written underneath: where the two disagree, the note is what is true.
@@ -60,7 +61,7 @@ genuine judgement calls. It can be added later as one more column in the same sh
 
 **Schema 13 → 14.** Items 5 and 8, plus the `Muscle.Shoulders` split from Part 4. First because it
 has the longest lead time — ~250 authored defaults — and because Phase 5's target generator and
-Phase 6's load guards both depend on it.
+Phase 7's load guards both depend on it.
 
 All three land together: they touch the same table, the same authoring pass over
 `DefaultExercises.kt`, and the same data migration. Splitting them would pay that cost three times.
@@ -286,7 +287,7 @@ details chart still render.
 > the dashboard the plan below puts it on:
 >
 > - **The accumulator is `MuscleVolume` in `:domain`**, not a `Map<Muscle, Double>` on the
->   statistics. Phase 7 has to fold planned volume the same way for the two to be comparable, and a
+>   statistics. Phase 6 has to fold planned volume the same way for the two to be comparable, and a
 >   bare map would have meant reimplementing the fractional credits next to the plan. It also owns
 >   the rounding: `bandOf` reads the *rounded* set count, so the number on screen and the band
 >   beside it can never disagree — 5.75 sets reads as six sets at maintenance, not as six sets
@@ -354,7 +355,7 @@ details chart still render.
 > the same on the dashboard's card as on the screen behind it.
 
 **No schema.** Part 4's volume accounting applied to *logged* work. Planned volume needs the targets
-from Phase 5 and lands in Phase 7.
+from Phase 5 and lands in Phase 6.
 
 [`GetDashboardStatisticsUseCase`](../feature/home/src/main/kotlin/com/patrykandpatrick/liftapp/feature/dashboard/model/GetDashboardStatisticsUseCase.kt)
 is the only time-windowed aggregation in the app: it takes `today.atStartOfWeek(firstDayOfWeek)`,
@@ -467,14 +468,14 @@ list; `UpsertGoalSetsUseCase` (the ±1 set buttons in the workout) must edit the
 > runs it: `SetActivePlanUseCase` now takes `GenerationParameters` and re-authors the whole plan,
 > and `PlanConfiguratorScreen` grew the intent picker and the starting-RIR input. 23 unit tests.
 >
-> Two ramps, per Phase 7's note that both are generator defaults rather than new data. **RIR** goes
+> Two ramps, per Phase 6's note that both are generator defaults rather than new data. **RIR** goes
 > evenly from the declared start down to the floor of the role's band, so four cycles from 3 read
 > 3, 2, 2, 1; a start already at or below the floor is left alone rather than raised to give the
 > ramp somewhere to fall from. **Set count** climbs linearly to roughly double by the last cycle.
 >
 > The volume ramp is the one place the translation is lossy. The reference states MEV → MRV *per
 > muscle*; the generator applies it per exercise. Doubling every exercise does double each muscle,
-> so the shape survives — what it cannot do is notice that two exercises share one. Phase 7's fold
+> so the shape survives — what it cannot do is notice that two exercises share one. Phase 6's fold
 > over planned volume is what would.
 >
 > **The editor** is `PlanTargetsScreen`, keyed by (plan, cycle, day) and reached from a Targets
@@ -544,7 +545,44 @@ and restore.
 
 ---
 
-## Phase 6 — Autoregulation and stalls
+## Phase 6 — Mesocycle, deloads, planned volume
+
+> **Moved ahead of autoregulation.** This was Phase 7 and is now Phase 6, because two of its items
+> are foundations the other phase would build on rather than follow. Cycle-position arithmetic is
+> written three times already and autoregulation adds a fourth reader of it. The two plan bugs are
+> worse: `getPlanPosition` in Phase 5 had to be scoped to a plan precisely because
+> `insertPlanItemSchedule` appends overlapping schedule rows, and that workaround should come out
+> with the cause rather than be joined by more of its kind. Doing this first also means planned
+> volume exists before anything starts suggesting changes to it.
+
+With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–1) and the volume ramp are
+**generator defaults**, not new data. What remains:
+
+- **Deload weeks** — cut sets roughly in half, keep frequency, reduce load moderately and raise RIR
+  by 2–3, never stop entirely. A flag on the cycle, driving generation.
+- **Planned volume per muscle** — the Part 4 fold over the active plan's targets, reusing Phase 4's
+  per-muscle accumulator so planned and actual are directly comparable.
+- **Unify cycle-position arithmetic.** `daysBetween / itemCount` and `% itemCount` are implemented
+  **three times** — `GetPlanStateUseCase`, `DashboardViewModel.getNextRoutineID`, and
+  `PlanState.getAllCycleDates`. Collapse into one `:domain` helper before adding a second dimension.
+  Phase 7 reads the same arithmetic to place a session in its block, so this lands first.
+- **Two pre-existing plan bugs that get worse**, and should be fixed before or with this phase:
+  `insertPlanItemSchedule` is a bare `@Insert` with no prior delete, so re-activating or switching
+  plans appends overlapping rows; and `getScheduledRoutine` filters by date without
+  `plan_item_schedule_plan_id`, so the mapper then picks arbitrarily among them. `TargetDao
+  .getPlanPosition` takes a plan for the same reason and can stop doing so once the duplicate rows
+  cannot exist.
+
+`ActivePlan` is JSON in DataStore, so anything added there needs **no migration** — but
+`LegacySharedPreferencesMigrationTest` asserts its exact JSON string and will need updating.
+
+---
+
+## Phase 7 — Autoregulation and stalls
+
+> **Moved behind the mesocycle work**, which was Phase 6 — see the note there. Nothing in this
+> phase changed, and its inputs were all in place from Phase 5 onward; it waits on the other only
+> for the cycle arithmetic and the plan bugs it would otherwise inherit.
 
 **Little or no schema.** The loop from Part 5, now that RIR, e1RM, role, increments and targets all
 exist. `Workout.Exercise.lastSets` is already populated and surfaced as `previousWorkoutSets` — that
@@ -568,28 +606,6 @@ Progress load **or** volume in a given week, never both.
 
 **Verify:** table-driven unit tests over synthetic session histories covering load-up, hold, back-off,
 and both guard rejections; confirm the reason string is always populated.
-
----
-
-## Phase 7 — Mesocycle, deloads, planned volume
-
-With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–1) and the volume ramp are
-**generator defaults**, not new data. What remains:
-
-- **Deload weeks** — cut sets roughly in half, keep frequency, reduce load moderately and raise RIR
-  by 2–3, never stop entirely. A flag on the cycle, driving generation.
-- **Planned volume per muscle** — the Part 4 fold over the active plan's targets, reusing Phase 4's
-  per-muscle accumulator so planned and actual are directly comparable.
-- **Unify cycle-position arithmetic.** `daysBetween / itemCount` and `% itemCount` are implemented
-  **three times** — `GetPlanStateUseCase`, `DashboardViewModel.getNextRoutineID`, and
-  `PlanState.getAllCycleDates`. Collapse into one `:domain` helper before adding a second dimension.
-- **Two pre-existing plan bugs that get worse**, and should be fixed before or with this phase:
-  `insertPlanItemSchedule` is a bare `@Insert` with no prior delete, so re-activating or switching
-  plans appends overlapping rows; and `getScheduledRoutine` filters by date without
-  `plan_item_schedule_plan_id`, so the mapper then picks arbitrarily among them.
-
-`ActivePlan` is JSON in DataStore, so anything added there needs **no migration** — but
-`LegacySharedPreferencesMigrationTest` asserts its exact JSON string and will need updating.
 
 ---
 
