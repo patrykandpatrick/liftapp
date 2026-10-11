@@ -415,6 +415,28 @@
     <string name="workout_set_target_none">No target for this set</string>
     <!-- Shown only for straight sets, where the load and reps hold and the effort therefore does not. -->
     <string name="workout_set_target_straight_sets_note">Same reps and weight each set, so the last will land closer to failure than the first. That is expected.</string>
+    <string name="workout_set_target_weight_title">Weight</string>
+
+    <!-- Load suggestions: why the suggested weight is what it is. A %s is a weight with its unit,
+         and the plural after a number is "rep"/"reps" or "session"/"sessions". -->
+    <string name="load_suggestion_load_up">Up from %1$s — you reached the top of the range last time.</string>
+    <string name="load_suggestion_load_up_easier">Up from %1$s — last time had more in reserve than asked.</string>
+    <!-- Example: "Same weight — 9 of 12 reps last time." -->
+    <string name="load_suggestion_hold">Same weight — %1$d of %2$d %3$s last time.</string>
+    <string name="load_suggestion_hold_harder">Same weight — %1$d %2$s last time, but closer to failure than asked.</string>
+    <!-- Example: "Lighter — 6 reps last time, and the range starts at 8." -->
+    <string name="load_suggestion_back_off">Lighter — %1$d %2$s last time, and the range starts at %3$d.</string>
+    <string name="load_suggestion_back_off_harder">Lighter — %1$d %2$s last time, but closer to failure than asked.</string>
+    <!-- %1$s is one of the sentences above; %2$s is the weight the arithmetic asked for. -->
+    <string name="load_suggestion_capped">%1$s Held to a 10%% step — the numbers pointed to %2$s.</string>
+    <string name="load_suggestion_stalled_check_effort">Same weight — no progress for %1$d %2$s. Was the effort as hard as you logged it?</string>
+    <string name="load_suggestion_stalled_deload">10%% lighter — no progress for %1$d %2$s. Build back up from here.</string>
+    <!-- %3$s is a muscle in lower case, for example "chest". -->
+    <string name="load_suggestion_stalled_reduce_volume">Same weight — no progress for %1$d %2$s. Your %3$s may be getting too many sets elsewhere.</string>
+    <string name="load_suggestion_stalled_reduce_volume_unnamed">Same weight — no progress for %1$d %2$s. This muscle may be getting too many sets elsewhere.</string>
+    <string name="load_suggestion_stalled_change_exercise">Same weight — no progress for %1$d %2$s. A variation of this exercise may get it moving again.</string>
+    <string name="load_suggestion_deload">Deload week — about 10%% under %1$s, and stop well short of failure.</string>
+    <string name="load_suggestion_one_more_session">One more session and you\'ll get a suggested weight.</string>
     <string name="workout_set_entry_section_past_sets">Past sets</string>
     <string name="workout_set_entry_section_previous_workout">Sets from the previous workout</string>
     <string name="workout_calisthenics_set_body_weight"><![CDATA[Body weight <b><color-surface-variant>%s</color-surface-variant></b>]]></string>

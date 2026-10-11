@@ -22,35 +22,29 @@ The plan is left as written underneath: where the two disagree, the note is what
 
 ## Still open
 
-Every phase shipped, but five things did not, and each is recorded in the phase note it belongs to
+Every phase shipped, but four things did not, and each is recorded in the phase note it belongs to
 as well as here. In rough order of what a user would notice first:
 
-1. **Nothing shows a load suggestion.** `SuggestLoadUseCase` and its three guards are built and
-   tested; no screen reads them, so the loop that decides what to lift next is invisible. This also
-   leaves half of the "show the reason" guard open — the reason exists and nobody sees it. What is
-   missing is a `SuggestionReason` mapper in `:core`, one string per case plus the plurals, and a
-   line beside the weight field of the set being logged. See [Phase 7](#phase-7--autoregulation-and-stalls).
-
-2. **A load is computed but never authored.** [`SetTarget.loadPercent`][loadpercent] is still filled
+1. **A load is computed but never authored.** [`SetTarget.loadPercent`][loadpercent] is still filled
    in by nothing. The suggestion derives a load from history at the moment it is asked for, which
    answers the user's hardest decision but leaves the plan itself silent about load — so a target
    read without running the loop says nothing about weight. Part 5 item 3, half done.
 
-3. **Planned volume is invisible exactly where it matters most.** A muscle the plan asks twelve
+2. **Planned volume is invisible exactly where it matters most.** A muscle the plan asks twelve
    sets of and that got nothing appears in the volume screen's "Nothing this period" line with no
    number beside it. The planned figure shows only on muscles with logged work, because the
    comparison was added to the worked rows. A muscle at zero against a plan is the strongest signal
    the screen has, and it is the one case that does not carry it. See
    [Phase 6](#phase-6--mesocycle-deloads-planned-volume).
 
-4. **Two seeded exercises still credit a full set to an assisting muscle.** Phase 4's review found
+3. **Two seeded exercises still credit a full set to an assisting muscle.** Phase 4's review found
    23 of the 101 defaults naming two or three muscles at the top tier, where a main muscle takes a
    whole set and an assisting one half. Nine were re-tiered — every bench variant and both chin-up
    variants — and twelve were left deliberately, because a squat, a deadlift, a dip, a row and a
    muscle-up genuinely share the work. `DeclinePushUps` and `IsometricWipers`, both
    `[Chest, FrontDelts]`, are the two that were neither fixed nor justified.
 
-5. **Per-exercise fatigue cost was never built.** Part 5 item 7, deferred from the start: a
+4. **Per-exercise fatigue cost was never built.** Part 5 item 7, deferred from the start: a
    three-level hint would stop the app suggesting five sets of fifteen deadlifts, but it cannot be
    derived from muscle lists and needs 101 judgement calls for something that only ever changed a
    warning. The only item on the list nothing exists for.
@@ -677,20 +671,53 @@ With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–
 >   Dropping from twelve reps to eight at the same effort is worth more than a tenth of the bar on
 >   its own, so over 8–12 the guard fires on the honest arithmetic rather than only on an outlier.
 >   That is the guard working, and it is why the capped reason carries what was asked for: a user
->   who sees the same +10% three weeks running deserves to know the loop wanted more.
+>   who sees the same +10% three weeks running deserves to know the loop wanted more. Since the
+>   suggestion reached a screen, a cap is reported only where snapping to the equipment's step
+>   leaves one: off 100 kg the arithmetic asks for about 110.2 kg, which rounds to the 110 kg the
+>   cap allows anyway.
 >
 > Stall escalation needs no stored state — the step is read off how many sessions the stall has
 > persisted, so cheapest-first falls out of the history rather than out of a counter someone has to
 > keep. Changing the exercise is reachable only after the three cheaper answers.
 >
+> **Load and volume may progress in the same week**, against the plan below. The loop first shipped
+> with a flag that held the load whenever the plan had added sets that cycle; nothing ever set it,
+> and it was removed rather than wired. The generator ramps sets linearly from the base to double
+> across a block's accumulating weeks — under the defaults, a set more every week — so the rule
+> would have frozen the load for all but the first week of every block. That ramp is scheduled, not
+> a response to how a session went, and so is not the choice the rule is about.
+>
 > **The load is computed, never authored.** `SetTarget.loadPercent` is still filled in by nothing:
 > the loop derives a load from history when asked, so a target read on its own says nothing about
 > weight. That is Part 5's item 3, and why it reads *half done*.
 >
-> **Not wired to a screen**, which leaves half of "show the reason" open: the reason exists and
-> nothing shows it. What is left is a `SuggestionReason` mapper in `:core` — one string per case,
-> plus the plurals — and a line beside the weight field of the set being logged. Everything below
-> the sentence is done and tested.
+> **Shown in the workout.** The suggestion fills the first set's weight and sits in that set's
+> target card as a weight line, with its reason beneath; later sets inherit the weight the way any
+> weight carries from set to set. It fills the field rather than sitting beside it because the
+> field was already pre-filled with last session's weight, and a suggestion next to a field saying
+> something else loses to habit. Only a workout still in progress gets one. With one session of
+> history the card says one more is needed; with none, or on a reps-only exercise, it says nothing.
+>
+> Putting it on screen surfaced four things the tests had not caught:
+>
+> - **The effort check read RIR backwards.** A set stopped with reps to spare was backed off, as if
+>   it had been too hard — the opposite of the reference's own pseudocode. The loop now judges the
+>   reps a set would have reached at the target effort, and the reason says when the effort rather
+>   than the rep count decided it.
+> - **Pound users rounded to kilogram steps.** `loadIncrement` is in kilograms, and a pound gym
+>   steps in round pounds, so the step becomes the nearest 2.5 lb.
+> - **A bodyweight lift's reason spoke in total mass** while its load spoke in added weight. Every
+>   weight a reason carries now goes through the same conversion as the load, and a lift with
+>   nothing hung off it is never told to take weight off.
+> - **The workout loaded one previous session**, and the loop needs two and reads up to eight. The
+>   history now comes from its own query, which ends where the workout began so logging its sets
+>   cannot move the suggestion made for them.
+>
+> **Deload weeks are the plan's, not the loop's.** In one, the suggestion is a tenth under the last
+> normal week; outside one, deload sessions are read past, so the week after progresses from the
+> week before rather than from the rest. The stall ladder keeps no state, so taking its deload
+> resets it: a lifter who climbs back to the same plateau is asked about effort again rather than
+> told to cut volume elsewhere. Accepted for now.
 >
 > **Moved behind the mesocycle work**, which was Phase 6 — see the note there. Its inputs were all
 > in place from Phase 5 onward; it waited on the other only for the cycle arithmetic and the plan

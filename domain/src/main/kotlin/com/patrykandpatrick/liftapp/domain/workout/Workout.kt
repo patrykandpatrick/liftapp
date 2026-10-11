@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.domain.workout
 
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
+import com.patrykandpatrick.liftapp.domain.exercise.ProgressionPolicy
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
@@ -34,6 +35,9 @@ data class Workout(
         val notes: String = "",
         val sets: List<ExerciseSet>,
         val lastSets: List<ExerciseSet> = emptyList(),
+        val progressionPolicy: ProgressionPolicy = ProgressionPolicy.DoubleProgression,
+        /** The equipment's smallest step, in kilograms. */
+        val loadIncrement: Double? = null,
         val workoutItemID: Long = id,
         val workoutItemType: RoutineItemType = RoutineItemType.Exercise,
         val workoutItemOrder: Int = 0,

@@ -108,6 +108,8 @@ constructor(
             notes = exercise.notes,
             sets = sets,
             lastSets = lastSets,
+            progressionPolicy = exercise.exercise.progressionPolicy,
+            loadIncrement = exercise.exercise.loadIncrement,
         )
 
     /** Identifies one exercise of one workout item, which the query returns once per set. */

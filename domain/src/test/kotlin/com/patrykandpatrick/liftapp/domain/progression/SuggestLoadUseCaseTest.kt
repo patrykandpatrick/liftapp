@@ -7,6 +7,7 @@ import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -49,10 +50,44 @@ class SuggestLoadUseCaseTest {
     }
 
     @Test
-    fun `A set harder than asked for backs off even inside the range`() {
-        val suggestion = suggest(session(100.0, reps = 10, rir = 4), session(100.0, reps = 9))
+    fun `A set stopped short of the target effort counts the reps it had left`() {
+        // Ten reps with four in reserve is twelve at the two asked for: the top of the range.
+        val suggestion =
+            suggest(
+                session(100.0, reps = 10, rir = 4),
+                session(100.0, reps = 9),
+                target = NARROW_TARGET,
+            )
 
-        assertIs<SuggestionReason.BackOff>(suggestion?.reason)
+        val reason = assertIs<SuggestionReason.LoadUp>(suggestion?.reason)
+        assertTrue(reason.easierThanAsked, "The reps alone would not have earned the load-up.")
+    }
+
+    @Test
+    fun `A set taken past the target effort backs off even inside the range`() {
+        // Nine reps at failure is seven at the two in reserve asked for, one short of the range.
+        val suggestion = suggest(session(100.0, reps = 9, rir = 0), session(100.0, reps = 8))
+
+        val reason = assertIs<SuggestionReason.BackOff>(suggestion?.reason)
+        assertTrue(reason.harderThanAsked, "The reps alone would have held.")
+        assertEquals(97.5, suggestion!!.load, ABSOLUTE_TOLERANCE)
+    }
+
+    @Test
+    fun `Topping the range past the target effort holds rather than adds`() {
+        val suggestion = suggest(session(100.0, reps = 12, rir = 0), session(100.0, reps = 10))
+
+        val reason = assertIs<SuggestionReason.Hold>(suggestion?.reason)
+        assertTrue(reason.harderThanAsked, "The reps alone would have added load.")
+        assertEquals(100.0, suggestion!!.load)
+    }
+
+    @Test
+    fun `Reps that reach the range without help from the effort say so`() {
+        val suggestion = suggest(session(100.0, reps = 9, rir = 2), session(100.0, reps = 8))
+
+        val reason = assertIs<SuggestionReason.Hold>(suggestion?.reason)
+        assertFalse(reason.harderThanAsked)
     }
 
     @Test
@@ -68,14 +103,35 @@ class SuggestLoadUseCaseTest {
 
     @Test
     fun `A load-up across a wide rep range is held to a tenth`() {
-        // Dropping from twelve reps to eight at the same effort is worth more than a tenth of the
-        // bar on its own, so an ordinary double progression over 8-12 meets the guard every time.
+        // Dropping from twelve reps to eight at the same effort is worth a little more than a tenth
+        // of the bar on its own, so an ordinary double progression over 8-12 meets the guard.
         val suggestion = suggest(session(100.0, reps = 12, rir = 2), session(100.0, reps = 11))
+
+        assertEquals(110.0, suggestion!!.load, ABSOLUTE_TOLERANCE)
+    }
+
+    @Test
+    fun `A cap the equipment's step rounds away is not reported`() {
+        // The arithmetic asks for about 110.2 kg, which snaps to the 110 kg the cap allows anyway.
+        val suggestion = suggest(session(100.0, reps = 12, rir = 2), session(100.0, reps = 11))
+
+        assertIs<SuggestionReason.LoadUp>(suggestion?.reason)
+    }
+
+    @Test
+    fun `A load-up off one unusually good set is held to a tenth and says what it wanted`() {
+        val suggestion =
+            suggest(
+                session(100.0, reps = 12, rir = 2),
+                session(100.0, reps = 11),
+                session(120.0, reps = 10, rir = 2),
+            )
 
         val reason = assertIs<SuggestionReason.Capped>(suggestion?.reason)
         assertIs<SuggestionReason.LoadUp>(reason.within)
         assertEquals(110.0, suggestion!!.load, ABSOLUTE_TOLERANCE)
         assertTrue(reason.uncapped > 110.0, "The capped reason should carry what was asked for.")
+        assertTrue(reason.uncapped % 2.5 < ABSOLUTE_TOLERANCE, "${reason.uncapped} is unsnapped.")
     }
 
     @Test
@@ -165,22 +221,6 @@ class SuggestLoadUseCaseTest {
     }
 
     @Test
-    fun `The load waits when the plan already added sets this cycle`() {
-        val suggestion =
-            useCase(
-                history = listOf(session(100.0, reps = 12, rir = 2), session(100.0, reps = 10)),
-                target = TARGET,
-                policy = ProgressionPolicy.DoubleProgression,
-                loadIncrement = 2.5,
-                massUnit = MassUnit.Kilograms,
-                volumeProgressedThisCycle = true,
-            )
-
-        assertEquals(SuggestionReason.VolumeProgressedInstead, suggestion?.reason)
-        assertEquals(100.0, suggestion?.load)
-    }
-
-    @Test
     fun `A bodyweight lift is told what to hang off the bar, not what it moves in total`() {
         val suggestion =
             suggest(
@@ -189,10 +229,116 @@ class SuggestLoadUseCaseTest {
                 target = NARROW_TARGET,
             )
 
-        assertIs<SuggestionReason.LoadUp>(suggestion?.reason)
+        val reason = assertIs<SuggestionReason.LoadUp>(suggestion?.reason)
         assertTrue(
             suggestion!!.load in 10.0..19.0,
             "Expected added weight near 10 kg, got ${suggestion.load}.",
+        )
+        assertEquals(10.0, reason.previousLoad, "The reason should speak in added weight too.")
+    }
+
+    @Test
+    fun `A capped bodyweight suggestion names its uncapped figure in added weight`() {
+        val suggestion =
+            suggest(
+                calisthenics(added = 10.0, bodyWeight = 80.0, reps = 12, rir = 2),
+                calisthenics(added = 10.0, bodyWeight = 80.0, reps = 11, rir = 2),
+                calisthenics(added = 30.0, bodyWeight = 80.0, reps = 10, rir = 2),
+            )
+
+        val reason = assertIs<SuggestionReason.Capped>(suggestion?.reason)
+        assertTrue(reason.uncapped in 20.0..60.0, "Expected added weight, got ${reason.uncapped}.")
+        assertTrue(reason.uncapped % 2.5 < ABSOLUTE_TOLERANCE, "${reason.uncapped} is unsnapped.")
+        assertEquals(10.0, assertIs<SuggestionReason.LoadUp>(reason.within).previousLoad)
+    }
+
+    @Test
+    fun `A bodyweight lift with nothing hung off it has nothing to back off`() {
+        val suggestion =
+            suggest(
+                calisthenics(added = 0.0, bodyWeight = 80.0, reps = 5, rir = 2),
+                calisthenics(added = 0.0, bodyWeight = 80.0, reps = 9, rir = 2),
+            )
+
+        assertNull(suggestion)
+    }
+
+    @Test
+    fun `A pound user's load is snapped to round pounds, not converted kilograms`() {
+        // Two reps short of 225 lb is 211.5 lb. A 2.5 kg step is 5 lb in a pound gym, not 5.5 lb
+        // and not the 2.5 lb the raw kilogram figure would read as.
+        val suggestion =
+            suggest(
+                session(225.0, reps = 6, rir = 2),
+                session(225.0, reps = 9),
+                massUnit = MassUnit.Pounds,
+            )
+
+        assertEquals(210.0, suggestion!!.load, ABSOLUTE_TOLERANCE)
+    }
+
+    @Test
+    fun `A deload week takes a tenth off the last normal week`() {
+        val suggestion =
+            suggest(session(100.0, reps = 12), session(100.0, reps = 11), isDeloadWeek = true)
+
+        val reason = assertIs<SuggestionReason.Deload>(suggestion?.reason)
+        assertEquals(100.0, reason.previousLoad)
+        assertEquals(90.0, suggestion!!.load, ABSOLUTE_TOLERANCE)
+    }
+
+    @Test
+    fun `A deload week needs only one session to come down from`() {
+        val suggestion = suggest(session(100.0, reps = 10), isDeloadWeek = true)
+
+        assertIs<SuggestionReason.Deload>(suggestion?.reason)
+    }
+
+    @Test
+    fun `The week after a deload progresses from the week before it`() {
+        val history = arrayOf(session(100.0, reps = 12, rir = 2), session(100.0, reps = 11))
+        val withDeload = arrayOf(session(90.0, reps = 8, rir = 4, isDeload = true), *history)
+
+        assertEquals(
+            suggest(*history, target = NARROW_TARGET),
+            suggest(*withDeload, target = NARROW_TARGET),
+        )
+    }
+
+    @Test
+    fun `A deload week comes down from the last normal week, not an earlier deload`() {
+        val suggestion =
+            suggest(
+                session(90.0, reps = 8, rir = 4, isDeload = true),
+                session(100.0, reps = 10),
+                isDeloadWeek = true,
+            )
+
+        assertEquals(100.0, assertIs<SuggestionReason.Deload>(suggestion?.reason).previousLoad)
+    }
+
+    @Test
+    fun `One session is one short of a suggestion, and a deload session does not count`() {
+        val policy = ProgressionPolicy.DoubleProgression
+
+        assertTrue(useCase.isOneSessionShort(listOf(session(100.0, reps = 10)), policy))
+        assertFalse(
+            useCase.isOneSessionShort(
+                listOf(session(100.0, reps = 10), session(100.0, reps = 9)),
+                policy,
+            )
+        )
+        assertFalse(
+            useCase.isOneSessionShort(
+                listOf(session(100.0, reps = 10, isDeload = true)),
+                policy,
+            )
+        )
+        assertFalse(
+            useCase.isOneSessionShort(
+                listOf(session(100.0, reps = 10)),
+                ProgressionPolicy.RepsOnly,
+            )
         )
     }
 
@@ -215,25 +361,30 @@ class SuggestLoadUseCaseTest {
     private fun suggest(
         vararg history: ExerciseSession,
         target: SetTarget = TARGET,
+        massUnit: MassUnit = MassUnit.Kilograms,
+        isDeloadWeek: Boolean = false,
     ): LoadSuggestion? =
         useCase(
             history = history.toList(),
             target = target,
             policy = ProgressionPolicy.DoubleProgression,
             loadIncrement = 2.5,
-            massUnit = MassUnit.Kilograms,
+            massUnit = massUnit,
+            isDeloadWeek = isDeloadWeek,
         )
 
-    private fun session(load: Double, reps: Int, rir: Int? = 2) =
+    private fun session(load: Double, reps: Int, rir: Int? = 2, isDeload: Boolean = false) =
         ExerciseSession(
-            listOf(
-                ExerciseSet.Weight(
-                    weight = load,
-                    reps = reps,
-                    weightUnit = MassUnit.Kilograms,
-                    rir = rir,
-                )
-            )
+            sets =
+                listOf(
+                    ExerciseSet.Weight(
+                        weight = load,
+                        reps = reps,
+                        weightUnit = MassUnit.Kilograms,
+                        rir = rir,
+                    )
+                ),
+            isDeload = isDeload,
         )
 
     private fun calisthenics(added: Double, bodyWeight: Double, reps: Int, rir: Int?) =

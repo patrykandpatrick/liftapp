@@ -4,6 +4,7 @@ import com.patrykandpatrick.liftapp.domain.exercise.GetExerciseNameAndTypeContra
 import com.patrykandpatrick.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatrick.liftapp.domain.exercise.GetRoutineExercisesUseCase
 import com.patrykandpatrick.liftapp.domain.exerciseset.GetExerciseSetsUseCase
+import com.patrykandpatrick.liftapp.domain.progression.GetRecentSessionsContract
 import com.patrykandpatrick.liftapp.functionality.database.exercise.RoomExerciseRepository
 import dagger.Binds
 import dagger.Module
@@ -27,4 +28,7 @@ interface ExerciseModule {
 
     @Binds
     fun bindGetExerciseSetsUseCase(repository: RoomExerciseRepository): GetExerciseSetsUseCase
+
+    @Binds
+    fun bindGetRecentSessionsContract(repository: RoomExerciseRepository): GetRecentSessionsContract
 }

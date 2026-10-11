@@ -46,6 +46,27 @@ interface ExerciseDao {
         endDateTime: LocalDateTime,
     ): Flow<List<ExerciseSetWithWorkoutDataDto>>
 
+    /** [limit] counts workouts rather than sets, which is why it sits in the subquery. */
+    @Query(
+        "SELECT exercise_set.*, workout_start_date, workout_name, workout_body_weight, " +
+            "'' AS workout_item_exercise_notes " +
+            "FROM exercise_set " +
+            "JOIN workout ON workout_id = exercise_set_workout_id " +
+            "WHERE exercise_set_exercise_id = :exerciseID AND exercise_set_workout_id IN (" +
+            "SELECT exercise_set_workout_id FROM exercise_set " +
+            "JOIN workout ON workout_id = exercise_set_workout_id " +
+            "WHERE exercise_set_exercise_id = :exerciseID AND workout_start_date < :before " +
+            "GROUP BY exercise_set_workout_id " +
+            "ORDER BY MAX(workout_start_date) DESC LIMIT :limit" +
+            ") " +
+            "ORDER BY workout_start_date DESC, workout_exercise_set_index"
+    )
+    suspend fun getRecentExerciseSets(
+        exerciseID: Long,
+        before: LocalDateTime,
+        limit: Int,
+    ): List<ExerciseSetWithWorkoutDataDto>
+
     @Query(
         "SELECT EXISTS(" +
             "SELECT 1 FROM exercise_set WHERE exercise_set_exercise_id = :exerciseID LIMIT 1" +

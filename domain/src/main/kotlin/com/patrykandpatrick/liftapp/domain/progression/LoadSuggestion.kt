@@ -1,5 +1,15 @@
 package com.patrykandpatrick.liftapp.domain.progression
 
+/** What the workout can say about an exercise's load before its first set. */
+sealed interface LoadAdvice {
+
+    /**
+     * Exactly one session to read. The loop waits for a second, and saying so once is better than
+     * leaving the user to wonder why nothing appears.
+     */
+    data object OneMoreSession : LoadAdvice
+}
+
 /**
  * What to put on the bar next time, and why.
  *
@@ -7,25 +17,37 @@ package com.patrykandpatrick.liftapp.domain.progression
  * nothing here is allowed to reach a user without the sentence that explains it — which is why the
  * reason is part of the suggestion rather than something a caller may forget to ask for.
  *
- * [load] is in the same terms the set records: the bar weight for a loaded lift, the weight hung
- * off it for a bodyweight one.
+ * [load], and every weight inside [reason], is in the same terms the set records: the bar weight
+ * for a loaded lift, the weight hung off it for a bodyweight one.
  */
-data class LoadSuggestion(val load: Double, val reason: SuggestionReason)
+data class LoadSuggestion(val load: Double, val reason: SuggestionReason) : LoadAdvice
 
 /**
  * Why the loop landed where it did, carrying the numbers the sentence needs rather than a pre-built
  * string — the wording and its plurals belong with the resources.
+ *
+ * The flags on [LoadUp], [Hold] and [BackOff] are set only when the effort, not the rep count,
+ * decided the outcome, so the sentence can say which of the two it was.
  */
 sealed interface SuggestionReason {
 
-    /** The top of the rep range came up at or above the target effort: time to add load. */
-    data class LoadUp(val previousLoad: Double) : SuggestionReason
+    /** The top of the rep range came up, counting any reps left beyond the target effort. */
+    data class LoadUp(val previousLoad: Double, val easierThanAsked: Boolean = false) :
+        SuggestionReason
 
     /** Reps still to find inside the range at this load. */
-    data class Hold(val achievedReps: Int, val maxReps: Int) : SuggestionReason
+    data class Hold(
+        val achievedReps: Int,
+        val maxReps: Int,
+        val harderThanAsked: Boolean = false,
+    ) : SuggestionReason
 
-    /** The range was missed, or the effort came in harder than asked: give some back. */
-    data class BackOff(val achievedReps: Int, val minReps: Int) : SuggestionReason
+    /** The range was missed once the effort is accounted for: give some back. */
+    data class BackOff(
+        val achievedReps: Int,
+        val minReps: Int,
+        val harderThanAsked: Boolean = false,
+    ) : SuggestionReason
 
     /** The arithmetic asked for more than a tenth in one step, and was held to it. */
     data class Capped(val uncapped: Double, val within: SuggestionReason) : SuggestionReason
@@ -33,8 +55,8 @@ sealed interface SuggestionReason {
     /** Two sessions or more without progress. [step] is the cheapest thing left to try. */
     data class Stalled(val step: StallEscalation, val sessions: Int) : SuggestionReason
 
-    /** Volume already went up this cycle. One variable progresses at a time, so the load waits. */
-    data object VolumeProgressedInstead : SuggestionReason
+    /** The plan's deload week: about a tenth under [previousLoad], the last normal week's load. */
+    data class Deload(val previousLoad: Double) : SuggestionReason
 }
 
 /**

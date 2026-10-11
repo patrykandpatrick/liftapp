@@ -341,6 +341,10 @@ sets if recovery was good, 1 if moderate, none if the user is struggling ([RP St
 
 **Progress load *or* volume in a given week, not both.**
 
+The app reads this as a choice between two responses to the last session, which is how this section
+frames volume. It does not cover the mesocycle's scheduled volume ramp below: that adds sets in most
+weeks of a block, and holding the load whenever it did would freeze the load for the whole block.
+
 ### Block to block: the mesocycle
 
 A block is 4–6 weeks of accumulation followed by a deload. Two things ramp across it:
@@ -583,7 +587,8 @@ Guard it with three rules:
 The reason travels as a `SuggestionReason` carrying the numbers rather than as a finished sentence,
 because the domain has no resources to build one from and "9 of 12 reps" needs a plural form the
 locale picks. A suggestion cannot be constructed without one, so the guard holds by construction
-rather than by remembering. The sentence itself is the piece still to write.
+rather than by remembering. `:core` builds the sentence, and the workout shows it under the
+suggested weight in the first set's target card.
 
 Two things the loop settled that this document did not say. A **regression is not a stall** — going
 backwards already has an answer in the back-off, and treating it as one escalates over what a single

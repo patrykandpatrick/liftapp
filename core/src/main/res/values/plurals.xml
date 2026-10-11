@@ -8,6 +8,10 @@
         <item quantity="one">rep</item>
         <item quantity="other">reps</item>
     </plurals>
+    <plurals name="session_count">
+        <item quantity="one">session</item>
+        <item quantity="other">sessions</item>
+    </plurals>
     <plurals name="day_count">
         <item quantity="one">day</item>
         <item quantity="other">days</item>

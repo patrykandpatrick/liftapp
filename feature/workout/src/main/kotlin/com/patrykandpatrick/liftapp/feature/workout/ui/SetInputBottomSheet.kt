@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.patrykandpatrick.liftapp.core.R
 import com.patrykandpatrick.liftapp.core.model.getDisplayName
 import com.patrykandpatrick.liftapp.core.ui.LiftAppModalBottomSheetWithTopAppBar
+import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableExerciseSet
 import com.patrykandpatrick.liftapp.feature.workout.model.EditableWorkout
 import com.patrykandpatrick.liftapp.ui.component.LiftAppButton
@@ -61,6 +62,10 @@ internal fun SetInputBottomSheet(
                 goal = exercise.goal,
                 setIndex = setIndex,
                 exerciseType = exercise.exerciseType,
+                // The suggestion is judged on the first set and carried from there.
+                loadAdvice = exercise.loadAdvice.takeIf { setIndex == 0 },
+                massUnit = set.massUnit,
+                mainMuscle = exercise.mainMuscles.firstOrNull(),
             )
 
             SetEditorContent(set)
@@ -78,6 +83,14 @@ internal fun SetInputBottomSheet(
         }
     }
 }
+
+private val EditableExerciseSet<*>.massUnit: MassUnit
+    get() =
+        when (this) {
+            is EditableExerciseSet.Weight -> weightUnit
+            is EditableExerciseSet.Calisthenics -> weightUnit
+            else -> MassUnit.Kilograms
+        }
 
 private fun EditableExerciseSet<*>.inputTexts(): List<String> =
     when (this) {

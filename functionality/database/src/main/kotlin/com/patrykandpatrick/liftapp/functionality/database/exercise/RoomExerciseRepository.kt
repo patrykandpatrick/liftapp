@@ -11,12 +11,16 @@ import com.patrykandpatrick.liftapp.domain.exercise.GetExerciseUseCase
 import com.patrykandpatrick.liftapp.domain.exercise.GetRoutineExercisesUseCase
 import com.patrykandpatrick.liftapp.domain.exerciseset.ExerciseSetGroup
 import com.patrykandpatrick.liftapp.domain.exerciseset.GetExerciseSetsUseCase
+import com.patrykandpatrick.liftapp.domain.progression.GetRecentSessionsContract
 import com.patrykandpatrick.liftapp.domain.routine.RoutineExerciseItem
 import com.patrykandpatrick.liftapp.functionality.database.appendSQLOrderByCase
+import com.patrykandpatrick.liftapp.functionality.database.workout.ExerciseSetWithWorkoutDataDto
+import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -29,7 +33,12 @@ constructor(
     private val exerciseMapper: ExerciseMapper,
     private val exerciseSetMapper: ExerciseSetMapper,
     @param:DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-) : ExerciseRepository, GetExerciseUseCase, GetRoutineExercisesUseCase, GetExerciseSetsUseCase {
+) :
+    ExerciseRepository,
+    GetExerciseUseCase,
+    GetRoutineExercisesUseCase,
+    GetExerciseSetsUseCase,
+    GetRecentSessionsContract {
 
     override fun getAllExercises(): Flow<List<Exercise>> =
         exerciseDao.getAllExercises().map(exerciseMapper::toDomain).flowOn(dispatcher)
@@ -92,30 +101,45 @@ constructor(
                         dateInterval.periodStartTime,
                         dateInterval.periodEndTime,
                     )
-                    .map { allSets ->
-                        allSets
-                            .groupBy { it.exerciseSet.workoutID }
-                            .map { (workoutID, dtos) ->
-                                val workout = dtos.first()
-                                val workoutStartDate = workout.workoutStartDate
-                                ExerciseSetGroup(
-                                    workoutID = workoutID,
-                                    workoutName = workout.workoutName,
-                                    exerciseID = exercise.id,
-                                    sets =
-                                        exerciseSetMapper.mapCompletedExerciseSets(
-                                            exercise.exerciseType,
-                                            dtos.map { it.exerciseSet },
-                                            workout.bodyWeight as? BodyMeasurementValue.SingleValue,
-                                        ),
-                                    workoutStartDate = workoutStartDate,
-                                    notes = workout.exerciseNotes,
-                                )
-                            }
-                    }
+                    .map { allSets -> allSets.toExerciseSetGroups(exercise) }
             }
             .flowOn(dispatcher)
 
     override fun hasExerciseSets(exerciseID: Long): Flow<Boolean> =
         exerciseDao.hasExerciseSets(exerciseID).flowOn(dispatcher)
+
+    override suspend fun getRecentSessions(
+        exerciseID: Long,
+        before: LocalDateTime,
+        limit: Int,
+    ): List<ExerciseSetGroup> =
+        withContext(dispatcher) {
+            val exercise =
+                exerciseDao.getExercise(exerciseID).first() ?: return@withContext emptyList()
+            exerciseDao
+                .getRecentExerciseSets(exerciseID, before, limit)
+                .toExerciseSetGroups(exercise)
+        }
+
+    private suspend fun List<ExerciseSetWithWorkoutDataDto>.toExerciseSetGroups(
+        exercise: ExerciseEntity
+    ): List<ExerciseSetGroup> = groupBy {
+        it.exerciseSet.workoutID
+    }
+        .map { (workoutID, dtos) ->
+            val workout = dtos.first()
+            ExerciseSetGroup(
+                workoutID = workoutID,
+                workoutName = workout.workoutName,
+                exerciseID = exercise.id,
+                sets =
+                    exerciseSetMapper.mapCompletedExerciseSets(
+                        exercise.exerciseType,
+                        dtos.map { it.exerciseSet },
+                        workout.bodyWeight as? BodyMeasurementValue.SingleValue,
+                    ),
+                workoutStartDate = workout.workoutStartDate,
+                notes = workout.exerciseNotes,
+            )
+        }
 }

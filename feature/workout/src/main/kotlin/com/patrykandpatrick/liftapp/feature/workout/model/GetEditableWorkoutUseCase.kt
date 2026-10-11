@@ -4,6 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatrick.liftapp.domain.Constants.Database.ID_NOT_SET
 import com.patrykandpatrick.liftapp.domain.format.Formatter
+import com.patrykandpatrick.liftapp.domain.progression.GetLoadAdviceUseCase
+import com.patrykandpatrick.liftapp.domain.progression.LoadAdvice
+import com.patrykandpatrick.liftapp.domain.progression.LoadSuggestion
+import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.text.StringProvider
 import com.patrykandpatrick.liftapp.domain.validation.higherThanZero
 import com.patrykandpatrick.liftapp.domain.validation.nonEmpty
@@ -33,7 +37,10 @@ constructor(
     private val stringProvider: StringProvider,
     private val workoutRouteData: WorkoutRouteData,
     private val savedStateHandle: SavedStateHandle,
+    private val getLoadAdvice: GetLoadAdviceUseCase,
 ) {
+    private var loadAdvice: Pair<LoadAdviceKey, Map<Long, LoadAdvice>>? = null
+
     operator fun invoke(): Flow<EditableWorkout> =
         contract
             .getWorkout(
@@ -43,11 +50,23 @@ constructor(
             )
             .map {
                 savedStateHandle[RESOLVED_WORKOUT_ID] = it.id
-                it.editable()
+                it.editable(loadAdviceFor(it))
             }
 
-    private fun Workout.editable(): EditableWorkout {
+    /**
+     * Worked out once per workout and its exercises rather than on every emission, which comes with
+     * each saved set and could not change the answer.
+     */
+    private suspend fun loadAdviceFor(workout: Workout): Map<Long, LoadAdvice> {
+        val key = LoadAdviceKey(workout)
+        loadAdvice?.let { (cachedKey, advice) -> if (cachedKey == key) return advice }
+        return getLoadAdvice(workout).also { loadAdvice = key to it }
+    }
+
+    private fun Workout.editable(loadAdvice: Map<Long, LoadAdvice>): EditableWorkout {
         val exercises = exercises.map { exercise ->
+            val advice = loadAdvice[exercise.id]
+            val suggestedLoad = (advice as? LoadSuggestion)?.load
             EditableWorkout.Exercise(
                 id = exercise.id,
                 workoutItemID = exercise.workoutItemID,
@@ -69,9 +88,12 @@ constructor(
                             previousSet =
                                 exercise.sets.getOrNull(index - 1)?.takeIf { it.isCompleted },
                             lastSet = exercise.lastSets.getOrNull(index),
+                            // Later sets inherit it from the set before, as any weight carries.
+                            suggestedLoad = suggestedLoad.takeIf { index == 0 },
                         )
                     },
                 previousWorkoutSets = exercise.lastSets.filter { it.isCompleted },
+                loadAdvice = advice,
             )
         }
 
@@ -133,6 +155,7 @@ constructor(
         setIndex: Int,
         previousSet: ExerciseSet?,
         lastSet: ExerciseSet?,
+        suggestedLoad: Double?,
     ): EditableExerciseSet<ExerciseSet> =
         when (this) {
             is ExerciseSet.Weight ->
@@ -141,6 +164,7 @@ constructor(
                     setIndex = setIndex,
                     previousSet = previousSet as? ExerciseSet.Weight,
                     lastSet = lastSet as? ExerciseSet.Weight,
+                    suggestedLoad = suggestedLoad,
                 )
 
             is ExerciseSet.Calisthenics ->
@@ -149,6 +173,7 @@ constructor(
                     setIndex = setIndex,
                     previousSet = previousSet as? ExerciseSet.Calisthenics,
                     lastSet = lastSet as? ExerciseSet.Calisthenics,
+                    suggestedLoad = suggestedLoad,
                 )
 
             is ExerciseSet.Reps ->
@@ -182,6 +207,7 @@ constructor(
         setIndex: Int,
         previousSet: ExerciseSet.Weight?,
         lastSet: ExerciseSet.Weight?,
+        suggestedLoad: Double?,
     ): EditableExerciseSet.Weight =
         EditableExerciseSet.Weight(
             weight = weight,
@@ -195,6 +221,7 @@ constructor(
                     )
                     .apply {
                         when {
+                            !isCompleted && suggestedLoad != null -> updateValue(suggestedLoad)
                             !isCompleted && previousSet?.isCompleted == true -> {
                                 updateValue(previousSet.weight)
                             }
@@ -231,6 +258,7 @@ constructor(
         setIndex: Int,
         previousSet: ExerciseSet.Calisthenics?,
         lastSet: ExerciseSet.Calisthenics?,
+        suggestedLoad: Double?,
     ): EditableExerciseSet.Calisthenics =
         EditableExerciseSet.Calisthenics(
             weight = weight,
@@ -247,6 +275,7 @@ constructor(
                     )
                     .apply {
                         when {
+                            !isCompleted && suggestedLoad != null -> updateValue(suggestedLoad)
                             !isCompleted && previousSet?.isCompleted == true -> {
                                 updateValue(previousSet.weight)
                             }
@@ -439,4 +468,18 @@ constructor(
         setIndex: Int,
         inputType: String,
     ): String = "exercise_${exerciseId}_set_${setIndex}_$inputType"
+
+    private data class LoadAdviceKey(
+        val workoutID: Long,
+        val isCompleted: Boolean,
+        val firstTargets: List<Pair<Long, SetTarget?>>,
+    ) {
+        constructor(
+            workout: Workout
+        ) : this(
+            workoutID = workout.id,
+            isCompleted = workout.isCompleted,
+            firstTargets = workout.exercises.map { it.id to it.goal.setTargets.firstOrNull() },
+        )
+    }
 }

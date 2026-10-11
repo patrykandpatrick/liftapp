@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.model.Name
 import com.patrykandpatrick.liftapp.domain.muscle.Muscle
+import com.patrykandpatrick.liftapp.domain.progression.LoadAdvice
 import com.patrykandpatrick.liftapp.domain.routine.RoutineItemType
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.domain.workout.Workout
@@ -72,6 +73,7 @@ data class EditableWorkout(
         val notes: String,
         val sets: List<EditableExerciseSet<ExerciseSet>>,
         val previousWorkoutSets: List<ExerciseSet>,
+        val loadAdvice: LoadAdvice? = null,
         val workoutItemID: Long = id,
         val workoutItemType: RoutineItemType = RoutineItemType.Exercise,
         val workoutItemOrder: Int = 0,
