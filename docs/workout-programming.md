@@ -43,10 +43,8 @@ kilograms, because the `ln w` term makes the curve unit-dependent where Epley wa
 chart reads a recorded RIR, so a set of 8 at 2 RIR plots as the 10-rep max it is; a set logged
 before RIR existed is unchanged, because a null RIR is not a zero.
 
-This is not a Part 5 item — it is the math those items will call, and until they exist nothing
-consumes `loadFor` or the rounding. What it does mean is that
-[the autoregulation loop](#the-autoregulation-loop-once-those-exist) is now missing only its inputs,
-not its primitives.
+This is not a Part 5 item — it is the math those items call. Written before anything consumed
+`loadFor` or the rounding; [the autoregulation loop](#the-autoregulation-loop) uses both now.
 
 **Weekly volume per muscle** (no schema). `MuscleVolume` in `:domain` credits each completed set to
 the muscles its exercise names, at the fractional weights in
@@ -82,9 +80,11 @@ reading of the mass a set moved — body weight included — where the statistic
 chart mappers did not, and the dashboard's tonnage did not either. An unweighted pull-up used to
 plot a one-rep max of zero.
 
-Still open, in the order Part 5 gives them: a target load (3), training intent (4), and
-per-exercise fatigue cost (7). Item 2 has shipped and item 6 with it: prescription has moved out of
-`Goal` and into the plan, keyed by cycle, and `Goal` is gone.
+Everything Part 5 lists has shipped bar two. Item 3, a target load, is half done: a load is
+computed from the last sessions when one is asked for, but never authored onto the target, so a
+target read on its own still says nothing about weight. Item 7, per-exercise fatigue cost, was
+deferred and nothing exists for it. The roadmap's
+[Still open](workout-programming-roadmap.md#still-open) carries those two and three more.
 
 ## What the app actually has to decide
 

@@ -20,6 +20,43 @@ workout, mesocycles with deloads, and load suggestions with their reasons.
 Each shipped phase keeps its section below, with what actually happened recorded at the top of it.
 The plan is left as written underneath: where the two disagree, the note is what is true.
 
+## Still open
+
+Every phase shipped, but five things did not, and each is recorded in the phase note it belongs to
+as well as here. In rough order of what a user would notice first:
+
+1. **Nothing shows a load suggestion.** `SuggestLoadUseCase` and its three guards are built and
+   tested; no screen reads them, so the loop that decides what to lift next is invisible. This also
+   leaves half of the "show the reason" guard open — the reason exists and nobody sees it. What is
+   missing is a `SuggestionReason` mapper in `:core`, one string per case plus the plurals, and a
+   line beside the weight field of the set being logged. See [Phase 7](#phase-7--autoregulation-and-stalls).
+
+2. **A load is computed but never authored.** [`SetTarget.loadPercent`][loadpercent] is still filled
+   in by nothing. The suggestion derives a load from history at the moment it is asked for, which
+   answers the user's hardest decision but leaves the plan itself silent about load — so a target
+   read without running the loop says nothing about weight. Part 5 item 3, half done.
+
+3. **Planned volume is invisible exactly where it matters most.** A muscle the plan asks twelve
+   sets of and that got nothing appears in the volume screen's "Nothing this period" line with no
+   number beside it. The planned figure shows only on muscles with logged work, because the
+   comparison was added to the worked rows. A muscle at zero against a plan is the strongest signal
+   the screen has, and it is the one case that does not carry it. See
+   [Phase 6](#phase-6--mesocycle-deloads-planned-volume).
+
+4. **Two seeded exercises still credit a full set to an assisting muscle.** Phase 4's review found
+   23 of the 101 defaults naming two or three muscles at the top tier, where a main muscle takes a
+   whole set and an assisting one half. Nine were re-tiered — every bench variant and both chin-up
+   variants — and twelve were left deliberately, because a squat, a deadlift, a dip, a row and a
+   muscle-up genuinely share the work. `DeclinePushUps` and `IsometricWipers`, both
+   `[Chest, FrontDelts]`, are the two that were neither fixed nor justified.
+
+5. **Per-exercise fatigue cost was never built.** Part 5 item 7, deferred from the start: a
+   three-level hint would stop the app suggesting five sets of fifteen deadlifts, but it cannot be
+   derived from muscle lists and needs 101 judgement calls for something that only ever changed a
+   warning. The only item on the list nothing exists for.
+
+[loadpercent]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/target/SetTarget.kt
+
 ## Context
 
 [workout-programming.md](workout-programming.md) is the reference for how LiftApp should prescribe
@@ -296,6 +333,12 @@ details chart still render.
 > - **A muscle named in two tiers is credited once, at the highest.** Not anticipated here, and it
 >   matters: the annotations are hand-authored and a few name the same muscle twice. Summing them
 >   would have paid 1.5× for an authoring slip.
+> - **The seeded tiers were authored for a body diagram, not for volume credit**, and reusing them
+>   doubled what a pressing day read as. 23 of the 101 defaults named two or three muscles at the
+>   top tier, where a main muscle takes a whole set: twelve sets of bench credited the triceps
+>   twelve rather than six. Nine were re-tiered — every bench variant and both chin-ups — and twelve
+>   were left because a squat, a deadlift, a dip, a row and a muscle-up genuinely share the work.
+>   Two were neither, and remain open; see [Still open](#still-open).
 > - **Cardio is excluded from the set count.** The landmarks count working sets of resistance
 >   training; a five-kilometre run is not one set of quadriceps, and counting it as one would put
 >   every runner over the ceiling on the legs. `Time` exercises are counted — a plank is a set.
@@ -568,6 +611,11 @@ and restore.
 > often as a week. `perWeek` refuses to scale up for exactly the opposite reason — a short window
 > of logged work is a count that happened.
 >
+> **The comparison stops short of the case that matters most.** It was added to the rows of muscles
+> with logged work, so a muscle the plan asks twelve sets of and that got nothing shows in the
+> screen's "Nothing this period" line with no number beside it — see
+> [Still open](#still-open).
+>
 > One thing found while verifying this phase and fixed separately in `afdca431`: **CI was running
 > 161 of the repo's 382 tests.** An Android module has no `testDebug` task, only
 > `testDebugUnitTest`; Gradle abbreviates a qualified task name so `:module:testDebug` resolved and
@@ -634,6 +682,10 @@ With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–
 > Stall escalation needs no stored state — the step is read off how many sessions the stall has
 > persisted, so cheapest-first falls out of the history rather than out of a counter someone has to
 > keep. Changing the exercise is reachable only after the three cheaper answers.
+>
+> **The load is computed, never authored.** `SetTarget.loadPercent` is still filled in by nothing:
+> the loop derives a load from history when asked, so a target read on its own says nothing about
+> weight. That is Part 5's item 3, and why it reads *half done*.
 >
 > **Not wired to a screen**, which leaves half of "show the reason" open: the reason exists and
 > nothing shows it. What is left is a `SuggestionReason` mapper in `:core` — one string per case,
