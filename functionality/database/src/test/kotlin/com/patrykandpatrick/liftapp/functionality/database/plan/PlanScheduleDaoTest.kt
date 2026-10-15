@@ -41,7 +41,10 @@ class PlanScheduleDaoTest {
             .allowMainThreadQueries()
             .build()
 
-    @After fun close() = database.close()
+    @After
+    fun close() {
+        database.close()
+    }
 
     @Test
     fun `Activating a plan again replaces its days rather than adding a second set`() = runTest {

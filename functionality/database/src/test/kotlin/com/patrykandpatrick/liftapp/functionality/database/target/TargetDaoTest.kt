@@ -50,7 +50,10 @@ class TargetDaoTest {
             .allowMainThreadQueries()
             .build()
 
-    @After fun close() = database.close()
+    @After
+    fun close() {
+        database.close()
+    }
 
     @Test
     fun `Every exercise appears once, however many items the routine has`() = runTest {
