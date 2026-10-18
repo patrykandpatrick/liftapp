@@ -73,7 +73,8 @@ data class EditableWorkout(
         val notes: String,
         val sets: List<EditableExerciseSet<ExerciseSet>>,
         val previousWorkoutSets: List<ExerciseSet>,
-        val loadAdvice: LoadAdvice? = null,
+        /** By set index; a set the plan says nothing about the load of is absent. */
+        val loadAdvice: Map<Int, LoadAdvice> = emptyMap(),
         val workoutItemID: Long = id,
         val workoutItemType: RoutineItemType = RoutineItemType.Exercise,
         val workoutItemOrder: Int = 0,

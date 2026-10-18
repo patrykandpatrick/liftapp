@@ -13,7 +13,12 @@ sealed interface Action {
 
     data object DismissEditor : Action
 
+    /** Null selects every set at once. */
+    data class SelectSet(val index: Int?) : Action
+
     data class SetRir(val rir: Int?) : Action
+
+    data class UseLoadPercent(val percent: Int) : Action
 
     data object SaveEdit : Action
 }

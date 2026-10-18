@@ -7,6 +7,7 @@ import com.patrykandpatrick.liftapp.domain.plan.ActivePlan
 import com.patrykandpatrick.liftapp.domain.plan.GetActivePlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.GetPlanUseCase
 import com.patrykandpatrick.liftapp.domain.plan.Plan
+import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
 import com.patrykandpatrick.liftapp.domain.workout.Workout
@@ -26,14 +27,14 @@ class GetLoadAdviceUseCaseTest {
     fun `An exercise with history gets a suggestion`() = runTest {
         val advice = useCase(history = twoSessions()).invoke(workout())
 
-        assertIs<LoadSuggestion>(advice[BENCH_ID])
+        assertIs<LoadSuggestion>(advice[BENCH_ID]?.get(0))
     }
 
     @Test
     fun `One session of history says one more is needed`() = runTest {
         val advice = useCase(history = twoSessions().take(1)).invoke(workout())
 
-        assertEquals(LoadAdvice.OneMoreSession, advice[BENCH_ID])
+        assertEquals(LoadAdvice.OneMoreSession, advice[BENCH_ID]?.get(0))
     }
 
     @Test
@@ -82,7 +83,7 @@ class GetLoadAdviceUseCaseTest {
             useCase(history = twoSessions(), deloadEveryCycles = 2)
                 .invoke(workout(start = PLAN_START.plusDays(1).atTime(18, 0)))
 
-        val suggestion = assertIs<LoadSuggestion>(advice[BENCH_ID])
+        val suggestion = assertIs<LoadSuggestion>(advice[BENCH_ID]?.get(0))
         assertIs<SuggestionReason.Deload>(suggestion.reason)
     }
 
@@ -95,9 +96,48 @@ class GetLoadAdviceUseCaseTest {
             useCase(history = history, deloadEveryCycles = 2)
                 .invoke(workout(start = PLAN_START.plusDays(2).atTime(18, 0)))
 
-        val suggestion = assertIs<LoadSuggestion>(advice[BENCH_ID])
+        val suggestion = assertIs<LoadSuggestion>(advice[BENCH_ID]?.get(0))
         assertTrue(suggestion.load >= 100.0, "Progressed from the deload's 90 kg instead.")
     }
+
+    @Test
+    fun `Only the first set gets the loop's advice, and the rest carry its weight`() = runTest {
+        val advice = useCase(history = twoSessions()).invoke(workout())
+
+        assertEquals(setOf(0), advice[BENCH_ID]?.keys)
+    }
+
+    @Test
+    fun `A set given a percentage of one-rep max gets its own load`() = runTest {
+        val goal =
+            Workout.Goal.default.copy(
+                setTargets =
+                    listOf(
+                        SetTarget(minReps = 5, maxReps = 5, rir = 2, loadPercent = 70.0),
+                        SetTarget(minReps = 5, maxReps = 5, rir = 2, loadPercent = 80.0),
+                    )
+            )
+
+        val advice = useCase(history = twoSessions()).invoke(workout(goal = goal))
+
+        val first = assertIs<LoadSuggestion>(advice[BENCH_ID]?.get(0))
+        val second = assertIs<LoadSuggestion>(advice[BENCH_ID]?.get(1))
+        assertIs<SuggestionReason.PercentOfOneRepMax>(first.reason)
+        assertTrue(second.load > first.load, "80% should ask for more than 70%.")
+    }
+
+    @Test
+    fun `A percentage with no history to estimate from says one more session is needed`() =
+        runTest {
+            val goal =
+                Workout.Goal.default.copy(
+                    setTargets = listOf(SetTarget(minReps = 5, maxReps = 5, loadPercent = 75.0))
+                )
+
+            val advice = useCase(history = emptyList()).invoke(workout(goal = goal))
+
+            assertEquals(LoadAdvice.OneMoreSession, advice[BENCH_ID]?.get(0))
+        }
 
     private suspend fun useCase(
         history: List<ExerciseSetGroup> = emptyList(),
@@ -141,6 +181,7 @@ class GetLoadAdviceUseCaseTest {
         start: LocalDateTime = WORKOUT_START,
         endDate: LocalDateTime? = null,
         exerciseType: ExerciseType = ExerciseType.Weight,
+        goal: Workout.Goal = Workout.Goal.default,
     ) =
         Workout(
             id = 1L,
@@ -158,7 +199,7 @@ class GetLoadAdviceUseCaseTest {
                         mainMuscles = emptyList(),
                         secondaryMuscles = emptyList(),
                         tertiaryMuscles = emptyList(),
-                        goal = Workout.Goal.default,
+                        goal = goal,
                         sets = emptyList(),
                         loadIncrement = 2.5,
                     )

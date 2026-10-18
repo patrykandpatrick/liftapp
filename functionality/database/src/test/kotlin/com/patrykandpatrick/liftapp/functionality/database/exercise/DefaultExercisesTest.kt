@@ -118,6 +118,8 @@ class DefaultExercisesTest {
                 ExerciseStringResource.InclineDbBenchPress,
                 ExerciseStringResource.DeclineDbBenchPress,
                 ExerciseStringResource.ReverseGripBenchPress,
+                ExerciseStringResource.DeclinePushUps,
+                ExerciseStringResource.IsometricWipers,
             )
         val chinUps = listOf(ExerciseStringResource.PullUps, ExerciseStringResource.ChinUps)
 

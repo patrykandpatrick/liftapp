@@ -37,6 +37,15 @@ value class MuscleVolume private constructor(val setsPerMuscle: Map<Muscle, Doub
     val untrainedMuscles: List<Muscle>
         get() = Muscle.entries.filter { muscle -> this[muscle] <= 0 }
 
+    /**
+     * The [untrainedMuscles] that [planned] asks at least a whole set of, the most asked first: a
+     * plan against a muscle that got nothing is the strongest finding the comparison has.
+     */
+    fun untrainedAgainst(planned: MuscleVolume): List<Muscle> =
+        untrainedMuscles
+            .filter { muscle -> planned.wholeSetsOf(muscle) > 0 }
+            .sortedByDescending(planned::get)
+
     operator fun get(muscle: Muscle): Double = setsPerMuscle[muscle] ?: 0.0
 
     /** A quarter of a set is an artefact of the fractional credits, not a set anybody did. */

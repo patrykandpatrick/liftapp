@@ -80,11 +80,9 @@ reading of the mass a set moved — body weight included — where the statistic
 chart mappers did not, and the dashboard's tonnage did not either. An unweighted pull-up used to
 plot a one-rep max of zero.
 
-Everything Part 5 lists has shipped bar two. Item 3, a target load, is half done: a load is
-computed from the last sessions when one is asked for, but never authored onto the target, so a
-target read on its own still says nothing about weight. Item 7, per-exercise fatigue cost, was
-deferred and nothing exists for it. The roadmap's
-[Still open](workout-programming-roadmap.md#still-open) carries those two and three more.
+Everything Part 5 lists has shipped bar one. Item 7, per-exercise fatigue cost, was deferred and
+nothing exists for it; the roadmap's [Still open](workout-programming-roadmap.md#still-open) carries
+it.
 
 ## What the app actually has to decide
 
@@ -96,7 +94,7 @@ four of them per set, and [`ExerciseTarget`][exercisetarget] the fifth for the e
 | How many sets | the length of `ExerciseTarget.sets` |
 | What rep target | `SetTarget.minReps`..`maxReps` |
 | How close to failure (RIR) | `SetTarget.rir`, nullable |
-| What load | `SetTarget.loadPercent`, nullable and not yet generated |
+| What load | `SetTarget.loadPercent`, nullable, authored per set and never generated |
 | How long to rest | `ExerciseTarget.restTime` |
 
 The list is the point. The flat `Goal` this replaced said one thing about every set of an exercise,
@@ -526,10 +524,11 @@ numbering the rest of this document uses still holds.
    [`SetTarget`][target] list hung off `(plan, cycle, day, exercise)`. The set count is the length
    of that list, which is what makes a volume ramp across weeks authorable at all.
 
-3. **A target load or `%e1RM`.** *Half done.* [`SuggestLoadUseCase`][suggest] computes a load from
-   what the last sessions did, which is the answer to the hard decision — but it is computed at
-   suggestion time rather than authored, so [`SetTarget.loadPercent`][target] is still never filled
-   in, and nothing yet shows the suggestion to a user.
+3. **A target load or `%e1RM`.** *Done, no schema.* [`SuggestLoadUseCase`][suggest] computes a load
+   from what the last sessions did, and the workout shows it. A set can also be given a percentage
+   of one-rep max in the plan, [`SetTarget.loadPercent`][target], which the workout turns into a
+   load against the best one-rep max the recent sessions show. The editor offers the percentage the
+   set's reps and effort call for, read off this document's own table.
 
 4. **Training intent.** *Done, no schema.* Strength / hypertrophy / both, chosen per plan rather
    than per routine or exercise — it is a property of the block. Every default table in Part 2 is

@@ -57,6 +57,9 @@ sealed interface SuggestionReason {
 
     /** The plan's deload week: about a tenth under [previousLoad], the last normal week's load. */
     data class Deload(val previousLoad: Double) : SuggestionReason
+
+    /** The plan asks for [percent] of a one-rep max, estimated at [oneRepMax] from recent sets. */
+    data class PercentOfOneRepMax(val percent: Double, val oneRepMax: Double) : SuggestionReason
 }
 
 /**

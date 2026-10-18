@@ -9,6 +9,8 @@ import com.patrykandpatrick.liftapp.domain.muscle.Muscle
 import com.patrykandpatrick.liftapp.domain.progression.StallEscalation
 import com.patrykandpatrick.liftapp.domain.progression.SuggestionReason
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 /**
  * The sentence shown beside a suggested load. [mainMuscle] is the muscle a stall may be
@@ -60,6 +62,13 @@ fun SuggestionReason.prettyString(massUnit: MassUnit, mainMuscle: Muscle?): Stri
         is SuggestionReason.Stalled -> stalled(step, sessions, mainMuscle)
         is SuggestionReason.Deload ->
             stringResource(R.string.load_suggestion_deload, weight(previousLoad, massUnit))
+        is SuggestionReason.PercentOfOneRepMax ->
+            stringResource(
+                R.string.load_suggestion_percent,
+                percent.roundToInt(),
+                // A one-rep max estimate claims no more precision than a tenth of a unit.
+                weight(round(oneRepMax * 10) / 10, massUnit),
+            )
     }
 
 @Composable

@@ -1,6 +1,7 @@
 package com.patrykandpatrick.liftapp.domain.progression
 
 import com.patrykandpatrick.liftapp.domain.exercise.ProgressionPolicy
+import com.patrykandpatrick.liftapp.domain.exerciseset.OneRepMaxCalculator
 import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.unit.MassUnit
 import com.patrykandpatrick.liftapp.domain.workout.ExerciseSet
@@ -356,6 +357,60 @@ class SuggestLoadUseCaseTest {
             val suggestion = suggest(*history.toTypedArray())
             assertTrue(suggestion != null, "No suggestion for $history.")
         }
+    }
+
+    @Test
+    fun `A percentage is taken of the best one-rep max the recent sessions show`() {
+        val history = listOf(session(100.0, reps = 5, rir = 2), session(90.0, reps = 5, rir = 2))
+        val oneRepMax =
+            OneRepMaxCalculator.estimatedOneRepMax(100.0, reps = 5, rir = 2, MassUnit.Kilograms)
+
+        val suggestion =
+            useCase.forPercent(history, percent = 80.0, loadIncrement = 2.5, MassUnit.Kilograms)
+
+        val reason = assertIs<SuggestionReason.PercentOfOneRepMax>(suggestion?.reason)
+        assertEquals(oneRepMax, reason.oneRepMax, ABSOLUTE_TOLERANCE)
+        assertEquals(
+            OneRepMaxCalculator.roundToIncrement(oneRepMax * 0.8, 2.5),
+            suggestion!!.load,
+            ABSOLUTE_TOLERANCE,
+        )
+    }
+
+    @Test
+    fun `A percentage needs only one session to estimate from`() {
+        val suggestion =
+            useCase.forPercent(
+                listOf(session(100.0, reps = 5)),
+                percent = 75.0,
+                loadIncrement = 2.5,
+                MassUnit.Kilograms,
+            )
+
+        assertIs<SuggestionReason.PercentOfOneRepMax>(suggestion?.reason)
+    }
+
+    @Test
+    fun `A bodyweight lift is given no percentage, which would be of its whole mass`() {
+        val suggestion =
+            useCase.forPercent(
+                listOf(calisthenics(added = 10.0, bodyWeight = 80.0, reps = 8, rir = 2)),
+                percent = 75.0,
+                loadIncrement = 2.5,
+                MassUnit.Kilograms,
+            )
+
+        assertNull(suggestion)
+    }
+
+    @Test
+    fun `A percentage is one session short only when there is none`() {
+        val policy = ProgressionPolicy.RepsOnly
+
+        assertTrue(useCase.isOneSessionShort(emptyList(), policy, isPercent = true))
+        assertFalse(
+            useCase.isOneSessionShort(listOf(session(100.0, reps = 5)), policy, isPercent = true)
+        )
     }
 
     private fun suggest(

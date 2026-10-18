@@ -50,6 +50,19 @@ class OneRepMaxCalculatorTest {
     }
 
     @Test
+    fun `The percentage offered for a target is the reference table's`() {
+        referenceLoadTable.forEach { (reps, percentages) ->
+            percentages.forEachIndexed { rir, percentage ->
+                assertEquals(
+                    percentage,
+                    OneRepMaxCalculator.percentOfOneRepMax(reps, rir).roundToInt(),
+                    "$reps reps at $rir RIR",
+                )
+            }
+        }
+    }
+
+    @Test
     fun `The whole reference table sits above the weight-dependent floor`() {
         // If it did not, the acceptance test above would be measuring Epley in places.
         val lightest = referenceLoadTable.values.flatten().min() * REFERENCE_ONE_REP_MAX / PERCENT

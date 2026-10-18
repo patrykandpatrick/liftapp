@@ -10,6 +10,7 @@ import com.patrykandpatrick.liftapp.domain.exercise.ExerciseType
 import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.unit.EnergyUnit
 import com.patrykandpatrick.liftapp.domain.unit.LongDistanceUnit
+import kotlin.math.roundToInt
 
 /**
  * One set's prescription in a line, for showing beside the set being logged.
@@ -24,7 +25,7 @@ fun SetTarget.prettyString(
     distanceUnit: LongDistanceUnit = LongDistanceUnit.Kilometer,
 ): String =
     when (exerciseType) {
-        ExerciseType.Weight,
+        ExerciseType.Weight -> withLoadPercent(repsWithRir())
         ExerciseType.Calisthenics,
         ExerciseType.Reps -> repsWithRir()
         ExerciseType.Cardio -> cardio(distanceUnit)
@@ -51,6 +52,12 @@ private fun SetTarget.repsWithRir(): String {
     return rir?.let { stringResource(R.string.exercise_set_format_rir, reps, rirString(it)) }
         ?: reps
 }
+
+@Composable
+private fun SetTarget.withLoadPercent(reps: String): String =
+    loadPercent?.let { percent ->
+        stringResource(R.string.workout_set_target_load_percent, reps, percent.roundToInt())
+    } ?: reps
 
 @Composable
 private fun SetTarget.cardio(distanceUnit: LongDistanceUnit): String = buildString {

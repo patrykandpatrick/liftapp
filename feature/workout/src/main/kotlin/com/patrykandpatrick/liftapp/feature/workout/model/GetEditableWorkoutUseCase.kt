@@ -39,7 +39,7 @@ constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getLoadAdvice: GetLoadAdviceUseCase,
 ) {
-    private var loadAdvice: Pair<LoadAdviceKey, Map<Long, LoadAdvice>>? = null
+    private var loadAdvice: Pair<LoadAdviceKey, Map<Long, Map<Int, LoadAdvice>>>? = null
 
     operator fun invoke(): Flow<EditableWorkout> =
         contract
@@ -57,16 +57,15 @@ constructor(
      * Worked out once per workout and its exercises rather than on every emission, which comes with
      * each saved set and could not change the answer.
      */
-    private suspend fun loadAdviceFor(workout: Workout): Map<Long, LoadAdvice> {
+    private suspend fun loadAdviceFor(workout: Workout): Map<Long, Map<Int, LoadAdvice>> {
         val key = LoadAdviceKey(workout)
         loadAdvice?.let { (cachedKey, advice) -> if (cachedKey == key) return advice }
         return getLoadAdvice(workout).also { loadAdvice = key to it }
     }
 
-    private fun Workout.editable(loadAdvice: Map<Long, LoadAdvice>): EditableWorkout {
+    private fun Workout.editable(loadAdvice: Map<Long, Map<Int, LoadAdvice>>): EditableWorkout {
         val exercises = exercises.map { exercise ->
-            val advice = loadAdvice[exercise.id]
-            val suggestedLoad = (advice as? LoadSuggestion)?.load
+            val advice = loadAdvice[exercise.id].orEmpty()
             EditableWorkout.Exercise(
                 id = exercise.id,
                 workoutItemID = exercise.workoutItemID,
@@ -88,8 +87,8 @@ constructor(
                             previousSet =
                                 exercise.sets.getOrNull(index - 1)?.takeIf { it.isCompleted },
                             lastSet = exercise.lastSets.getOrNull(index),
-                            // Later sets inherit it from the set before, as any weight carries.
-                            suggestedLoad = suggestedLoad.takeIf { index == 0 },
+                            // A set with no advice of its own carries the set before's weight.
+                            suggestedLoad = (advice[index] as? LoadSuggestion)?.load,
                         )
                     },
                 previousWorkoutSets = exercise.lastSets.filter { it.isCompleted },
@@ -472,14 +471,14 @@ constructor(
     private data class LoadAdviceKey(
         val workoutID: Long,
         val isCompleted: Boolean,
-        val firstTargets: List<Pair<Long, SetTarget?>>,
+        val targets: List<Pair<Long, List<SetTarget>>>,
     ) {
         constructor(
             workout: Workout
         ) : this(
             workoutID = workout.id,
             isCompleted = workout.isCompleted,
-            firstTargets = workout.exercises.map { it.id to it.goal.setTargets.firstOrNull() },
+            targets = workout.exercises.map { it.id to it.goal.setTargets },
         )
     }
 }

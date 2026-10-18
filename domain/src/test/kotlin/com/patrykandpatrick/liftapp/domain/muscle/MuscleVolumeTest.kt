@@ -251,6 +251,36 @@ class MuscleVolumeTest {
     }
 
     @Test
+    fun `Untrained muscles the plan asks for come out, the most asked first`() {
+        val logged =
+            MuscleVolume.of(
+                sets = 3,
+                primaryMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = emptyList(),
+                tertiaryMuscles = emptyList(),
+            )
+        val planned =
+            MuscleVolume.of(
+                sets = 12,
+                primaryMuscles = listOf(Muscle.Chest, Muscle.Lats),
+                secondaryMuscles = listOf(Muscle.Biceps),
+                // A quarter of twelve rounds to three; a quarter of one would round to nothing.
+                tertiaryMuscles = listOf(Muscle.Forearms),
+            ) +
+                MuscleVolume.of(
+                    sets = 1,
+                    primaryMuscles = emptyList(),
+                    secondaryMuscles = emptyList(),
+                    tertiaryMuscles = listOf(Muscle.Calves),
+                )
+
+        assertEquals(
+            listOf(Muscle.Lats, Muscle.Biceps, Muscle.Forearms),
+            logged.untrainedAgainst(planned),
+        )
+    }
+
+    @Test
     fun `Work too slight to round up to a set still counts as trained`() {
         val volume =
             MuscleVolume.of(

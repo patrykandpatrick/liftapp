@@ -386,8 +386,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.DeclinePushUps),
                 exerciseType = ExerciseType.Reps,
-                mainMuscles = listOf(Muscle.Chest, Muscle.FrontDelts),
-                secondaryMuscles = listOf(Muscle.Triceps),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.FrontDelts, Muscle.Triceps),
                 tertiaryMuscles = listOf(Muscle.LowerBack, Muscle.Lats, Muscle.Glutes),
                 role = ExerciseRole.SecondaryCompound,
                 progressionPolicy = ProgressionPolicy.RepsOnly,
@@ -1174,8 +1174,8 @@ object DefaultExercises {
         Exercise.Insert(
                 name = Name.Resource(ExerciseStringResource.IsometricWipers),
                 exerciseType = ExerciseType.Reps,
-                mainMuscles = listOf(Muscle.Chest, Muscle.FrontDelts),
-                secondaryMuscles = listOf(Muscle.Triceps),
+                mainMuscles = listOf(Muscle.Chest),
+                secondaryMuscles = listOf(Muscle.FrontDelts, Muscle.Triceps),
                 tertiaryMuscles = listOf(Muscle.LowerBack, Muscle.Lats, Muscle.Glutes),
                 role = ExerciseRole.SecondaryCompound,
                 progressionPolicy = ProgressionPolicy.RepsOnly,

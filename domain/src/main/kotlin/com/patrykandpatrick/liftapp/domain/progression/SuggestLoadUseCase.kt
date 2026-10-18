@@ -80,9 +80,46 @@ class SuggestLoadUseCase @Inject constructor() {
         return toBar.suggestion(totalLoad = capped, lastLoad = lastLoad, reason = cappedReason)
     }
 
-    /** True when the loop has exactly one session to read, and a second would let it speak. */
-    fun isOneSessionShort(history: List<ExerciseSession>, policy: ProgressionPolicy): Boolean =
-        policy != ProgressionPolicy.RepsOnly && history.usable().size == MINIMUM_SESSIONS - 1
+    /**
+     * The load a target of [percent] of a one-rep max calls for, against the best one-rep max the
+     * exercise has shown recently.
+     *
+     * The plan's author chose the percentage, so it overrides the progression policy and is neither
+     * capped nor made to wait for a second session: one is enough to estimate from. A bodyweight
+     * lift gets none, because a percentage of the whole mass moved is not a weight the user sets.
+     */
+    fun forPercent(
+        history: List<ExerciseSession>,
+        percent: Double,
+        loadIncrement: Double?,
+        massUnit: MassUnit,
+    ): LoadSuggestion? {
+        val sessions = history.usable()
+        val lastSet = sessions.firstOrNull()?.firstWorkingSet ?: return null
+        if (lastSet.bodyWeightOffset > 0.0) return null
+        val oneRepMax = bestOneRepMax(sessions, massUnit).takeIf { it > 0.0 } ?: return null
+        val toBar = BarTerms(offset = 0.0, loadIncrement?.let { incrementIn(it, massUnit) })
+        return toBar.suggestion(
+            totalLoad = oneRepMax * percent / 100.0,
+            lastLoad = lastSet.totalWeight ?: 0.0,
+            reason = SuggestionReason.PercentOfOneRepMax(percent = percent, oneRepMax = oneRepMax),
+        )
+    }
+
+    /**
+     * True when one more session would give [invoke] something to say: a second for the loop, or a
+     * first for a [percentage][forPercent] to estimate from.
+     */
+    fun isOneSessionShort(
+        history: List<ExerciseSession>,
+        policy: ProgressionPolicy,
+        isPercent: Boolean = false,
+    ): Boolean =
+        if (isPercent) {
+            history.usable().isEmpty()
+        } else {
+            policy != ProgressionPolicy.RepsOnly && history.usable().size == MINIMUM_SESSIONS - 1
+        }
 
     /** Deload sessions were light by design, so progressing from one would progress from a rest. */
     private fun List<ExerciseSession>.usable(): List<ExerciseSession> = filter { session ->
@@ -138,7 +175,8 @@ class SuggestLoadUseCase @Inject constructor() {
                 }
             is SuggestionReason.Hold,
             is SuggestionReason.Capped,
-            is SuggestionReason.Deload -> lastLoad
+            is SuggestionReason.Deload,
+            is SuggestionReason.PercentOfOneRepMax -> lastLoad
         }
 
     /** The best the exercise has shown recently, which is what a load-up is measured against. */
@@ -269,6 +307,8 @@ class SuggestLoadUseCase @Inject constructor() {
                 is SuggestionReason.Deload -> copy(previousLoad = previousLoad - offset)
                 is SuggestionReason.Capped ->
                     copy(uncapped = toBar(uncapped), within = within.inBarTerms())
+                // Only ever built with no offset to take away; see forPercent.
+                is SuggestionReason.PercentOfOneRepMax,
                 is SuggestionReason.Hold,
                 is SuggestionReason.BackOff,
                 is SuggestionReason.Stalled -> this

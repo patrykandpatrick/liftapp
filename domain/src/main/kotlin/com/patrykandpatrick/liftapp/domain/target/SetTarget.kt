@@ -14,6 +14,8 @@ import kotlinx.serialization.Serializable
  *
  * [rir] and [loadPercent] are nullable because a target may leave them open, which is not the same
  * as prescribing zero — zero RIR is a set taken to failure.
+ *
+ * [loadPercent] is a percentage of the estimated one-rep max, 70.0 for 70%.
  */
 @Serializable
 @SerialName("SetTarget")

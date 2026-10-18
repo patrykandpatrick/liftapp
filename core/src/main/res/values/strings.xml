@@ -369,6 +369,7 @@
     <!-- Work too slight to round up to a whole set, which a long window averaged down produces. -->
     <string name="muscle_volume_under_one_set">Under 1 set</string>
     <string name="muscle_volume_untrained_title">Nothing this period</string>
+    <string name="muscle_volume_planned_untrained_title">Planned, but nothing logged</string>
     <!-- Example: "8 of 12 sets" — what was done against what the plan asks for in a week. -->
     <string name="muscle_volume_sets_of_planned">%1$d of %2$d %3$s</string>
     <string name="muscle_volume_planned_caption">Compared with what your plan asks of each muscle in a week.</string>
@@ -416,6 +417,8 @@
     <!-- Shown only for straight sets, where the load and reps hold and the effort therefore does not. -->
     <string name="workout_set_target_straight_sets_note">Same reps and weight each set, so the last will land closer to failure than the first. That is expected.</string>
     <string name="workout_set_target_weight_title">Weight</string>
+    <!-- Example: "8–12 reps @ 2 RIR · 70% 1RM" -->
+    <string name="workout_set_target_load_percent">%1$s · %2$d%% 1RM</string>
 
     <!-- Load suggestions: why the suggested weight is what it is. A %s is a weight with its unit,
          and the plural after a number is "rep"/"reps" or "session"/"sessions". -->
@@ -436,6 +439,8 @@
     <string name="load_suggestion_stalled_reduce_volume_unnamed">Same weight — no progress for %1$d %2$s. This muscle may be getting too many sets elsewhere.</string>
     <string name="load_suggestion_stalled_change_exercise">Same weight — no progress for %1$d %2$s. A variation of this exercise may get it moving again.</string>
     <string name="load_suggestion_deload">Deload week — about 10%% under %1$s, and stop well short of failure.</string>
+    <!-- Example: "70% of your estimated 1RM of 120 kg." -->
+    <string name="load_suggestion_percent">%1$d%% of your estimated 1RM of %2$s.</string>
     <string name="load_suggestion_one_more_session">One more session and you\'ll get a suggested weight.</string>
     <string name="workout_set_entry_section_past_sets">Past sets</string>
     <string name="workout_set_entry_section_previous_workout">Sets from the previous workout</string>
@@ -524,7 +529,14 @@
     <string name="plan_targets_max_reps">Highest reps</string>
     <string name="plan_targets_rest_seconds">Rest between sets (seconds)</string>
     <string name="plan_targets_rir_none">Not set</string>
-    <string name="plan_targets_edit_info">This applies to every set of the exercise in this cycle. Other cycles keep what they were given.</string>
+    <string name="plan_targets_edit_info">Pick a set to change it on its own, or All sets to change every set at once. Other cycles keep what they were given.</string>
+    <string name="plan_targets_all_sets">All sets</string>
+    <string name="plan_targets_varies">Differs between sets. A value here applies to all of them.</string>
+    <string name="plan_targets_load_percent">Load (% of 1RM)</string>
+    <!-- Example: "8 reps with 2 in reserve is about 74% of a 1RM." -->
+    <string name="plan_targets_load_percent_suggestion">%1$d %2$s with %3$s in reserve is about %4$d%% of a 1RM.</string>
+    <string name="plan_targets_load_percent_suggestion_failure">%1$d %2$s to failure is about %3$d%% of a 1RM.</string>
+    <string name="plan_targets_use_load_percent">Use %1$d%%</string>
     <string name="training_plan_rebuild_targets">Rebuild every target</string>
     <string name="training_plan_rebuild_targets_note">Off, only days and exercises without a target get one. On, the whole plan is written again from these settings and any change you made to an exercise is lost.</string>
     <string name="training_plan_generation_info"><![CDATA[Every set gets a rep range and an effort target. Reps in reserve tightens from <b><color-surface-variant>%1$s</color-surface-variant></b> in the first cycle to the hardest in the last, and sets climb as it goes. Change any of it afterwards.]]></string>

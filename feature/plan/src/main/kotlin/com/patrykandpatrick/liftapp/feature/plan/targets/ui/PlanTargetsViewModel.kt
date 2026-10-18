@@ -3,6 +3,7 @@ package com.patrykandpatrick.liftapp.feature.plan.targets.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.liftapp.core.model.toLoadableStateFlow
+import com.patrykandpatrick.liftapp.core.text.IntTextFieldState
 import com.patrykandpatrick.liftapp.core.text.TextFieldStateManager
 import com.patrykandpatrick.liftapp.domain.model.Loadable
 import com.patrykandpatrick.liftapp.domain.navigation.NavigationCommander
@@ -12,16 +13,18 @@ import com.patrykandpatrick.liftapp.domain.target.SetTarget
 import com.patrykandpatrick.liftapp.domain.target.UpsertExerciseTargetsContract
 import com.patrykandpatrick.liftapp.domain.validation.validNumberHigherThanZero
 import com.patrykandpatrick.liftapp.feature.plan.targets.model.Action
+import com.patrykandpatrick.liftapp.feature.plan.targets.model.TargetDraft
 import com.patrykandpatrick.liftapp.navigation.data.PlanTargetsRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlin.time.Duration
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -41,7 +44,14 @@ constructor(
     /** The exercise the editor is open on, and the source of the target being written. */
     private val editedItem = MutableStateFlow<PlanDayTargets.Item?>(null)
 
-    private val rir = MutableStateFlow<Int?>(null)
+    private val draft = MutableStateFlow<TargetDraft?>(null)
+
+    /**
+     * Set while the fields are filled from [draft]. A text field reports an update made in code the
+     * same way as a typed one, and filling the fields for every set at once would otherwise level
+     * the sets to whatever the first one held.
+     */
+    private var isFillingFields = false
 
     /**
      * Made once and reset as the editor opens, rather than built per exercise. Each `intTextField`
@@ -57,6 +67,7 @@ constructor(
         textFieldStateManager.intTextField(
             savedStateKey = "plan_target_set_count",
             validators = { validNumberHigherThanZero() },
+            onValueChange = { count -> count?.let(::resize) },
             veto = { it < 0 || it > SetTarget.setRange.endInclusive },
         )
 
@@ -64,13 +75,25 @@ constructor(
     private val minReps =
         textFieldStateManager.intTextField(
             savedStateKey = "plan_target_min_reps",
+            onValueChange = { reps -> editSets { it.copy(minReps = reps ?: 0) } },
             veto = { it < 0 || it > SetTarget.repRange.endInclusive },
         )
 
     private val maxReps =
         textFieldStateManager.intTextField(
             savedStateKey = "plan_target_max_reps",
+            onValueChange = { reps -> editSets { it.copy(maxReps = reps ?: 0) } },
             veto = { it < 0 || it > SetTarget.repRange.endInclusive },
+        )
+
+    // Empty, or zero, leaves the load open.
+    private val loadPercent =
+        textFieldStateManager.intTextField(
+            savedStateKey = "plan_target_load_percent",
+            onValueChange = { percent ->
+                editSets { it.copy(loadPercent = percent?.takeIf { it > 0 }?.toDouble()) }
+            },
+            veto = { it < 0 || it > MAX_LOAD_PERCENT },
         )
 
     private val restSeconds =
@@ -89,9 +112,12 @@ constructor(
                         planItemOrderIndex = routeData.planItemOrderIndex,
                     ),
                     editedItem,
-                    rir,
-                ) { day, item, rirValue ->
-                    ScreenState(day = day, editor = item?.let { editor(it, rirValue) })
+                    draft,
+                ) { day, item, draft ->
+                    ScreenState(
+                        day = day,
+                        editor = if (item != null && draft != null) editor(item, draft) else null,
+                    )
                 }
             }
             .toLoadableStateFlow(viewModelScope)
@@ -103,59 +129,70 @@ constructor(
             Action.NextCycle -> cycleIndex.value += 1
             is Action.Edit -> openEditor(action.item)
             Action.DismissEditor -> editedItem.value = null
-            is Action.SetRir -> rir.value = action.rir
+            is Action.SelectSet -> {
+                draft.update { it?.select(action.index) }
+                fillFields()
+            }
+            is Action.SetRir -> editSets { it.copy(rir = action.rir) }
+            is Action.UseLoadPercent -> loadPercent.updateValue(action.percent)
             Action.SaveEdit -> save()
         }
     }
 
     private fun openEditor(item: PlanDayTargets.Item) {
-        val first = item.target.sets.firstOrNull()
-        setCount.updateValue(item.target.setCount)
-        minReps.updateValue(first?.minReps ?: 0)
-        maxReps.updateValue(first?.maxReps ?: 0)
+        draft.value = TargetDraft.of(item.target.sets)
         restSeconds.updateValue(item.target.restTime.inWholeSeconds.toInt())
-        rir.value = first?.rir
+        fillFields()
         editedItem.value = item
     }
 
-    private fun editor(item: PlanDayTargets.Item, rir: Int?): Editor =
+    private fun editSets(transform: (SetTarget) -> SetTarget) {
+        if (isFillingFields) return
+        draft.update { it?.edit(transform) }
+    }
+
+    /** A count can drop the selected set out of range, which selects them all and so refills. */
+    private fun resize(count: Int) {
+        if (isFillingFields) return
+        val selected = draft.value?.selected
+        draft.update { it?.withCount(count) }
+        if (draft.value?.selected != selected) fillFields()
+    }
+
+    /** A field every set disagrees on is left empty, and typing into it levels them. */
+    private fun fillFields() {
+        val draft = draft.value ?: return
+        isFillingFields = true
+        setCount.updateValue(draft.count)
+        minReps.fill(draft.valueOf(SetTarget::minReps))
+        maxReps.fill(draft.valueOf(SetTarget::maxReps))
+        loadPercent.fill(draft.valueOf(SetTarget::loadPercent)?.roundToInt())
+        isFillingFields = false
+    }
+
+    private fun IntTextFieldState.fill(value: Int?) {
+        if (value == null) clear() else updateValue(value)
+    }
+
+    private fun editor(item: PlanDayTargets.Item, draft: TargetDraft): Editor =
         Editor(
             name = item.name,
             exerciseType = item.exerciseType,
+            draft = draft,
             setCount = setCount,
             minReps = minReps,
             maxReps = maxReps,
+            loadPercent = loadPercent,
             restSeconds = restSeconds,
-            rir = rir,
         )
 
-    /**
-     * Writes the exercise's values onto every one of its sets. Sets beyond the count are dropped
-     * and new ones arrive prescribed the same as the rest, which is what the count control means.
-     */
     private fun save() {
         val target = editedItem.value?.target ?: return
-        val first = target.sets.firstOrNull()
-        val set =
-            SetTarget(
-                minReps = minReps.value,
-                maxReps = maxOf(maxReps.value, minReps.value),
-                rir = rir.value,
-                duration = first?.duration ?: Duration.ZERO,
-                distance = first?.distance ?: 0.0,
-                calories = first?.calories ?: 0.0,
-            )
+        val sets = draft.value?.toSets() ?: return
 
         viewModelScope.launch {
             upsertTargets.upsertTargets(
-                listOf(
-                    target.copy(
-                        // Save is disabled below one, and the stepper cannot reach a negative; this
-                        // is the same floor the workout's set-count buttons hold.
-                        sets = List(setCount.value.coerceAtLeast(1)) { set },
-                        restTime = restSeconds.value.seconds,
-                    )
-                )
+                listOf(target.copy(sets = sets, restTime = restSeconds.value.seconds))
             )
             editedItem.value = null
         }
@@ -164,5 +201,7 @@ constructor(
     private companion object {
         /** Ten minutes, which is past the longest rest the reference contemplates. */
         const val MAX_REST_SECONDS = 600
+
+        const val MAX_LOAD_PERCENT = 100
     }
 }

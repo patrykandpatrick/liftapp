@@ -22,34 +22,15 @@ The plan is left as written underneath: where the two disagree, the note is what
 
 ## Still open
 
-Every phase shipped, but four things did not, and each is recorded in the phase note it belongs to
-as well as here. In rough order of what a user would notice first:
+Every phase shipped, and of what did not, one thing is left: **per-exercise fatigue cost was never
+built.** Part 5 item 7, deferred from the start: a three-level hint would stop the app suggesting
+five sets of fifteen deadlifts, but it cannot be derived from muscle lists and needs 101 judgement
+calls for something that only ever changed a warning. The only item on the list nothing exists for.
 
-1. **A load is computed but never authored.** [`SetTarget.loadPercent`][loadpercent] is still filled
-   in by nothing. The suggestion derives a load from history at the moment it is asked for, which
-   answers the user's hardest decision but leaves the plan itself silent about load — so a target
-   read without running the loop says nothing about weight. Part 5 item 3, half done.
-
-2. **Planned volume is invisible exactly where it matters most.** A muscle the plan asks twelve
-   sets of and that got nothing appears in the volume screen's "Nothing this period" line with no
-   number beside it. The planned figure shows only on muscles with logged work, because the
-   comparison was added to the worked rows. A muscle at zero against a plan is the strongest signal
-   the screen has, and it is the one case that does not carry it. See
-   [Phase 6](#phase-6--mesocycle-deloads-planned-volume).
-
-3. **Two seeded exercises still credit a full set to an assisting muscle.** Phase 4's review found
-   23 of the 101 defaults naming two or three muscles at the top tier, where a main muscle takes a
-   whole set and an assisting one half. Nine were re-tiered — every bench variant and both chin-up
-   variants — and twelve were left deliberately, because a squat, a deadlift, a dip, a row and a
-   muscle-up genuinely share the work. `DeclinePushUps` and `IsometricWipers`, both
-   `[Chest, FrontDelts]`, are the two that were neither fixed nor justified.
-
-4. **Per-exercise fatigue cost was never built.** Part 5 item 7, deferred from the start: a
-   three-level hint would stop the app suggesting five sets of fifteen deadlifts, but it cannot be
-   derived from muscle lists and needs 101 judgement calls for something that only ever changed a
-   warning. The only item on the list nothing exists for.
-
-[loadpercent]: ../domain/src/main/kotlin/com/patrykandpatrick/liftapp/domain/target/SetTarget.kt
+Closed since this section was written, each recorded in its phase note: the load suggestion is
+shown in the workout, a load can be authored as a percentage of one-rep max per set, planned volume
+shows on muscles with nothing logged, and the last two seeded exercises crediting an assistant with
+a whole set were re-tiered.
 
 ## Context
 
@@ -332,7 +313,8 @@ details chart still render.
 >   top tier, where a main muscle takes a whole set: twelve sets of bench credited the triceps
 >   twelve rather than six. Nine were re-tiered — every bench variant and both chin-ups — and twelve
 >   were left because a squat, a deadlift, a dip, a row and a muscle-up genuinely share the work.
->   Two were neither, and remain open; see [Still open](#still-open).
+>   Two were neither, `DeclinePushUps` and `IsometricWipers`, and were later re-tiered the same way
+>   as the bench variants — before release, so the `Migration13To14` replay carries them.
 > - **Cardio is excluded from the set count.** The landmarks count working sets of resistance
 >   training; a five-kilometre run is not one set of quadriceps, and counting it as one would put
 >   every runner over the ceiling on the legs. `Time` exercises are counted — a plank is a set.
@@ -522,10 +504,12 @@ list; `UpsertGoalSetsUseCase` (the ±1 set buttons in the workout) must edit the
 > sets spelled out rather than summarised, and a sheet edits the set count, the rep range, the RIR
 > and the rest time.
 >
-> **It edits the exercise, not the set.** That is the shape the generator writes and the shape a
-> lifter changes — "make this exercise fives this week", not "make set three fives" — so saving
-> levels any difference between an exercise's sets. Nothing can author such a difference yet; when
-> something can, this is where it has to grow.
+> **It edits a set, or every set at once.** It first edited the exercise only, levelling any
+> difference between its sets on save. It now has a row of set chips: All sets edits every set,
+> changing only the field touched, so levelling the reps leaves ramped loads alone; a numbered set
+> edits that one. The set count and the rest stay the exercise's. Lowering the count hides sets
+> rather than dropping them, because a count typed digit by digit — from 3 to 12 through 1 — would
+> otherwise destroy every set it passed.
 >
 > **Activation no longer re-authors by default.** It fills gaps only, so a plan reconfigured to
 > start on a different date keeps every edited target, and a plan that gained a day or an exercise
@@ -605,10 +589,11 @@ and restore.
 > often as a week. `perWeek` refuses to scale up for exactly the opposite reason — a short window
 > of logged work is a count that happened.
 >
-> **The comparison stops short of the case that matters most.** It was added to the rows of muscles
-> with logged work, so a muscle the plan asks twelve sets of and that got nothing shows in the
-> screen's "Nothing this period" line with no number beside it — see
-> [Still open](#still-open).
+> **The comparison first stopped short of the case that matters most.** It was added to the rows of
+> muscles with logged work, so a muscle the plan asked twelve sets of and that got nothing sat in
+> the "Nothing this period" line with no number beside it. Such muscles now get rows of their own,
+> under *Planned, but nothing logged*, reading "0 of 12 sets"; only muscles neither planned nor
+> trained are left to the line.
 >
 > One thing found while verifying this phase and fixed separately in `afdca431`: **CI was running
 > 161 of the repo's 382 tests.** An Android module has no `testDebug` task, only
@@ -687,9 +672,13 @@ With per-cycle targets authored in Phase 5, the RIR ramp (3 → 2 → 1 → 0–
 > would have frozen the load for all but the first week of every block. That ramp is scheduled, not
 > a response to how a session went, and so is not the choice the rule is about.
 >
-> **The load is computed, never authored.** `SetTarget.loadPercent` is still filled in by nothing:
-> the loop derives a load from history when asked, so a target read on its own says nothing about
-> weight. That is Part 5's item 3, and why it reads *half done*.
+> **A load can also be authored.** `SetTarget.loadPercent` is set per set in the targets editor, as
+> a percentage of one-rep max, on loaded exercises only — on a bodyweight lift it would be a share
+> of the whole mass moved, not what the user sets. The editor offers the percentage the set's reps
+> and effort call for, read off the reference's own table at 100 kg. In the workout a set with a
+> percentage takes its load from the best one-rep max of the recent sessions instead of from the
+> loop, and one session is enough to estimate from: the author chose the figure, so it overrides
+> the progression policy and is neither capped nor made to wait. The generator still writes none.
 >
 > **Shown in the workout.** The suggestion fills the first set's weight and sits in that set's
 > target card as a weight line, with its reason beneath; later sets inherit the weight the way any

@@ -109,7 +109,14 @@ private fun Content(
     // Held rather than recomputed: workedMuscles sorts on every read and hands LazyColumn a new
     // list identity each time, rebuilding the content for no reason.
     val muscles = remember(state.muscleVolume) { state.muscleVolume.workedMuscles }
-    val untrained = remember(state.muscleVolume) { state.muscleVolume.untrainedMuscles }
+    val plannedUntrained =
+        remember(state.muscleVolume, state.plannedVolume) {
+            state.plannedVolume?.let(state.muscleVolume::untrainedAgainst).orEmpty()
+        }
+    val untrained =
+        remember(state.muscleVolume, plannedUntrained) {
+            state.muscleVolume.untrainedMuscles - plannedUntrained.toSet()
+        }
     val colorStops = VolumeScale.rememberColorStops()
 
     LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = contentPadding) {
@@ -117,7 +124,7 @@ private fun Content(
             Controls(state = state, onAction = onAction, modifier = Modifier.padding(top = 16.dp))
         }
 
-        if (muscles.isEmpty()) {
+        if (muscles.isEmpty() && plannedUntrained.isEmpty()) {
             item(key = "empty") {
                 EmptyState(
                     icon = LiftAppIcons.BicepsFlexed,
@@ -174,6 +181,34 @@ private fun Content(
                         .padding(horizontal = screenPadding)
                         .padding(bottom = MuscleVolumeDefaults.rowSpacing),
             )
+        }
+
+        // Drawn as rows, unlike the rest of the untrained: a plan gives each a number to fall short
+        // of, which a name alone would hide.
+        if (plannedUntrained.isNotEmpty()) {
+            item(key = "planned_untrained_title") {
+                LiftAppText(
+                    text = stringResource(R.string.muscle_volume_planned_untrained_title),
+                    style = typography.titleSmall,
+                    modifier =
+                        Modifier.animateItem()
+                            .padding(horizontal = screenPadding)
+                            .padding(top = 12.dp, bottom = MuscleVolumeDefaults.rowSpacing),
+                )
+            }
+
+            items(items = plannedUntrained, key = { muscle -> muscle.name }) { muscle ->
+                MuscleVolumeRow(
+                    muscle = muscle,
+                    volume = state.muscleVolume,
+                    colorStops = colorStops,
+                    plannedVolume = state.plannedVolume,
+                    modifier =
+                        Modifier.animateItem()
+                            .padding(horizontal = screenPadding)
+                            .padding(bottom = MuscleVolumeDefaults.rowSpacing),
+                )
+            }
         }
 
         if (untrained.isNotEmpty()) {

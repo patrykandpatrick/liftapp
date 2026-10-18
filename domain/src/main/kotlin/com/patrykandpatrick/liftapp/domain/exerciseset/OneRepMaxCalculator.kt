@@ -32,6 +32,7 @@ object OneRepMaxCalculator {
     private const val DIVISOR_LOG_COEFFICIENT = 4.58
 
     private const val SOLVER_TOLERANCE_KG = 1e-9
+    private const val REFERENCE_ONE_REP_MAX_KG = 100.0
     private const val SOLVER_MAX_ITERATIONS = 32
 
     /**
@@ -128,6 +129,15 @@ object OneRepMaxCalculator {
     fun roundToIncrement(load: Double, increment: Double?): Double =
         if (increment == null || increment <= 0.0) load
         else floor(load / increment + 0.5) * increment
+
+    /**
+     * The percentage of a one-rep max that puts [reps] reps within [rir] of failure, read at a 100
+     * kg one-rep max — the convention the reference's percentage table is printed in. The curve is
+     * weight-dependent, so this is a starting figure for a plan rather than a law for every lift.
+     */
+    fun percentOfOneRepMax(reps: Int, rir: Int): Double =
+        loadFor(REFERENCE_ONE_REP_MAX_KG, reps, rir, MassUnit.Kilograms) /
+            REFERENCE_ONE_REP_MAX_KG * 100.0
 
     /**
      * Solves `load × (1 + (r - 1)^0.85 / (-2.55 + 4.58 × ln load)) = oneRepMaxKilograms` for

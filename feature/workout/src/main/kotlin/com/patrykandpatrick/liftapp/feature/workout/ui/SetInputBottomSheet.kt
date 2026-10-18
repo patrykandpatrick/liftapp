@@ -62,8 +62,7 @@ internal fun SetInputBottomSheet(
                 goal = exercise.goal,
                 setIndex = setIndex,
                 exerciseType = exercise.exerciseType,
-                // The suggestion is judged on the first set and carried from there.
-                loadAdvice = exercise.loadAdvice.takeIf { setIndex == 0 },
+                loadAdvice = exercise.loadAdvice[setIndex],
                 massUnit = set.massUnit,
                 mainMuscle = exercise.mainMuscles.firstOrNull(),
             )
